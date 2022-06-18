@@ -8,27 +8,27 @@ namespace Common.Config
     public class DebugConfig : ScriptableObject
     {
         /// <summary>
-        ///     Show the order of execution of all reactive (implementing React attribute) systems and controllers.
+        /// Show the order of execution of all reactive (implementing React attribute) systems and controllers.
         /// </summary>
         public bool LogSystemExecutionOrder;
 
         /// <summary>
-        ///     Logs all added <see cref="AbstractSignal" />.
+        /// Logs all added <see cref="AbstractSignal" />.
         /// </summary>
         public bool LogAddedSignals;
 
         /// <summary>
-        ///     Logs all state change requests.
+        /// Logs all state change requests.
         /// </summary>
         public bool LogRequestedStateChange;
 
         /// <summary>
-        ///     Logs player position relative to search point
+        /// Logs player position relative to search point
         /// </summary>
         public bool LogPlayerPosition;
 
         /// <summary>
-        ///     Shows Input log.
+        /// Shows Input log.
         /// </summary>
         [InfoBox("Shows input registered.", InfoMessageType.None)]
         public bool ShowInputLog;

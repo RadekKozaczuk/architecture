@@ -5,8 +5,8 @@ using UnityEngine;
 namespace Common
 {
     /// <summary>
-    ///     In Unity only enabled <see cref="MonoBehaviour" />s can start a coroutine.
-    ///     This class helps us avoid this limitation.
+    /// In Unity only enabled <see cref="MonoBehaviour" />s can start a coroutine.
+    /// This class helps us avoid this limitation.
     /// </summary>
     [DisallowMultipleComponent]
     public class StaticCoroutine : MonoBehaviour

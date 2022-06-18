@@ -40,18 +40,18 @@ namespace Common
         }
 
         /// <summary>
-        ///     Takes rotation along Y axis in degrees (0 means north), returns normalized direction vector.
+        /// Takes rotation along Y axis in degrees (0 means north), returns normalized direction vector.
         /// </summary>
         public static Vector3 ConvertRotationToDirectionVector(float degrees) =>
             new Vector3(Mathf.Sin(degrees * Mathf.Deg2Rad), 0, Mathf.Cos(degrees * Mathf.Deg2Rad)).normalized;
 
         /// <summary>
-        ///     Returns normalized direction vector.
+        /// Returns normalized direction vector.
         /// </summary>
         public static Vector3 ConvertRotationToDirectionVector(Quaternion rotation) => (rotation * Vector3.forward).normalized;
 
         /// <summary>
-        ///     Maps value from one range to another.
+        /// Maps value from one range to another.
         /// </summary>
         public static float Map(float newMin, float newMax, float oldMin, float oldMax, float value)
             => Mathf.Lerp(newMin, newMax, Mathf.InverseLerp(oldMin, oldMax, value));

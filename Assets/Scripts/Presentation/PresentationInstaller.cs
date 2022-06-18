@@ -6,7 +6,7 @@ using Zenject;
 
 namespace Presentation
 {
-    public class PresentationInstaller : MonoInstaller
+    class PresentationInstaller : MonoInstaller
     {
         [SerializeField]
         AudioConfig _audioConfig;

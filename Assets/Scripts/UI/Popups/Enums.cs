@@ -1,6 +1,4 @@
 namespace UI.Popups
 {
-    public enum PopupType
-    {
-    }
+    public enum PopupType { }
 }

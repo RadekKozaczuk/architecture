@@ -35,7 +35,7 @@ namespace Boot.Controllers
 #endif
 
         /// <summary>
-        ///     Must correspond to <see cref="GameState" />.
+        /// Must correspond to <see cref="GameState" />.
         /// </summary>
         readonly State[] _states;
 
@@ -136,9 +136,7 @@ namespace Boot.Controllers
                     await Task.Run(
                         () =>
                         {
-                            while (_awaitingLazyEvaluation)
-                            {
-                            }
+                            while (_awaitingLazyEvaluation) { }
                         });
 
                 // execute state's on-entry code
@@ -156,7 +154,7 @@ namespace Boot.Controllers
         }
 
         /// <summary>
-        ///     Some code cannot be run from a different Task.
+        /// Some code cannot be run from a different Task.
         /// </summary>
         async Task ExecuteTransitionSynchronousCode(GameState previous, GameState current)
         {
@@ -179,13 +177,9 @@ namespace Boot.Controllers
             }
         }
 
-        void MainMenuOnEntry(string[] args = null)
-        {
-        }
+        void MainMenuOnEntry(string[] args = null) { }
 
-        static void MainMenuOnExit(string[] args = null)
-        {
-        }
+        static void MainMenuOnExit(string[] args = null) { }
 
         static void GameplayOnEntry(string[] args = null)
         {

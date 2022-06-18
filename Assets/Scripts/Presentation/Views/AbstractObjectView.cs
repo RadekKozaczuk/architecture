@@ -7,7 +7,7 @@ namespace Presentation.Views
     abstract class AbstractObjectView : MonoBehaviour
     {
         /// <summary>
-        ///     Global unique object id.
+        /// Global unique object id.
         /// </summary>
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         internal int Id
@@ -34,7 +34,7 @@ namespace Presentation.Views
 #endif
 
         /// <summary>
-        ///     The active state of the View, setting this also enables/disables the GameObject
+        /// The active state of the View, setting this also enables/disables the GameObject
         /// </summary>
         internal bool IsActive
         {

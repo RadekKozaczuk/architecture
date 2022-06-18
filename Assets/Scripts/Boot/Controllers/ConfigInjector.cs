@@ -8,9 +8,9 @@ using UnityEngine.Scripting;
 namespace Boot.Controllers
 {
     /// <summary>
-    ///     This class automatically injects config files to corresponding config containers (classes that ends with
-    ///     'ConfigContainer')
-    ///     and systems (static classes).
+    /// This class automatically injects config files to corresponding config containers (classes that ends with
+    /// 'ConfigContainer')
+    /// and systems (static classes).
     /// </summary>
     [DisallowMultipleComponent]
     [DefaultExecutionOrder(-5)]

@@ -1,10 +1,8 @@
 namespace Common
 {
     /// <summary>
-    ///     Application-level (global) data.
-    ///     All static data objects used across the project are stored here.
+    /// Application-level (global) data.
+    /// All static data objects used across the project are stored here.
     /// </summary>
-    public static class CommonData
-    {
-    }
+    public static class CommonData { }
 }

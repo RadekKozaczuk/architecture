@@ -1,6 +1,4 @@
 namespace Common
 {
-    public class AddressableSpriteLoader
-    {
-    }
+    public class AddressableSpriteLoader { }
 }

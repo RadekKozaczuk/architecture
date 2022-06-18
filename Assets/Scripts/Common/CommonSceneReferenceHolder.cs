@@ -4,8 +4,6 @@ namespace Common
 {
     class CommonSceneReferenceHolder : MonoBehaviour
     {
-        void Awake()
-        {
-        }
+        void Awake() { }
     }
 }

@@ -9,7 +9,7 @@ namespace GameLogic.ViewModels
     public class GameLogicViewModel
     {
         /// <summary>
-        ///     Result retrieval (processing) that should be handled in the callback function.
+        /// Result retrieval (processing) that should be handled in the callback function.
         /// </summary>
         public static void ValidatePlayer(string accessCode, Action<bool> callback)
             => StaticCoroutine.StartStaticCoroutine(JsonSystem.ValidateProfileAsync(accessCode, callback));

@@ -17,17 +17,13 @@ namespace Presentation.Controllers
             SignalProcessor.AddReactiveController(this);
         }
 
-        public void CustomUpdate()
-        {
-        }
+        public void CustomUpdate() { }
 
         public void CustomLateUpdate()
         {
             _vfxController.CustomLateUpdate();
         }
 
-        public static void OnCoreSceneLoaded()
-        {
-        }
+        public static void OnCoreSceneLoaded() { }
     }
 }

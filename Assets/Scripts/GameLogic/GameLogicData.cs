@@ -1,9 +1,7 @@
 namespace GameLogic
 {
     /// <summary>
-    ///     Assembly-level data. Everything here should be internal.
+    /// Assembly-level data. Everything here should be internal.
     /// </summary>
-    static class GameLogicData
-    {
-    }
+    static class GameLogicData { }
 }

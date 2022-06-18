@@ -11,15 +11,14 @@ namespace Common
         public static readonly int Water = LayerMask.NameToLayer("Water");
         public static readonly int UI = LayerMask.NameToLayer("UI");
         public static readonly int Props = LayerMask.NameToLayer("Props");
-        public static readonly int Collectables = LayerMask.NameToLayer("Collectables");
+        public static readonly int Collectibles = LayerMask.NameToLayer("Collectibles");
         public static readonly int Npcs = LayerMask.NameToLayer("Npcs");
-        public static readonly int Players = LayerMask.NameToLayer("Players");
 
         // Masks
         public static readonly int PropsMask = 1 << Props;
-        public static readonly int CollectablesMask = 1 << Collectables;
+        public static readonly int CollectiblesMask = 1 << Collectibles;
         public static readonly int PropsAndPlayersMask = LayerMask.GetMask("Props", "Players");
-        public static readonly int PropsAndCollectablesAndNpcsMask = LayerMask.GetMask("Props", "Collectables", "Npcs");
+        public static readonly int PropsAndCollectiblesAndNpcsMask = LayerMask.GetMask("Props", "Collectibles", "Npcs");
 
         public static void ChangeLayer(GameObject gameObject, int layer, bool withChildren = true)
         {

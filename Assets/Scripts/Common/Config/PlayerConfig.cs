@@ -7,7 +7,7 @@ namespace Common.Config
     public class PlayerConfig : ScriptableObject
     {
         /// <summary>
-        ///     Player's max health.
+        /// Player's max health.
         /// </summary>
         public ushort MaxHealth = 100;
 

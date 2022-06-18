@@ -6,7 +6,7 @@ using Zenject;
 
 namespace GameLogic
 {
-    public class GameLogicInstaller : MonoInstaller
+    class GameLogicInstaller : MonoInstaller
     {
         [SerializeField]
         GameplayConfig _gameplayConfig;

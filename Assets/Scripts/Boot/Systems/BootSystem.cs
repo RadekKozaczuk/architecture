@@ -45,7 +45,7 @@ namespace Boot.Systems
         }
 
         /// <summary>
-        ///     Waits until all operations are either done or have progress greater equal 0.9.
+        /// Waits until all operations are either done or have progress greater equal 0.9.
         /// </summary>
         static async Task AwaitAsyncOperations(params AsyncOperation[] operations)
         {

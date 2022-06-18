@@ -8,7 +8,7 @@ using ModestTree;
 namespace Common.SignalProcessing
 {
     /// <summary>
-    ///     General purpose signal processing system.
+    /// General purpose signal processing system.
     /// </summary>
     public static class SignalProcessor
     {
@@ -47,8 +47,8 @@ namespace Common.SignalProcessing
         }
 
         /// <summary>
-        ///     Sends a Signal of type <typeparamref name="T" />
-        ///     <para><typeparamref name="T" /> Needs to be of the explicit type you want send</para>
+        /// Sends a Signal of type <typeparamref name="T" />
+        /// <para><typeparamref name="T" /> Needs to be of the explicit type you want send</para>
         /// </summary>
         public static void SendSignal<T>(T abstractSignal) where T : AbstractSignal
         {

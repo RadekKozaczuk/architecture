@@ -4,8 +4,6 @@ using UnityEngine;
 namespace Presentation.Config
 {
     [CreateAssetMenu(fileName = "PresentationDebugConfig", menuName = "Config/Presentation/PresentationDebugConfig")]
-    class PresentationDebugConfig : ScriptableObject
-    {
-    }
+    class PresentationDebugConfig : ScriptableObject { }
 }
 #endif

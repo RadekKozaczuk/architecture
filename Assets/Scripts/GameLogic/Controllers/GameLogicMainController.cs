@@ -10,10 +10,10 @@ using Zenject;
 namespace GameLogic.Controllers
 {
     /// <summary>
-    ///     Main logic of the game.
-    ///     Additionally provide more convenient way to set up the order of execution.
-    ///     For better code readability all controllers meant to interact with this controller should implement
-    ///     <see cref="ICustomLateUpdate" /> interface.
+    /// Main logic of the game.
+    /// Additionally provide more convenient way to set up the order of execution.
+    /// For better code readability all controllers meant to interact with this controller should implement
+    /// <see cref="ICustomLateUpdate" /> interface.
     /// </summary>
     [UsedImplicitly]
     [ReactOnSignals]

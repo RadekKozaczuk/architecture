@@ -12,8 +12,6 @@ namespace UI.Popups.Views
             Type = type;
         }
 
-        internal virtual void Close()
-        {
-        }
+        internal virtual void Close() { }
     }
 }

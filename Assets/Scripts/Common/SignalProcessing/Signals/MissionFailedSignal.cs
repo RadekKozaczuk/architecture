@@ -1,6 +1,4 @@
 namespace Common.SignalProcessing.Signals
 {
-    public sealed class MissionFailedSignal : AbstractSignal
-    {
-    }
+    public sealed class MissionFailedSignal : AbstractSignal { }
 }

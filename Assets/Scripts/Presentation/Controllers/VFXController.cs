@@ -16,8 +16,8 @@ namespace Presentation.Controllers
             internal readonly VFXView Vfx;
 
             /// <summary>
-            ///     Time until destruction in seconds.
-            ///     Nulls means the vfx never dies.
+            /// Time until destruction in seconds.
+            /// Nulls means the vfx never dies.
             /// </summary>
             internal float? TimeLeft;
 
@@ -29,7 +29,7 @@ namespace Presentation.Controllers
         }
 
         /// <summary>
-        ///     Used when the VFX is associated with a given position in space.
+        /// Used when the VFX is associated with a given position in space.
         /// </summary>
         // ReSharper disable once InconsistentNaming
         class VfxLocalData_Position : AbstractVfxLocalData

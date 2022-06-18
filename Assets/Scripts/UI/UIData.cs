@@ -1,9 +1,7 @@
 namespace UI
 {
     /// <summary>
-    ///     Assembly-level data.
+    /// Assembly-level data.
     /// </summary>
-    static class UIData
-    {
-    }
+    static class UIData { }
 }

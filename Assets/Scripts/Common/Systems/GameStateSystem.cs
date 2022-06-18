@@ -37,7 +37,7 @@ namespace Common.Systems
         }
 
         /// <summary>
-        ///     Actual state change may be delayed in time. Consecutive calls are not allowed.
+        /// Actual state change may be delayed in time. Consecutive calls are not allowed.
         /// </summary>
         public static void RequestStateChange(GameState state, params string[] args)
         {
@@ -61,7 +61,7 @@ namespace Common.Systems
         public static void ScheduleStateChange(GameState state) => _scheduledState = state;
 
         /// <summary>
-        ///     Only allowed to be called from <see cref="Boot" /> assembly.
+        /// Only allowed to be called from <see cref="Boot" /> assembly.
         /// </summary>
         public static void ChangeState(GameState newCurrent)
         {
