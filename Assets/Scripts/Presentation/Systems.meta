@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+<<<<<<< HEAD
+<<<<<<< HEAD:Assets/Scripts/Presentation/Systems.meta
+guid: bfbf85c3646b42b4acfa2349b88d06be
+=======
+guid: e3e0da30fb37844409051483d931096a
+>>>>>>> sprint-5-release-candidate:Assets/Editor.meta
+folderAsset: yes
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+=======
+guid: 8477472b80484b15bc0b3b41c1309894
+timeCreated: 1654076120
+>>>>>>> sprint-5-release-candidate
