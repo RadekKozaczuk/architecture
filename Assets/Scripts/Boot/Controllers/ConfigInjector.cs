@@ -8,13 +8,12 @@ using UnityEngine.Scripting;
 namespace Boot.Controllers
 {
     /// <summary>
-    /// This class automatically injects config files to corresponding config containers (classes that ends with
-    /// 'ConfigContainer')
+    /// This class automatically injects config files to corresponding config containers (classes that ends with 'ConfigContainer')
     /// and systems (static classes).
     /// </summary>
     [DisallowMultipleComponent]
     [DefaultExecutionOrder(-5)]
-    public class ConfigInjector : MonoBehaviour
+    class ConfigInjector : MonoBehaviour
     {
         [InfoBox(
             "Config Injector automatically injects config files to all ConfigContainers and static classes (systems). "
@@ -23,7 +22,7 @@ namespace Boot.Controllers
         List<ScriptableObject> _configs;
 
         [Preserve]
-        public void Awake()
+        void Awake()
         {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             _configs.Add(Resources.Load<ScriptableObject>("DebugConfig"));
@@ -38,10 +37,10 @@ namespace Boot.Controllers
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             var duplicates = new Dictionary<ScriptableObject, int>();
             for (int i = 0 ; i < _configs.Count ; i++)
-                if (!duplicates.TryGetValue(_configs[i], out int _))
-                    duplicates.Add(_configs[i], 1);
-                else
+                if (duplicates.TryGetValue(_configs[i], out int _))
                     throw new Exception($"Duplicated config in ConfigInjector: {_configs[i]}");
+                else
+                    duplicates.Add(_configs[i], 1);
 
             bool[] usedConfig = new bool[_configs.Count];
 #endif

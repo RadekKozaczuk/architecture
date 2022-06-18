@@ -17,7 +17,7 @@ namespace GameLogic.Controllers
     /// </summary>
     [UsedImplicitly]
     [ReactOnSignals]
-    public class GameLogicMainController
+    class GameLogicMainController
     {
         // TODO: convert to constructor injection for better performance
         [Inject]
@@ -26,7 +26,7 @@ namespace GameLogic.Controllers
         [Inject]
         readonly GameplayConfig _gameplayConfig;
 
-        #region Unity life-cycle methods
+#region Unity life-cycle methods
         [UsedImplicitly]
         public void Initialize()
         {
@@ -48,6 +48,6 @@ namespace GameLogic.Controllers
             if (GameStateSystem.CurrentState == GameState.Booting)
                 return;
         }
-        #endregion
+#endregion
     }
 }

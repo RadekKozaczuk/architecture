@@ -1,21 +1,16 @@
 using Common.Interfaces;
-using Common.SignalProcessing;
 using JetBrains.Annotations;
 using Zenject;
 
 namespace Presentation.Controllers
 {
     [UsedImplicitly]
-    [ReactOnSignals]
     public class PresentationMainController : IInitializable, ICustomUpdate, ICustomLateUpdate
     {
         [Inject]
         readonly VFXController _vfxController;
 
-        public void Initialize()
-        {
-            SignalProcessor.AddReactiveController(this);
-        }
+        public void Initialize() { }
 
         public void CustomUpdate() { }
 

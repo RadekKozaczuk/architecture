@@ -12,23 +12,26 @@ namespace Common.SignalProcessing
     /// </summary>
     public static class SignalProcessor
     {
-        static readonly Type[] _validTypes;
         static readonly Dictionary<Type, MethodInfo[]> _cachedMethodInfos = new();
         static readonly Dictionary<Type, Delegate> _signals = new();
 
         static SignalProcessor()
         {
-            _validTypes = GetValidTypes();
-            InitializeReactiveSystems();
-            InitializeReactiveControllers();
+            foreach (Type type in GetValidTypes())
+                // check if static (abstract + sealed = static)
+                if (type.IsAbstract && type.IsSealed)
+                    AddReactiveSystem(type);
+                else
+                    CacheControllerMethods(type);
         }
 
         public static void AddReactiveController<T>(T controller) where T : class
         {
             if (!_cachedMethodInfos.TryGetValue(typeof(T), out MethodInfo[] methods))
                 throw new ArgumentException(
-                    $"{typeof(T)} is not a valid controller it needs to implement the ReactOnSignals attribute and at least one [React] method.");
-
+                    $"Registration of {typeof(T)} in SignalProcessor is not possible. "
+                    + "The class lacks [ReactOnSignals] attribute or does not have at least one private method decorated with [React] attribute.");
+            
             Assert.False(
                 controller == null,
                 "Controllers with null values are not allowed to be added to SignalProcessor. "
@@ -61,49 +64,22 @@ namespace Common.SignalProcessing
             (action as Action<T>)?.Invoke(abstractSignal);
         }
 
-        static bool IsStatic(Type type) => type.IsAbstract && type.IsSealed;
-
-        static Type[] GetValidTypes()
-        {
-            return AppDomain.CurrentDomain.GetAssemblies()
+        static Type[] GetValidTypes() 
+            => AppDomain.CurrentDomain.GetAssemblies()
 #if ENABLE_MONO
-                            .AsParallel()
+                        .AsParallel()
 #endif
-                            .SelectMany(assembly => assembly.GetTypes())
-                            .Where(t => t.GetCustomAttributes(typeof(ReactOnSignalsAttribute), true).Length > 0)
-                            .ToArray();
-        }
-
-        static void InitializeReactiveSystems()
-        {
-            foreach (Type type in _validTypes.Where(IsStatic))
-                AddReactiveSystem(type);
-        }
-
-        static void InitializeReactiveControllers()
-        {
-            foreach (Type type in _validTypes.Where(type => !IsStatic(type)))
-                CacheControllerMethods(type);
-        }
+                        .SelectMany(assembly => assembly.GetTypes())
+                        .Where(t => t.GetCustomAttributes(typeof(ReactOnSignalsAttribute), true).Length > 0)
+                        .ToArray();
 
         static void AddReactiveSystem(Type type)
         {
-            MethodInfo[] compatibleMethods = type
-                                             .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
-                                             .Where(
-                                                 info =>
-                                                 {
-                                                     if (!info.HasAttribute(typeof(ReactAttribute)))
-                                                         return false;
-                                                     ParameterInfo[] parameters = info.GetParameters();
-                                                     return parameters.Length == 1
-                                                            && typeof(AbstractSignal).IsAssignableFrom(parameters[0].ParameterType);
-                                                 })
-                                             .ToArray();
+            MethodInfo[] methods = GetReactiveMethods(type, BindingFlags.Static | BindingFlags.NonPublic);
 
-            for (int i = 0 ; i < compatibleMethods.Length ; i++)
+            for (int i = 0 ; i < methods.Length ; i++)
             {
-                MethodInfo method = compatibleMethods[i];
+                MethodInfo method = methods[i];
                 Type parameterType = method.GetParameters().First().ParameterType;
                 if (_signals.TryGetValue(parameterType, out Delegate action))
                     _signals[parameterType] = Delegate.Combine(action, method.CreateDelegate(typeof(Action<>).MakeGenericType(parameterType)));
@@ -114,23 +90,25 @@ namespace Common.SignalProcessing
 
         static void CacheControllerMethods(Type type)
         {
-            MethodInfo[] compatibleMethods = type
-                                             .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
-                                             .Where(
-                                                 info =>
-                                                 {
-                                                     if (!info.HasAttribute(typeof(ReactAttribute)))
-                                                         return false;
-                                                     ParameterInfo[] parameters = info.GetParameters();
-                                                     return parameters.Length == 1
-                                                            && typeof(AbstractSignal).IsAssignableFrom(parameters[0].ParameterType);
-                                                 })
-                                             .ToArray();
+            MethodInfo[] methods = GetReactiveMethods(type, BindingFlags.Instance | BindingFlags.NonPublic);
 
-            if (!compatibleMethods.Any())
+            if (methods.Length == 0)
                 return;
 
-            _cachedMethodInfos.Add(type, compatibleMethods);
+            _cachedMethodInfos.Add(type, methods);
         }
+        
+        static MethodInfo[] GetReactiveMethods(IReflect type, BindingFlags flags)
+            => type
+               .GetMethods(flags)
+               .Where(
+                   info =>
+                   {
+                       if (!info.HasAttribute(typeof(ReactAttribute)))
+                           return false;
+                       ParameterInfo[] parameters = info.GetParameters();
+                       return parameters.Length == 1 && typeof(AbstractSignal).IsAssignableFrom(parameters[0].ParameterType);
+                   })
+               .ToArray();
     }
 }

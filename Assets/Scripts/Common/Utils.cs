@@ -11,17 +11,15 @@ namespace Common
             Assert.False(a == 0, "Not a quadratic equation, 'a' cannot be 0 for quadratics.");
 
             float delta = b * b - 4 * a * c;
-            if (delta > 0)
+            switch (delta)
             {
-                root1 = (-b + (float) Math.Sqrt(delta)) / (2 * a);
-                root2 = (-b - (float) Math.Sqrt(delta)) / (2 * a);
-                return true;
-            }
-
-            if (delta == 0)
-            {
-                root1 = root2 = -b / (2 * a);
-                return true;
+                case > 0:
+                    root1 = (-b + (float) Math.Sqrt(delta)) / (2 * a);
+                    root2 = (-b - (float) Math.Sqrt(delta)) / (2 * a);
+                    return true;
+                case 0:
+                    root1 = root2 = -b / (2 * a);
+                    return true;
             }
 
             root1 = int.MinValue;

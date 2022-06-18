@@ -12,7 +12,7 @@ namespace Boot.Controllers
     /// Contains all the high-level logic that cannot be executed from within <see cref="GameLogic" /> namespace.
     /// </summary>
     [DisallowMultipleComponent]
-    public class MainBootController : MonoBehaviour
+    class MainBootController : MonoBehaviour
     {
         [SerializeField]
         EventSystem _eventSystem;
