@@ -142,8 +142,11 @@ namespace Boot.Controllers
 
                 // execute state's on-entry code
                 _states[(int) requested].OnEntry?.Invoke(args);
-                
-                MyDebug.Log($"DEBUG LOG: GameStateSystem: State changed from {current} to {requested}", _debugConfig.LogRequestedStateChange);
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                if (_debugConfig.LogRequestedStateChange)
+                    Debug.Log($"DEBUG LOG: GameStateSystem: State changed from {current} to {requested}");  
+#endif
 
                 break;
             }
