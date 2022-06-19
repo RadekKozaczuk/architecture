@@ -1,4 +1,5 @@
 using Common.Enums;
+using Common.Signals;
 using Common.Systems;
 using GameLogic.Config;
 using JetBrains.Annotations;
@@ -16,7 +17,7 @@ namespace GameLogic.Controllers
     /// </summary>
     [UsedImplicitly]
     [ReactOnSignals]
-    class GameLogicMainController
+    class GameLogicMainController : IInitializable, ITickable, ILateTickable
     {
         // TODO: convert to constructor injection for better performance
         [Inject]
@@ -48,5 +49,11 @@ namespace GameLogic.Controllers
                 return;
         }
 #endregion
+
+        [React]
+        void OnMissionFailed(MissionFailedSignal _)
+        {
+            
+        }
     }
 }
