@@ -1,7 +1,9 @@
 using Common.Enums;
 using Common.Systems;
+#if UNITY_EDITOR
 using Common.Views;
 using GameLogic.Views;
+#endif
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
