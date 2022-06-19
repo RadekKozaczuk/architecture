@@ -1,7 +1,8 @@
 using Common.Enums;
+using Shared.SignalProcessing;
 using UnityEngine;
 
-namespace Common.SignalProcessing.Signals
+namespace Common.Signals
 {
     public sealed class PlaySoundSignal : AbstractSignal
     {

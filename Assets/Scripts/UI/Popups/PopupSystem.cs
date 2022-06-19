@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using Common;
-using Common.SignalProcessing;
+using Shared;
+using Shared.SignalProcessing;
 using UI.Config;
 using UI.Popups.Views;
 using UnityEngine;

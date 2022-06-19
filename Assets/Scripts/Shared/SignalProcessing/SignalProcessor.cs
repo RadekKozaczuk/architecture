@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Common.SignalProcessing.Signals;
 using ModestTree;
 
-namespace Common.SignalProcessing
+namespace Shared.SignalProcessing
 {
     /// <summary>
     /// General purpose signal processing system.
@@ -73,9 +72,9 @@ namespace Common.SignalProcessing
                         .Where(t => t.GetCustomAttributes(typeof(ReactOnSignalsAttribute), true).Length > 0)
                         .ToArray();
 
-        static void AddReactiveSystem(Type type)
+        static void AddReactiveSystem<T>(T system) where T : class, IReflect
         {
-            MethodInfo[] methods = GetReactiveMethods(type, BindingFlags.Static | BindingFlags.NonPublic);
+            MethodInfo[] methods = GetReactiveMethods(system, BindingFlags.Static | BindingFlags.NonPublic);
 
             for (int i = 0 ; i < methods.Length ; i++)
             {

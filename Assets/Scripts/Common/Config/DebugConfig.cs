@@ -1,4 +1,3 @@
-using Common.SignalProcessing.Signals;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -13,7 +12,7 @@ namespace Common.Config
         public bool LogSystemExecutionOrder;
 
         /// <summary>
-        /// Logs all added <see cref="AbstractSignal" />.
+        /// Logs all added <see cref="Shared.SignalProcessing.AbstractSignal" />.
         /// </summary>
         public bool LogAddedSignals;
 

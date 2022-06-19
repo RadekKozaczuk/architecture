@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using Common.Interfaces;
 using JetBrains.Annotations;
 using Presentation.Config;
 using Presentation.Views;
+using Shared.Interfaces;
 using UnityEngine;
 using Zenject;
 

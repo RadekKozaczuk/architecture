@@ -5,6 +5,7 @@ using GameLogic.Views;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
+using Shared.Systems;
 
 namespace Boot.Controllers
 {
@@ -22,10 +23,13 @@ namespace Boot.Controllers
 
         void Start()
         {
+            ConfigInjector.Run(new [] {"Boot", "Common", "GameLogic", "Presentation", "UI"});
+
             GameStateSystem.RequestStateChange(GameState.MainMenu);
 
             DontDestroyOnLoad(_eventSystem);
             DontDestroyOnLoad(_sceneContext); // must be preserved for ticks to work
+            DontDestroyOnLoad(this);
 
             Application.SetStackTraceLogType(LogType.Error, StackTraceLogType.ScriptOnly);
             Application.SetStackTraceLogType(LogType.Assert, StackTraceLogType.ScriptOnly);
@@ -37,8 +41,7 @@ namespace Boot.Controllers
             GameObject debugCommands = Instantiate(new GameObject(), Vector3.zero, Quaternion.identity);
             debugCommands.AddComponent<CommonDebugView>();
             debugCommands.AddComponent<GameLogicDebugView>();
-            debugCommands.name
-                = "DebugCommands"; // had to add it because if set in the line above then it was named "DebugCommands(Clone)" for some reason
+            debugCommands.name = "DebugCommands"; // had to add it because if set in the line above, it was named "DebugCommands(Clone)" for some reason
             DontDestroyOnLoad(debugCommands);
 #endif
         }

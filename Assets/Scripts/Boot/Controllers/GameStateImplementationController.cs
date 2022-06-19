@@ -7,6 +7,9 @@ using Common.Config;
 using Common.Enums;
 using Common.Systems;
 using JetBrains.Annotations;
+using Presentation.Controllers;
+using Presentation.ViewModels;
+using Shared;
 using UI.Systems;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -94,9 +97,7 @@ namespace Boot.Controllers
                     throw new Exception(ErrorMessage(current, requested));
             }
             else
-            {
                 throw new Exception(ErrorMessage(current, requested));
-            }
 
             static string ErrorMessage(GameState p, GameState c) => $"Transition from {p} to {c} is not allowed or undefined.";
 
@@ -141,11 +142,8 @@ namespace Boot.Controllers
 
                 // execute state's on-entry code
                 _states[(int) requested].OnEntry?.Invoke(args);
-
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-                if (_debugConfig.LogRequestedStateChange)
-                    Debug.Log($"DEBUG LOG: GameStateSystem: State changed from {current} to {requested}");
-#endif
+                
+                MyDebug.Log($"DEBUG LOG: GameStateSystem: State changed from {current} to {requested}", _debugConfig.LogRequestedStateChange);
 
                 break;
             }
@@ -177,7 +175,7 @@ namespace Boot.Controllers
             }
         }
 
-        void MainMenuOnEntry(string[] args = null) { }
+        static void MainMenuOnEntry(string[] args = null) { }
 
         static void MainMenuOnExit(string[] args = null) { }
 
@@ -221,8 +219,8 @@ namespace Boot.Controllers
                 //debug.AddComponent<DebugCommandsView>();
 #endif
 
-                //PresentationMainController.OnCoreSceneLoaded();
-                //PresentationViewModel.OnCoreSceneLoad();
+                PresentationMainController.OnCoreSceneLoaded();
+                PresentationViewModel.OnCoreSceneLoaded();
             }
         }
     }

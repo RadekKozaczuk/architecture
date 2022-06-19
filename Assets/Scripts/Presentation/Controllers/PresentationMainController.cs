@@ -1,5 +1,5 @@
-using Common.Interfaces;
 using JetBrains.Annotations;
+using Shared.Interfaces;
 using Zenject;
 
 namespace Presentation.Controllers

@@ -1,5 +1,5 @@
-using Common.Interfaces;
 using JetBrains.Annotations;
+using Shared.Interfaces;
 
 namespace UI.Controllers
 {

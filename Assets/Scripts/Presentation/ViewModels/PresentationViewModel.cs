@@ -15,5 +15,10 @@ namespace Presentation.ViewModels
         {
             _audioController.Play(music);
         }
+
+        public static void OnCoreSceneLoaded()
+        {
+            
+        }
     }
 }

@@ -1,10 +1,9 @@
 using Common.Enums;
-using Common.Interfaces;
-using Common.SignalProcessing;
 using Common.Systems;
 using GameLogic.Config;
 using JetBrains.Annotations;
 using Presentation.Controllers;
+using Shared.SignalProcessing;
 using Zenject;
 
 namespace GameLogic.Controllers
@@ -13,7 +12,7 @@ namespace GameLogic.Controllers
     /// Main logic of the game.
     /// Additionally provide more convenient way to set up the order of execution.
     /// For better code readability all controllers meant to interact with this controller should implement
-    /// <see cref="ICustomLateUpdate" /> interface.
+    /// <see cref="Shared.Interfaces.ICustomLateUpdate" /> interface.
     /// </summary>
     [UsedImplicitly]
     [ReactOnSignals]

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Diagnostics;
 #endif
 
-namespace Common.SignalProcessing.Signals
+namespace Shared.SignalProcessing
 {
     public abstract class AbstractSignal
     {

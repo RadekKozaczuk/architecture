@@ -1,7 +1,7 @@
 using System;
 using JetBrains.Annotations;
 
-namespace Common.SignalProcessing
+namespace Shared.SignalProcessing
 {
     /// <summary>
     /// Indicates that this system is reacting on signals.

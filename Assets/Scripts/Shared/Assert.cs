@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace Common
+namespace Shared
 {
     public static class Assert
     {

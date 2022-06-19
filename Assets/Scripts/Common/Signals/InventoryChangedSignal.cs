@@ -1,4 +1,6 @@
-namespace Common.SignalProcessing.Signals
+using Shared.SignalProcessing;
+
+namespace Common.Signals
 {
     /// <summary>
     /// Universal signal indicating that something has changed in the inventory.

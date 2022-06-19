@@ -44,7 +44,7 @@ namespace Common.Systems
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (_config.LogRequestedStateChange)
                 Debug.Log($"DEBUG LOG: Requested game state change from {CurrentState} to {state}");
-
+            
             // assertion
             string assemblyName = Assembly.GetCallingAssembly().GetName().Name;
             if (new List<string> {"Boot", "Common", "GameLogic", "UI"}.All(x => x != assemblyName))

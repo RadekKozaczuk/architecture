@@ -1,7 +1,7 @@
 using System;
 using JetBrains.Annotations;
 
-namespace Common.SignalProcessing
+namespace Shared.SignalProcessing
 {
     /// <summary>
     /// Methods marked with this attribute should not be public.
