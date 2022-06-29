@@ -1,21 +1,30 @@
 using Common.Enums;
 using Common.Systems;
 using JetBrains.Annotations;
+using Shared.DependencyInjector;
+using Shared.DependencyInjector.Interfaces;
+using Shared.Interfaces;
 using UI.Systems;
-using Zenject;
+using UnityEngine.Scripting;
 
 namespace UI.Controllers
 {
     [UsedImplicitly]
-    public class UIMainController : IInitializable, ITickable
+    public class UIMainController : IInitializable, ICustomUpdate
     {
         [Inject]
         readonly InputHandler _inputHandler;
 
+        [Preserve]
+        UIMainController()
+        {
+            
+        }
+        
 #region Unity life-cycle methods
         public void Initialize() { }
 
-        public void Tick()
+        public void CustomUpdate()
         {
             if (GameStateSystem.CurrentState == GameState.Booting)
                 return;

@@ -11,8 +11,8 @@ namespace UI.Systems
             if (!IsActive)
                 return;
 
-            if (Input.GetKeyDown(KeyCode.Escape))
-                Application.Quit();
+            /*if (Input.GetKeyDown(KeyCode.Escape))
+                Application.Quit();*/
         }
     }
 }

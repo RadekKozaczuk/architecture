@@ -1,12 +1,12 @@
 using Common.Enums;
 using JetBrains.Annotations;
 using Presentation.Controllers;
-using Zenject;
+using Shared.DependencyInjector;
 
 namespace Presentation.ViewModels
 {
     [UsedImplicitly]
-    public class PresentationViewModel
+    public partial class PresentationViewModel
     {
         [Inject]
         readonly AudioController _audioController;

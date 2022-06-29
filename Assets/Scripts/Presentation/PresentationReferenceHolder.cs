@@ -1,6 +1,6 @@
 using JetBrains.Annotations;
 using Presentation.ViewModels;
-using Zenject;
+using Shared.DependencyInjector;
 
 namespace Presentation
 {

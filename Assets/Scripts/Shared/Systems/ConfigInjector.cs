@@ -33,10 +33,6 @@ namespace Shared.Systems
                 {
                     Type type = types[j];
 
-                    // check if static (abstract + sealed = static)
-                    if (!type.IsAbstract || !type.IsSealed)
-                        continue;
-                    
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                     bool isConfigContainer = type.Name.Contains("ConfigContainer");
 #endif

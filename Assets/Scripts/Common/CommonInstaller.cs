@@ -1,26 +1,11 @@
-using Common.Config;
-using UnityEngine;
-using Zenject;
+using Shared.DependencyInjector.Install;
 
 namespace Common
 {
-    public class CommonInstaller : MonoInstaller
+    public class CommonInstaller : Installer
     {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-        [SerializeField]
-        DebugConfig _debugConfig;
-#endif
-
-        [SerializeField]
-        PlayerConfig _playerConfig;
-
         public override void InstallBindings()
         {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            Container.BindInstance(_debugConfig);
-#endif
-
-            Container.BindInstance(_playerConfig);
         }
     }
 }

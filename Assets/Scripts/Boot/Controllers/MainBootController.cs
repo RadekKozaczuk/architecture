@@ -1,13 +1,21 @@
+using System;
+using Common;
+using Common.Config;
 using Common.Enums;
 using Common.Systems;
+using GameLogic;
+using GameLogic.ViewModels;
+using Presentation;
+using Shared.DependencyInjector.Install;
 #if UNITY_EDITOR
 using Common.Views;
 using GameLogic.Views;
 #endif
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Zenject;
 using Shared.Systems;
+using UI;
+using UI.Systems;
 
 namespace Boot.Controllers
 {
@@ -20,17 +28,46 @@ namespace Boot.Controllers
         [SerializeField]
         EventSystem _eventSystem;
 
-        [SerializeField]
-        SceneContext _sceneContext;
+        static bool _isCoreSceneLoaded;
+        static GameStateMachine<GameState> _gameStateSystem;
 
+        static DebugConfig _config;
+        
         void Start()
         {
             ConfigInjector.Run(new [] {"Boot", "Common", "GameLogic", "Presentation", "UI"});
 
+            SceneContext.Installers.Add(new BootInstaller());
+            SceneContext.Installers.Add(new CommonInstaller());
+            SceneContext.Installers.Add(new GameLogicInstaller());
+            SceneContext.Installers.Add(new PresentationInstaller());
+            SceneContext.Installers.Add(new UIInstaller());
+
+            SceneContext.Run();
+            
+            _gameStateSystem = new GameStateMachine<GameState>(
+                new[]
+                {
+                    (GameState.Booting, GameState.MainMenu, new[] {Constants.MainMenuScene, Constants.CoreScene, Constants.UIScene}, Array.Empty<int>()),
+                    (GameState.MainMenu, GameState.Gameplay, Array.Empty<int>(), new[] {Constants.MainMenuScene}),
+                    (GameState.Gameplay, GameState.MainMenu, new[] {Constants.MainMenuScene}, Array.Empty<int>())
+                },
+                new (GameState, Action<string[]>, Action<string[]>)[]
+                {
+                    (GameState.Booting, null, null),
+                    (GameState.MainMenu, MainMenuOnEntry, MainMenuOnExit),
+                    (GameState.Gameplay, GameplayOnEntry, GameplayOnExit)
+                },
+                GameState.Booting,
+                _config.LogRequestedStateChange
+            );
+            
+            GameStateSystem.OnStateChangeRequest += _gameStateSystem.RequestStateChange;
+            GameStateSystem.OnScheduleStateChange += _gameStateSystem.ScheduleStateChange;
+            GameStateSystem.OnGetCurrentGameState += _gameStateSystem.GetCurrentState;
             GameStateSystem.RequestStateChange(GameState.MainMenu);
 
             DontDestroyOnLoad(_eventSystem);
-            DontDestroyOnLoad(_sceneContext); // must be preserved for ticks to work
             DontDestroyOnLoad(this);
 
             Application.SetStackTraceLogType(LogType.Error, StackTraceLogType.ScriptOnly);
@@ -46,6 +83,53 @@ namespace Boot.Controllers
             debugCommands.name = "DebugCommands"; // had to add it because if set in the line above, it was named "DebugCommands(Clone)" for some reason
             DontDestroyOnLoad(debugCommands);
 #endif
+        }
+
+        void Update()
+        {
+            if (_isCoreSceneLoaded)
+            {
+                GameLogicViewModel.CustomUpdate();
+                FlowController.UIMainController.CustomUpdate();
+                _gameStateSystem.CustomUpdate();
+            }
+        }
+
+        void FixedUpdate()
+        {
+            if (_isCoreSceneLoaded)
+                GameLogicViewModel.CustomFixedUpdate();  
+        }
+
+        void LateUpdate()
+        {
+            if (_isCoreSceneLoaded)
+                GameLogicViewModel.CustomLateUpdate();   
+        }
+        
+        internal static void OnCoreSceneLoaded() => _isCoreSceneLoaded = true;
+        
+        static void MainMenuOnEntry(string[] args = null) { }
+
+        static void MainMenuOnExit(string[] args = null) { }
+
+        static void GameplayOnEntry(string[] args = null)
+        {
+            InputSystem.IsActive = true;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
+            if (args != null && args.Contains("loadgame"))
+            {
+                // load the game
+            }
+        }
+
+        static void GameplayOnExit(string[] args = null)
+        {
+            InputSystem.IsActive = false;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
     }
 }

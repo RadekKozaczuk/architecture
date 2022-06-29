@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using ModestTree;
+using Shared.DependencyInjector.Internal;
 
 namespace Shared.SignalProcessing
 {
@@ -54,13 +54,13 @@ namespace Shared.SignalProcessing
         /// </summary>
         public static void SendSignal<T>(T abstractSignal) where T : AbstractSignal
         {
-            if (!_signals.TryGetValue(typeof(T), out Delegate action))
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-                throw new Exception(
-                    $"No matching method for the given signal. Signal type: {abstractSignal.GetType()}. Methods marked with [React] should not be public.");
-#endif
+            if (_signals.TryGetValue(typeof(T), out Delegate action))
+                (action as Action<T>)?.Invoke(abstractSignal);
 
-            (action as Action<T>)?.Invoke(abstractSignal);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                throw new Exception($"No matching method for the given signal. "
+                                    + $"Signal type: {abstractSignal.GetType()}. Methods marked with [React] should not be public.");
+#endif
         }
 
         static Type[] GetValidTypes() 

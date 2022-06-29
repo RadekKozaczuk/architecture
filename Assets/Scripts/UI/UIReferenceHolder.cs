@@ -1,6 +1,6 @@
 using JetBrains.Annotations;
+using Shared.DependencyInjector;
 using UI.Controllers;
-using Zenject;
 
 namespace UI
 {

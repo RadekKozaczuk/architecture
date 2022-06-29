@@ -1,24 +1,16 @@
-using GameLogic.Config;
 using GameLogic.Controllers;
 using GameLogic.ViewModels;
-using UnityEngine;
-using Zenject;
+using Shared.DependencyInjector.Install;
 
 namespace GameLogic
 {
-    class GameLogicInstaller : MonoInstaller
+    public class GameLogicInstaller : Installer
     {
-        [SerializeField]
-        GameplayConfig _gameplayConfig;
-
         public override void InstallBindings()
         {
-            // configs
-            Container.BindInstance(_gameplayConfig);
-
             // controllers
-            Container.BindInterfacesAndSelfTo<GameLogicMainController>().AsSingle();
-            Container.Bind<GameLogicViewModel>().AsSingle();
+            Container.BindInterfacesAndSelfTo<GameLogicMainController>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<GameLogicViewModel>().AsSingle().Lazy();
         }
     }
 }

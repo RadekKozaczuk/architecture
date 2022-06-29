@@ -1,12 +1,10 @@
 using Boot.Controllers;
-using UnityEngine;
-using Zenject;
+using Shared.DependencyInjector.Install;
 
 namespace Boot
 {
-    [DisallowMultipleComponent]
-    class BootInstaller : MonoInstaller
+    public class BootInstaller : Installer
     {
-        public override void InstallBindings() => Container.BindInterfacesAndSelfTo<GameStateImplementationController>().AsSingle().NonLazy();
+        public override void InstallBindings() => Container.BindInterfacesAndSelfTo<FlowController>().AsSingle().NonLazy();
     }
 }

@@ -2,9 +2,11 @@ using Common.Enums;
 using Common.Signals;
 using JetBrains.Annotations;
 using Presentation.Config;
+using Shared.DependencyInjector;
+using Shared.DependencyInjector.Interfaces;
 using Shared.SignalProcessing;
 using UnityEngine;
-using Zenject;
+using UnityEngine.Scripting;
 
 namespace Presentation.Controllers
 {
@@ -12,9 +14,14 @@ namespace Presentation.Controllers
     [ReactOnSignals]
     class AudioController : IInitializable
     {
-        [Inject]
-        readonly AudioConfig _config;
+        static readonly AudioConfig _config;
 
+        [Preserve]
+        AudioController()
+        {
+            
+        }
+        
         public void Initialize()
         {
             SignalProcessor.AddReactiveController(this);

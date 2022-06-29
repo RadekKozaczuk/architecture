@@ -1,18 +1,27 @@
+using Common.Interfaces;
 using JetBrains.Annotations;
+using Shared.DependencyInjector.Interfaces;
 using Shared.Interfaces;
-using Zenject;
+using UnityEngine.Scripting;
 
 namespace Presentation.Controllers
 {
     [UsedImplicitly]
-    public class PresentationMainController : IInitializable, ICustomUpdate, ICustomLateUpdate
+    public class PresentationMainController : IInitializable, ICustomUpdate, ICustomFixedUpdate, ICustomLateUpdate
     {
-        [Inject]
-        readonly VFXController _vfxController;
+        static readonly VFXController _vfxController;
 
+        [Preserve]
+        PresentationMainController()
+        {
+            
+        }
+        
         public void Initialize() { }
 
         public void CustomUpdate() { }
+        
+        public void CustomFixedUpdate() { }
 
         public void CustomLateUpdate()
         {

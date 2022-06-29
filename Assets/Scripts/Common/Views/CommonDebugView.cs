@@ -10,7 +10,7 @@ namespace Common.Views
     [DisallowMultipleComponent]
     public class CommonDebugView : MonoBehaviour
     {
-        readonly DebugConfig _debugConfig = CommonConfigContainer.DebugConfig;
+        static readonly DebugConfig _debugConfig;
 
         void Awake() => DontDestroyOnLoad(gameObject);
 

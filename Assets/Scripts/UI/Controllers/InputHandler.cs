@@ -1,5 +1,6 @@
 using JetBrains.Annotations;
 using Shared.Interfaces;
+using UnityEngine.Scripting;
 
 namespace UI.Controllers
 {
@@ -9,6 +10,15 @@ namespace UI.Controllers
     [UsedImplicitly]
     class InputHandler : ICustomUpdate
     {
-        public void CustomUpdate() { }
+        [Preserve]
+        InputHandler()
+        {
+            
+        }
+        
+        public void CustomUpdate()
+        {
+            
+        }
     }
 }

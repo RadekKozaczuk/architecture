@@ -2,9 +2,10 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using Presentation.Config;
 using Presentation.Views;
+using Shared.DependencyInjector;
 using Shared.Interfaces;
 using UnityEngine;
-using Zenject;
+using UnityEngine.Scripting;
 
 namespace Presentation.Controllers
 {
@@ -42,8 +43,7 @@ namespace Presentation.Controllers
             }
         }
 
-        [Inject]
-        readonly VFXConfig _config;
+        static readonly VFXConfig _config;
 
         // key is VFX instance, value is its lifetime
         // TODO: change to dictionary with id
@@ -52,6 +52,12 @@ namespace Presentation.Controllers
 
         static int _idCounter;
 
+        [Preserve]
+        VFXController()
+        {
+            
+        }
+        
         public void CustomLateUpdate()
         {
             _vfxsAtPositions.RemoveAll(HasExpired);

@@ -1,11 +1,15 @@
 using Common.Enums;
+using Common.Interfaces;
 using Common.Signals;
 using Common.Systems;
 using GameLogic.Config;
 using JetBrains.Annotations;
 using Presentation.Controllers;
+using Shared.DependencyInjector;
+using Shared.DependencyInjector.Interfaces;
+using Shared.Interfaces;
 using Shared.SignalProcessing;
-using Zenject;
+using UnityEngine.Scripting;
 
 namespace GameLogic.Controllers
 {
@@ -17,15 +21,20 @@ namespace GameLogic.Controllers
     /// </summary>
     [UsedImplicitly]
     [ReactOnSignals]
-    class GameLogicMainController : IInitializable, ITickable, ILateTickable
+    class GameLogicMainController : IInitializable, ICustomUpdate, ICustomFixedUpdate, ICustomLateUpdate
     {
         // TODO: convert to constructor injection for better performance
         [Inject]
         readonly PresentationMainController _presentationMainController;
 
-        [Inject]
-        readonly GameplayConfig _gameplayConfig;
+        static readonly GameplayConfig _gameplayConfig;
 
+        [Preserve]
+        GameLogicMainController()
+        {
+            
+        }
+        
 #region Unity life-cycle methods
         [UsedImplicitly]
         public void Initialize()
@@ -33,17 +42,15 @@ namespace GameLogic.Controllers
             SignalProcessor.AddReactiveController(this);
         }
 
-        [UsedImplicitly]
-        public void Tick()
+        public void CustomUpdate()
         {
             if (GameStateSystem.CurrentState == GameState.Booting)
                 return;
-
-            GameStateSystem.CustomUpdate();
         }
 
-        [UsedImplicitly]
-        public void LateTick()
+        public void CustomFixedUpdate() { }
+
+        public void CustomLateUpdate()
         {
             if (GameStateSystem.CurrentState == GameState.Booting)
                 return;
@@ -51,9 +58,6 @@ namespace GameLogic.Controllers
 #endregion
 
         [React]
-        void OnMissionFailed(MissionFailedSignal _)
-        {
-            
-        }
+        void OnMissionFailed(MissionFailedSignal _) { }
     }
 }
