@@ -105,15 +105,16 @@ namespace Shared.AI
                 ? 0f
                 : remainingDistance / _agent.speed;
 
-            if (!(timeToRotate > 0 && remainingTime / timeToRotate <= Mathf.Clamp01(TargetYawSetupFactor)))
+            if (timeToRotate > 0 && remainingTime / timeToRotate <= Mathf.Clamp01(TargetYawSetupFactor))
+            {
+                _agent.updateRotation = false;
+                Quaternion targetRotation = Quaternion.Euler(currentRotationEuler.x, TargetYaw.Value, currentRotationEuler.z);
+                _agent.transform.rotation = Quaternion.RotateTowards(currentRotation, targetRotation, Time.deltaTime * _agent.angularSpeed);
+            }
+            else
             {
                 _agent.updateRotation = true;
-                return;
             }
-
-            _agent.updateRotation = false;
-            Quaternion targetRotation = Quaternion.Euler(currentRotationEuler.x, TargetYaw.Value, currentRotationEuler.z);
-            _agent.transform.rotation = Quaternion.RotateTowards(currentRotation, targetRotation, Time.deltaTime * _agent.angularSpeed);
         }
     }
 }
