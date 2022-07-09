@@ -3,6 +3,7 @@ using Common;
 using Common.Systems;
 using GameLogic.Controllers;
 using JetBrains.Annotations;
+using Presentation.ViewModels;
 using Shared;
 using Shared.DependencyInjector;
 using Shared.DependencyInjector.Interfaces;
@@ -21,8 +22,12 @@ namespace GameLogic.ViewModels
         {
             _instance = this;
         }
-        
-        public static void CustomUpdate() => _instance._gameLogicMainController.CustomUpdate();
+
+        public static void CustomUpdate()
+        {
+            _instance._gameLogicMainController.CustomUpdate();
+            PresentationViewModel.CustomUpdate();
+        } 
         
         public static void CustomFixedUpdate() => _instance._gameLogicMainController.CustomFixedUpdate();
         

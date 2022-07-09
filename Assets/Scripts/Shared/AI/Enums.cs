@@ -3,7 +3,7 @@
     /// <summary>
     /// States in which a single action can be at any given time
     /// </summary>
-    public enum StateMachineActionState
+    enum StateMachineActionState
     {
         /// <summary>
         /// Action is scheduled for execution, not running

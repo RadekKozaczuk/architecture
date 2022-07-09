@@ -2,7 +2,7 @@
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace Shared.AI.Actions
+namespace Shared.AI.NavigationTargets
 {
     /// <summary>
     /// Navigation target that is defined as an offset from other navigation target

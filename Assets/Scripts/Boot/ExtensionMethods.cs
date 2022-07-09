@@ -2,7 +2,7 @@ using System;
 
 namespace Boot
 {
-    static class ExtensionsMethods
+    static class ExtensionMethods
     {
         /// <summary>
         /// Value is trimmed and case insensitive.

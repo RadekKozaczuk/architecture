@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Shared.AI.Actions
+namespace Shared.AI.NavigationTargets
 {
     /// <summary>
     /// Represents a navigation target

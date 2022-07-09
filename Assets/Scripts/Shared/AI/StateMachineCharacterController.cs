@@ -1,12 +1,11 @@
 ﻿using JetBrains.Annotations;
-using Shared.AI.Interfaces;
 using Shared.Interfaces;
 
 namespace Shared.AI
 {
     public delegate void StateMachineControllerActionEvent(
         [NotNull] StateMachineCharacterController sender, 
-        [NotNull] IStateMachineAction action);
+        [NotNull] StateMachineActionBase action);
     
     public class StateMachineCharacterController : ICustomUpdate
     {
@@ -30,7 +29,7 @@ namespace Shared.AI
 
         public void CustomUpdate()
         {
-            StateMachine.Update();
+            StateMachine.CustomUpdate();
         }
     }
 }

@@ -34,9 +34,7 @@ namespace Shared.DependencyInjector.Binding
             
             if (BindInfo.ToChoice == ToChoices.Self)
                 RegisterProviderPerContract(container, providerFunc);
-            else if (BindInfo.ToTypes.Count == 0)
-                ;
-            else
+            else if (BindInfo.ToTypes.Count != 0)
                 RegisterProvidersForAllContractsPerConcreteType(container, BindInfo.ToTypes, providerFunc);
         }
 

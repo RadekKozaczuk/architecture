@@ -1,5 +1,6 @@
 using System;
 using Shared.DependencyInjector.Atributes;
+using Shared.DependencyInjector.DataModels;
 using Shared.DependencyInjector.Main;
 using Shared.DependencyInjector.Util;
 

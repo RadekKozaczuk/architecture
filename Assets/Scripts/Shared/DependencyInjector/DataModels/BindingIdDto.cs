@@ -1,8 +1,7 @@
 using System;
 using System.Diagnostics;
-using Shared.DependencyInjector.Internal;
 
-namespace Shared.DependencyInjector.Main
+namespace Shared.DependencyInjector.DataModels
 {
     [DebuggerStepThrough]
     public struct BindingIdDto : IEquatable<BindingIdDto>

@@ -1,8 +1,9 @@
 ﻿using System;
 using JetBrains.Annotations;
+using Shared.AI.Actions;
 using UnityEngine;
 
-namespace Shared.AI.Actions
+namespace Shared.AI.NavigationTargets
 {
     /// <summary>
     /// A navigation target that adds filtering based on current state and other navigation target

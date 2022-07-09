@@ -1,3 +1,4 @@
+using Presentation.ViewModels;
 using UnityEngine;
 
 namespace UI.Systems
@@ -11,6 +12,11 @@ namespace UI.Systems
             if (!IsActive)
                 return;
 
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                PresentationViewModel.Troll();
+            }
+            
             /*if (Input.GetKeyDown(KeyCode.Escape))
                 Application.Quit();*/
         }

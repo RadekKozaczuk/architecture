@@ -1,10 +1,11 @@
 ﻿using System;
+using Shared.Interfaces;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace Shared.AI
 {
-    public class NavMeshNavigationController
+    public class NavMeshNavigationController : ICustomUpdate
     {
 #region Properties
         public float TargetYawSetupFactor
@@ -77,10 +78,7 @@ namespace Shared.AI
             return true;
         }
 
-        public void CustomUpdate()
-        {
-            HandleTargetRotation();
-        }
+        public void CustomUpdate() => HandleTargetRotation();
 
         void HandleTargetRotation()
         {

@@ -19,7 +19,10 @@ namespace Presentation.Controllers
         
         public void Initialize() { }
 
-        public void CustomUpdate() { }
+        public void CustomUpdate()
+        {
+            PresentationSceneReferenceHolder.Enemy.CustomUpdate();
+        }
         
         public void CustomFixedUpdate() { }
 

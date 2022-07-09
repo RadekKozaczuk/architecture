@@ -12,7 +12,7 @@ namespace Presentation
             Container.BindInterfacesAndSelfTo<PresentationMainController>().AsSingle();
             Container.BindInterfacesAndSelfTo<AudioController>().AsSingle();
             Container.BindInterfacesAndSelfTo<VFXController>().AsSingle();
-            Container.Bind<PresentationViewModel>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<PresentationViewModel>().AsSingle().NonLazy();
             Container.Bind<PresentationReferenceHolder>().AsSingle().NonLazy();
         }
     }

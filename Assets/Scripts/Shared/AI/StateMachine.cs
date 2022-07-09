@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using Shared.AI.Interfaces;
-using UnityEngine;
+using Shared.Interfaces;
 
 namespace Shared.AI
 {
-    public delegate void StateMachineActionEvent([NotNull] StateMachine sender, [NotNull] IStateMachineAction action);
+    public delegate void StateMachineActionEvent([NotNull] StateMachine sender, [NotNull] StateMachineActionBase action);
 
-    public class StateMachine
+    public class StateMachine : ICustomUpdate
     {
         [CanBeNull]
         public StateMachineActionEvent OnActionStateChanged;
@@ -22,26 +21,24 @@ namespace Shared.AI
         [CanBeNull]
         public StateMachineActionEvent OnActionFailed;
 
-        readonly List<IStateMachineAction> _actions = new();
+        readonly List<StateMachineActionBase> _actions = new();
 
-        public IStateMachineAction CurrentAction => _actions.Count > 0
+        public StateMachineActionBase CurrentAction => _actions.Count > 0
             ? _actions[0]
             : null;
 
-        public IReadOnlyList<IStateMachineAction> Actions => _actions;
+        public IReadOnlyList<StateMachineActionBase> Actions => _actions;
 
-        public virtual void Update()
+        public void CustomUpdate()
         {
-            IStateMachineAction currentAction = CurrentAction;
+            StateMachineActionBase currentAction = CurrentAction;
             if (currentAction == null)
                 return;
 
             switch (currentAction.CurrentState)
             {
                 case StateMachineActionState.Awaiting:
-                    if (!TryStartAction(currentAction))
-                        return;
-
+                    StartAction(currentAction);
                     break;
                 case StateMachineActionState.Starting:
                 case StateMachineActionState.InProgress:
@@ -54,8 +51,7 @@ namespace Shared.AI
                     throw new ArgumentOutOfRangeException(currentAction.CurrentState.ToString());
             }
 
-            if (!TryUpdateAction(currentAction))
-                return;
+            UpdateAction(currentAction);
 
             switch (currentAction.CurrentState)
             {
@@ -83,13 +79,12 @@ namespace Shared.AI
             }
         }
 
-        public void TransitionToAction(IStateMachineAction action)
+        public void TransitionToAction(StateMachineActionBase action)
         {
-            IStateMachineAction currentAction = CurrentAction;
+            StateMachineActionBase currentAction = CurrentAction;
             RemoveAllQueuedActions();
 
-            if (CurrentAction != null)
-                TryFinishAction(CurrentAction);
+            CurrentAction?.Finish();
 
             if (action == null)
                 return;
@@ -100,12 +95,12 @@ namespace Shared.AI
                 OnCurrentActionChanged?.Invoke(this, action);
         }
 
-        public void QueueAction(IStateMachineAction action)
+        public void QueueAction(StateMachineActionBase action)
         {
             if (action == null)
                 throw new ArgumentNullException(nameof(action));
 
-            IStateMachineAction currentAction = CurrentAction;
+            StateMachineActionBase currentAction = CurrentAction;
 
             _actions.Add(action);
 
@@ -113,7 +108,7 @@ namespace Shared.AI
                 OnCurrentActionChanged?.Invoke(this, action);
         }
 
-        protected void RemoveAllQueuedActions()
+        void RemoveAllQueuedActions()
         {
             for (int i = _actions.Count - 1 ; i > 0 ; --i)
                 _actions.RemoveAt(i);
@@ -125,68 +120,24 @@ namespace Shared.AI
                 _actions.RemoveAt(0);
         }
 
-        bool TryFinishAction([NotNull] IStateMachineAction action)
+        void StartAction([NotNull] StateMachineActionBase action)
         {
-            if (action == null)
-                throw new ArgumentNullException(nameof(action));
+            Assert.False(action == null, "StateMachine tried to start null action.");
 
-            try
-            {
-                action.Finish();
-                return true;
-            }
-            catch (Exception e)
-            {
-                Debug.LogException(e);
-                _actions.Remove(action);
-                OnActionFailed?.Invoke(this, action);
-                return false;
-            }
+            action.Start();
+            OnActionStateChanged?.Invoke(this, action);
         }
 
-        bool TryStartAction([NotNull] IStateMachineAction action)
+        void UpdateAction([NotNull] StateMachineActionBase action)
         {
-            if (action == null)
-                throw new ArgumentNullException(nameof(action));
+            Assert.False(action == null, "StateMachine tried to start null action.");
 
-            try
-            {
-                action.Start();
+            StateMachineActionState currentState = action.CurrentState;
+
+            action.Update();
+
+            if (currentState != action.CurrentState)
                 OnActionStateChanged?.Invoke(this, action);
-                return true;
-            }
-            catch (Exception e)
-            {
-                Debug.LogException(e);
-                _actions.Remove(action);
-                OnActionFailed?.Invoke(this, action);
-                return false;
-            }
-        }
-
-        bool TryUpdateAction([NotNull] IStateMachineAction action)
-        {
-            if (action == null)
-                throw new ArgumentNullException(nameof(action));
-
-            try
-            {
-                StateMachineActionState currentState = action.CurrentState;
-
-                action.Update();
-
-                if (currentState != action.CurrentState)
-                    OnActionStateChanged?.Invoke(this, action);
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                Debug.LogException(e);
-                _actions.Remove(action);
-                OnActionFailed?.Invoke(this, action);
-                return false;
-            }
         }
     }
 }

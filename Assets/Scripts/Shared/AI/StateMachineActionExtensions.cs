@@ -1,6 +1,5 @@
 ﻿using System;
 using JetBrains.Annotations;
-using Shared.AI.Interfaces;
 
 namespace Shared.AI
 {
@@ -9,7 +8,7 @@ namespace Shared.AI
         /// <summary>
         /// Returns true if action is currently running, false otherwise
         /// </summary>
-        public static bool IsRunning([NotNull] this IStateMachineAction self)
+        public static bool IsRunning([NotNull] this StateMachineActionBase self)
         {
             if (self == null)
                 throw new ArgumentNullException(nameof(self));

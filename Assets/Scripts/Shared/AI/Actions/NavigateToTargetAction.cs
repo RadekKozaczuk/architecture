@@ -1,6 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
-using Shared.AI.Interfaces;
+using Shared.AI.NavigationTargets;
 using UnityEngine;
 
 namespace Shared.AI.Actions
@@ -8,7 +8,7 @@ namespace Shared.AI.Actions
     /// <summary>
     /// A state machine action that navigates a character controller to specified target
     /// </summary>
-    public class NavigateToTargetAction : StateMachineActionBase, INavigateAction
+    public class NavigateToTargetAction : StateMachineActionBase
     {
         /// <summary>
         /// If the character cannot reach the desired target exactly and the displacement is more than this value, the action
@@ -54,10 +54,16 @@ namespace Shared.AI.Actions
         /// <param name="target">Navigation target</param>
         public NavigateToTargetAction([NotNull] NavMeshNavigationController controller, [NotNull] INavigationTarget target)
         {
-            _controller = controller ?? throw new ArgumentNullException(nameof(controller));
-            _target = target ?? throw new ArgumentNullException(nameof(target));
+            Assert.False(controller == null, "Controller cannot be null.");
+            Assert.False(target == null, "Target cannot be null.");
+            
+            _controller = controller;
+            _target = target;
         }
 
+        /// <summary>
+        /// Current navigation target position
+        /// </summary>
         public Vector3? TargetPosition
         {
             get
@@ -161,14 +167,14 @@ namespace Shared.AI.Actions
 
             _target.GetTarget(currentPosition, currentYaw, out _targetPosition, out _targetYaw);
 
-            if (!_controller.SetTarget(_targetPosition, _targetYaw))
+            if (_controller.SetTarget(_targetPosition, _targetYaw))
             {
-                FinalizeAction(false, "Cannot find path to target");
-                return false;
+                _lastTargetRefreshTime = DateTime.Now;
+                return true;
             }
 
-            _lastTargetRefreshTime = DateTime.Now;
-            return true;
+            FinalizeAction(false, "Cannot find path to target");
+            return false;
         }
     }
 }
