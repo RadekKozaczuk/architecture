@@ -18,7 +18,15 @@ namespace NavMeshComponents.Extensions
         
         public int CahcheCount => _lookup.Count;
 
-        internal bool Troll { get => _troll; set => _troll = value; }
+        internal bool Troll
+        {
+            get => _troll;
+            set
+            {
+                int i = 4;
+                _troll = value;
+            } 
+        }
         
         public List<NavMeshBuildSource> Cache { get; private set; }
         
