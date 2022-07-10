@@ -42,35 +42,33 @@ namespace NavMeshComponents.Extensions
 
         public bool UpdateSource(GameObject gameObject)
         {
-            var res = _lookup.ContainsKey(gameObject);
-            if (res)
-            {
-                IsDirty = true;
-                var source = _lookup[gameObject];
-                var idx = Cache.IndexOf(source);
-                if (idx >= 0)
-                {
-                    source.transform = Matrix4x4.TRS(gameObject.transform.position, gameObject.transform.rotation, gameObject.transform.lossyScale);
-                    Cache[idx] = source;
-                    _lookup[gameObject] = source;
-                }
-            }
+            if (!_lookup.ContainsKey(gameObject))
+                return false;
+            
+            IsDirty = true;
+            NavMeshBuildSource source = _lookup[gameObject];
+            int idx = Cache.IndexOf(source);
+            if (idx < 0)
+                return true;
+                
+            source.transform = Matrix4x4.TRS(gameObject.transform.position, gameObject.transform.rotation, gameObject.transform.lossyScale);
+            Cache[idx] = source;
+            _lookup[gameObject] = source;
 
-            return res;
+            return true;
         }
 
         public bool RemoveSource(GameObject gameObject)
         {
-            bool res = _lookup.ContainsKey(gameObject);
-            if (res)
-            {
-                IsDirty = true;
-                NavMeshBuildSource source = _lookup[gameObject];
-                _lookup.Remove(gameObject);
-                Cache.Remove(source);
-            }
+            if (!_lookup.ContainsKey(gameObject))
+                return false;
+            
+            IsDirty = true;
+            NavMeshBuildSource source = _lookup[gameObject];
+            _lookup.Remove(gameObject);
+            Cache.Remove(source);
 
-            return res;
+            return true;
         }
 
         public AsyncOperation UpdateNavMesh(NavMeshData data)
@@ -101,7 +99,7 @@ namespace NavMeshComponents.Extensions
 
         public override void PostCollectSources(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navNeshState)
         {
-            _sourcesBounds = navNeshState.worldBounds;
+            _sourcesBounds = navNeshState.WorldBounds;
             Cache = sources;
         }
     }

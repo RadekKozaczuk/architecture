@@ -7,46 +7,43 @@ namespace UnityEngine.AI
     [HelpURL("https://github.com/Unity-Technologies/NavMeshComponents#documentation-draft")]
     public class NavMeshModifierVolume : MonoBehaviour
     {
+        public static List<NavMeshModifierVolume> ActiveModifiers { get; } = new();
+
+        public Vector3 Size { get => _size; set => _size = value; }
         [SerializeField]
-        Vector3 m_Size = new(4.0f, 3.0f, 4.0f);
+        Vector3 _size = new(4.0f, 3.0f, 4.0f);
 
-        public Vector3 size { get => m_Size; set => m_Size = value; }
-
+        public Vector3 Center { get => _center; set => _center = value; }
         [SerializeField]
-        Vector3 m_Center = new(0, 1.0f, 0);
+        Vector3 _center = new(0, 1.0f, 0);
 
-        public Vector3 center { get => m_Center; set => m_Center = value; }
-
+        public int Area { get => _area; set => _area = value; }
         [SerializeField]
-        int m_Area;
-
-        public int area { get => m_Area; set => m_Area = value; }
+        int _area;
 
         // List of agent types the modifier is applied for.
         // Special values: empty == None, m_AffectedAgents[0] =-1 == All.
         [SerializeField]
-        List<int> m_AffectedAgents = new(new[] {-1}); // Default value is All
-
-        public static List<NavMeshModifierVolume> activeModifiers { get; } = new();
+        List<int> _affectedAgents = new(new[] {-1}); // Default value is All
 
         void OnEnable()
         {
-            if (!activeModifiers.Contains(this))
-                activeModifiers.Add(this);
+            if (!ActiveModifiers.Contains(this))
+                ActiveModifiers.Add(this);
         }
 
         void OnDisable()
         {
-            activeModifiers.Remove(this);
+            ActiveModifiers.Remove(this);
         }
 
         public bool AffectsAgentType(int agentTypeID)
         {
-            if (m_AffectedAgents.Count == 0)
+            if (_affectedAgents.Count == 0)
                 return false;
-            if (m_AffectedAgents[0] == -1)
+            if (_affectedAgents[0] == -1)
                 return true;
-            return m_AffectedAgents.IndexOf(agentTypeID) != -1;
+            return _affectedAgents.IndexOf(agentTypeID) != -1;
         }
     }
 }

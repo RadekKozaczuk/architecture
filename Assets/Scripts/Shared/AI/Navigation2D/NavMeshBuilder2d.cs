@@ -116,12 +116,12 @@ namespace UnityEngine.AI
 
                 int area = builder.defaultArea;
                 //if it is walkable
-                if (builder.defaultArea != 1 && !modifier.ignoreFromBuild)
+                if (builder.defaultArea != 1 && !modifier.IgnoreFromBuild)
                     AddDefaultWalkableTilemap(sources, builder, modifier);
 
-                if (modifier.overrideArea)
-                    area = modifier.area;
-                if (!modifier.ignoreFromBuild)
+                if (modifier.OverrideArea)
+                    area = modifier.Area;
+                if (!modifier.IgnoreFromBuild)
                     CollectSources(sources, builder, modifier, area);
             }
         }

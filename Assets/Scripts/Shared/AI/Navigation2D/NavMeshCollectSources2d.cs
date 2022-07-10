@@ -9,30 +9,26 @@ namespace NavMeshComponents.Extensions
     [AddComponentMenu("Navigation/NavMeshCollectSources2d", 30)]
     public class NavMeshCollectSources2d : NavMeshExtension
     {
+        public bool OverrideByGrid { get => _overrideByGrid; set => _overrideByGrid = value; }
         [SerializeField]
-        bool m_OverrideByGrid;
+        bool _overrideByGrid;
 
-        public bool overrideByGrid { get => m_OverrideByGrid; set => m_OverrideByGrid = value; }
-
+        public GameObject UseMeshPrefab { get => _useMeshPrefab; set => _useMeshPrefab = value; }
         [SerializeField]
-        GameObject m_UseMeshPrefab;
+        GameObject _useMeshPrefab;
 
-        public GameObject useMeshPrefab { get => m_UseMeshPrefab; set => m_UseMeshPrefab = value; }
-
+        public bool CompressBounds { get => _compressBounds; set => _compressBounds = value; }
         [SerializeField]
-        bool m_CompressBounds;
-
-        public bool compressBounds { get => m_CompressBounds; set => m_CompressBounds = value; }
-
+        bool _compressBounds;
+        
+        public Vector3 OverrideVector { get => _overrideVector; set => _overrideVector = value; }
         [SerializeField]
-        Vector3 m_OverrideVector = Vector3.one;
-
-        public Vector3 overrideVector { get => m_OverrideVector; set => m_OverrideVector = value; }
-
+        Vector3 _overrideVector = Vector3.one;
+        
         public override void CalculateWorldBounds(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navNeshState)
         {
             if (surface.collectObjects != CollectObjects.Volume)
-                navNeshState.worldBounds.Encapsulate(CalculateGridWorldBounds(surface, navNeshState.worldToLocal, navNeshState.worldBounds));
+                navNeshState.WorldBounds.Encapsulate(CalculateGridWorldBounds(surface, navNeshState.WorldToLocal, navNeshState.WorldBounds));
         }
 
         static Bounds CalculateGridWorldBounds(NavMeshSurface surface, Matrix4x4 worldToLocal, Bounds bounds)
@@ -41,7 +37,7 @@ namespace NavMeshComponents.Extensions
             Tilemap[] tilemaps = grid?.GetComponentsInChildren<Tilemap>();
             if (tilemaps == null || tilemaps.Length < 1)
                 return bounds;
-            foreach (var tilemap in tilemaps)
+            foreach (Tilemap tilemap in tilemaps)
             {
                 Bounds lbounds = NavMeshSurface.GetWorldBounds(worldToLocal * tilemap.transform.localToWorldMatrix, tilemap.localBounds);
                 bounds.Encapsulate(lbounds);
@@ -66,15 +62,15 @@ namespace NavMeshComponents.Extensions
             builder.defaultArea = surface.defaultArea;
             builder.layerMask = surface.layerMask;
             builder.agentID = surface.agentTypeID;
-            builder.useMeshPrefab = useMeshPrefab;
-            builder.overrideByGrid = overrideByGrid;
-            builder.compressBounds = compressBounds;
-            builder.overrideVector = overrideVector;
+            builder.useMeshPrefab = UseMeshPrefab;
+            builder.overrideByGrid = OverrideByGrid;
+            builder.compressBounds = CompressBounds;
+            builder.overrideVector = OverrideVector;
             builder.CollectGeometry = surface.useGeometry;
             builder.CollectObjects = (CollectObjects2d)(int)surface.collectObjects;
             builder.parent = surface.gameObject;
             builder.hideEditorLogs = surface.hideEditorLogs;
-            builder.SetRoot(navNeshState.roots);
+            builder.SetRoot(navNeshState.Roots);
             NavMeshBuilder2d.CollectSources(sources, builder);
         }
     }

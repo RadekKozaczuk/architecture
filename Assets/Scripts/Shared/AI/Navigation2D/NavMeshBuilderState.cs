@@ -6,9 +6,9 @@ namespace NavMeshComponents.Extensions
 {
     public class NavMeshBuilderState
     {
-        public Matrix4x4 worldToLocal;
-        public Bounds worldBounds;
-        public IEnumerable<GameObject> roots;
+        public Matrix4x4 WorldToLocal;
+        public Bounds WorldBounds;
+        public IEnumerable<GameObject> Roots;
 
         public T GetExtraState<T>() where T : class, new()
         {

@@ -15,13 +15,13 @@ namespace NavMeshComponents.Extensions
         readonly List<NavMeshExtensionMeta> _extensions = new();
 
         static readonly Comparer<NavMeshExtensionMeta> _comparer = Comparer<NavMeshExtensionMeta>.Create(
-            (x, y) => x.order > y.order
+            (x, y) => x.Order > y.Order
                 ? 1
-                : x.order < y.order
+                : x.Order < y.Order
                     ? -1
                     : 0);
 
-        public NavMeshExtension this[int index] => _extensions[index].extension;
+        public NavMeshExtension this[int index] => _extensions[index].Extension;
 
         public int Count => _extensions.Count;
 
@@ -40,7 +40,7 @@ namespace NavMeshComponents.Extensions
 
         public void Remove(NavMeshExtension extension)
         {
-            _extensions.RemoveAll(x => x.extension = extension);
+            _extensions.RemoveAll(x => x.Extension = extension);
         }
     }
 }

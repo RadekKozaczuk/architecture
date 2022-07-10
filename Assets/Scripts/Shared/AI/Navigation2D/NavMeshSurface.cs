@@ -187,7 +187,7 @@ namespace UnityEngine.AI
             var sourcesBounds = new Bounds(m_Center, Abs(m_Size));
             if (m_CollectObjects == CollectObjects.All || m_CollectObjects == CollectObjects.Children)
                 sourcesBounds = CalculateWorldBounds(sources);
-            var builderState = new NavMeshBuilderState {worldBounds = sourcesBounds};
+            var builderState = new NavMeshBuilderState {WorldBounds = sourcesBounds};
             for (int i = 0; i < NevMeshExtensions.Count; ++i)
                 NevMeshExtensions[i].PostCollectSources(this, sources, builderState);
             NavMeshData data = NavMeshBuilder.BuildNavMeshData(
@@ -225,7 +225,7 @@ namespace UnityEngine.AI
             var sourcesBounds = new Bounds(m_Center, Abs(m_Size));
             if (m_CollectObjects == CollectObjects.All || m_CollectObjects == CollectObjects.Children)
                 sourcesBounds = CalculateWorldBounds(sources);
-            var builderState = new NavMeshBuilderState {worldBounds = sourcesBounds};
+            var builderState = new NavMeshBuilderState {WorldBounds = sourcesBounds};
             for (int i = 0; i < NevMeshExtensions.Count; ++i)
                 NevMeshExtensions[i].PostCollectSources(this, sources, builderState);
             return NavMeshBuilder.UpdateNavMeshDataAsync(data, GetBuildSettings(), sources, sourcesBounds);
@@ -277,7 +277,7 @@ namespace UnityEngine.AI
                 modifiers.RemoveAll(x => !x.isActiveAndEnabled);
             }
             else
-                modifiers = NavMeshModifierVolume.activeModifiers;
+                modifiers = NavMeshModifierVolume.ActiveModifiers;
 
             foreach (NavMeshModifierVolume m in modifiers)
             {
@@ -289,15 +289,15 @@ namespace UnityEngine.AI
                 if (!myStage.Contains(m.gameObject))
                     continue;
 #endif
-                Vector3 mcenter = m.transform.TransformPoint(m.center);
+                Vector3 mcenter = m.transform.TransformPoint(m.Center);
                 Vector3 scale = m.transform.lossyScale;
-                var msize = new Vector3(m.size.x * Mathf.Abs(scale.x), m.size.y * Mathf.Abs(scale.y), m.size.z * Mathf.Abs(scale.z));
+                var msize = new Vector3(m.Size.x * Mathf.Abs(scale.x), m.Size.y * Mathf.Abs(scale.y), m.Size.z * Mathf.Abs(scale.z));
 
                 var src = new NavMeshBuildSource();
                 src.shape = NavMeshBuildSourceShape.ModifierBox;
                 src.transform = Matrix4x4.TRS(mcenter, m.transform.rotation, Vector3.one);
                 src.size = msize;
-                src.area = m.area;
+                src.area = m.Area;
                 sources.Add(src);
             }
         }
@@ -314,7 +314,7 @@ namespace UnityEngine.AI
                 modifiers.RemoveAll(x => !x.isActiveAndEnabled);
             }
             else
-                modifiers = NavMeshModifier.activeModifiers;
+                modifiers = NavMeshModifier.ActiveModifiers;
 
             foreach (NavMeshModifier m in modifiers)
             {
@@ -324,9 +324,9 @@ namespace UnityEngine.AI
                     continue;
                 var markup = new NavMeshBuildMarkup();
                 markup.root = m.transform;
-                markup.overrideArea = m.overrideArea;
-                markup.area = m.area;
-                markup.ignoreFromBuild = m.ignoreFromBuild;
+                markup.overrideArea = m.OverrideArea;
+                markup.area = m.Area;
+                markup.ignoreFromBuild = m.IgnoreFromBuild;
                 markups.Add(markup);
             }
 
@@ -404,11 +404,11 @@ namespace UnityEngine.AI
             worldToLocal = worldToLocal.inverse;
 
             var result = new Bounds();
-            var builderState = new NavMeshBuilderState {worldBounds = result, worldToLocal = worldToLocal};
+            var builderState = new NavMeshBuilderState {WorldBounds = result, WorldToLocal = worldToLocal};
             for (int i = 0; i < NevMeshExtensions.Count; ++i)
             {
                 NevMeshExtensions[i].CalculateWorldBounds(this, sources, builderState);
-                result.Encapsulate(builderState.worldBounds);
+                result.Encapsulate(builderState.WorldBounds);
             }
 
             foreach (NavMeshBuildSource src in sources)

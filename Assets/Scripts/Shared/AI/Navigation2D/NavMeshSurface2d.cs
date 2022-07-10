@@ -292,7 +292,7 @@ namespace UnityEngine.AI
                 modifiers.RemoveAll(x => !x.isActiveAndEnabled);
             }
             else
-                modifiers = NavMeshModifierVolume.activeModifiers;
+                modifiers = NavMeshModifierVolume.ActiveModifiers;
 
             foreach (var m in modifiers)
             {
@@ -304,15 +304,15 @@ namespace UnityEngine.AI
                 if (!myStage.Contains(m.gameObject))
                     continue;
 #endif
-                var mcenter = m.transform.TransformPoint(m.center);
+                var mcenter = m.transform.TransformPoint(m.Center);
                 var scale = m.transform.lossyScale;
-                var msize = new Vector3(m.size.x * Mathf.Abs(scale.x), m.size.y * Mathf.Abs(scale.y), m.size.z * Mathf.Abs(scale.z));
+                var msize = new Vector3(m.Size.x * Mathf.Abs(scale.x), m.Size.y * Mathf.Abs(scale.y), m.Size.z * Mathf.Abs(scale.z));
 
                 var src = new NavMeshBuildSource();
                 src.shape = NavMeshBuildSourceShape.ModifierBox;
                 src.transform = Matrix4x4.TRS(mcenter, m.transform.rotation, Vector3.one);
                 src.size = msize;
-                src.area = m.area;
+                src.area = m.Area;
                 sources.Add(src);
             }
         }
@@ -329,7 +329,7 @@ namespace UnityEngine.AI
                 modifiers.RemoveAll(x => !x.isActiveAndEnabled);
             }
             else
-                modifiers = NavMeshModifier.activeModifiers;
+                modifiers = NavMeshModifier.ActiveModifiers;
 
             foreach (var m in modifiers)
             {
@@ -339,9 +339,9 @@ namespace UnityEngine.AI
                     continue;
                 var markup = new NavMeshBuildMarkup();
                 markup.root = m.transform;
-                markup.overrideArea = m.overrideArea;
-                markup.area = m.area;
-                markup.ignoreFromBuild = m.ignoreFromBuild;
+                markup.overrideArea = m.OverrideArea;
+                markup.area = m.Area;
+                markup.ignoreFromBuild = m.IgnoreFromBuild;
                 markups.Add(markup);
             }
 

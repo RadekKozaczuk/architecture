@@ -8,21 +8,17 @@ namespace NavMeshComponents.Extensions
     public abstract class NavMeshExtension : MonoBehaviour
     {
         public int Order { get; protected set; }
-        public virtual void CollectSources(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navNeshState) { }
-        public virtual void CalculateWorldBounds(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navNeshState) { }
-        public virtual void PostCollectSources(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navNeshState) { }
 
         public NavMeshSurface NavMeshSurfaceOwner
         {
             get
             {
-                if (m_navMeshOwner == null)
-                    m_navMeshOwner = GetComponent<NavMeshSurface>();
-                return m_navMeshOwner;
+                if (_mNavMeshOwner == null)
+                    _mNavMeshOwner = GetComponent<NavMeshSurface>();
+                return _mNavMeshOwner;
             }
         }
-
-        NavMeshSurface m_navMeshOwner;
+        NavMeshSurface _mNavMeshOwner;
 
         protected virtual void Awake()
         {
@@ -44,14 +40,20 @@ namespace NavMeshComponents.Extensions
         {
             ConnectToVcam(false);
         }
+        
+        public virtual void CollectSources(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navNeshState) { }
+        
+        public virtual void CalculateWorldBounds(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navNeshState) { }
+        
+        public virtual void PostCollectSources(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navNeshState) { }
 
         protected virtual void ConnectToVcam(bool connect)
         {
             if (connect && NavMeshSurfaceOwner == null)
                 Debug.LogError("NevMeshExtension requires a NavMeshSurface component");
             if (NavMeshSurfaceOwner == null)
-
                 return;
+            
             if (connect)
                 NavMeshSurfaceOwner.NevMeshExtensions.Add(this, Order);
             else

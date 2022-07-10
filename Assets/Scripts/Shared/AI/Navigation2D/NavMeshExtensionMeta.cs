@@ -1,15 +1,14 @@
 ﻿namespace NavMeshComponents.Extensions
 {
-    internal class NavMeshExtensionMeta
+    class NavMeshExtensionMeta
     {
-        public readonly int order;
+        public readonly int Order;
+        public NavMeshExtension Extension;
 
         public NavMeshExtensionMeta(int order, NavMeshExtension extension)
         {
-            this.order = order;
-            this.extension = extension;
+            Order = order;
+            Extension = extension;
         }
-
-        public NavMeshExtension extension;
     }
 }

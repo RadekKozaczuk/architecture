@@ -8,11 +8,10 @@ namespace NavMeshComponents.Extensions
     [AddComponentMenu("Navigation/NavMeshCollectRootSources2d", 30)]
     public class NavMeshCollectRootSources2d : NavMeshExtension
     {
+        public List<GameObject> RootSources { get => _rootSources; set => _rootSources = value; }
         [SerializeField]
         List<GameObject> _rootSources;
-
-        public List<GameObject> RooySources { get => _rootSources; set => _rootSources = value; }
-
+        
         protected override void Awake()
         {
             Order = -1000;
@@ -21,7 +20,7 @@ namespace NavMeshComponents.Extensions
 
         public override void CollectSources(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navNeshState)
         {
-            navNeshState.roots = _rootSources;
+            navNeshState.Roots = _rootSources;
         }
     }
 }
