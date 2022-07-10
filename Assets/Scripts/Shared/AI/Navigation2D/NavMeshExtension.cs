@@ -28,8 +28,7 @@ namespace NavMeshComponents.Extensions
         [DidReloadScripts]
         static void OnScriptReload()
         {
-            var extensions = Resources.FindObjectsOfTypeAll(
-                typeof(NavMeshExtension)) as NavMeshExtension[];
+            var extensions = Resources.FindObjectsOfTypeAll(typeof(NavMeshExtension)) as NavMeshExtension[];
             foreach (NavMeshExtension e in extensions)
                 e.ConnectToVcam(true);
         }

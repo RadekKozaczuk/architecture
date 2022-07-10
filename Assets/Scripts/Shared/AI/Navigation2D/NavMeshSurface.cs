@@ -87,9 +87,9 @@ namespace UnityEngine.AI
         NavMeshData _navMeshData;
         
         // Do not serialize - runtime only state.
-        NavMeshDataInstance _mNavMeshDataInstance;
-        Vector3 _mLastPosition = Vector3.zero;
-        Quaternion _mLastRotation = Quaternion.identity;
+        NavMeshDataInstance _navMeshDataInstance;
+        Vector3 _lastPosition = Vector3.zero;
+        Quaternion _lastRotation = Quaternion.identity;
 
         public INavMeshExtensionsProvider NevMeshExtensions { get; set; } = new NavMeshExtensionsProvider();
 
@@ -117,23 +117,23 @@ namespace UnityEngine.AI
                 //    gameObject.name, name);
                 return;
 #endif
-            if (_mNavMeshDataInstance.valid)
+            if (_navMeshDataInstance.valid)
                 return;
 
             if (_navMeshData != null)
             {
-                _mNavMeshDataInstance = NavMesh.AddNavMeshData(_navMeshData, transform.position, transform.rotation);
-                _mNavMeshDataInstance.owner = this;
+                _navMeshDataInstance = NavMesh.AddNavMeshData(_navMeshData, transform.position, transform.rotation);
+                _navMeshDataInstance.owner = this;
             }
 
-            _mLastPosition = transform.position;
-            _mLastRotation = transform.rotation;
+            _lastPosition = transform.position;
+            _lastRotation = transform.rotation;
         }
 
         public void RemoveData()
         {
-            _mNavMeshDataInstance.Remove();
-            _mNavMeshDataInstance = new NavMeshDataInstance();
+            _navMeshDataInstance.Remove();
+            _navMeshDataInstance = new NavMeshDataInstance();
         }
 
         public NavMeshBuildSettings GetBuildSettings()
@@ -205,7 +205,7 @@ namespace UnityEngine.AI
             // Use unscaled bounds - this differs in behaviour from e.g. collider components.
             // But is similar to reflection probe - and since navmesh data has no scaling support - it is the right choice here.
             var sourcesBounds = new Bounds(_center, Abs(_size));
-            if (_collectObjects == CollectObjects.All || _collectObjects == CollectObjects.Children)
+            if (_collectObjects is CollectObjects.All or CollectObjects.Children)
                 sourcesBounds = CalculateWorldBounds(sources);
             var builderState = new NavMeshBuilderState {WorldBounds = sourcesBounds};
             for (int i = 0; i < NevMeshExtensions.Count; ++i)
@@ -219,8 +219,6 @@ namespace UnityEngine.AI
             bool isInPreviewScene = EditorSceneManager.IsPreviewSceneObject(surface);
             bool isPrefab = isInPreviewScene || EditorUtility.IsPersistent(surface);
             if (isPrefab)
-                //Debug.LogFormat("NavMeshData from {0}.{1} will not be added to the NavMesh world because the gameObject is a prefab.",
-                //    surface.gameObject.name, surface.name);
                 return;
 #endif
             if (ActiveSurfaces.Count == 0)
@@ -271,15 +269,15 @@ namespace UnityEngine.AI
                 if (!myStage.Contains(m.gameObject))
                     continue;
 #endif
-                Vector3 mcenter = m.transform.TransformPoint(m.Center);
+                Vector3 center = m.transform.TransformPoint(m.Center);
                 Vector3 scale = m.transform.lossyScale;
-                var msize = new Vector3(m.Size.x * Mathf.Abs(scale.x), m.Size.y * Mathf.Abs(scale.y), m.Size.z * Mathf.Abs(scale.z));
+                var size = new Vector3(m.Size.x * Mathf.Abs(scale.x), m.Size.y * Mathf.Abs(scale.y), m.Size.z * Mathf.Abs(scale.z));
 
                 var src = new NavMeshBuildSource
                 {
                     shape = NavMeshBuildSourceShape.ModifierBox, 
-                    transform = Matrix4x4.TRS(mcenter, m.transform.rotation, Vector3.one), 
-                    size = msize,
+                    transform = Matrix4x4.TRS(center, m.transform.rotation, Vector3.one), 
+                    size = size,
                     area = m.Area
                 };
                 sources.Add(src);
@@ -428,9 +426,9 @@ namespace UnityEngine.AI
 
         bool HasTransformChanged()
         {
-            if (_mLastPosition != transform.position)
+            if (_lastPosition != transform.position)
                 return true;
-            return _mLastRotation != transform.rotation;
+            return _lastRotation != transform.rotation;
         }
 
         void UpdateDataIfTransformChanged()
