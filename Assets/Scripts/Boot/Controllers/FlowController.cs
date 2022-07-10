@@ -1,5 +1,4 @@
 using Common;
-using Common.Systems;
 using JetBrains.Annotations;
 using Presentation.Controllers;
 using Presentation.ViewModels;
@@ -22,22 +21,16 @@ namespace Boot.Controllers
         internal static UIMainController UIMainController;
 
         [Preserve]
-        FlowController()
-        {
-            SceneManager.sceneLoaded += OnSceneLoaded;
-        }
+        FlowController() => SceneManager.sceneLoaded += OnSceneLoaded;
 
-        public void Initialize()
-        {
-            UIMainController = _uiMainController;
-        }
+        public void Initialize() => UIMainController = _uiMainController;
 
         static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             if (scene.buildIndex == Constants.CoreScene)
             {
                 SceneManager.UnloadSceneAsync(Constants.BootScene);
-                
+
                 // have to be here because Boot assembly does not see UI
                 // and the view must be in UI not in common cause it touches GameLogic stuff
 #if UNITY_EDITOR

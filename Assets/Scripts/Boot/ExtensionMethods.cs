@@ -7,7 +7,7 @@ namespace Boot
         /// <summary>
         /// Value is trimmed and case insensitive.
         /// </summary>
-        internal static bool Contains(this string[] array, string value)
-            => Array.Find(array, s => string.Equals(s, value.Trim(), StringComparison.CurrentCultureIgnoreCase)) != null;
+        internal static bool Contains(this string[] array, string value) =>
+            Array.Find(array, s => string.Equals(s, value.Trim(), StringComparison.CurrentCultureIgnoreCase)) != null;
     }
 }

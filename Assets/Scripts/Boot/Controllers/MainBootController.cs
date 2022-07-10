@@ -7,15 +7,15 @@ using GameLogic;
 using GameLogic.ViewModels;
 using Presentation;
 using Shared.DependencyInjector.Install;
+using Shared.Systems;
+using UI;
+using UI.Systems;
+using UnityEngine;
+using UnityEngine.EventSystems;
 #if UNITY_EDITOR
 using Common.Views;
 using GameLogic.Views;
 #endif
-using UnityEngine;
-using UnityEngine.EventSystems;
-using Shared.Systems;
-using UI;
-using UI.Systems;
 
 namespace Boot.Controllers
 {
@@ -32,10 +32,10 @@ namespace Boot.Controllers
         static GameStateMachine<GameState> _gameStateSystem;
 
         static DebugConfig _config;
-        
+
         void Start()
         {
-            ConfigInjector.Run(new [] {"Boot", "Common", "GameLogic", "Presentation", "UI"});
+            ConfigInjector.Run(new[] {"Boot", "Common", "GameLogic", "Presentation", "UI"});
 
             SceneContext.Installers.Add(new BootInstaller());
             SceneContext.Installers.Add(new CommonInstaller());
@@ -44,11 +44,12 @@ namespace Boot.Controllers
             SceneContext.Installers.Add(new UIInstaller());
 
             SceneContext.Run();
-            
+
             _gameStateSystem = new GameStateMachine<GameState>(
                 new[]
                 {
-                    (GameState.Booting, GameState.MainMenu, new[] {Constants.MainMenuScene, Constants.CoreScene, Constants.UIScene}, Array.Empty<int>()),
+                    (GameState.Booting, GameState.MainMenu, new[] {Constants.MainMenuScene, Constants.CoreScene, Constants.UIScene},
+                     Array.Empty<int>()),
                     (GameState.MainMenu, GameState.Gameplay, Array.Empty<int>(), new[] {Constants.MainMenuScene}),
                     (GameState.Gameplay, GameState.MainMenu, new[] {Constants.MainMenuScene}, Array.Empty<int>())
                 },
@@ -57,11 +58,8 @@ namespace Boot.Controllers
                     (GameState.Booting, null, null),
                     (GameState.MainMenu, MainMenuOnEntry, MainMenuOnExit),
                     (GameState.Gameplay, GameplayOnEntry, GameplayOnExit)
-                },
-                GameState.Booting,
-                _config.LogRequestedStateChange
-            );
-            
+                }, GameState.Booting, _config.LogRequestedStateChange);
+
             GameStateSystem.OnStateChangeRequest += _gameStateSystem.RequestStateChange;
             GameStateSystem.OnScheduleStateChange += _gameStateSystem.ScheduleStateChange;
             GameStateSystem.OnGetCurrentGameState += _gameStateSystem.GetCurrentState;
@@ -80,9 +78,16 @@ namespace Boot.Controllers
             GameObject debugCommands = Instantiate(new GameObject(), Vector3.zero, Quaternion.identity);
             debugCommands.AddComponent<CommonDebugView>();
             debugCommands.AddComponent<GameLogicDebugView>();
-            debugCommands.name = "DebugCommands"; // had to add it because if set in the line above, it was named "DebugCommands(Clone)" for some reason
+            debugCommands.name
+                = "DebugCommands"; // had to add it because if set in the line above, it was named "DebugCommands(Clone)" for some reason
             DontDestroyOnLoad(debugCommands);
 #endif
+        }
+
+        void FixedUpdate()
+        {
+            if (_isCoreSceneLoaded)
+                GameLogicViewModel.CustomFixedUpdate();
         }
 
         void Update()
@@ -95,20 +100,14 @@ namespace Boot.Controllers
             }
         }
 
-        void FixedUpdate()
-        {
-            if (_isCoreSceneLoaded)
-                GameLogicViewModel.CustomFixedUpdate();  
-        }
-
         void LateUpdate()
         {
             if (_isCoreSceneLoaded)
-                GameLogicViewModel.CustomLateUpdate();   
+                GameLogicViewModel.CustomLateUpdate();
         }
-        
+
         internal static void OnCoreSceneLoaded() => _isCoreSceneLoaded = true;
-        
+
         static void MainMenuOnEntry(string[] args = null) { }
 
         static void MainMenuOnExit(string[] args = null) { }
