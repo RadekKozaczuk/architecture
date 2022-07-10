@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Object = UnityEngine.Object;
 
 namespace NavMeshComponents.Extensions
 {
@@ -11,9 +13,13 @@ namespace NavMeshComponents.Extensions
         public bool IsDirty { get; protected set; }
         
         public int SourcesCount => Cache.Count;
+
+        bool _troll;
         
         public int CahcheCount => _lookup.Count;
 
+        internal bool Troll { get => _troll; set => _troll = value; }
+        
         public List<NavMeshBuildSource> Cache { get; private set; }
         
         Dictionary<Object, NavMeshBuildSource> _lookup;
@@ -59,6 +65,11 @@ namespace NavMeshComponents.Extensions
             return true;
         }
 
+        void Update()
+        {
+            throw new NotImplementedException();
+        }
+
         public bool RemoveSource(GameObject gameObject)
         {
             if (!_lookup.ContainsKey(gameObject))
@@ -76,6 +87,11 @@ namespace NavMeshComponents.Extensions
         {
             IsDirty = false;
             return NavMeshBuilder.UpdateNavMeshDataAsync(data, NavMeshSurfaceOwner.GetBuildSettings(), Cache, _sourcesBounds);
+        }
+
+        internal void LateUpdate()
+        {
+            throw new NotImplementedException();
         }
 
         public AsyncOperation UpdateNavMesh()
