@@ -18,9 +18,9 @@ namespace NavMeshComponents.Extensions
             base.Awake();
         }
 
-        public override void CollectSources(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navNeshState)
+        public override void CollectSources(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navMeshState)
         {
-            navNeshState.Roots = _rootSources;
+            navMeshState.Roots = _rootSources;
         }
     }
 }

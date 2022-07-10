@@ -98,9 +98,9 @@ namespace NavMeshComponents.Extensions
             _lookup.Add(component, source);
         }
 
-        public override void PostCollectSources(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navNeshState)
+        public override void PostCollectSources(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navMeshState)
         {
-            _sourcesBounds = navNeshState.WorldBounds;
+            _sourcesBounds = navMeshState.WorldBounds;
             Cache = sources;
         }
     }
