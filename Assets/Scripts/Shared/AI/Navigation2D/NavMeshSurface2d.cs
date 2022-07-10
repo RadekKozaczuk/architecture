@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -12,7 +13,7 @@ namespace UnityEngine.AI
     {
         All = 0,
         Volume = 1,
-        Children = 2,
+        Children = 2
     }
 
     [ExecuteAlways]
@@ -23,82 +24,105 @@ namespace UnityEngine.AI
     {
         [SerializeField]
         int m_AgentTypeID;
+
         public int agentTypeID { get { return m_AgentTypeID; } set { m_AgentTypeID = value; } }
 
         [SerializeField]
         CollectObjects2d m_CollectObjects = CollectObjects2d.All;
+
         public CollectObjects2d collectObjects { get { return m_CollectObjects; } set { m_CollectObjects = value; } }
 
         [SerializeField]
         Vector3 m_Size = new(10.0f, 10.0f, 10.0f);
+
         public Vector3 size { get { return m_Size; } set { m_Size = value; } }
 
         [SerializeField]
         Vector3 m_Center = new(0, 2.0f, 0);
+
         public Vector3 center { get { return m_Center; } set { m_Center = value; } }
 
         [SerializeField]
         LayerMask m_LayerMask = ~0;
+
         public LayerMask layerMask { get { return m_LayerMask; } set { m_LayerMask = value; } }
 
         [SerializeField]
         NavMeshCollectGeometry m_UseGeometry = NavMeshCollectGeometry.RenderMeshes;
+
         public NavMeshCollectGeometry useGeometry { get { return m_UseGeometry; } set { m_UseGeometry = value; } }
 
         [SerializeField]
         bool m_OverrideByGrid;
+
         public bool overrideByGrid { get { return m_OverrideByGrid; } set { m_OverrideByGrid = value; } }
 
         [SerializeField]
         GameObject m_UseMeshPrefab;
+
         public GameObject useMeshPrefab { get { return m_UseMeshPrefab; } set { m_UseMeshPrefab = value; } }
 
         [SerializeField]
         bool m_CompressBounds;
+
         public bool compressBounds { get { return m_CompressBounds; } set { m_CompressBounds = value; } }
 
         [SerializeField]
         Vector3 m_OverrideVector = Vector3.one;
+
         public Vector3 overrideVector { get { return m_OverrideVector; } set { m_OverrideVector = value; } }
 
         [SerializeField]
         int m_DefaultArea;
+
         public int defaultArea { get { return m_DefaultArea; } set { m_DefaultArea = value; } }
 
         [SerializeField]
         bool m_IgnoreNavMeshAgent = true;
+
         public bool ignoreNavMeshAgent { get { return m_IgnoreNavMeshAgent; } set { m_IgnoreNavMeshAgent = value; } }
 
         [SerializeField]
         bool m_IgnoreNavMeshObstacle = true;
+
         public bool ignoreNavMeshObstacle { get { return m_IgnoreNavMeshObstacle; } set { m_IgnoreNavMeshObstacle = value; } }
 
         [SerializeField]
         bool m_OverrideTileSize;
+
         public bool overrideTileSize { get { return m_OverrideTileSize; } set { m_OverrideTileSize = value; } }
+
         [SerializeField]
         int m_TileSize = 256;
+
         public int tileSize { get { return m_TileSize; } set { m_TileSize = value; } }
+
         [SerializeField]
         bool m_OverrideVoxelSize;
+
         public bool overrideVoxelSize { get { return m_OverrideVoxelSize; } set { m_OverrideVoxelSize = value; } }
+
         [SerializeField]
         float m_VoxelSize;
+
         public float voxelSize { get { return m_VoxelSize; } set { m_VoxelSize = value; } }
 
         // Currently not supported advanced options
         [SerializeField]
         bool m_BuildHeightMesh;
+
         public bool buildHeightMesh { get { return m_BuildHeightMesh; } set { m_BuildHeightMesh = value; } }
 
         [SerializeField]
         bool m_HideEditorLogs;
+
         public bool hideEditorLogs { get { return m_HideEditorLogs; } set { m_HideEditorLogs = value; } }
 
         // Reference to whole scene navmesh data asset.
-        [UnityEngine.Serialization.FormerlySerializedAs("m_BakedNavMeshData")]
+        [FormerlySerializedAs("m_BakedNavMeshData")]
         [SerializeField]
         NavMeshData m_NavMeshData;
+
         public NavMeshData navMeshData { get { return m_NavMeshData; } set { m_NavMeshData = value; } }
 
         // Do not serialize - runtime only state.
@@ -106,12 +130,7 @@ namespace UnityEngine.AI
         Vector3 m_LastPosition = Vector3.zero;
         Quaternion m_LastRotation = Quaternion.identity;
 
-        static readonly List<NavMeshSurface2d> s_NavMeshSurfaces = new();
-
-        public static List<NavMeshSurface2d> activeSurfaces
-        {
-            get { return s_NavMeshSurfaces; }
-        }
+        public static List<NavMeshSurface2d> activeSurfaces { get; } = new();
 
         void OnEnable()
         {
@@ -131,11 +150,9 @@ namespace UnityEngine.AI
             var isInPreviewScene = EditorSceneManager.IsPreviewSceneObject(this);
             var isPrefab = isInPreviewScene || EditorUtility.IsPersistent(this);
             if (isPrefab)
-            {
                 //Debug.LogFormat("NavMeshData from {0}.{1} will not be added to the NavMesh world because the gameObject is a prefab.",
                 //    gameObject.name, name);
                 return;
-            }
 #endif
             if (m_NavMeshDataInstance.valid)
                 return;
@@ -170,11 +187,13 @@ namespace UnityEngine.AI
                 buildSettings.overrideTileSize = true;
                 buildSettings.tileSize = tileSize;
             }
+
             if (overrideVoxelSize)
             {
                 buildSettings.overrideVoxelSize = true;
                 buildSettings.voxelSize = voxelSize;
             }
+
             return buildSettings;
         }
 
@@ -186,12 +205,11 @@ namespace UnityEngine.AI
             // But is similar to reflection probe - and since navmesh data has no scaling support - it is the right choice here.
             var sourcesBounds = new Bounds(m_Center, Abs(m_Size));
             if (m_CollectObjects != CollectObjects2d.Volume)
-            {
                 sourcesBounds = CalculateWorldBounds(sources);
-            }
 
-            var data = NavMeshBuilder.BuildNavMeshData(GetBuildSettings(),
-                    sources, sourcesBounds, transform.position, transform.rotation);
+            var data = NavMeshBuilder.BuildNavMeshData(
+                GetBuildSettings(),
+                sources, sourcesBounds, transform.position, transform.rotation);
 
             if (data != null)
             {
@@ -207,17 +225,10 @@ namespace UnityEngine.AI
         public AsyncOperation BuildNavMeshAsync()
         {
             RemoveData();
-            m_NavMeshData = new NavMeshData(m_AgentTypeID)
-            {
-                name = gameObject.name,
-                position = transform.position,
-                rotation = transform.rotation
-            };
+            m_NavMeshData = new NavMeshData(m_AgentTypeID) {name = gameObject.name, position = transform.position, rotation = transform.rotation};
 
             if (isActiveAndEnabled)
-            {
                 AddData();
-            }
 
             return UpdateNavMesh(m_NavMeshData);
         }
@@ -241,31 +252,29 @@ namespace UnityEngine.AI
             var isInPreviewScene = EditorSceneManager.IsPreviewSceneObject(surface);
             var isPrefab = isInPreviewScene || EditorUtility.IsPersistent(surface);
             if (isPrefab)
-            {
                 //Debug.LogFormat("NavMeshData from {0}.{1} will not be added to the NavMesh world because the gameObject is a prefab.",
                 //    surface.gameObject.name, surface.name);
                 return;
-            }
 #endif
-            if (s_NavMeshSurfaces.Count == 0)
+            if (activeSurfaces.Count == 0)
                 NavMesh.onPreUpdate += UpdateActive;
 
-            if (!s_NavMeshSurfaces.Contains(surface))
-                s_NavMeshSurfaces.Add(surface);
+            if (!activeSurfaces.Contains(surface))
+                activeSurfaces.Add(surface);
         }
 
         static void Unregister(NavMeshSurface2d surface)
         {
-            s_NavMeshSurfaces.Remove(surface);
+            activeSurfaces.Remove(surface);
 
-            if (s_NavMeshSurfaces.Count == 0)
+            if (activeSurfaces.Count == 0)
                 NavMesh.onPreUpdate -= UpdateActive;
         }
 
         static void UpdateActive()
         {
-            for (var i = 0; i < s_NavMeshSurfaces.Count; ++i)
-                s_NavMeshSurfaces[i].UpdateDataIfTransformChanged();
+            for (var i = 0; i < activeSurfaces.Count; ++i)
+                activeSurfaces[i].UpdateDataIfTransformChanged();
         }
 
         void AppendModifierVolumes(ref List<NavMeshBuildSource> sources)
@@ -283,9 +292,7 @@ namespace UnityEngine.AI
                 modifiers.RemoveAll(x => !x.isActiveAndEnabled);
             }
             else
-            {
                 modifiers = NavMeshModifierVolume.activeModifiers;
-            }
 
             foreach (var m in modifiers)
             {
@@ -322,9 +329,7 @@ namespace UnityEngine.AI
                 modifiers.RemoveAll(x => !x.isActiveAndEnabled);
             }
             else
-            {
                 modifiers = NavMeshModifier.activeModifiers;
-            }
 
             foreach (var m in modifiers)
             {
@@ -344,15 +349,11 @@ namespace UnityEngine.AI
             if (!EditorApplication.isPlaying)
             {
                 if (m_CollectObjects == CollectObjects2d.All)
-                {
                     UnityEditor.AI.NavMeshBuilder.CollectSourcesInStage(
                         null, m_LayerMask, m_UseGeometry, m_DefaultArea, markups, gameObject.scene, sources);
-                }
                 else if (m_CollectObjects == CollectObjects2d.Children)
-                {
                     UnityEditor.AI.NavMeshBuilder.CollectSourcesInStage(
                         transform, m_LayerMask, m_UseGeometry, m_DefaultArea, markups, gameObject.scene, sources);
-                }
                 else if (m_CollectObjects == CollectObjects2d.Volume)
                 {
                     Matrix4x4 localToWorld = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one);
@@ -361,6 +362,7 @@ namespace UnityEngine.AI
                     UnityEditor.AI.NavMeshBuilder.CollectSourcesInStage(
                         worldBounds, m_LayerMask, m_UseGeometry, m_DefaultArea, markups, gameObject.scene, sources);
                 }
+
                 if (!hideEditorLogs && !Mathf.Approximately(transform.eulerAngles.x, 270f))
                     Debug.LogWarning("NavMeshSurface2d is not rotated respectively to (x-90;y0;z0). Apply rotation unless intended.");
                 var builder = new NavMeshBuilder2dState();
@@ -376,25 +378,21 @@ namespace UnityEngine.AI
                 builder.parent = gameObject;
                 builder.hideEditorLogs = hideEditorLogs;
                 NavMeshBuilder2d.CollectSources(sources, builder);
-
             }
             else
 #endif
             {
                 if (m_CollectObjects == CollectObjects2d.All)
-                {
                     NavMeshBuilder.CollectSources(null, m_LayerMask, m_UseGeometry, m_DefaultArea, markups, sources);
-                }
                 else if (m_CollectObjects == CollectObjects2d.Children)
-                {
                     NavMeshBuilder.CollectSources(transform, m_LayerMask, m_UseGeometry, m_DefaultArea, markups, sources);
-                }
                 else if (m_CollectObjects == CollectObjects2d.Volume)
                 {
                     Matrix4x4 localToWorld = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one);
                     var worldBounds = GetWorldBounds(localToWorld, new Bounds(m_Center, m_Size));
                     NavMeshBuilder.CollectSources(worldBounds, m_LayerMask, m_UseGeometry, m_DefaultArea, markups, sources);
                 }
+
                 if (!hideEditorLogs && !Mathf.Approximately(transform.eulerAngles.x, 270f))
                     Debug.LogWarning("NavMeshSurface2d is not rotated respectively to (x-90;y0;z0). Apply rotation unless intended.");
                 var builder = new NavMeshBuilder2dState();
@@ -411,11 +409,12 @@ namespace UnityEngine.AI
                 builder.hideEditorLogs = hideEditorLogs;
                 NavMeshBuilder2d.CollectSources(sources, builder);
             }
+
             if (m_IgnoreNavMeshAgent)
-                sources.RemoveAll((x) => x.component != null && x.component.gameObject.GetComponent<NavMeshAgent>() != null);
+                sources.RemoveAll(x => x.component != null && x.component.gameObject.GetComponent<NavMeshAgent>() != null);
 
             if (m_IgnoreNavMeshObstacle)
-                sources.RemoveAll((x) => x.component != null && x.component.gameObject.GetComponent<NavMeshObstacle>() != null);
+                sources.RemoveAll(x => x.component != null && x.component.gameObject.GetComponent<NavMeshObstacle>() != null);
 
             AppendModifierVolumes(ref sources);
 
@@ -444,27 +443,24 @@ namespace UnityEngine.AI
             worldToLocal = worldToLocal.inverse;
             var result = new Bounds();
             if (collectObjects != CollectObjects2d.Children)
-            {
                 result.Encapsulate(CalculateGridWorldBounds(worldToLocal));
-            }
 
             foreach (var src in sources)
-            {
                 switch (src.shape)
                 {
                     case NavMeshBuildSourceShape.Mesh:
-                        {
-                            var m = src.sourceObject as Mesh;
-                            result.Encapsulate(GetWorldBounds(worldToLocal * src.transform, m.bounds));
-                            break;
-                        }
+                    {
+                        var m = src.sourceObject as Mesh;
+                        result.Encapsulate(GetWorldBounds(worldToLocal * src.transform, m.bounds));
+                        break;
+                    }
                     case NavMeshBuildSourceShape.Terrain:
-                        {
-                            // Terrain pivot is lower/left corner - shift bounds accordingly
-                            var t = src.sourceObject as TerrainData;
-                            result.Encapsulate(GetWorldBounds(worldToLocal * src.transform, new Bounds(0.5f * t.size, t.size)));
-                            break;
-                        }
+                    {
+                        // Terrain pivot is lower/left corner - shift bounds accordingly
+                        var t = src.sourceObject as TerrainData;
+                        result.Encapsulate(GetWorldBounds(worldToLocal * src.transform, new Bounds(0.5f * t.size, t.size)));
+                        break;
+                    }
                     case NavMeshBuildSourceShape.Box:
                     case NavMeshBuildSourceShape.Sphere:
                     case NavMeshBuildSourceShape.Capsule:
@@ -472,7 +468,7 @@ namespace UnityEngine.AI
                         result.Encapsulate(GetWorldBounds(worldToLocal * src.transform, new Bounds(Vector3.zero, src.size)));
                         break;
                 }
-            }
+
             // Inflate the bounds a bit to avoid clipping co-planar sources
             result.Expand(0.1f);
             return result;
@@ -484,10 +480,7 @@ namespace UnityEngine.AI
             var grid = FindObjectOfType<Grid>();
             var tilemaps = grid.GetComponentsInChildren<Tilemap>();
             if (tilemaps == null || tilemaps.Length < 1)
-            {
-
                 throw new NullReferenceException("Add at least one tilemap");
-            }
             foreach (var tilemap in tilemaps)
             {
                 //Debug.Log($"From Local Bounds [{tilemap.name}]: {tilemap.localBounds}");
@@ -495,6 +488,7 @@ namespace UnityEngine.AI
                 bounds.Encapsulate(lbounds);
                 //Debug.Log($"To World Bounds: {bounds}");
             }
+
             bounds.Expand(0.1f);
             return bounds;
         }
@@ -529,14 +523,14 @@ namespace UnityEngine.AI
                 return false;
 
             // An instance can share asset reference only with its prefab parent
-            var prefab = UnityEditor.PrefabUtility.GetCorrespondingObjectFromSource(this) as NavMeshSurface2d;
+            var prefab = PrefabUtility.GetCorrespondingObjectFromSource(this);
             if (prefab != null && prefab.navMeshData == navMeshData)
                 return false;
 
             // Don't allow referencing an asset that's assigned to another surface
-            for (var i = 0; i < s_NavMeshSurfaces.Count; ++i)
+            for (var i = 0; i < activeSurfaces.Count; ++i)
             {
-                var surface = s_NavMeshSurfaces[i];
+                var surface = activeSurfaces[i];
                 if (surface != this && surface.m_NavMeshData == m_NavMeshData)
                     return true;
             }

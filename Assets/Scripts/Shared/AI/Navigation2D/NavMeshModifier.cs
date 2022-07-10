@@ -9,34 +9,35 @@ namespace UnityEngine.AI
     {
         [SerializeField]
         bool m_OverrideArea;
+
         public bool overrideArea { get => m_OverrideArea; set => m_OverrideArea = value; }
 
         [SerializeField]
         int m_Area;
+
         public int area { get => m_Area; set => m_Area = value; }
 
         [SerializeField]
         bool m_IgnoreFromBuild;
+
         public bool ignoreFromBuild { get => m_IgnoreFromBuild; set => m_IgnoreFromBuild = value; }
 
         // List of agent types the modifier is applied for.
         // Special values: empty == None, m_AffectedAgents[0] =-1 == All.
         [SerializeField]
-        List<int> m_AffectedAgents = new(new[] { -1 });    // Default value is All
+        List<int> m_AffectedAgents = new(new[] {-1}); // Default value is All
 
-        static readonly List<NavMeshModifier> s_NavMeshModifiers = new();
-
-        public static List<NavMeshModifier> activeModifiers => s_NavMeshModifiers;
+        public static List<NavMeshModifier> activeModifiers { get; } = new();
 
         void OnEnable()
         {
-            if (!s_NavMeshModifiers.Contains(this))
-                s_NavMeshModifiers.Add(this);
+            if (!activeModifiers.Contains(this))
+                activeModifiers.Add(this);
         }
 
         void OnDisable()
         {
-            s_NavMeshModifiers.Remove(this);
+            activeModifiers.Remove(this);
         }
 
         public bool AffectsAgentType(int agentTypeID)

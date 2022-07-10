@@ -21,7 +21,7 @@ namespace UnityEngine.AI
         public CollectObjects2d CollectObjects;
         public GameObject parent;
         public bool hideEditorLogs;
-        
+
         public IEnumerable<GameObject> Root => _root ?? GetRoot();
         protected IEnumerable<GameObject> _root;
 
@@ -36,15 +36,14 @@ namespace UnityEngine.AI
         {
             Mesh mesh;
             if (map.ContainsKey(sprite))
-            {
                 mesh = map[sprite];
-            }
             else
             {
                 mesh = new Mesh();
                 NavMeshBuilder2d.Sprite2Mesh(sprite, mesh);
                 map.Add(sprite, mesh);
             }
+
             return mesh;
         }
 
@@ -53,28 +52,27 @@ namespace UnityEngine.AI
             Mesh mesh;
             uint hash = collider.GetShapeHash();
             if (coliderMap.ContainsKey(hash))
-            {
                 mesh = coliderMap[hash];
-            }
             else
             {
                 mesh = collider.CreateMesh(false, false);
                 coliderMap.Add(hash, mesh);
             }
+
             return mesh;
         }
-        
+
         public void SetRoot(IEnumerable<GameObject> root)
         {
             _root = root;
         }
-        
+
         public IEnumerable<GameObject> GetRoot()
         {
             switch (CollectObjects)
             {
-                case CollectObjects2d.Children: return new[] { parent };
-                case CollectObjects2d.Volume: 
+                case CollectObjects2d.Children: return new[] {parent};
+                case CollectObjects2d.Volume:
                 case CollectObjects2d.All:
                 default:
                 {
@@ -86,6 +84,7 @@ namespace UnityEngine.AI
                         s.GetRootGameObjects(list);
                         testlist.AddRange(list);
                     }
+
                     return testlist;
                 }
             }
@@ -98,9 +97,11 @@ namespace UnityEngine.AI
         {
             foreach (GameObject it in builder.Root)
             {
-                if(!it.activeSelf){continue;}
+                if (!it.activeSelf)
+                    continue;
                 CollectSources(it, sources, builder);
             }
+
             if (!builder.hideEditorLogs) Debug.Log("Sources " + sources.Count);
         }
 
@@ -149,11 +150,11 @@ namespace UnityEngine.AI
             var tilemap = modifier.GetComponent<Tilemap>();
             if (tilemap == null)
                 return;
-            
+
             if (builder.compressBounds)
                 tilemap.CompressBounds();
 
-            if (!builder.hideEditorLogs) 
+            if (!builder.hideEditorLogs)
                 Debug.Log($"Walkable Bounds [{tilemap.name}]: {tilemap.localBounds}");
             NavMeshBuildSource box = BoxBoundSource(NavMeshSurface2d.GetWorldBounds(tilemap.transform.localToWorldMatrix, tilemap.localBounds));
             box.area = builder.defaultArea;
@@ -167,15 +168,19 @@ namespace UnityEngine.AI
             Mesh mesh = builder.GetMesh(spriteRenderer.sprite);
             if (mesh == null)
             {
-                if (!builder.hideEditorLogs) 
+                if (!builder.hideEditorLogs)
                     Debug.Log($"{spriteRenderer.name} mesh is null");
                 return;
             }
-            var src = new NavMeshBuildSource {
-                shape = NavMeshBuildSourceShape.Mesh, 
-                component = spriteRenderer, 
-                area = area, 
-                transform = Matrix4x4.TRS(Vector3.Scale(spriteRenderer.transform.position, builder.overrideVector), spriteRenderer.transform.rotation, spriteRenderer.transform.lossyScale),
+
+            var src = new NavMeshBuildSource
+            {
+                shape = NavMeshBuildSourceShape.Mesh,
+                component = spriteRenderer,
+                area = area,
+                transform = Matrix4x4.TRS(
+                    Vector3.Scale(spriteRenderer.transform.position, builder.overrideVector), spriteRenderer.transform.rotation,
+                    spriteRenderer.transform.lossyScale),
                 sourceObject = mesh
             };
             sources.Add(src);
@@ -184,25 +189,28 @@ namespace UnityEngine.AI
         }
 
         public static void CollectSources(List<NavMeshBuildSource> sources, Collider2D collider, int area, NavMeshBuilder2dState builder)
-        { 
+        {
             if (collider.usedByComposite)
                 collider = collider.GetComponent<CompositeCollider2D>();
 
             Mesh mesh = builder.GetMesh(collider);
             if (mesh == null)
             {
-                if (!builder.hideEditorLogs) 
+                if (!builder.hideEditorLogs)
                     Debug.Log($"{collider.name} mesh is null");
                 return;
             }
 
-            var src = new NavMeshBuildSource {
-                shape = NavMeshBuildSourceShape.Mesh, 
-                area = area, 
-                component = collider, 
+            var src = new NavMeshBuildSource
+            {
+                shape = NavMeshBuildSourceShape.Mesh,
+                area = area,
+                component = collider,
                 sourceObject = mesh,
-                transform = collider.attachedRigidbody 
-                    ? Matrix4x4.TRS(Vector3.Scale(collider.attachedRigidbody.transform.position, builder.overrideVector), collider.attachedRigidbody.transform.rotation, Vector3.one) 
+                transform = collider.attachedRigidbody
+                    ? Matrix4x4.TRS(
+                        Vector3.Scale(collider.attachedRigidbody.transform.position, builder.overrideVector),
+                        collider.attachedRigidbody.transform.rotation, Vector3.one)
                     : Matrix4x4.identity
             };
 
@@ -228,7 +236,7 @@ namespace UnityEngine.AI
                 size = builder.useMeshPrefab.transform.localScale;
                 rot = builder.useMeshPrefab.transform.rotation;
             }
-            
+
             for (int i = bound.xMin; i < bound.xMax; i++)
             {
                 for (int j = bound.yMin; j < bound.yMax; j++)
@@ -246,14 +254,17 @@ namespace UnityEngine.AI
             }
         }
 
-        static void CollectTile(Tilemap tilemap, NavMeshBuilder2dState builder, Vector3Int vec3int, Vector3 size, Mesh sharedMesh, Quaternion rot, ref NavMeshBuildSource src)
+        static void CollectTile(
+            Tilemap tilemap, NavMeshBuilder2dState builder, Vector3Int vec3int, Vector3 size, Mesh sharedMesh, Quaternion rot,
+            ref NavMeshBuildSource src
+        )
         {
             if (!builder.overrideByGrid && tilemap.GetColliderType(vec3int) == Tile.ColliderType.Sprite)
             {
                 Sprite sprite = tilemap.GetSprite(vec3int);
                 if (sprite == null)
                     return;
-                
+
                 Mesh mesh = builder.GetMesh(sprite);
                 src.component = tilemap;
                 src.transform = GetCellTransformMatrix(tilemap, builder.overrideVector, vec3int);
@@ -276,16 +287,18 @@ namespace UnityEngine.AI
 
         public static Matrix4x4 GetCellTransformMatrix(Tilemap tilemap, Vector3 scale, Vector3Int vec3int)
         {
-            return Matrix4x4.TRS(Vector3.Scale(tilemap.GetCellCenterWorld(vec3int), scale) - tilemap.layoutGrid.cellGap, tilemap.transform.rotation, tilemap.transform.lossyScale) * tilemap.orientationMatrix * tilemap.GetTransformMatrix(vec3int);
+            return Matrix4x4.TRS(
+                       Vector3.Scale(tilemap.GetCellCenterWorld(vec3int), scale) - tilemap.layoutGrid.cellGap, tilemap.transform.rotation,
+                       tilemap.transform.lossyScale)
+                   * tilemap.orientationMatrix
+                   * tilemap.GetTransformMatrix(vec3int);
         }
 
         internal static void Sprite2Mesh(Sprite sprite, Mesh mesh)
         {
             var vert = new Vector3[sprite.vertices.Length];
             for (int i = 0; i < sprite.vertices.Length; i++)
-            {
                 vert[i] = new Vector3(sprite.vertices[i].x, sprite.vertices[i].y, 0);
-            }
             mesh.vertices = vert;
             mesh.uv = sprite.uv;
             int[] tri = new int[sprite.triangles.Length];
@@ -298,10 +311,7 @@ namespace UnityEngine.AI
         {
             return new NavMeshBuildSource
             {
-                transform = Matrix4x4.Translate(localBounds.center), 
-                shape = NavMeshBuildSourceShape.Box, 
-                size = localBounds.size, 
-                area = 0
+                transform = Matrix4x4.Translate(localBounds.center), shape = NavMeshBuildSourceShape.Box, size = localBounds.size, area = 0
             };
         }
     }

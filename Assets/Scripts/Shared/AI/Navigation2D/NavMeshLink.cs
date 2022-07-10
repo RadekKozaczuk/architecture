@@ -10,37 +10,101 @@ namespace UnityEngine.AI
     {
         [SerializeField]
         int m_AgentTypeID;
-        public int agentTypeID { get => m_AgentTypeID; set { m_AgentTypeID = value; UpdateLink(); } }
+
+        public int agentTypeID
+        {
+            get => m_AgentTypeID;
+            set
+            {
+                m_AgentTypeID = value;
+                UpdateLink();
+            }
+        }
 
         [SerializeField]
         Vector3 m_StartPoint = new(0.0f, 0.0f, -2.5f);
-        public Vector3 startPoint { get => m_StartPoint; set { m_StartPoint = value; UpdateLink(); } }
+
+        public Vector3 startPoint
+        {
+            get => m_StartPoint;
+            set
+            {
+                m_StartPoint = value;
+                UpdateLink();
+            }
+        }
 
         [SerializeField]
         Vector3 m_EndPoint = new(0.0f, 0.0f, 2.5f);
-        public Vector3 endPoint { get => m_EndPoint; set { m_EndPoint = value; UpdateLink(); } }
+
+        public Vector3 endPoint
+        {
+            get => m_EndPoint;
+            set
+            {
+                m_EndPoint = value;
+                UpdateLink();
+            }
+        }
 
         [SerializeField]
         float m_Width;
-        public float width { get => m_Width; set { m_Width = value; UpdateLink(); } }
+
+        public float width
+        {
+            get => m_Width;
+            set
+            {
+                m_Width = value;
+                UpdateLink();
+            }
+        }
 
         [SerializeField]
         int m_CostModifier = -1;
-        public int costModifier { get => m_CostModifier; set { m_CostModifier = value; UpdateLink(); } }
+
+        public int costModifier
+        {
+            get => m_CostModifier;
+            set
+            {
+                m_CostModifier = value;
+                UpdateLink();
+            }
+        }
 
         [SerializeField]
         bool m_Bidirectional = true;
-        public bool bidirectional { get => m_Bidirectional; set { m_Bidirectional = value; UpdateLink(); } }
+
+        public bool bidirectional
+        {
+            get => m_Bidirectional;
+            set
+            {
+                m_Bidirectional = value;
+                UpdateLink();
+            }
+        }
 
         [SerializeField]
         bool m_AutoUpdatePosition;
+
         public bool autoUpdate { get => m_AutoUpdatePosition; set => SetAutoUpdate(value); }
 
         [SerializeField]
         int m_Area;
-        public int area { get => m_Area; set { m_Area = value; UpdateLink(); } }
 
-        NavMeshLinkInstance m_LinkInstance = new();
+        public int area
+        {
+            get => m_Area;
+            set
+            {
+                m_Area = value;
+                UpdateLink();
+            }
+        }
+
+        NavMeshLinkInstance m_LinkInstance;
 
         Vector3 m_LastPosition = Vector3.zero;
         Quaternion m_LastRotation = Quaternion.identity;
@@ -142,10 +206,8 @@ namespace UnityEngine.AI
         static void UpdateTrackedInstances()
         {
             foreach (var instance in s_Tracked)
-            {
                 if (instance.HasTransformChanged())
                     instance.UpdateLink();
-            }
         }
 
 #if UNITY_EDITOR
@@ -159,13 +221,9 @@ namespace UnityEngine.AI
             UpdateLink();
 
             if (!m_AutoUpdatePosition)
-            {
                 RemoveTracking(this);
-            }
             else if (!s_Tracked.Contains(this))
-            {
                 AddTracking(this);
-            }
         }
 #endif
     }

@@ -9,7 +9,7 @@ namespace NavMeshComponents.Extensions
         public Matrix4x4 worldToLocal;
         public Bounds worldBounds;
         public IEnumerable<GameObject> roots;
-        
+
         public T GetExtraState<T>() where T : class, new()
         {
             _mExtraState ??= new Dictionary<Type, object>();

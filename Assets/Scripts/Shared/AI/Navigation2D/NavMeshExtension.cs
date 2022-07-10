@@ -1,15 +1,17 @@
 ﻿using System.Collections.Generic;
+using UnityEditor.Callbacks;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace NavMeshComponents.Extensions
 {
-    public abstract class NavMeshExtension: MonoBehaviour
+    public abstract class NavMeshExtension : MonoBehaviour
     {
         public int Order { get; protected set; }
         public virtual void CollectSources(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navNeshState) { }
         public virtual void CalculateWorldBounds(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navNeshState) { }
         public virtual void PostCollectSources(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navNeshState) { }
+
         public NavMeshSurface NavMeshSurfaceOwner
         {
             get
@@ -19,6 +21,7 @@ namespace NavMeshComponents.Extensions
                 return m_navMeshOwner;
             }
         }
+
         NavMeshSurface m_navMeshOwner;
 
         protected virtual void Awake()
@@ -26,7 +29,7 @@ namespace NavMeshComponents.Extensions
             ConnectToVcam(true);
         }
 #if UNITY_EDITOR
-        [UnityEditor.Callbacks.DidReloadScripts]
+        [DidReloadScripts]
         static void OnScriptReload()
         {
             var extensions = Resources.FindObjectsOfTypeAll(
@@ -36,18 +39,18 @@ namespace NavMeshComponents.Extensions
         }
 #endif
         protected virtual void OnEnable() { }
-        
+
         protected virtual void OnDestroy()
         {
             ConnectToVcam(false);
         }
-        
+
         protected virtual void ConnectToVcam(bool connect)
         {
             if (connect && NavMeshSurfaceOwner == null)
                 Debug.LogError("NevMeshExtension requires a NavMeshSurface component");
             if (NavMeshSurfaceOwner == null)
-                
+
                 return;
             if (connect)
                 NavMeshSurfaceOwner.NevMeshExtensions.Add(this, Order);

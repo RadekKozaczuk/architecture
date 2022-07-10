@@ -6,7 +6,7 @@ namespace NavMeshComponents.Extensions
 {
     [ExecuteAlways]
     [AddComponentMenu("Navigation/NavMeshCollectRootSources2d", 30)]
-    public class NavMeshCollectRootSources2d: NavMeshExtension
+    public class NavMeshCollectRootSources2d : NavMeshExtension
     {
         [SerializeField]
         List<GameObject> _rootSources;
