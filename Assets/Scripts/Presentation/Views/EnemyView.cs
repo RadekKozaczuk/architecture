@@ -19,9 +19,9 @@ namespace Presentation.Views
         NavMeshAgent _agent;
         
         NavMeshNavigationController _navMeshNavigationController;
-        StateMachineCharacterController _stateMachineCharacterController;
+        protected StateMachineCharacterController _stateMachineCharacterController;
 
-        bool _initialize;
+        protected bool _initialize;
         
         public void CustomUpdate()
         {

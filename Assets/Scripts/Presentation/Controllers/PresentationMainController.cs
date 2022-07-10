@@ -21,7 +21,8 @@ namespace Presentation.Controllers
 
         public void CustomUpdate()
         {
-            PresentationSceneReferenceHolder.Enemy.CustomUpdate();
+            PresentationSceneReferenceHolder.Wolf1.CustomUpdate();
+            PresentationSceneReferenceHolder.Wolf2.CustomUpdate();
         }
         
         public void CustomFixedUpdate() { }

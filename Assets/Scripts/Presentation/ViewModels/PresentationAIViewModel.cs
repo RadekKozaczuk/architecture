@@ -1,5 +1,5 @@
 ﻿using Presentation.Views;
-using Shared.AI.Actions;
+using Shared;
 using Shared.AI.NavigationTargets;
 using UnityEngine;
 using UnityEngine.Scripting;
@@ -13,22 +13,21 @@ namespace Presentation.ViewModels
         {
             
         }
-        
+
         /// <summary>
         /// This constantly follows player with no end goal. Just follows till the end of time.
         /// Has to be cancelled explicitly.
         /// </summary>
-        /// <param name="agentId"></param>
+        /// <param name="enemyView"></param>
         /// <param name="approachDistance"></param>
-        static void FollowPlayerTarget(int agentId, float approachDistance = 2f)
+        static void FollowPlayerTarget(EnemyView enemyView, float approachDistance = 2f)
         {
             // TODO: use the id
             
-            EnemyView view = PresentationSceneReferenceHolder.Enemy;
             Transform target = PresentationSceneReferenceHolder.Target;
 
             var navigationTarget = new OffsetNavigationTarget(new TransformNavigationTarget(target, false), approachDistance);
-            view.SetTransitionToFollowAction(navigationTarget, .2f);
+            enemyView.SetTransitionToFollowAction(navigationTarget, .2f);
         }
 
         /// <summary>
@@ -39,7 +38,7 @@ namespace Presentation.ViewModels
             Debug.Log("rotate called");
             
             // TODO: use the id
-            EnemyView view = PresentationSceneReferenceHolder.Enemy;
+            EnemyView view = PresentationSceneReferenceHolder.Wolf1;
             Transform target = PresentationSceneReferenceHolder.Target;
 
             var lookAtTarget = new LookAtTarget(target, 5f);
@@ -56,22 +55,29 @@ namespace Presentation.ViewModels
             EnemyView view = PresentationData.Enemy;
             view.FinishCurrentAction();
         }
-        
+
         /// <summary>
         /// This action ends one the target is reached
         /// </summary>
-        /// <param name="agentId"></param>
+        /// <param name="enemyView"></param>
         /// <param name="targetId"></param>
         /// <param name="approachDistance"></param>
-        public static void GoAndFaceTargetWithOffset(int agentId, int targetId, float approachDistance)
+        /// <param name="approachAngle"></param>
+        /// <param name="targetRelativeYaw"></param>
+        internal static void GoAndFaceTargetWithOffset(EnemyView enemyView, int targetId, float approachDistance, float approachAngle = 0f, float targetRelativeYaw = 0f)
         {
-            EnemyView view = PresentationSceneReferenceHolder.Enemy; // should be based on agent Id
+            Assert.True(approachDistance >= 0, "ApproachDistance cannot be lower than 0.");
+            Assert.True(approachAngle is >= 0 and <= 360, "ApproachAngle must be a value from 0 to 360.");
+            Assert.True(targetRelativeYaw is >= 0 and <= 360, "TargetRelativeYaw must be a value from 0 to 360.");
+            
             Transform target = PresentationSceneReferenceHolder.Target; // should be based on targetId
             
+            // TODO: to trzeba zrobic jako jeden po prostu niech tranform ma te dodatkowe parametry nie ma sensu opakowywac go
+            // TODO: to strasznie nie czytelne
             var navigationTarget = new OffsetNavigationTarget(
-                new TransformNavigationTarget(target, true), approachDistance, 120, 180);
+                new TransformNavigationTarget(target, true), approachDistance, approachAngle, targetRelativeYaw);
 
-            view.SetTransitionToAction(navigationTarget, 1f);
+            enemyView.SetTransitionToAction(navigationTarget, 1f);
         }
     }
 }

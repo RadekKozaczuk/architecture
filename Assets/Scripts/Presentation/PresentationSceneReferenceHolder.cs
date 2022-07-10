@@ -9,7 +9,8 @@ namespace Presentation
 
         internal static Transform VfxContainer;
         internal static Light Light;
-        internal static EnemyView Enemy;
+        internal static WolfView Wolf1;
+        internal static WolfView Wolf2;
         internal static Transform Target;
 
         [SerializeField]
@@ -22,7 +23,10 @@ namespace Presentation
         Light _light;
         
         [SerializeField]
-        EnemyView _enemy;
+        WolfView _wolf1;
+        
+        [SerializeField]
+        WolfView _wolf2;
         
         [SerializeField]
         Transform _target;
@@ -33,7 +37,8 @@ namespace Presentation
             VfxContainer = _vfxContainer;
             
             Light = _light;
-            Enemy = _enemy;
+            Wolf1 = _wolf1;
+            Wolf2 = _wolf2;
             Target = _target;
         }
     }

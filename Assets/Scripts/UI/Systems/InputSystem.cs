@@ -12,9 +12,14 @@ namespace UI.Systems
             if (!IsActive)
                 return;
 
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Alpha1))
             {
-                PresentationViewModel.Troll();
+                PresentationViewModel.FirstWolfGo();
+            }
+            
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                PresentationViewModel.SecondWolfGo();
             }
             
             /*if (Input.GetKeyDown(KeyCode.Escape))
