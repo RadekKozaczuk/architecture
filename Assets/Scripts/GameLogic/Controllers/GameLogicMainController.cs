@@ -30,17 +30,10 @@ namespace GameLogic.Controllers
         static readonly GameplayConfig _gameplayConfig;
 
         [Preserve]
-        GameLogicMainController()
-        {
-            
-        }
-        
-#region Unity life-cycle methods
+        GameLogicMainController() { }
+
         [UsedImplicitly]
-        public void Initialize()
-        {
-            SignalProcessor.AddReactiveController(this);
-        }
+        public void Initialize() => SignalProcessor.AddReactiveController(this);
 
         public void CustomUpdate()
         {
@@ -55,7 +48,6 @@ namespace GameLogic.Controllers
             if (GameStateSystem.CurrentState == GameState.Booting)
                 return;
         }
-#endregion
 
         [React]
         void OnMissionFailed(MissionFailedSignal _) { }
