@@ -4,8 +4,6 @@ namespace Common
 {
     public class CommonInstaller : Installer
     {
-        public override void InstallBindings()
-        {
-        }
+        public override void InstallBindings() { }
     }
 }

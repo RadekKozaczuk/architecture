@@ -26,7 +26,7 @@ namespace Common
             if (withChildren)
             {
                 Transform transform = gameObject.transform;
-                for (int i = 0 ; i < transform.childCount ; i++)
+                for (int i = 0; i < transform.childCount; i++)
                     ChangeLayer(transform.GetChild(i).gameObject, layer);
             }
         }
