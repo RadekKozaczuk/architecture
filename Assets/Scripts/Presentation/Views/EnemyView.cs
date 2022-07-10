@@ -17,28 +17,28 @@ namespace Presentation.Views
         Animator _animator;
         [SerializeField]
         NavMeshAgent _agent;
-        
+
         NavMeshNavigationController _navMeshNavigationController;
         protected StateMachineCharacterController _stateMachineCharacterController;
 
         protected bool _initialize;
-        
+
         public void CustomUpdate()
         {
             // TODO: dummy solution normally Initialize method is called upon object instantiation
-            if(!_initialize)
+            if (!_initialize)
                 return;
-            
+
             // TODO: change so that only one update is needed - this is needlessly convoluted
             _navMeshNavigationController.CustomUpdate();
             _stateMachineCharacterController.CustomUpdate();
         }
-        
+
         internal void Initialize()
         {
             // TODO: dummy solution normally Initialize method is called upon object instantiation
             _initialize = true;
-            
+
             _navMeshNavigationController = new NavMeshNavigationController(_agent);
             _stateMachineCharacterController = new StateMachineCharacterController(_navMeshNavigationController);
 
@@ -47,7 +47,7 @@ namespace Presentation.Views
             _stateMachineCharacterController.OnActionFinished += HandleActionFinished;
             _stateMachineCharacterController.OnActionFailed += HandleActionFailed;
         }
-        
+
         internal void SetTransitionToAction(StaticNavigationTarget navigationTarget)
         {
             _stateMachineCharacterController.StateMachine.TransitionToAction(
@@ -59,7 +59,7 @@ namespace Presentation.Views
             _stateMachineCharacterController.StateMachine.TransitionToAction(
                 new NavigateToTargetAction(_navMeshNavigationController, navigationTarget)
                 {
-                    TargetPathRefreshInterval = TimeSpan.FromSeconds(targetPathRefreshInternal),
+                    TargetPathRefreshInterval = TimeSpan.FromSeconds(targetPathRefreshInternal)
                 });
         }
 
@@ -68,7 +68,7 @@ namespace Presentation.Views
             _stateMachineCharacterController.StateMachine.TransitionToAction(
                 new FollowTargetAction(_navMeshNavigationController, navigationTarget)
                 {
-                    TargetPathRefreshInterval = TimeSpan.FromSeconds(targetPathRefreshInternal),
+                    TargetPathRefreshInterval = TimeSpan.FromSeconds(targetPathRefreshInternal)
                 });
         }
 
@@ -76,7 +76,7 @@ namespace Presentation.Views
         {
             _stateMachineCharacterController.StateMachine.CurrentAction?.Finish();
         }
-        
+
         void HandleActionStateChanged([NotNull] StateMachineCharacterController sender, [NotNull] StateMachineActionBase action)
         {
             Debug.Log("ActionStateChanged");

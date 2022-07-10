@@ -3,7 +3,6 @@ using JetBrains.Annotations;
 using Presentation.Controllers;
 using Shared.DependencyInjector;
 using Shared.DependencyInjector.Interfaces;
-using UnityEngine;
 
 namespace Presentation.ViewModels
 {
@@ -22,12 +21,12 @@ namespace Presentation.ViewModels
         {
             _instance = this;
         }
-        
+
         public static void CustomUpdate()
         {
             _instance._presentationMainController.CustomUpdate();
         }
-        
+
         public void PlayMusic(Music music)
         {
             _audioController.Play(music);
@@ -41,7 +40,7 @@ namespace Presentation.ViewModels
 
             PresentationSceneReferenceHolder.Wolf1.DoWolfieThings();
         }
-        
+
         public static void SecondWolfGo()
         {
             PresentationSceneReferenceHolder.Wolf2.Initialize();
@@ -50,10 +49,7 @@ namespace Presentation.ViewModels
 
             PresentationSceneReferenceHolder.Wolf2.DoWolfieThings();
         }
-        
-        public static void OnCoreSceneLoaded()
-        {
-            
-        }
+
+        public static void OnCoreSceneLoaded() { }
     }
 }

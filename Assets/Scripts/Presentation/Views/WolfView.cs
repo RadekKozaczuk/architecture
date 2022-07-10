@@ -9,13 +9,19 @@ namespace Presentation.Views
 {
     class WolfView : EnemyView
     {
-        enum WolfAIState { IsGoingTowardsPlayer, IsChargingJump, IsPerformingJump, IsThinkingWhatNext}
+        enum WolfAIState
+        {
+            IsGoingTowardsPlayer,
+            IsChargingJump,
+            IsPerformingJump,
+            IsThinkingWhatNext
+        }
 
         WolfAIState _state;
         float _timer;
 
         Vector3 _dirVec;
-        
+
         internal new void Initialize()
         {
             base.Initialize();
@@ -27,17 +33,16 @@ namespace Presentation.Views
             base.CustomUpdate();
 
             // TODO: dummy solution normally Initialize method is called upon object instantiation
-            if(!_initialize)
+            if (!_initialize)
                 return;
-            
+
             switch (_state)
             {
                 case WolfAIState.IsGoingTowardsPlayer:
-                    
-                
-                case WolfAIState.IsChargingJump: 
+
+                case WolfAIState.IsChargingJump:
                     // TODO: add here some animation of barking dog 
-                
+
                     _timer -= Time.deltaTime;
                     if (_timer > 0)
                         return;
@@ -53,33 +58,32 @@ namespace Presentation.Views
 
                     // go in this direction for a duration of a second
                     transform.position += _dirVec;
-                    
+
                     _timer -= Time.deltaTime;
                     if (_timer > 0)
                         return;
 
                     _state = WolfAIState.IsThinkingWhatNext;
-                    
+
                     return;
-                case WolfAIState.IsThinkingWhatNext: 
+                case WolfAIState.IsThinkingWhatNext:
                     // probably just go again towards player
                     // or maybe if damage start skomlec ane go away somewhere
                     return;
                 default: throw new ArgumentOutOfRangeException();
             }
         }
-        
+
         internal void DoWolfieThings()
         {
             float approachDistance = Random.Range(10f, 20f);
             float approachAngle = Random.Range(0f, 360f);
-            
+
             Transform target = PresentationSceneReferenceHolder.Target; // should be based on targetId
-            
+
             // TODO: to trzeba zrobic jako jeden po prostu niech tranform ma te dodatkowe parametry nie ma sensu opakowywac go
             // TODO: to strasznie nie czytelne
-            var navigationTarget = new OffsetNavigationTarget(
-                new TransformNavigationTarget(target, true), approachDistance, approachAngle);
+            var navigationTarget = new OffsetNavigationTarget(new TransformNavigationTarget(target, true), approachDistance, approachAngle);
 
             SetTransitionToAction(navigationTarget, 1f);
         }
@@ -93,6 +97,5 @@ namespace Presentation.Views
             _state = WolfAIState.IsChargingJump;
             _timer = 1f; // TODO: should be taken from the config
         }
-        
     }
 }

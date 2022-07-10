@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using Presentation.Config;
 using Presentation.Views;
-using Shared.DependencyInjector;
 using Shared.Interfaces;
 using UnityEngine;
 using UnityEngine.Scripting;
@@ -37,7 +36,8 @@ namespace Presentation.Controllers
         {
             internal readonly int Id;
 
-            internal VfxLocalData_Position(int id, VFXView vfx, float? timeLeft = null) : base(vfx, timeLeft)
+            internal VfxLocalData_Position(int id, VFXView vfx, float? timeLeft = null)
+                : base(vfx, timeLeft)
             {
                 Id = id;
             }
@@ -53,11 +53,8 @@ namespace Presentation.Controllers
         static int _idCounter;
 
         [Preserve]
-        VFXController()
-        {
-            
-        }
-        
+        VFXController() { }
+
         public void CustomLateUpdate()
         {
             _vfxsAtPositions.RemoveAll(HasExpired);

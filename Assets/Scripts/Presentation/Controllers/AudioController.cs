@@ -2,7 +2,6 @@ using Common.Enums;
 using Common.Signals;
 using JetBrains.Annotations;
 using Presentation.Config;
-using Shared.DependencyInjector;
 using Shared.DependencyInjector.Interfaces;
 using Shared.SignalProcessing;
 using UnityEngine;
@@ -17,11 +16,8 @@ namespace Presentation.Controllers
         static readonly AudioConfig _config;
 
         [Preserve]
-        AudioController()
-        {
-            
-        }
-        
+        AudioController() { }
+
         public void Initialize()
         {
             SignalProcessor.AddReactiveController(this);
@@ -30,12 +26,12 @@ namespace Presentation.Controllers
         internal void Play(Sound sound)
         {
             // TODO: should be instantiated in a container
-            InstantiateAudioObject(Vector3.zero, _config.Sounds[(int) sound]);
+            InstantiateAudioObject(Vector3.zero, _config.Sounds[(int)sound]);
         }
 
         internal void Play(Music music)
         {
-            InstantiateAudioObject(Vector3.zero, _config.Music[(int) music]);
+            InstantiateAudioObject(Vector3.zero, _config.Music[(int)music]);
         }
 
         void Play(Vector3 position)

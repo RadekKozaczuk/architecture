@@ -12,11 +12,8 @@ namespace Presentation.Controllers
         static readonly VFXController _vfxController;
 
         [Preserve]
-        PresentationMainController()
-        {
-            
-        }
-        
+        PresentationMainController() { }
+
         public void Initialize() { }
 
         public void CustomUpdate()
@@ -24,7 +21,7 @@ namespace Presentation.Controllers
             PresentationSceneReferenceHolder.Wolf1.CustomUpdate();
             PresentationSceneReferenceHolder.Wolf2.CustomUpdate();
         }
-        
+
         public void CustomFixedUpdate() { }
 
         public void CustomLateUpdate()

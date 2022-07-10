@@ -1,7 +1,4 @@
 ﻿namespace Presentation.Views
 {
-    public class AbstractAgentView
-    {
-        
-    }
+    public class AbstractAgentView { }
 }

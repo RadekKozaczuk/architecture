@@ -21,13 +21,13 @@ namespace Presentation
 
         [SerializeField]
         Light _light;
-        
+
         [SerializeField]
         WolfView _wolf1;
-        
+
         [SerializeField]
         WolfView _wolf2;
-        
+
         [SerializeField]
         Transform _target;
 
@@ -35,7 +35,7 @@ namespace Presentation
         {
             AudioListener = _audioListener;
             VfxContainer = _vfxContainer;
-            
+
             Light = _light;
             Wolf1 = _wolf1;
             Wolf2 = _wolf2;

@@ -10,7 +10,7 @@ namespace Presentation.Views
 
         internal void Play()
         {
-            for (int i = 0 ; i < _particleSystems.Count ; i++)
+            for (int i = 0; i < _particleSystems.Count; i++)
                 _particleSystems[i].Play();
         }
     }
