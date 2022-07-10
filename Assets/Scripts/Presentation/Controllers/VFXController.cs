@@ -37,10 +37,8 @@ namespace Presentation.Controllers
             internal readonly int Id;
 
             internal VfxLocalData_Position(int id, VFXView vfx, float? timeLeft = null)
-                : base(vfx, timeLeft)
-            {
+                : base(vfx, timeLeft) =>
                 Id = id;
-            }
         }
 
         static readonly VFXConfig _config;

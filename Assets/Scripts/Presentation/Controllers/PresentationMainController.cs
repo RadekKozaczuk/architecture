@@ -24,10 +24,7 @@ namespace Presentation.Controllers
 
         public void CustomFixedUpdate() { }
 
-        public void CustomLateUpdate()
-        {
-            _vfxController.CustomLateUpdate();
-        }
+        public void CustomLateUpdate() => _vfxController.CustomLateUpdate();
 
         public static void OnCoreSceneLoaded() { }
     }

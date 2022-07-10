@@ -48,56 +48,39 @@ namespace Presentation.Views
             _stateMachineCharacterController.OnActionFailed += HandleActionFailed;
         }
 
-        internal void SetTransitionToAction(StaticNavigationTarget navigationTarget)
-        {
+        internal void SetTransitionToAction(StaticNavigationTarget navigationTarget) =>
             _stateMachineCharacterController.StateMachine.TransitionToAction(
                 new NavigateToTargetAction(_navMeshNavigationController, navigationTarget));
-        }
 
-        internal void SetTransitionToAction(OffsetNavigationTarget navigationTarget, float targetPathRefreshInternal)
-        {
+        internal void SetTransitionToAction(OffsetNavigationTarget navigationTarget, float targetPathRefreshInternal) =>
             _stateMachineCharacterController.StateMachine.TransitionToAction(
                 new NavigateToTargetAction(_navMeshNavigationController, navigationTarget)
                 {
                     TargetPathRefreshInterval = TimeSpan.FromSeconds(targetPathRefreshInternal)
                 });
-        }
 
-        internal void SetTransitionToFollowAction(INavigationTarget navigationTarget, float targetPathRefreshInternal)
-        {
+        internal void SetTransitionToFollowAction(INavigationTarget navigationTarget, float targetPathRefreshInternal) =>
             _stateMachineCharacterController.StateMachine.TransitionToAction(
                 new FollowTargetAction(_navMeshNavigationController, navigationTarget)
                 {
                     TargetPathRefreshInterval = TimeSpan.FromSeconds(targetPathRefreshInternal)
                 });
-        }
 
-        internal void FinishCurrentAction()
-        {
-            _stateMachineCharacterController.StateMachine.CurrentAction?.Finish();
-        }
+        internal void FinishCurrentAction() => _stateMachineCharacterController.StateMachine.CurrentAction?.Finish();
 
-        void HandleActionStateChanged([NotNull] StateMachineCharacterController sender, [NotNull] StateMachineActionBase action)
-        {
+        void HandleActionStateChanged([NotNull] StateMachineCharacterController sender, [NotNull] StateMachineActionBase action) =>
             Debug.Log("ActionStateChanged");
-        }
 
-        void HandleCurrentActionChanged([NotNull] StateMachineCharacterController sender, [NotNull] StateMachineActionBase action)
-        {
+        void HandleCurrentActionChanged([NotNull] StateMachineCharacterController sender, [NotNull] StateMachineActionBase action) =>
             Debug.Log("CurrentActionChanged");
-            //ARSceneReferenceHolder.PlayerNavMeshObstacle.enabled = true;
-        }
 
-        void HandleActionFinished([NotNull] StateMachineCharacterController sender, [NotNull] StateMachineActionBase action)
-        {
+        //ARSceneReferenceHolder.PlayerNavMeshObstacle.enabled = true;
+        void HandleActionFinished([NotNull] StateMachineCharacterController sender, [NotNull] StateMachineActionBase action) =>
             Debug.Log("ActionFinished");
-            // TODO: for now only this one interests us
-            //SignalProcessor.SendSignal(new AIEventSignal(Id, SpecialNpcType));
-        }
 
-        void HandleActionFailed([NotNull] StateMachineCharacterController sender, [NotNull] StateMachineActionBase action)
-        {
+        // TODO: for now only this one interests us
+        //SignalProcessor.SendSignal(new AIEventSignal(Id, SpecialNpcType));
+        void HandleActionFailed([NotNull] StateMachineCharacterController sender, [NotNull] StateMachineActionBase action) =>
             Debug.Log("ActionFailed");
-        }
     }
 }

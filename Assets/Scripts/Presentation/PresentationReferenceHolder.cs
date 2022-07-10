@@ -14,9 +14,6 @@ namespace Presentation
         [Inject]
         PresentationViewModel _viewModel;
 
-        PresentationReferenceHolder()
-        {
-            _instance = this;
-        }
+        PresentationReferenceHolder() => _instance = this;
     }
 }
