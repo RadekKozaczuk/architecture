@@ -8,17 +8,18 @@ namespace NavMeshComponents.Extensions
     [AddComponentMenu("Navigation/NavMeshCacheSources2d", 30)]
     public class NavMeshCacheSources2d : NavMeshExtension
     {
-        Dictionary<Object, NavMeshBuildSource> _lookup;
-        Bounds _sourcesBounds;
         public bool IsDirty { get; protected set; }
-
-        NavMeshBuilder2dState _state;
-
+        
         public int SourcesCount => Cache.Count;
+        
         public int CahcheCount => _lookup.Count;
 
         public List<NavMeshBuildSource> Cache { get; private set; }
-
+        
+        Dictionary<Object, NavMeshBuildSource> _lookup;
+        Bounds _sourcesBounds;
+        NavMeshBuilder2dState _state;
+        
         protected override void Awake()
         {
             _lookup = new Dictionary<Object, NavMeshBuildSource>();
@@ -29,31 +30,31 @@ namespace NavMeshComponents.Extensions
             base.Awake();
         }
 
-        public bool AddSource(GameObject gameObject, NavMeshBuildSource source)
+        public bool AddSource(GameObject go, NavMeshBuildSource source)
         {
-            bool res = _lookup.ContainsKey(gameObject);
+            bool res = _lookup.ContainsKey(go);
             if (res)
-                return UpdateSource(gameObject);
+                return UpdateSource(go);
             Cache.Add(source);
-            _lookup.Add(gameObject, source);
+            _lookup.Add(go, source);
             IsDirty = true;
             return true;
         }
 
-        public bool UpdateSource(GameObject gameObject)
+        public bool UpdateSource(GameObject go)
         {
-            if (!_lookup.ContainsKey(gameObject))
+            if (!_lookup.ContainsKey(go))
                 return false;
             
             IsDirty = true;
-            NavMeshBuildSource source = _lookup[gameObject];
+            NavMeshBuildSource source = _lookup[go];
             int idx = Cache.IndexOf(source);
             if (idx < 0)
                 return true;
                 
-            source.transform = Matrix4x4.TRS(gameObject.transform.position, gameObject.transform.rotation, gameObject.transform.lossyScale);
+            source.transform = Matrix4x4.TRS(go.transform.position, go.transform.rotation, go.transform.lossyScale);
             Cache[idx] = source;
-            _lookup[gameObject] = source;
+            _lookup[go] = source;
 
             return true;
         }
@@ -79,7 +80,7 @@ namespace NavMeshComponents.Extensions
 
         public AsyncOperation UpdateNavMesh()
         {
-            return UpdateNavMesh(NavMeshSurfaceOwner.navMeshData);
+            return UpdateNavMesh(NavMeshSurfaceOwner.NavMeshData);
         }
 
         public override void CollectSources(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navMeshState)

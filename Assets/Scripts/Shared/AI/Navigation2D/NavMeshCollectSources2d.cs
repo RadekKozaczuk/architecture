@@ -27,7 +27,7 @@ namespace NavMeshComponents.Extensions
         
         public override void CalculateWorldBounds(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navNeshState)
         {
-            if (surface.collectObjects != CollectObjects.Volume)
+            if (surface.CollectObjects != CollectObjects.Volume)
                 navNeshState.WorldBounds.Encapsulate(CalculateGridWorldBounds(surface, navNeshState.WorldToLocal, navNeshState.WorldBounds));
         }
 
@@ -48,28 +48,28 @@ namespace NavMeshComponents.Extensions
 
         public override void CollectSources(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navNeshState)
         {
-            if (!surface.hideEditorLogs)
+            if (!surface.HideEditorLogs)
             {
                 if (!Mathf.Approximately(transform.eulerAngles.x, 270f))
                     Debug.LogWarning("NavMeshSurface is not rotated respectively to (x-90;y0;z0). Apply rotation unless intended.");
                 if (Application.isPlaying)
-                    if (surface.useGeometry == NavMeshCollectGeometry.PhysicsColliders && Time.frameCount <= 1)
+                    if (surface.UseGeometry == NavMeshCollectGeometry.PhysicsColliders && Time.frameCount <= 1)
                         Debug.LogWarning(
                             "Use Geometry - Physics Colliders option in NavMeshSurface may cause inaccurate mesh bake if executed before Physics update.");
             }
 
             var builder = navNeshState.GetExtraState<NavMeshBuilder2dState>();
-            builder.defaultArea = surface.defaultArea;
-            builder.layerMask = surface.layerMask;
-            builder.agentID = surface.agentTypeID;
+            builder.defaultArea = surface.DefaultArea;
+            builder.layerMask = surface.LayerMask;
+            builder.agentID = surface.AgentTypeID;
             builder.useMeshPrefab = UseMeshPrefab;
             builder.overrideByGrid = OverrideByGrid;
             builder.compressBounds = CompressBounds;
             builder.overrideVector = OverrideVector;
-            builder.CollectGeometry = surface.useGeometry;
-            builder.CollectObjects = (CollectObjects2d)(int)surface.collectObjects;
+            builder.CollectGeometry = surface.UseGeometry;
+            builder.CollectObjects = (CollectObjects2d)(int)surface.CollectObjects;
             builder.parent = surface.gameObject;
-            builder.hideEditorLogs = surface.hideEditorLogs;
+            builder.hideEditorLogs = surface.HideEditorLogs;
             builder.SetRoot(navNeshState.Roots);
             NavMeshBuilder2d.CollectSources(sources, builder);
         }
