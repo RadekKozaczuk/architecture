@@ -14,11 +14,12 @@ namespace Boot.Controllers
     [UsedImplicitly]
     class FlowController : IInitializable
     {
+        internal static UIMainController UIMainController;
+
         // this is just to make it visible for MainBootController
         // TODO: I don't like this solution
         [Inject]
         readonly UIMainController _uiMainController;
-        internal static UIMainController UIMainController;
 
         [Preserve]
         FlowController() => SceneManager.sceneLoaded += OnSceneLoaded;
