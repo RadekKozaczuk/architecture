@@ -14,9 +14,6 @@ namespace UI
         [Inject]
         UIMainController _mainController;
 
-        UIReferenceHolder()
-        {
-            _instance = this;
-        }
+        UIReferenceHolder() => _instance = this;
     }
 }

@@ -7,10 +7,7 @@ namespace UI.Popups.Views
     {
         internal readonly PopupType Type;
 
-        protected AbstractPopupView(PopupType type)
-        {
-            Type = type;
-        }
+        protected AbstractPopupView(PopupType type) => Type = type;
 
         internal virtual void Close() { }
     }

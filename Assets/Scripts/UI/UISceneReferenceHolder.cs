@@ -9,9 +9,6 @@ namespace UI
         [SerializeField]
         Transform _popupContainer;
 
-        void Awake()
-        {
-            PopupContainer = _popupContainer;
-        }
+        void Awake() => PopupContainer = _popupContainer;
     }
 }

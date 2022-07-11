@@ -11,14 +11,8 @@ namespace UI.Controllers
     class InputHandler : ICustomUpdate
     {
         [Preserve]
-        InputHandler()
-        {
-            
-        }
-        
-        public void CustomUpdate()
-        {
-            
-        }
+        InputHandler() { }
+
+        public void CustomUpdate() { }
     }
 }

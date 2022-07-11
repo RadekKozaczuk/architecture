@@ -13,15 +13,11 @@ namespace UI.Systems
                 return;
 
             if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
                 PresentationViewModel.FirstWolfGo();
-            }
-            
+
             if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
                 PresentationViewModel.SecondWolfGo();
-            }
-            
+
             /*if (Input.GetKeyDown(KeyCode.Escape))
                 Application.Quit();*/
         }

@@ -16,12 +16,8 @@ namespace UI.Controllers
         readonly InputHandler _inputHandler;
 
         [Preserve]
-        UIMainController()
-        {
-            
-        }
-        
-#region Unity life-cycle methods
+        UIMainController() { }
+
         public void Initialize() { }
 
         public void CustomUpdate()
@@ -33,6 +29,5 @@ namespace UI.Controllers
 
             InputSystem.CustomUpdate();
         }
-#endregion
     }
 }

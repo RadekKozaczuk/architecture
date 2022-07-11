@@ -38,7 +38,7 @@ namespace UI.Popups
         {
             if (CurrentPopup == null)
             {
-                AbstractPopupView prefab = _config.PopupPrefabs[(int) popupType];
+                AbstractPopupView prefab = _config.PopupPrefabs[(int)popupType];
 
                 Assert.False(prefab == null, "Prefab cannot be null.");
 
@@ -49,16 +49,12 @@ namespace UI.Popups
                     popup = Object.Instantiate(prefab, _blockingPanel.transform);
                 }
                 else
-                {
                     popup = Object.Instantiate(prefab, UISceneReferenceHolder.PopupContainer);
-                }
 
                 CurrentPopup = popup;
             }
             else
-            {
                 _scheduledPopups.Enqueue((popupType, blockingPanel, null));
-            }
         }
 
         public static void CloseCurrentPopup()
