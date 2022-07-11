@@ -1,7 +1,6 @@
 using Shared.DependencyInjector.Atributes;
 using Shared.DependencyInjector.DataModels;
 using Shared.DependencyInjector.Interfaces;
-using Shared.DependencyInjector.Providers;
 
 namespace Shared.DependencyInjector.Main
 {

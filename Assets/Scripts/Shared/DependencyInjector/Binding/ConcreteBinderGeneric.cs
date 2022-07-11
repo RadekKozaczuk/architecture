@@ -9,12 +9,10 @@ namespace Shared.DependencyInjector.Binding
     public class ConcreteBinderGeneric<TContract> : FromBinder
     {
         internal ConcreteBinderGeneric(DiContainer bindContainer, BindInfo bindInfo, BindStatement bindStatement)
-            : base(bindContainer, bindInfo, bindStatement)
-        {
+            : base(bindContainer, bindInfo, bindStatement) =>
             SubFinalizer = new ScopableBindingFinalizer(
                 BindInfo, (container, type) => new TransientProvider(type, container, BindInfo.InstantiatedCallback));
-        }
-        
+
         internal ConcreteBinderGeneric<TConcrete> To<TConcrete>() where TConcrete : TContract
         {
             BindInfo.ToChoice = ToChoices.Concrete;

@@ -24,10 +24,7 @@ namespace Shared.DependencyInjector.Providers
 
         public void GetAllInstancesWithInjectSplit(InjectContext context, out Action injectAction, List<object> buffer)
         {
-            injectAction = () =>
-            {
-                _instantiateCallback?.Invoke(context, _instance);
-            };
+            injectAction = () => { _instantiateCallback?.Invoke(context, _instance); };
 
             buffer.Add(_instance);
         }

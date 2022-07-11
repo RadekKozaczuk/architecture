@@ -24,9 +24,8 @@ namespace Shared.DependencyInjector.Install
 
         void Initialize()
         {
-            Container = new DiContainer(new DiContainer [] {});
-            Container.Bind(typeof(InitializableManager))
-                     .ToSelf().AsSingle().CopyIntoAllSubContainers();
+            Container = new DiContainer(new DiContainer[] { });
+            Container.Bind(typeof(InitializableManager)).ToSelf().AsSingle().CopyIntoAllSubContainers();
             Container.ResolveRoots();
         }
     }

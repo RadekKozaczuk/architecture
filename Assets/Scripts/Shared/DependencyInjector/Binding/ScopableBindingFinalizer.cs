@@ -28,10 +28,10 @@ namespace Shared.DependencyInjector.Binding
             if (BindInfo.ContractTypes.Count == 0)
                 return;
 
-            Func<DiContainer, Type, IProvider> providerFunc = BindInfo.Scope == ScopeTypes.Singleton 
-                ? (_, type) => new CachedProvider(_providerFactory(container, type)) 
+            Func<DiContainer, Type, IProvider> providerFunc = BindInfo.Scope == ScopeTypes.Singleton
+                ? (_, type) => new CachedProvider(_providerFactory(container, type))
                 : _providerFactory;
-            
+
             if (BindInfo.ToChoice == ToChoices.Self)
                 RegisterProviderPerContract(container, providerFunc);
             else if (BindInfo.ToTypes.Count != 0)
@@ -46,7 +46,7 @@ namespace Shared.DependencyInjector.Binding
                 RegisterProvider(container, contractType, provider);
             }
         }
-        
+
         void RegisterProvider(DiContainer container, Type contractType, IProvider provider)
         {
             if (BindInfo.OnlyBindIfNotBound && container.HasBindingId(contractType))
@@ -56,7 +56,7 @@ namespace Shared.DependencyInjector.Binding
 
             if (!contractType.IsValueType() || contractType.IsGenericType && contractType.GetGenericTypeDefinition() == typeof(Nullable<>))
                 return;
-            
+
             Type nullableType = typeof(Nullable<>).MakeGenericType(contractType);
 
             // Also bind to nullable primitives
@@ -95,7 +95,7 @@ namespace Shared.DependencyInjector.Binding
         // Note that if multiple contract types are provided per concrete type,
         // it will re-use the same provider for each contract type
         // (each concrete type will have its own provider though)
-        void RegisterProvidersForAllContractsPerConcreteType(DiContainer container, List<Type> concreteTypes, 
+        void RegisterProvidersForAllContractsPerConcreteType(DiContainer container, List<Type> concreteTypes,
             Func<DiContainer, Type, IProvider> providerFunc)
         {
             Dictionary<Type, IProvider> providerMap = ZenPools.SpawnDictionary<Type, IProvider>();

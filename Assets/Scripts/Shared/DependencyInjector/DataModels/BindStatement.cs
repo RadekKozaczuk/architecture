@@ -10,12 +10,9 @@ namespace Shared.DependencyInjector.DataModels
     public class BindStatement : IDisposable
     {
         internal ScopableBindingFinalizer BindingFinalizer;
-        readonly List<IDisposable> _disposables= new();
+        readonly List<IDisposable> _disposables = new();
 
-        public BindStatement()
-        {
-            Reset();
-        }
+        public BindStatement() => Reset();
 
         public BindInfo SpawnBindInfo()
         {
@@ -23,12 +20,12 @@ namespace Shared.DependencyInjector.DataModels
             _disposables.Add(bindInfo);
             return bindInfo;
         }
-        
+
         public void Reset()
         {
             BindingFinalizer = null;
 
-            for (int i = 0 ; i < _disposables.Count ; i++)
+            for (int i = 0; i < _disposables.Count; i++)
                 _disposables[i].Dispose();
 
             _disposables.Clear();

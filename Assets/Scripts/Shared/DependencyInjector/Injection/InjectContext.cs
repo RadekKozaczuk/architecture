@@ -12,12 +12,8 @@ namespace Shared.DependencyInjector.Injection
         public BindingIdDto BindingIdDto => _bindingIdDto;
 
         // The type of the constructor parameter, field or property
-        public Type MemberType
-        {
-            get => _bindingIdDto.Type;
-            set => _bindingIdDto.Type = value;
-        }
-        
+        public Type MemberType { get => _bindingIdDto.Type; set => _bindingIdDto.Type = value; }
+
         // The type of the object which is having its members injected
         // NOTE: This is null for root calls to Resolve<> or Instantiate<>
         public Type ObjectType;
@@ -28,7 +24,7 @@ namespace Shared.DependencyInjector.Injection
 
         // The constructor parameter name, or field name, or property name
         public string MemberName;
-        
+
         // When optional, null is a valid value to be returned
         public bool Optional;
 
@@ -41,13 +37,10 @@ namespace Shared.DependencyInjector.Injection
 
         // The container used for this injection
         public DiContainer Container;
-        
+
         BindingIdDto _bindingIdDto;
 
-        public InjectContext()
-        {
-            Reset();
-        }
+        public InjectContext() => Reset();
 
         public void Dispose() => ZenPools.DespawnInjectContext(this);
 

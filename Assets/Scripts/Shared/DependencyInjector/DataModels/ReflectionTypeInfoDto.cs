@@ -17,7 +17,7 @@ namespace Shared.DependencyInjector.DataModels
         internal readonly List<InjectMethodInfoDto> InjectMethods;
 
         static readonly HashSet<Type> _injectAttributeTypes = new() {typeof(InjectAttributeBase)};
-        
+
         internal ReflectionTypeInfoDto(Type type)
         {
             InjectFields = GetFieldInfos(type);
@@ -30,40 +30,35 @@ namespace Shared.DependencyInjector.DataModels
         {
             PropertyInfo[] properties = type.GetProperties(
                 BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-            
-            return properties
-                   .Where(x => _injectAttributeTypes.Any(a => x.HasAttribute(a)))
-                   .Select(x => new InjectPropertyInfoDto(x, GetInjectableInfoForMember(x))).ToList();
+
+            return properties.Where(x => _injectAttributeTypes.Any(a => x.HasAttribute(a)))
+                             .Select(x => new InjectPropertyInfoDto(x, GetInjectableInfoForMember(x)))
+                             .ToList();
         }
 
         static List<InjectFieldInfoDto> GetFieldInfos(Type type)
         {
-            FieldInfo[] fields = type.GetFields(
-                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-            
-            return fields
-                   .Where(x => _injectAttributeTypes.Any(a => x.HasAttribute(a)))
-                   .Select(
-                       x => new InjectFieldInfoDto(x, GetInjectableInfoForMember(x)))
-                   .ToList();
+            FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+
+            return fields.Where(x => _injectAttributeTypes.Any(a => x.HasAttribute(a)))
+                         .Select(x => new InjectFieldInfoDto(x, GetInjectableInfoForMember(x)))
+                         .ToList();
         }
 
         static List<InjectMethodInfoDto> GetMethodInfos(Type type)
         {
             var injectMethodInfos = new List<InjectMethodInfoDto>();
 
-            MethodInfo[] methods = type.GetMethods(
-                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-            
-            IEnumerable<MethodInfo> methodInfos = methods
-                .Where(x => _injectAttributeTypes.Any(a => x.GetCustomAttributes(a, false).Any()));
+            MethodInfo[] methods = type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+
+            IEnumerable<MethodInfo> methodInfos = methods.Where(x => _injectAttributeTypes.Any(a => x.GetCustomAttributes(a, false).Any()));
 
             foreach (MethodInfo methodInfo in methodInfos)
             {
                 InjectableInfoDto[] injectParamInfos = methodInfo.GetParameters().Select(CreateInjectableInfoForParam).ToArray();
                 injectMethodInfos.Add(new InjectMethodInfoDto(methodInfo, injectParamInfos));
             }
-            
+
             return injectMethodInfos;
         }
 
@@ -71,8 +66,8 @@ namespace Shared.DependencyInjector.DataModels
         {
             ConstructorInfo constructor = TryGetInjectConstructor(type);
 
-            InjectableInfoDto[] args = constructor == null 
-                ? Array.Empty<InjectableInfoDto>() 
+            InjectableInfoDto[] args = constructor == null
+                ? Array.Empty<InjectableInfoDto>()
                 : constructor.GetParameters().Select(CreateInjectableInfoForParam).ToArray();
             return new InjectConstructorInfoDto(constructor, args);
         }
@@ -93,12 +88,8 @@ namespace Shared.DependencyInjector.DataModels
 
             bool isOptionalWithADefaultValue = (paramInfo.Attributes & ParameterAttributes.HasDefault) == ParameterAttributes.HasDefault;
 
-            return new InjectableInfoDto(
-                isOptionalWithADefaultValue || isOptional,
-                paramInfo.Name,
-                paramInfo.ParameterType,
-                isOptionalWithADefaultValue ? paramInfo.DefaultValue : null,
-                sourceType);
+            return new InjectableInfoDto(isOptionalWithADefaultValue || isOptional, paramInfo.Name, paramInfo.ParameterType,
+                                         isOptionalWithADefaultValue ? paramInfo.DefaultValue : null, sourceType);
         }
 
         static InjectableInfoDto GetInjectableInfoForMember(MemberInfo memInfo)
@@ -115,9 +106,7 @@ namespace Shared.DependencyInjector.DataModels
                 sourceType = injectAttr.Source;
             }
 
-            Type memberType = memInfo is FieldInfo
-                ? ((FieldInfo) memInfo).FieldType
-                : ((PropertyInfo) memInfo).PropertyType;
+            Type memberType = memInfo is FieldInfo ? ((FieldInfo)memInfo).FieldType : ((PropertyInfo)memInfo).PropertyType;
 
             return new InjectableInfoDto(isOptional, memInfo.Name, memberType, null, sourceType);
         }
@@ -137,9 +126,9 @@ namespace Shared.DependencyInjector.DataModels
 
             if (!constructors.HasMoreThan(1))
                 return constructors[0];
-            
-            ConstructorInfo explicitConstructor = (from c in constructors 
-                                                   where _injectAttributeTypes.Any(a => c.HasAttribute(a)) 
+
+            ConstructorInfo explicitConstructor = (from c in constructors
+                                                   where _injectAttributeTypes.Any(a => c.HasAttribute(a))
                                                    select c).SingleOrDefault();
 
             if (explicitConstructor != null)
@@ -150,9 +139,7 @@ namespace Shared.DependencyInjector.DataModels
             // constructor can sometimes be private with zero parameters
             ConstructorInfo singlePublicConstructor = constructors.Where(x => x.IsPublic).OnlyOrDefault();
 
-            return singlePublicConstructor == null 
-                ? constructors.OrderBy(x => x.GetParameters().Length).First()
-                : singlePublicConstructor;
+            return singlePublicConstructor == null ? constructors.OrderBy(x => x.GetParameters().Length).First() : singlePublicConstructor;
         }
     }
 }

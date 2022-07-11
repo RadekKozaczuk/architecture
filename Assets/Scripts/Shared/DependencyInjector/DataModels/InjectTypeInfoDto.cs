@@ -11,7 +11,8 @@ namespace Shared.DependencyInjector.DataModels
         internal readonly InjectMemberInfoDto[] InjectMembers;
         internal readonly InjectConstructorInfoDto InjectConstructor;
 
-        internal InjectTypeInfoDto(InjectConstructorInfoDto injectConstructor, InjectMethodInfoDto[] injectMethods, InjectMemberInfoDto[] injectMembers)
+        internal InjectTypeInfoDto(InjectConstructorInfoDto injectConstructor, InjectMethodInfoDto[] injectMethods,
+            InjectMemberInfoDto[] injectMembers)
         {
             InjectMethods = injectMethods;
             InjectMembers = injectMembers;

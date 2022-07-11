@@ -22,8 +22,8 @@ namespace Shared.DependencyInjector.Providers
             _instantiateCallback = instantiateCallback;
         }
 
-        public Type GetInstanceType(InjectContext context) 
-            => !_concreteType.DerivesFromOrEqual(context.MemberType) ? null : GetTypeToCreate(context.MemberType);
+        public Type GetInstanceType(InjectContext context) =>
+            !_concreteType.DerivesFromOrEqual(context.MemberType) ? null : GetTypeToCreate(context.MemberType);
 
         public void GetAllInstancesWithInjectSplit(InjectContext context, out Action injectAction, List<object> buffer)
         {
@@ -39,9 +39,8 @@ namespace Shared.DependencyInjector.Providers
 
             buffer.Add(instance);
         }
-        
-        Type GetTypeToCreate(Type contractType) => _concreteType.IsOpenGenericType() 
-            ? _concreteType.MakeGenericType(contractType.GetGenericArguments()) 
-            : _concreteType;
+
+        Type GetTypeToCreate(Type contractType) =>
+            _concreteType.IsOpenGenericType() ? _concreteType.MakeGenericType(contractType.GetGenericArguments()) : _concreteType;
     }
 }

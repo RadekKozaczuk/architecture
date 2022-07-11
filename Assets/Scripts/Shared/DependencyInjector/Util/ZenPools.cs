@@ -34,7 +34,22 @@ namespace Shared.DependencyInjector.Util
             _bindInfoPool.Despawn(bindInfo);
         }
 
-        public static void DespawnDictionary<TKey, TValue>(Dictionary<TKey, TValue> dictionary) => DictionaryPool<TKey, TValue>.Instance.Despawn(dictionary);
+        public static void DespawnDictionary<TKey, TValue>(Dictionary<TKey, TValue> dictionary) =>
+            DictionaryPool<TKey, TValue>.Instance.Despawn(dictionary);
+
+        public static List<T> SpawnList<T>() => ListPool<T>.Instance.Spawn();
+
+        public static void DespawnList<T>(List<T> list) => ListPool<T>.Instance.Despawn(list);
+
+        public static void DespawnArray<T>(T[] arr) => ArrayPool<T>.GetPool(arr.Length).Despawn(arr);
+
+        public static T[] SpawnArray<T>(int length) => ArrayPool<T>.GetPool(length).Spawn();
+
+        public static void DespawnInjectContext(InjectContext context)
+        {
+            context.Reset();
+            _contextPool.Despawn(context);
+        }
 
         internal static LookupId SpawnLookupId(IProvider provider, BindingIdDto bindingIdDto)
         {
@@ -52,14 +67,6 @@ namespace Shared.DependencyInjector.Util
             _lookupIdPool.Despawn(lookupId);
         }
 
-        public static List<T> SpawnList<T>() => ListPool<T>.Instance.Spawn();
-
-        public static void DespawnList<T>(List<T> list) => ListPool<T>.Instance.Despawn(list);
-
-        public static void DespawnArray<T>(T[] arr) => ArrayPool<T>.GetPool(arr.Length).Despawn(arr);
-
-        public static T[] SpawnArray<T>(int length) => ArrayPool<T>.GetPool(length).Spawn();
-
         internal static InjectContext SpawnInjectContext(DiContainer container, Type memberType)
         {
             InjectContext context = _contextPool.Spawn();
@@ -70,14 +77,8 @@ namespace Shared.DependencyInjector.Util
             return context;
         }
 
-        public static void DespawnInjectContext(InjectContext context)
-        {
-            context.Reset();
-            _contextPool.Despawn(context);
-        }
-
-        internal static InjectContext SpawnInjectContext(
-            DiContainer container, InjectableInfoDto injectableInfoDto, object targetInstance, Type targetType)
+        internal static InjectContext SpawnInjectContext(DiContainer container, InjectableInfoDto injectableInfoDto, object targetInstance,
+            Type targetType)
         {
             InjectContext context = SpawnInjectContext(container, injectableInfoDto.MemberType);
 

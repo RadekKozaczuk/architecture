@@ -9,20 +9,15 @@ namespace Shared.DependencyInjector.Runtime
     {
         readonly List<IInitializable> _initializables;
 
-        [Preserve]
-        InitializableManager()
-        {
-            
-        }
-        
         [Inject]
-        internal InitializableManager(
-            [Inject(Optional = true, Source = InjectSources.Local)] 
-            List<IInitializable> initializables)
+        internal InitializableManager([Inject(Optional = true, Source = InjectSources.Local)] List<IInitializable> initializables)
         {
             Debug.Log($"=== DEBUGG === InitializableManager InitializableManager initializables.Count: {initializables.Count}");
             _initializables = initializables;
         }
+
+        [Preserve]
+        InitializableManager() { }
 
         internal void Initialize()
         {

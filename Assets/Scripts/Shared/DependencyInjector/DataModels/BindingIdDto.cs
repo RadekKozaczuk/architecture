@@ -8,10 +8,7 @@ namespace Shared.DependencyInjector.DataModels
     {
         public Type Type;
 
-        public BindingIdDto(Type type)
-        {
-            Type = type;
-        }
+        public BindingIdDto(Type type) => Type = type;
 
         public override int GetHashCode()
         {

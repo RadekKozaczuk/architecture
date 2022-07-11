@@ -27,13 +27,27 @@ namespace Shared.DependencyInjector.Main
         internal delegate object ZenFactoryMethod(object[] args);
         internal delegate void ZenInjectMethod(object obj, object[] args);
         internal delegate void ZenMemberSetterMethod(object obj, object value);
-        
+
         readonly Dictionary<BindingIdDto, List<ProviderInfoDto>> _providers = new();
         readonly DiContainer[][] _containerLookups = new DiContainer[4][];
         readonly Queue<BindStatement> _currentBindings = new();
         readonly List<BindStatement> _childBindings = new();
         Transform _contextTransform;
-        
+
+        static bool ChecksForCircularDependencies
+        {
+            get
+            {
+#if ZEN_MULTITHREADING
+                // When multithreading is supported we can't use a static field to track the lookup
+                // TODO: We could look at the inject context though
+                return false;
+#else
+                return true;
+#endif
+            }
+        }
+
         internal DiContainer(IEnumerable<DiContainer> parentContainersEnumerable)
         {
             Bind(typeof(DiContainer)).FromInstance(this);
@@ -41,20 +55,20 @@ namespace Shared.DependencyInjector.Main
             FlushBindings();
 
             DiContainer[] selfLookup = {this};
-            _containerLookups[(int) InjectSources.Local] = selfLookup;
+            _containerLookups[(int)InjectSources.Local] = selfLookup;
 
             DiContainer[] parentContainers = parentContainersEnumerable.ToArray();
-            _containerLookups[(int) InjectSources.Parent] = parentContainers;
+            _containerLookups[(int)InjectSources.Parent] = parentContainers;
 
             DiContainer[] ancestorContainers = FlattenInheritanceChain().ToArray();
 
-            _containerLookups[(int) InjectSources.AnyParent] = ancestorContainers;
-            _containerLookups[(int) InjectSources.Any] = selfLookup.Concat(ancestorContainers).ToArray();
+            _containerLookups[(int)InjectSources.AnyParent] = ancestorContainers;
+            _containerLookups[(int)InjectSources.Any] = selfLookup.Concat(ancestorContainers).ToArray();
 
             if (parentContainers.IsEmpty())
                 return;
-            
-            for (int i = 0 ; i < parentContainers.Length ; i++)
+
+            for (int i = 0; i < parentContainers.Length; i++)
                 parentContainers[i].FlushBindings();
 
             // Make sure to avoid duplicates which could happen if a parent container
@@ -63,6 +77,173 @@ namespace Shared.DependencyInjector.Main
                 foreach (BindStatement binding in ancestorContainer._childBindings)
                     if (ShouldInheritBinding(binding, ancestorContainer))
                         binding.BindingFinalizer.FinalizeBinding(this);
+        }
+
+        public void ResolveRoots()
+        {
+            FlushBindings();
+            ResolveDependencyRoots();
+        }
+
+        public void RegisterProvider(BindingIdDto bindingIdDto, BindingCondition condition, IProvider provider, bool nonLazy)
+        {
+            var info = new ProviderInfoDto(provider, condition, nonLazy, this);
+
+            if (!_providers.TryGetValue(bindingIdDto, out List<ProviderInfoDto> providerInfos))
+            {
+                providerInfos = new List<ProviderInfoDto>();
+                _providers.Add(bindingIdDto, providerInfos);
+            }
+
+            providerInfos.Add(info);
+        }
+
+        public void InjectExplicit(object injectable, Type injectableType)
+        {
+            InjectTypeInfoDto typeInfoDto = TypeAnalyzer.TryGetInfo(injectableType);
+
+            if (typeInfoDto == null)
+                return;
+
+            FlushBindings();
+
+            InjectMembersTopDown(injectable, injectableType, typeInfoDto);
+            CallInjectMethodsTopDown(injectable, injectableType, typeInfoDto);
+        }
+
+        public bool HasBindingId(Type contractType)
+        {
+            using InjectContext ctx = ZenPools.SpawnInjectContext(this, contractType);
+            ctx.SourceType = InjectSources.Any;
+            return HasBinding(ctx);
+        }
+
+        // Map the given type to a way of obtaining it
+        // Note that this can include open generic types as well such as List<>
+        public ConcreteBinderGeneric<TContract> Bind<TContract>()
+        {
+            BindStatement bindStatement = StartBinding();
+            BindInfo bindInfo = bindStatement.SpawnBindInfo();
+
+            bindInfo.ContractTypes.Add(typeof(TContract));
+
+            return new ConcreteBinderGeneric<TContract>(this, bindInfo, bindStatement);
+        }
+
+        // Non-generic version of Bind<> for cases where you only have the runtime type
+        // Note that this can include open generic types as well such as List<>
+        public ConcreteBinderNonGeneric Bind(params Type[] contractTypes)
+        {
+            BindStatement statement = StartBinding();
+            BindInfo bindInfo = statement.SpawnBindInfo();
+            bindInfo.ContractTypes.AllocFreeAddRange(contractTypes);
+            return BindInternal(bindInfo, statement);
+        }
+
+        public ConcreteBinderNonGeneric BindInterfacesTo<T>()
+        {
+            Type type = typeof(T);
+            BindStatement statement = StartBinding();
+            BindInfo bindInfo = statement.SpawnBindInfo();
+
+            Type[] interfaces = type.Interfaces();
+
+            if (interfaces.Length == 0)
+                Debug.Log("Called BindInterfacesTo for type {0} but no interfaces were found");
+
+            bindInfo.ContractTypes.AllocFreeAddRange(interfaces);
+
+            return BindInternal(bindInfo, statement).To(type);
+        }
+
+        public ConcreteBinderNonGeneric BindInterfacesAndSelfTo<T>()
+        {
+            Type type = typeof(T);
+            BindStatement statement = StartBinding();
+            BindInfo bindInfo = statement.SpawnBindInfo();
+
+            bindInfo.ContractTypes.AllocFreeAddRange(type.Interfaces());
+            bindInfo.ContractTypes.Add(type);
+
+            return BindInternal(bindInfo, statement).To(type);
+        }
+
+        public FromBinder BindInstance<TContract>(TContract instance)
+        {
+            BindStatement statement = StartBinding();
+            BindInfo bindInfo = statement.SpawnBindInfo();
+            bindInfo.ContractTypes.Add(typeof(TContract));
+
+            statement.BindingFinalizer
+                = new ScopableBindingFinalizer(bindInfo, (_, type) => new InstanceProvider(type, instance, bindInfo.InstantiatedCallback));
+
+            return new FromBinder(bindInfo);
+        }
+
+        // Unfortunately we can't support setting scope / condition / etc. here since all the
+        // bindings are finalized one at a time
+        public void BindInstances(params object[] instances)
+        {
+            for (int i = 0; i < instances.Length; i++)
+            {
+                object instance = instances[i];
+                Bind(instance.GetType()).FromInstance(instance);
+            }
+        }
+
+        internal object InstantiateInternal(Type concreteType, bool autoInject)
+        {
+            FlushBindings();
+            InjectTypeInfoDto typeInfoDto = TypeAnalyzer.TryGetInfo(concreteType);
+
+            object newObj;
+
+            if (concreteType.DerivesFrom<ScriptableObject>())
+                newObj = ScriptableObject.CreateInstance(concreteType);
+            else
+            {
+                // Make a copy since we remove from it below
+                object[] paramValues = ZenPools.SpawnArray<object>(typeInfoDto.InjectConstructor.Parameters.Length);
+
+                try
+                {
+                    for (int i = 0; i < typeInfoDto.InjectConstructor.Parameters.Length; i++)
+                    {
+                        InjectableInfoDto injectInfoDto = typeInfoDto.InjectConstructor.Parameters[i];
+
+                        using InjectContext subContext = ZenPools.SpawnInjectContext(this, injectInfoDto, null, concreteType);
+                        object value = Resolve(subContext);
+
+                        if (value == null)
+                            paramValues[i] = injectInfoDto.MemberType.GetDefaultValue();
+                        else
+                            paramValues[i] = value;
+                    }
+
+                    newObj = typeInfoDto.InjectConstructor.Factory(paramValues);
+                }
+                finally
+                {
+                    ZenPools.DespawnArray(paramValues);
+                }
+            }
+
+            if (!autoInject)
+                return newObj;
+
+            InjectExplicit(newObj, concreteType);
+
+            return newObj;
+        }
+
+        // When you call any of these Inject methods
+        //    Any fields marked [Inject] will be set using the bindings on the container
+        //    Any methods marked with a [Inject] will be called
+        //    Any constructor parameters will be filled in with values from the container
+        internal void Inject(object injectable)
+        {
+            Type injectableType = injectable.GetType();
+            InjectExplicit(injectable, injectableType);
         }
 
         object CreateLazyBinding(InjectContext context)
@@ -81,32 +262,12 @@ namespace Shared.DependencyInjector.Main
             {
                 case BindingInheritanceMethods.CopyIntoAll:
                 case BindingInheritanceMethods.MoveIntoAll:
-                case BindingInheritanceMethods.CopyDirectOnly 
-                     or BindingInheritanceMethods.MoveDirectOnly when _containerLookups[(int) InjectSources.Parent].Contains(ancestorContainer):
+                case BindingInheritanceMethods.CopyDirectOnly or BindingInheritanceMethods.MoveDirectOnly
+                    when _containerLookups[(int)InjectSources.Parent].Contains(ancestorContainer):
                     return true;
                 default:
                     return false;
             }
-        }
-
-        static bool ChecksForCircularDependencies
-        {
-            get
-            {
-#if ZEN_MULTITHREADING
-                // When multithreading is supported we can't use a static field to track the lookup
-                // TODO: We could look at the inject context though
-                return false;
-#else
-                return true;
-#endif
-            }
-        }
-        
-        public void ResolveRoots()
-        {
-            FlushBindings();
-            ResolveDependencyRoots();
         }
 
         void ResolveDependencyRoots()
@@ -129,7 +290,7 @@ namespace Shared.DependencyInjector.Main
 
             try
             {
-                for (int i = 0 ; i < rootProviders.Count ; i++)
+                for (int i = 0; i < rootProviders.Count; i++)
                 {
                     BindingIdDto bindIdDto = rootBindings[i];
                     ProviderInfoDto providerInfoDto = rootProviders[i];
@@ -143,7 +304,7 @@ namespace Shared.DependencyInjector.Main
                     context.Optional = false;
 
                     instances.Clear();
-                        
+
                     SafeGetInstances(providerInfoDto, context, instances);
                 }
             }
@@ -153,34 +314,21 @@ namespace Shared.DependencyInjector.Main
             }
         }
 
-        public void RegisterProvider(BindingIdDto bindingIdDto, BindingCondition condition, IProvider provider, bool nonLazy)
-        {
-            var info = new ProviderInfoDto(provider, condition, nonLazy, this);
-
-            if (!_providers.TryGetValue(bindingIdDto, out List<ProviderInfoDto> providerInfos))
-            {
-                providerInfos = new List<ProviderInfoDto>();
-                _providers.Add(bindingIdDto, providerInfos);
-            }
-
-            providerInfos.Add(info);
-        }
-
         void GetProviderMatches(InjectContext context, ICollection<ProviderInfoDto> buffer)
         {
             List<ProviderInfoDto> allMatches = ZenPools.SpawnList<ProviderInfoDto>();
 
             try
             {
-                DiContainer[] containerLookups = _containerLookups[(int) context.SourceType];
+                DiContainer[] containerLookups = _containerLookups[(int)context.SourceType];
 
-                for (int i = 0 ; i < containerLookups.Length ; i++)
+                for (int i = 0; i < containerLookups.Length; i++)
                     containerLookups[i].FlushBindings();
 
-                for (int i = 0 ; i < containerLookups.Length ; i++)
+                for (int i = 0; i < containerLookups.Length; i++)
                     containerLookups[i].GetLocalProviders(context.BindingIdDto, allMatches);
-                
-                for (int i = 0 ; i < allMatches.Count ; i++)
+
+                for (int i = 0; i < allMatches.Count; i++)
                 {
                     ProviderInfoDto match = allMatches[i];
 
@@ -199,9 +347,9 @@ namespace Shared.DependencyInjector.Main
             BindingIdDto bindingIdDto = context.BindingIdDto;
             InjectSources sourceType = context.SourceType;
 
-            DiContainer[] containerLookups = _containerLookups[(int) sourceType];
+            DiContainer[] containerLookups = _containerLookups[(int)sourceType];
 
-            for (int i = 0 ; i < containerLookups.Length ; i++)
+            for (int i = 0; i < containerLookups.Length; i++)
                 containerLookups[i].FlushBindings();
 
             List<ProviderInfoDto> localProviders = ZenPools.SpawnList<ProviderInfoDto>();
@@ -213,7 +361,7 @@ namespace Shared.DependencyInjector.Main
                 bool selectedHasCondition = false;
                 bool ambiguousSelection = false;
 
-                for (int i = 0 ; i < containerLookups.Length ; i++)
+                for (int i = 0; i < containerLookups.Length; i++)
                 {
                     DiContainer container = containerLookups[i];
 
@@ -227,7 +375,7 @@ namespace Shared.DependencyInjector.Main
                     localProviders.Clear();
                     container.GetLocalProviders(bindingIdDto, localProviders);
 
-                    for (int k = 0 ; k < localProviders.Count ; k++)
+                    for (int k = 0; k < localProviders.Count; k++)
                     {
                         ProviderInfoDto provider = localProviders[k];
 
@@ -238,14 +386,13 @@ namespace Shared.DependencyInjector.Main
                             continue;
 
                         if (curHasCondition)
-                        {
                             ambiguousSelection = selectedHasCondition;
-                        }
                         else
                         {
                             if (selectedHasCondition)
                                 // Selected provider is better because it has condition.
                                 continue;
+
                             if (selected != null)
                                 // Both providers don't have a condition and are on equal depth.
                                 ambiguousSelection = true;
@@ -281,7 +428,7 @@ namespace Shared.DependencyInjector.Main
             {
                 DiContainer current = containerQueue.Dequeue();
 
-                foreach (DiContainer parent in current._containerLookups[(int) InjectSources.Parent])
+                foreach (DiContainer parent in current._containerLookups[(int)InjectSources.Parent])
                     if (!processed.Contains(parent))
                     {
                         processed.Add(parent);
@@ -314,12 +461,12 @@ namespace Shared.DependencyInjector.Main
             try
             {
                 ResolveAll(context, buffer);
-                
+
                 Type genericType = typeof(List<>).MakeGenericType(context.MemberType);
 
-                var list = (IList) Activator.CreateInstance(genericType);
+                var list = (IList)Activator.CreateInstance(genericType);
 
-                for (int i = 0 ; i < buffer.Count ; i++)
+                for (int i = 0; i < buffer.Count; i++)
                 {
                     object instance = buffer[i];
                     list.Add(instance);
@@ -343,9 +490,7 @@ namespace Shared.DependencyInjector.Main
                 GetProviderMatches(context, matches);
 
                 if (matches.Count == 0)
-                {
                     return;
-                }
 
                 List<object> instances = ZenPools.SpawnList<object>();
                 List<object> allInstances = ZenPools.SpawnList<object>();
@@ -359,7 +504,7 @@ namespace Shared.DependencyInjector.Main
                         instances.Clear();
                         SafeGetInstances(match, context, instances);
 
-                        for (int k = 0 ; k < instances.Count ; k++)
+                        for (int k = 0; k < instances.Count; k++)
                             allInstances.Add(instances[k]);
                     }
 
@@ -462,12 +607,12 @@ namespace Shared.DependencyInjector.Main
                 ZenPools.DespawnList(instances);
             }
         }
-        
+
         static Array CreateArray(Type elementType, IReadOnlyList<object> instances)
         {
             var array = Array.CreateInstance(elementType, instances.Count);
 
-            for (int i = 0 ; i < instances.Count ; i++)
+            for (int i = 0; i < instances.Count; i++)
                 array.SetValue(instances[i], i);
 
             return array;
@@ -498,9 +643,9 @@ namespace Shared.DependencyInjector.Main
 
             int? result = null;
 
-            DiContainer[] parentContainers = _containerLookups[(int) InjectSources.Parent];
+            DiContainer[] parentContainers = _containerLookups[(int)InjectSources.Parent];
 
-            for (int i = 0 ; i < parentContainers.Length ; i++)
+            for (int i = 0; i < parentContainers.Length; i++)
             {
                 int? distance = parentContainers[i].GetContainerHierarchyDistance(container, depth + 1);
 
@@ -511,157 +656,6 @@ namespace Shared.DependencyInjector.Main
             return result;
         }
 
-        internal object InstantiateInternal(Type concreteType, bool autoInject)
-        {
-            FlushBindings();
-            InjectTypeInfoDto typeInfoDto = TypeAnalyzer.TryGetInfo(concreteType);
-
-            object newObj;
-
-            if (concreteType.DerivesFrom<ScriptableObject>())
-            {
-                newObj = ScriptableObject.CreateInstance(concreteType);
-            }
-            else
-            {
-                // Make a copy since we remove from it below
-                object[] paramValues = ZenPools.SpawnArray<object>(typeInfoDto.InjectConstructor.Parameters.Length);
-
-                try
-                {
-                    for (int i = 0 ; i < typeInfoDto.InjectConstructor.Parameters.Length ; i++)
-                    {
-                        InjectableInfoDto injectInfoDto = typeInfoDto.InjectConstructor.Parameters[i];
-
-                        using InjectContext subContext = ZenPools.SpawnInjectContext(this, injectInfoDto, null, concreteType);
-                        object value = Resolve(subContext);
-
-                        if (value == null)
-                            paramValues[i] = injectInfoDto.MemberType.GetDefaultValue();
-                        else
-                            paramValues[i] = value;
-                    }
-
-                    newObj = typeInfoDto.InjectConstructor.Factory(paramValues);
-                }
-                finally
-                {
-                    ZenPools.DespawnArray(paramValues);
-                }
-            }
-
-            if (!autoInject)
-                return newObj;
-            
-            InjectExplicit(newObj, concreteType);
-
-            return newObj;
-        }
-
-        public void InjectExplicit(object injectable, Type injectableType)
-        {
-            InjectTypeInfoDto typeInfoDto = TypeAnalyzer.TryGetInfo(injectableType);
-
-            if (typeInfoDto == null)
-                return;
-
-            FlushBindings();
-
-            InjectMembersTopDown(injectable, injectableType, typeInfoDto);
-            CallInjectMethodsTopDown(injectable, injectableType, typeInfoDto);
-        }
-
-        // When you call any of these Inject methods
-        //    Any fields marked [Inject] will be set using the bindings on the container
-        //    Any methods marked with a [Inject] will be called
-        //    Any constructor parameters will be filled in with values from the container
-        internal void Inject(object injectable)
-        {
-            Type injectableType = injectable.GetType();
-            InjectExplicit(injectable, injectableType);
-        }
-
-        public bool HasBindingId(Type contractType)
-        {
-            using InjectContext ctx = ZenPools.SpawnInjectContext(this, contractType);
-            ctx.SourceType = InjectSources.Any;
-            return HasBinding(ctx);
-        }
-
-        // Map the given type to a way of obtaining it
-        // Note that this can include open generic types as well such as List<>
-        public ConcreteBinderGeneric<TContract> Bind<TContract>()
-        {
-            BindStatement bindStatement = StartBinding();
-            BindInfo bindInfo = bindStatement.SpawnBindInfo();
-
-            bindInfo.ContractTypes.Add(typeof(TContract));
-
-            return new ConcreteBinderGeneric<TContract>(this, bindInfo, bindStatement);
-        }
-
-        // Non-generic version of Bind<> for cases where you only have the runtime type
-        // Note that this can include open generic types as well such as List<>
-        public ConcreteBinderNonGeneric Bind(params Type[] contractTypes)
-        {
-            BindStatement statement = StartBinding();
-            BindInfo bindInfo = statement.SpawnBindInfo();
-            bindInfo.ContractTypes.AllocFreeAddRange(contractTypes);
-            return BindInternal(bindInfo, statement);
-        }
-        
-        public ConcreteBinderNonGeneric BindInterfacesTo<T>()
-        {
-            Type type = typeof(T);
-            BindStatement statement = StartBinding();
-            BindInfo bindInfo = statement.SpawnBindInfo();
-
-            Type[] interfaces = type.Interfaces();
-
-            if (interfaces.Length == 0)
-                Debug.Log("Called BindInterfacesTo for type {0} but no interfaces were found");
-
-            bindInfo.ContractTypes.AllocFreeAddRange(interfaces);
-
-            return BindInternal(bindInfo, statement).To(type);
-        }
-        
-        public ConcreteBinderNonGeneric BindInterfacesAndSelfTo<T>()
-        {
-            Type type = typeof(T);
-            BindStatement statement = StartBinding();
-            BindInfo bindInfo = statement.SpawnBindInfo();
-
-            bindInfo.ContractTypes.AllocFreeAddRange(type.Interfaces());
-            bindInfo.ContractTypes.Add(type);
-
-            return BindInternal(bindInfo, statement).To(type);
-        }
-
-        public FromBinder BindInstance<TContract>(TContract instance)
-        {
-            BindStatement statement = StartBinding();
-            BindInfo bindInfo = statement.SpawnBindInfo();
-            bindInfo.ContractTypes.Add(typeof(TContract));
-
-            statement.BindingFinalizer = 
-                new ScopableBindingFinalizer(bindInfo,
-                                             (_, type) => new InstanceProvider(type, instance, bindInfo.InstantiatedCallback));
-
-            return new FromBinder(bindInfo);
-        }
-
-        // Unfortunately we can't support setting scope / condition / etc. here since all the
-        // bindings are finalized one at a time
-        public void BindInstances(params object[] instances)
-        {
-            for (int i = 0 ; i < instances.Length ; i++)
-            {
-                object instance = instances[i];
-                Bind(instance.GetType()).FromInstance(instance);
-            }
-        }
-        
         // You shouldn't need to use this
         bool HasBinding(InjectContext context)
         {
@@ -707,20 +701,20 @@ namespace Shared.DependencyInjector.Main
             _currentBindings.Enqueue(bindStatement);
             return bindStatement;
         }
-        
+
         void CallInjectMethodsTopDown(object injectable, Type injectableType, InjectTypeInfoDto typeInfoDto)
         {
             if (typeInfoDto.BaseTypeInfoDto != null)
                 CallInjectMethodsTopDown(injectable, injectableType, typeInfoDto.BaseTypeInfoDto);
 
-            for (int i = 0 ; i < typeInfoDto.InjectMethods.Length ; i++)
+            for (int i = 0; i < typeInfoDto.InjectMethods.Length; i++)
             {
                 InjectMethodInfoDto method = typeInfoDto.InjectMethods[i];
                 object[] paramValues = ZenPools.SpawnArray<object>(method.Parameters.Length);
 
                 try
                 {
-                    for (int k = 0 ; k < method.Parameters.Length ; k++)
+                    for (int k = 0; k < method.Parameters.Length; k++)
                     {
                         InjectableInfoDto injectInfoDto = method.Parameters[k];
                         using InjectContext subContext = ZenPools.SpawnInjectContext(this, injectInfoDto, injectable, injectableType);
@@ -741,7 +735,7 @@ namespace Shared.DependencyInjector.Main
             if (typeInfoDto.BaseTypeInfoDto != null)
                 InjectMembersTopDown(injectable, injectableType, typeInfoDto.BaseTypeInfoDto);
 
-            for (int i = 0 ; i < typeInfoDto.InjectMembers.Length ; i++)
+            for (int i = 0; i < typeInfoDto.InjectMembers.Length; i++)
             {
                 InjectableInfoDto injectInfoDto = typeInfoDto.InjectMembers[i].InfoDto;
                 ZenMemberSetterMethod setterMethod = typeInfoDto.InjectMembers[i].Setter;
@@ -756,7 +750,7 @@ namespace Shared.DependencyInjector.Main
                     setterMethod(injectable, value);
             }
         }
-        
+
         ConcreteBinderNonGeneric BindInternal(BindInfo bindInfo, BindStatement bindingFinalizer) => new(this, bindInfo, bindingFinalizer);
     }
 }

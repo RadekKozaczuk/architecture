@@ -12,12 +12,8 @@ namespace Shared.DependencyInjector.Systems
     static class TypeAnalyzer
     {
         delegate InjectTypeInfoDto ZenTypeInfoGetter();
-        
-        static readonly Dictionary<Type, InjectTypeInfoDto> _typeInfo = new();
 
-        // Use double underscores for generated methods since this is also what the C# compiler does
-        // for things like anonymous methods
-        const string ReflectionBakingGetInjectInfoMethodName = "__zenCreateInjectTypeInfo";
+        static readonly Dictionary<Type, InjectTypeInfoDto> _typeInfo = new();
 
         internal static InjectTypeInfoDto TryGetInfo(Type type)
         {
@@ -56,23 +52,24 @@ namespace Shared.DependencyInjector.Systems
             if (ShouldSkipTypeAnalysis(type))
                 return null;
 
-            MethodInfo getInfoMethod = type.GetMethod(
-                ReflectionBakingGetInjectInfoMethodName, BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
+            MethodInfo getInfoMethod = type.GetMethod(ReflectionBakingGetInjectInfoMethodName,
+                                                      BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
 
             if (getInfoMethod == null)
                 return CreateTypeInfoFromReflection(type);
-            
-            var infoGetter = (ZenTypeInfoGetter) Delegate.CreateDelegate(typeof(ZenTypeInfoGetter), getInfoMethod);
+
+            var infoGetter = (ZenTypeInfoGetter)Delegate.CreateDelegate(typeof(ZenTypeInfoGetter), getInfoMethod);
             return infoGetter();
         }
 
-        static bool ShouldSkipTypeAnalysis(Type type) => type == null
-                                                         || type.IsEnum
-                                                         || type.IsArray
-                                                         || type.IsInterface
-                                                         || type.ContainsGenericParameters
-                                                         || IsStaticType(type)
-                                                         || type == typeof(object);
+        static bool ShouldSkipTypeAnalysis(Type type) =>
+            type == null
+            || type.IsEnum
+            || type.IsArray
+            || type.IsInterface
+            || type.ContainsGenericParameters
+            || IsStaticType(type)
+            || type == typeof(object);
 
         static bool IsStaticType(Type type) =>
             // Apparently this is unique to static classes
@@ -81,7 +78,7 @@ namespace Shared.DependencyInjector.Systems
         static InjectTypeInfoDto CreateTypeInfoFromReflection(Type type)
         {
             var reflectionInfo = new ReflectionTypeInfoDto(type);
-            
+
             DiContainer.ZenFactoryMethod zenFactoryMethod;
             if (type.DerivesFromOrEqual<Component>() || type.IsAbstract)
                 zenFactoryMethod = null;
@@ -92,8 +89,8 @@ namespace Shared.DependencyInjector.Systems
                 else
                     zenFactoryMethod = reflectionInfo.InjectConstructor.ConstructorInfo.Invoke;
             }
-            
-            var injectConstructor = new InjectConstructorInfoDto (zenFactoryMethod, reflectionInfo.InjectConstructor.Parameters.ToArray());
+
+            var injectConstructor = new InjectConstructorInfoDto(zenFactoryMethod, reflectionInfo.InjectConstructor.Parameters.ToArray());
             InjectMethodInfoDto[] injectMethods = reflectionInfo.InjectMethods.Select(ConvertMethod).ToArray();
 
             var injectMembers = new InjectMemberInfoDto[reflectionInfo.InjectFields.Count + reflectionInfo.InjectProperties.Count];
@@ -104,11 +101,19 @@ namespace Shared.DependencyInjector.Systems
 
             return new InjectTypeInfoDto(injectConstructor, injectMethods, injectMembers);
         }
-        
+
         static InjectMethodInfoDto ConvertMethod(InjectMethodInfoDto injectMethod)
         {
-            void Action(object obj, object[] args) => injectMethod.MethodInfo.Invoke(obj, args);
+            void Action(object obj, object[] args)
+            {
+                injectMethod.MethodInfo.Invoke(obj, args);
+            }
+
             return new InjectMethodInfoDto(Action, injectMethod.Parameters.ToArray());
         }
+
+        // Use double underscores for generated methods since this is also what the C# compiler does
+        // for things like anonymous methods
+        const string ReflectionBakingGetInjectInfoMethodName = "__zenCreateInjectTypeInfo";
     }
 }

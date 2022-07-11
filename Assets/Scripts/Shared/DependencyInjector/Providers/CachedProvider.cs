@@ -24,7 +24,6 @@ namespace Shared.DependencyInjector.Providers
 
         public void GetAllInstancesWithInjectSplit(InjectContext context, out Action injectAction, List<object> buffer)
         {
-
 #if ZEN_MULTITHREADING
             lock (_locker)
 #endif
@@ -35,7 +34,6 @@ namespace Shared.DependencyInjector.Providers
                     buffer.AllocFreeAddRange(_instances);
                     return;
                 }
-
 
                 var instances = new List<object>();
                 _creator.GetAllInstancesWithInjectSplit(context, out injectAction, instances);

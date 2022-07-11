@@ -16,7 +16,7 @@ namespace Shared.DependencyInjector.Providers
         readonly Type _componentType;
         readonly GameObject _gameObject;
 
-        internal AddToExistingGameObjectComponentProvider(GameObject gameObject, DiContainer container, Type componentType, 
+        internal AddToExistingGameObjectComponentProvider(GameObject gameObject, DiContainer container, Type componentType,
             Action<InjectContext, object> instantiateCallback)
         {
             _gameObject = gameObject;

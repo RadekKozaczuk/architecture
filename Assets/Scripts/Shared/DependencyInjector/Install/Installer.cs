@@ -1,8 +1,5 @@
 using System;
-using System.Diagnostics;
-using Shared.DependencyInjector.Interfaces;
 using Shared.DependencyInjector.Main;
-using UnityEngine;
 
 namespace Shared.DependencyInjector.Install
 {
@@ -13,9 +10,6 @@ namespace Shared.DependencyInjector.Install
         [Inject]
         DiContainer _container;
 
-        public virtual void InstallBindings()
-        {
-            throw new NotImplementedException();
-        }
+        public virtual void InstallBindings() => throw new NotImplementedException();
     }
 }

@@ -28,10 +28,7 @@ namespace Shared.DependencyInjector.DataModels
             Reset();
         }
 
-        public void Dispose()
-        {
-            ZenPools.DespawnBindInfo(this);
-        }
+        public void Dispose() => ZenPools.DespawnBindInfo(this);
 
         public void Reset()
         {

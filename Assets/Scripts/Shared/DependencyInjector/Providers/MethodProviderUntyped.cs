@@ -9,14 +9,11 @@ namespace Shared.DependencyInjector.Providers
     [NoReflectionBaking]
     class MethodProviderUntyped : IProvider
     {
-        public Type GetInstanceType(InjectContext context) => context.MemberType;
-        
         readonly Func<InjectContext, object> _method;
 
-        internal MethodProviderUntyped(Func<InjectContext, object> method)
-        {
-            _method = method;
-        }
+        internal MethodProviderUntyped(Func<InjectContext, object> method) => _method = method;
+
+        public Type GetInstanceType(InjectContext context) => context.MemberType;
 
         public void GetAllInstancesWithInjectSplit(InjectContext context, out Action injectAction, List<object> buffer)
         {

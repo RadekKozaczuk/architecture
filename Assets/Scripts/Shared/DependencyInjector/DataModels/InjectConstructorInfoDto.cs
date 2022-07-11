@@ -16,7 +16,7 @@ namespace Shared.DependencyInjector.DataModels
             Parameters = parameters;
             Factory = factory;
         }
-        
+
         internal InjectConstructorInfoDto(ConstructorInfo constructorInfo, InjectableInfoDto[] parameters)
         {
             ConstructorInfo = constructorInfo;

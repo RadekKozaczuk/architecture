@@ -8,14 +8,8 @@ namespace Shared.DependencyInjector.Runtime
         [InjectLocal]
         InitializableManager _initializableManager;
 
-        public void Start()
-        {
-            Initialize();
-        }
+        public void Start() => Initialize();
 
-        void Initialize()
-        {
-            _initializableManager.Initialize();
-        }
+        void Initialize() => _initializableManager.Initialize();
     }
 }

@@ -1,4 +1,3 @@
-using System.Linq;
 using Shared.DependencyInjector.Install;
 using UnityEngine;
 
@@ -8,14 +7,28 @@ namespace Shared.DependencyInjector.Util
 {
     public class CheatSheet : Installer
     {
+        public class Qux { }
+
+        public class Foo : MonoBehaviour, IFoo2, IBar { }
+
+        public class Foo1 : IFoo { }
+
+        public class Foo2 : IFoo { }
+
+        public class Baz { }
+
+        public class Gui { }
+
+        public class Bar : IBar { }
+
         public override void InstallBindings()
         {
             Container.Bind<Foo>().AsTransient().NonLazy();
             Container.BindInterfacesTo<Foo>().AsSingle().Lazy();
-            
+
             Container.Bind<Foo>().NonLazy().AsTransient();
             Container.BindInterfacesTo<Foo>().Lazy().AsSingle();
-            
+
             // Create a new instance of Foo for every class that asks for it
             Container.Bind<Foo>().AsTransient();
 
@@ -74,18 +87,9 @@ namespace Shared.DependencyInjector.Util
             InstallMore();
         }
 
-        void InstallMore()
-        {
-            InstallMore2();
-        }
+        void InstallMore() => InstallMore2();
 
-        public class Qux
-        { }
-
-        void InstallMore2()
-        {
-            InstallMore3();
-        }
+        void InstallMore2() => InstallMore3();
 
         void InstallMore3()
         {
@@ -118,19 +122,5 @@ namespace Shared.DependencyInjector.Util
         public interface IFoo { }
 
         public interface IBar : IFoo { }
-
-        public class Foo : MonoBehaviour, IFoo2, IBar
-        { }
-
-        public class Foo1 : IFoo { }
-
-        public class Foo2 : IFoo { }
-
-        public class Baz { }
-
-        public class Gui { }
-
-        public class Bar : IBar
-        { }
     }
 }

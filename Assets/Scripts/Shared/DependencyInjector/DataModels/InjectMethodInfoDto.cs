@@ -11,16 +11,16 @@ namespace Shared.DependencyInjector.DataModels
         internal readonly DiContainer.ZenInjectMethod Action;
         internal readonly InjectableInfoDto[] Parameters;
 
-        internal InjectMethodInfoDto(DiContainer.ZenInjectMethod action, InjectableInfoDto[] parameters)
-        {
-            Parameters = parameters;
-            Action = action;
-        }
-        
         public InjectMethodInfoDto(MethodInfo methodInfo, InjectableInfoDto[] parameters)
         {
             MethodInfo = methodInfo;
             Parameters = parameters;
+        }
+
+        internal InjectMethodInfoDto(DiContainer.ZenInjectMethod action, InjectableInfoDto[] parameters)
+        {
+            Parameters = parameters;
+            Action = action;
         }
     }
 }
