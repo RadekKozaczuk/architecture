@@ -110,16 +110,16 @@ namespace UnityEngine.AI
                 AddTracking(this);
         }
 
-        public void UpdateLink()
-        {
-            _mLinkInstance.Remove();
-            AddLink();
-        }
-
         void OnDisable()
         {
             RemoveTracking(this);
             _mLinkInstance.Remove();
+        }
+
+        public void UpdateLink()
+        {
+            _mLinkInstance.Remove();
+            AddLink();
         }
 
 #if UNITY_EDITOR

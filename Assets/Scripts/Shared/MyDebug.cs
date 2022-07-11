@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 namespace Shared
 {
@@ -10,6 +11,6 @@ namespace Shared
         /// </summary>
         [Conditional("UNITY_EDITOR")]
         [Conditional("DEVELOPMENT_BUILD")]
-        public static void Log(string msg) => UnityEngine.Debug.Log(msg);
+        public static void Log(string msg) => Debug.Log(msg);
     }
 }

@@ -7,10 +7,9 @@ namespace Shared.AI
 {
     public class NavMeshNavigationController : ICustomUpdate
     {
-        public float TargetYawSetupFactor { get => _targetYawSetupFactor; set => _targetYawSetupFactor = Mathf.Clamp01(value); }
-
         public Vector3? TargetPosition { get; private set; }
         public float? TargetYaw { get; private set; }
+        public float TargetYawSetupFactor { get => _targetYawSetupFactor; set => _targetYawSetupFactor = Mathf.Clamp01(value); }
         public Vector3 CurrentPosition => _agent.transform.position;
 
         public bool IsActive { get => !_agent.isStopped; set => _agent.isStopped = !value; }
@@ -39,7 +38,7 @@ namespace Shared.AI
         public float TargetLinearVelocity { get => _agent.speed; set => _agent.speed = value; }
 
         public float TargetAngularVelocity { get => _agent.angularSpeed; set => _agent.angularSpeed = value; }
-        
+
         readonly NavMeshAgent _agent;
         float _targetYawSetupFactor = 0.5f;
 

@@ -5,13 +5,13 @@ namespace Shared.Pooling
 {
     public class DictionaryPool<TKey, TValue> : MemoryPool<Dictionary<TKey, TValue>>
     {
+        public static DictionaryPool<TKey, TValue> Instance { get; } = new();
+
         DictionaryPool()
         {
             OnSpawnMethod = OnSpawned;
             OnDespawnedMethod = OnDespawned;
         }
-
-        public static DictionaryPool<TKey, TValue> Instance { get; } = new();
 
         static void OnSpawned(Dictionary<TKey, TValue> items) => Assert.True(items.IsEmpty());
 

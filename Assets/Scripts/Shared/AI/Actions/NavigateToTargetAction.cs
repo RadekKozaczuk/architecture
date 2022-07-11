@@ -24,7 +24,7 @@ namespace Shared.AI.Actions
                 return targetPosition;
             }
         }
-        
+
         /// <summary>
         /// If the character cannot reach the desired target exactly and the displacement is more than this value, the action
         /// will fail

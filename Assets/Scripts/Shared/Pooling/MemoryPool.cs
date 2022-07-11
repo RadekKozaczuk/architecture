@@ -4,21 +4,15 @@ using Shared.DependencyInjector.Atributes;
 namespace Shared.Pooling
 {
     [NoReflectionBaking]
-    public class MemoryPool<TValue> : AbstractMemoryPool<TValue>
-        where TValue : class, new()
+    public class MemoryPool<TValue> : AbstractMemoryPool<TValue> where TValue : class, new()
     {
         Action<TValue> _onSpawnMethod;
 
-        public MemoryPool(Action<TValue> onSpawnMethod = null, Action<TValue> onDespawnedMethod = null)
-            : base(onDespawnedMethod)
-        {
-            _onSpawnMethod = onSpawnMethod;
-        }
+        protected Action<TValue> OnSpawnMethod { set => _onSpawnMethod = value; }
 
-        protected Action<TValue> OnSpawnMethod
-        {
-            set => _onSpawnMethod = value;
-        }
+        public MemoryPool(Action<TValue> onSpawnMethod = null, Action<TValue> onDespawnedMethod = null)
+            : base(onDespawnedMethod) =>
+            _onSpawnMethod = onSpawnMethod;
 
         public TValue Spawn()
         {
@@ -33,10 +27,7 @@ namespace Shared.Pooling
                 return item;
             }
         }
-        
-        protected override TValue Alloc()
-        {
-            return new TValue();
-        }
+
+        protected override TValue Alloc() => new();
     }
 }

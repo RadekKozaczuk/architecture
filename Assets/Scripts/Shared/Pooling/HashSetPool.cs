@@ -5,13 +5,13 @@ namespace Shared.Pooling
 {
     public class HashSetPool<T> : MemoryPool<HashSet<T>>
     {
+        public static HashSetPool<T> Instance { get; } = new();
+
         HashSetPool()
         {
             OnSpawnMethod = OnSpawned;
             OnDespawnedMethod = OnDespawned;
         }
-
-        public static HashSetPool<T> Instance { get; } = new();
 
         static void OnSpawned(HashSet<T> items) => Assert.True(items.IsEmpty());
 

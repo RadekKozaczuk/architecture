@@ -14,8 +14,8 @@ namespace Shared
             switch (delta)
             {
                 case > 0:
-                    root1 = (-b + (float) Math.Sqrt(delta)) / (2 * a);
-                    root2 = (-b - (float) Math.Sqrt(delta)) / (2 * a);
+                    root1 = (-b + (float)Math.Sqrt(delta)) / (2 * a);
+                    root2 = (-b - (float)Math.Sqrt(delta)) / (2 * a);
                     return true;
                 case 0:
                     root1 = root2 = -b / (2 * a);
@@ -51,7 +51,7 @@ namespace Shared
         /// <summary>
         /// Maps value from one range to another.
         /// </summary>
-        public static float Map(float newMin, float newMax, float oldMin, float oldMax, float value)
-            => Mathf.Lerp(newMin, newMax, Mathf.InverseLerp(oldMin, oldMax, value));
+        public static float Map(float newMin, float newMax, float oldMin, float oldMax, float value) =>
+            Mathf.Lerp(newMin, newMax, Mathf.InverseLerp(oldMin, oldMax, value));
     }
 }

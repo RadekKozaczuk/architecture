@@ -29,7 +29,7 @@ namespace NavMeshComponents.Extensions
         public virtual void CalculateWorldBounds(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navMeshState) { }
 
         public virtual void PostCollectSources(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navMeshState) { }
-        
+
 #if UNITY_EDITOR
         [DidReloadScripts]
         static void OnScriptReload()

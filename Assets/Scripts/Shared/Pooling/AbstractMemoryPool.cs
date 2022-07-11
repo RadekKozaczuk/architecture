@@ -5,8 +5,7 @@ using Shared.DependencyInjector.Atributes;
 namespace Shared.Pooling
 {
     [NoReflectionBaking]
-    public abstract class AbstractMemoryPool<T> : IDisposable
-        where T : class
+    public abstract class AbstractMemoryPool<T> : IDisposable where T : class
     {
         // I also tried using ConcurrentBag instead of Stack + lock here but that performed much much worse
         readonly Stack<T> _stack = new();
@@ -19,19 +18,11 @@ namespace Shared.Pooling
         protected readonly object _locker = new object();
 #endif
 
-        protected AbstractMemoryPool(Action<T> onDespawnedMethod)
-        {
-            _onDespawnedMethod = onDespawnedMethod;
-        }
+        protected AbstractMemoryPool(Action<T> onDespawnedMethod) => _onDespawnedMethod = onDespawnedMethod;
 
-        protected Action<T> OnDespawnedMethod
-        {
-            set => _onDespawnedMethod = value;
-        }
+        protected Action<T> OnDespawnedMethod { set => _onDespawnedMethod = value; }
 
-        public void Dispose()
-        {
-        }
+        public void Dispose() { }
 
         // We assume here that we're in a lock
         protected T SpawnInternal()
@@ -42,10 +33,7 @@ namespace Shared.Pooling
             return element;
         }
 
-        public void Despawn(object item)
-        {
-            Despawn((T) item);
-        }
+        public void Despawn(object item) => Despawn((T)item);
 
         public void Despawn(T element)
         {
@@ -54,12 +42,11 @@ namespace Shared.Pooling
 #if ZEN_MULTITHREADING
             lock (_locker)
 #endif
-            {
-                Assert.True(!_stack.Contains(element), "Attempted to despawn element twice!");
+            
+            Assert.True(!_stack.Contains(element), "Attempted to despawn element twice!");
 
-                _activeCount--;
-                _stack.Push(element);
-            }
+            _activeCount--;
+            _stack.Push(element);
         }
 
         protected abstract T Alloc();

@@ -9,7 +9,7 @@ namespace UnityEngine.AI
     {
         public IEnumerable<GameObject> Root => _root ?? GetRoot();
         protected IEnumerable<GameObject> _root;
-        
+
         public Dictionary<Sprite, Mesh> map;
         public Dictionary<uint, Mesh> coliderMap;
         public Action<Object, NavMeshBuildSource> lookupCallback;
@@ -24,7 +24,7 @@ namespace UnityEngine.AI
         public CollectObjects2d CollectObjects;
         public GameObject parent;
         public bool hideEditorLogs;
-        
+
         public NavMeshBuilder2dState()
         {
             map = new Dictionary<Sprite, Mesh>();
@@ -301,9 +301,6 @@ namespace UnityEngine.AI
         }
 
         static NavMeshBuildSource BoxBoundSource(Bounds localBounds) =>
-            new()
-            {
-                transform = Matrix4x4.Translate(localBounds.center), shape = NavMeshBuildSourceShape.Box, size = localBounds.size, area = 0
-            };
+            new() {transform = Matrix4x4.Translate(localBounds.center), shape = NavMeshBuildSourceShape.Box, size = localBounds.size, area = 0};
     }
 }

@@ -1,9 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using Shared.DependencyInjector.Internal;
-using Shared.DependencyInjector.Util;
 
 namespace Shared
 {
@@ -24,7 +20,7 @@ namespace Shared
             if (!value)
                 throw new Exception(msg);
         }
-        
+
         public static void IsNotNull(object val)
         {
             if (val == null)

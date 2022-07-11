@@ -22,14 +22,14 @@ namespace Shared.Systems
 #endif
 
             var assemblies = new Assembly[assemblyNames.Count];
-            for (int i = 0 ; i < assemblyNames.Count ; i++)
+            for (int i = 0; i < assemblyNames.Count; i++)
                 assemblies[i] = Assembly.Load(assemblyNames[i]);
 
-            for (int i = 0 ; i < assemblies.Length ; i++)
+            for (int i = 0; i < assemblies.Length; i++)
             {
                 Assembly asm = assemblies[i];
                 Type[] types = asm.GetTypes();
-                for (int j = 0 ; j < types.Length ; j++)
+                for (int j = 0; j < types.Length; j++)
                 {
                     Type type = types[j];
 
@@ -39,8 +39,8 @@ namespace Shared.Systems
 
                     FieldInfo[] fields = type.GetFields(
                         BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly);
-                    
-                    for (int k = 0 ; k < fields.Length ; k++)
+
+                    for (int k = 0; k < fields.Length; k++)
                     {
                         FieldInfo field = fields[k];
 
@@ -54,7 +54,7 @@ namespace Shared.Systems
                         // check if the field is a config filed
                         if (!field.FieldType.IsSubclassOf(typeof(ScriptableObject)))
                             continue;
-                            
+
                         ScriptableObject config = configs.FirstOrDefault(c => c.GetType() == field.FieldType);
                         if (config == null)
                         {
@@ -111,6 +111,5 @@ namespace Shared.Systems
                     duplicates.Add(config, 1);
         }
 #endif
-
     }
 }

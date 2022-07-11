@@ -15,6 +15,10 @@ namespace Shared.DependencyInjector.Systems
 
         static readonly Dictionary<Type, InjectTypeInfoDto> _typeInfo = new();
 
+        // Use double underscores for generated methods since this is also what the C# compiler does
+        // for things like anonymous methods
+        const string ReflectionBakingGetInjectInfoMethodName = "__zenCreateInjectTypeInfo";
+
         internal static InjectTypeInfoDto TryGetInfo(Type type)
         {
             InjectTypeInfoDto infoDto;
@@ -111,9 +115,5 @@ namespace Shared.DependencyInjector.Systems
 
             return new InjectMethodInfoDto(Action, injectMethod.Parameters.ToArray());
         }
-
-        // Use double underscores for generated methods since this is also what the C# compiler does
-        // for things like anonymous methods
-        const string ReflectionBakingGetInjectInfoMethodName = "__zenCreateInjectTypeInfo";
     }
 }

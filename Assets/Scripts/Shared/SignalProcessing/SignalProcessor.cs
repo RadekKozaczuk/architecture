@@ -27,16 +27,14 @@ namespace Shared.SignalProcessing
         public static void AddReactiveController<T>(T controller) where T : class
         {
             if (!_cachedMethodInfos.TryGetValue(typeof(T), out MethodInfo[] methods))
-                throw new ArgumentException(
-                    $"Registration of {typeof(T)} in SignalProcessor is not possible. "
-                    + "The class lacks [ReactOnSignals] attribute or does not have at least one private method decorated with [React] attribute.");
-            
-            Assert.False(
-                controller == null,
-                "Controllers with null values are not allowed to be added to SignalProcessor. "
-                + "Maybe you added a variable of certain type before that variable was assigned with a value.");
+                throw new ArgumentException($"Registration of {typeof(T)} in SignalProcessor is not possible. "
+                                            + "The class lacks [ReactOnSignals] attribute or does not have at least one private method decorated with [React] attribute.");
 
-            for (int i = 0 ; i < methods.Length ; i++)
+            Assert.False(controller == null,
+                         "Controllers with null values are not allowed to be added to SignalProcessor. "
+                         + "Maybe you added a variable of certain type before that variable was assigned with a value.");
+
+            for (int i = 0; i < methods.Length; i++)
             {
                 MethodInfo method = methods[i];
                 Type parameterType = method.GetParameters().First().ParameterType;
@@ -58,25 +56,25 @@ namespace Shared.SignalProcessing
                 (action as Action<T>)?.Invoke(abstractSignal);
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-                throw new Exception($"No matching method for the given signal. "
-                                    + $"Signal type: {abstractSignal.GetType()}. Methods marked with [React] should not be public.");
+            throw new Exception("No matching method for the given signal. "
+                                + $"Signal type: {abstractSignal.GetType()}. Methods marked with [React] should not be public.");
 #endif
         }
 
-        static Type[] GetValidTypes() 
-            => AppDomain.CurrentDomain.GetAssemblies()
+        static Type[] GetValidTypes() =>
+            AppDomain.CurrentDomain.GetAssemblies()
 #if ENABLE_MONO
-                        .AsParallel()
+                     .AsParallel()
 #endif
-                        .SelectMany(assembly => assembly.GetTypes())
-                        .Where(t => t.GetCustomAttributes(typeof(ReactOnSignalsAttribute), true).Length > 0)
-                        .ToArray();
+                     .SelectMany(assembly => assembly.GetTypes())
+                     .Where(t => t.GetCustomAttributes(typeof(ReactOnSignalsAttribute), true).Length > 0)
+                     .ToArray();
 
         static void AddReactiveSystem<T>(T system) where T : class, IReflect
         {
             MethodInfo[] methods = GetReactiveMethods(system, BindingFlags.Static | BindingFlags.NonPublic);
 
-            for (int i = 0 ; i < methods.Length ; i++)
+            for (int i = 0; i < methods.Length; i++)
             {
                 MethodInfo method = methods[i];
                 Type parameterType = method.GetParameters().First().ParameterType;
@@ -96,18 +94,17 @@ namespace Shared.SignalProcessing
 
             _cachedMethodInfos.Add(type, methods);
         }
-        
-        static MethodInfo[] GetReactiveMethods(IReflect type, BindingFlags flags)
-            => type
-               .GetMethods(flags)
-               .Where(
-                   info =>
-                   {
-                       if (!info.HasAttribute(typeof(ReactAttribute)))
-                           return false;
-                       ParameterInfo[] parameters = info.GetParameters();
-                       return parameters.Length == 1 && typeof(AbstractSignal).IsAssignableFrom(parameters[0].ParameterType);
-                   })
-               .ToArray();
+
+        static MethodInfo[] GetReactiveMethods(IReflect type, BindingFlags flags) =>
+            type.GetMethods(flags)
+                .Where(info =>
+                {
+                    if (!info.HasAttribute(typeof(ReactAttribute)))
+                        return false;
+
+                    ParameterInfo[] parameters = info.GetParameters();
+                    return parameters.Length == 1 && typeof(AbstractSignal).IsAssignableFrom(parameters[0].ParameterType);
+                })
+                .ToArray();
     }
 }

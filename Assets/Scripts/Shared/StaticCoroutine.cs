@@ -19,11 +19,10 @@ namespace Shared
             DontDestroyOnLoad(gameObject);
         }
 
-        public static Coroutine StartStaticCoroutine(IEnumerator coroutine, Action onComplete)
-            => _instance.StartCoroutine(_instance.PerformWithCallback(coroutine, onComplete));
+        public static Coroutine StartStaticCoroutine(IEnumerator coroutine, Action onComplete) =>
+            _instance.StartCoroutine(_instance.PerformWithCallback(coroutine, onComplete));
 
-        public static Coroutine StartStaticCoroutine(IEnumerator coroutine)
-            => _instance.StartCoroutine(coroutine);
+        public static Coroutine StartStaticCoroutine(IEnumerator coroutine) => _instance.StartCoroutine(coroutine);
 
         public static void StopStaticCoroutine(Coroutine coroutine) => _instance.StopCoroutine(coroutine);
 
