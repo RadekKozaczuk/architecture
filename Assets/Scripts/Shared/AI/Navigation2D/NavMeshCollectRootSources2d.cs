@@ -11,16 +11,14 @@ namespace NavMeshComponents.Extensions
         public List<GameObject> RootSources { get => _rootSources; set => _rootSources = value; }
         [SerializeField]
         List<GameObject> _rootSources;
-        
+
         protected override void Awake()
         {
             Order = -1000;
             base.Awake();
         }
 
-        public override void CollectSources(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navMeshState)
-        {
+        public override void CollectSources(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navMeshState) =>
             navMeshState.Roots = _rootSources;
-        }
     }
 }

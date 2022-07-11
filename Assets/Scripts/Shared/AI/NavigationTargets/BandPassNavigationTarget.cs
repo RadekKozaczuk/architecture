@@ -11,15 +11,15 @@ namespace Shared.AI.NavigationTargets
     public class BandPassNavigationTarget : INavigationTarget
     {
         /// <summary>
+        /// Low pass filtering options
+        /// </summary>
+        public LowPassFilter LowPass { get; } = new();
+
+        /// <summary>
         /// High pass threshold. If the distance between current position and target position is bigger than this value, target
         /// will always be followed
         /// </summary>
         public float HighPassLinearThreshold = 5f;
-
-        /// <summary>
-        /// Low pass filtering options
-        /// </summary>
-        public LowPassFilter LowPass { get; } = new();
 
         readonly INavigationTarget _target;
 

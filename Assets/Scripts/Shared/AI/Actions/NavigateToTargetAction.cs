@@ -11,6 +11,21 @@ namespace Shared.AI.Actions
     public class NavigateToTargetAction : StateMachineActionBase
     {
         /// <summary>
+        /// Current navigation target position
+        /// </summary>
+        public Vector3? TargetPosition
+        {
+            get
+            {
+                if (CurrentState != StateMachineActionState.Awaiting)
+                    return _targetPosition;
+
+                _target.GetTarget(_controller.CurrentPosition, _controller.GetCurrentYaw(), out Vector3 targetPosition, out _);
+                return targetPosition;
+            }
+        }
+        
+        /// <summary>
         /// If the character cannot reach the desired target exactly and the displacement is more than this value, the action
         /// will fail
         /// </summary>
@@ -39,11 +54,9 @@ namespace Shared.AI.Actions
         public AnimationCurve DistanceToVelocityMap;
 
         protected DateTime ActionStartTime;
-
         DateTime _lastTargetRefreshTime;
         readonly INavigationTarget _target;
         readonly NavMeshNavigationController _controller;
-
         Vector3 _targetPosition;
         float? _targetYaw;
 
@@ -56,24 +69,9 @@ namespace Shared.AI.Actions
         {
             Assert.False(controller == null, "Controller cannot be null.");
             Assert.False(target == null, "Target cannot be null.");
-            
+
             _controller = controller;
             _target = target;
-        }
-
-        /// <summary>
-        /// Current navigation target position
-        /// </summary>
-        public Vector3? TargetPosition
-        {
-            get
-            {
-                if (CurrentState != StateMachineActionState.Awaiting)
-                    return _targetPosition;
-
-                _target.GetTarget(_controller.CurrentPosition, _controller.GetCurrentYaw(), out Vector3 targetPosition, out _);
-                return targetPosition;
-            }
         }
 
         public override void Update()
@@ -114,9 +112,7 @@ namespace Shared.AI.Actions
                 FailureReason = failureReason;
             }
 
-            CurrentState = succeeded
-                ? StateMachineActionState.Succeeded
-                : StateMachineActionState.Failed;
+            CurrentState = succeeded ? StateMachineActionState.Succeeded : StateMachineActionState.Failed;
 
             _controller.IsActive = false;
         }

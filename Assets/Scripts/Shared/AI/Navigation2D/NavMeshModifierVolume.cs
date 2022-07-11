@@ -32,10 +32,7 @@ namespace UnityEngine.AI
                 ActiveModifiers.Add(this);
         }
 
-        void OnDisable()
-        {
-            ActiveModifiers.Remove(this);
-        }
+        void OnDisable() => ActiveModifiers.Remove(this);
 
         public bool AffectsAgentType(int agentTypeID)
         {
@@ -43,6 +40,7 @@ namespace UnityEngine.AI
                 return false;
             if (_affectedAgents[0] == -1)
                 return true;
+
             return _affectedAgents.IndexOf(agentTypeID) != -1;
         }
     }

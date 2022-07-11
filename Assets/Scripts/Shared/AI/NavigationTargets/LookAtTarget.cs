@@ -14,7 +14,7 @@ namespace Shared.AI.NavigationTargets
         readonly Transform _targetDynamic;
         // Target will rotate towards internal target only if the angle difference is bigger than this value
         readonly float _angleThreshold;
-   
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -25,7 +25,7 @@ namespace Shared.AI.NavigationTargets
             _targetDynamic = target;
             _angleThreshold = angleThreshold;
         }
-        
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -39,12 +39,13 @@ namespace Shared.AI.NavigationTargets
 
         public void GetTarget(Vector3 currentPosition, float currentYaw, out Vector3 targetPosition, out float? targetYaw)
         {
-            Assert.True((_targetStatic.HasValue && _targetDynamic != null) || (_targetStatic.HasValue && _targetDynamic == null), "Only one target can be set at once.");
-            
+            Assert.True(_targetStatic.HasValue && _targetDynamic != null || _targetStatic.HasValue && _targetDynamic == null,
+                        "Only one target can be set at once.");
+
             targetPosition = currentPosition;
             // ReSharper disable once PossibleNullReferenceException
             Vector3 internalTargetPosition = _targetStatic ?? _targetDynamic.position;
-            
+
             if (Mathf.Approximately(0f, Vector3.Distance(internalTargetPosition, currentPosition)))
                 targetYaw = null;
 

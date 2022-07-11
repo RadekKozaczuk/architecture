@@ -20,30 +20,15 @@ namespace NavMeshComponents.Extensions
         public bool CompressBounds { get => _compressBounds; set => _compressBounds = value; }
         [SerializeField]
         bool _compressBounds;
-        
+
         public Vector3 OverrideVector { get => _overrideVector; set => _overrideVector = value; }
         [SerializeField]
         Vector3 _overrideVector = Vector3.one;
-        
+
         public override void CalculateWorldBounds(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navMeshState)
         {
             if (surface.CollectObjects != CollectObjects.Volume)
                 navMeshState.WorldBounds.Encapsulate(CalculateGridWorldBounds(surface, navMeshState.WorldToLocal, navMeshState.WorldBounds));
-        }
-
-        static Bounds CalculateGridWorldBounds(NavMeshSurface surface, Matrix4x4 worldToLocal, Bounds bounds)
-        {
-            var grid = FindObjectOfType<Grid>();
-            Tilemap[] tilemaps = grid?.GetComponentsInChildren<Tilemap>();
-            if (tilemaps == null || tilemaps.Length < 1)
-                return bounds;
-            foreach (Tilemap tilemap in tilemaps)
-            {
-                Bounds lbounds = NavMeshSurface.GetWorldBounds(worldToLocal * tilemap.transform.localToWorldMatrix, tilemap.localBounds);
-                bounds.Encapsulate(lbounds);
-            }
-
-            return bounds;
         }
 
         public override void CollectSources(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navMeshState)
@@ -72,6 +57,22 @@ namespace NavMeshComponents.Extensions
             builder.hideEditorLogs = surface.HideEditorLogs;
             builder.SetRoot(navMeshState.Roots);
             NavMeshBuilder2d.CollectSources(sources, builder);
+        }
+
+        static Bounds CalculateGridWorldBounds(NavMeshSurface surface, Matrix4x4 worldToLocal, Bounds bounds)
+        {
+            var grid = FindObjectOfType<Grid>();
+            Tilemap[] tilemaps = grid?.GetComponentsInChildren<Tilemap>();
+            if (tilemaps == null || tilemaps.Length < 1)
+                return bounds;
+
+            foreach (Tilemap tilemap in tilemaps)
+            {
+                Bounds lbounds = NavMeshSurface.GetWorldBounds(worldToLocal * tilemap.transform.localToWorldMatrix, tilemap.localBounds);
+                bounds.Encapsulate(lbounds);
+            }
+
+            return bounds;
         }
     }
 }

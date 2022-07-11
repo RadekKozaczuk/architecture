@@ -19,7 +19,7 @@ namespace UnityEngine.AI
         }
         [SerializeField]
         int _agentTypeID;
-        
+
         public Vector3 StartPoint
         {
             get => _startPoint;
@@ -79,11 +79,11 @@ namespace UnityEngine.AI
         }
         [SerializeField]
         bool _bidirectional = true;
-        
+
         public bool AutoUpdate { get => _autoUpdatePosition; set => SetAutoUpdate(value); }
         [SerializeField]
         bool _autoUpdatePosition;
-        
+
         public int Area
         {
             get => _area;
@@ -95,7 +95,7 @@ namespace UnityEngine.AI
         }
         [SerializeField]
         int _area;
-        
+
         NavMeshLinkInstance _mLinkInstance;
 
         Vector3 _mLastPosition = Vector3.zero;
@@ -110,12 +110,18 @@ namespace UnityEngine.AI
                 AddTracking(this);
         }
 
+        public void UpdateLink()
+        {
+            _mLinkInstance.Remove();
+            AddLink();
+        }
+
         void OnDisable()
         {
             RemoveTracking(this);
             _mLinkInstance.Remove();
         }
-        
+
 #if UNITY_EDITOR
         void OnValidate()
         {
@@ -132,17 +138,8 @@ namespace UnityEngine.AI
                 AddTracking(this);
         }
 #endif
-        
-        void OnDidApplyAnimationProperties()
-        {
-            UpdateLink();
-        }
 
-        public void UpdateLink()
-        {
-            _mLinkInstance.Remove();
-            AddLink();
-        }
+        void OnDidApplyAnimationProperties() => UpdateLink();
 
         static void AddTracking(NavMeshLink link)
         {
@@ -172,6 +169,7 @@ namespace UnityEngine.AI
         {
             if (_autoUpdatePosition == value)
                 return;
+
             _autoUpdatePosition = value;
             if (value)
                 AddTracking(this);
@@ -189,10 +187,11 @@ namespace UnityEngine.AI
             }
 #endif
 
-            var link = new NavMeshLinkData {
-                startPosition = _startPoint, 
-                endPosition = _endPoint, 
-                width = _width, 
+            var link = new NavMeshLinkData
+            {
+                startPosition = _startPoint,
+                endPosition = _endPoint,
+                width = _width,
                 costModifier = _costModifier,
                 bidirectional = _bidirectional,
                 area = _area,
@@ -210,8 +209,9 @@ namespace UnityEngine.AI
 
         bool HasTransformChanged()
         {
-            if (_mLastPosition != transform.position) 
+            if (_mLastPosition != transform.position)
                 return true;
+
             return _mLastRotation != transform.rotation;
         }
 

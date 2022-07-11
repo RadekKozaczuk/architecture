@@ -20,10 +20,16 @@ namespace NavMeshComponents.Extensions
         }
         NavMeshSurface _mNavMeshOwner;
 
-        protected virtual void Awake()
-        {
-            ConnectToVcam(true);
-        }
+        protected virtual void Awake() => ConnectToVcam(true);
+
+        protected virtual void OnEnable() { }
+
+        public virtual void CollectSources(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navMeshState) { }
+
+        public virtual void CalculateWorldBounds(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navMeshState) { }
+
+        public virtual void PostCollectSources(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navMeshState) { }
+        
 #if UNITY_EDITOR
         [DidReloadScripts]
         static void OnScriptReload()
@@ -33,18 +39,8 @@ namespace NavMeshComponents.Extensions
                 e.ConnectToVcam(true);
         }
 #endif
-        protected virtual void OnEnable() { }
 
-        protected virtual void OnDestroy()
-        {
-            ConnectToVcam(false);
-        }
-        
-        public virtual void CollectSources(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navMeshState) { }
-        
-        public virtual void CalculateWorldBounds(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navMeshState) { }
-        
-        public virtual void PostCollectSources(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navMeshState) { }
+        protected virtual void OnDestroy() => ConnectToVcam(false);
 
         protected virtual void ConnectToVcam(bool connect)
         {
@@ -52,7 +48,7 @@ namespace NavMeshComponents.Extensions
                 Debug.LogError("NevMeshExtension requires a NavMeshSurface component");
             if (NavMeshSurfaceOwner == null)
                 return;
-            
+
             if (connect)
                 NavMeshSurfaceOwner.NevMeshExtensions.Add(this, Order);
             else

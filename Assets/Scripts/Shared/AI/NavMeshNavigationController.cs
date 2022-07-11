@@ -7,22 +7,13 @@ namespace Shared.AI
 {
     public class NavMeshNavigationController : ICustomUpdate
     {
-#region Properties
-        public float TargetYawSetupFactor
-        {
-            get => _targetYawSetupFactor;
-            set => _targetYawSetupFactor = Mathf.Clamp01(value);
-        }
+        public float TargetYawSetupFactor { get => _targetYawSetupFactor; set => _targetYawSetupFactor = Mathf.Clamp01(value); }
 
         public Vector3? TargetPosition { get; private set; }
         public float? TargetYaw { get; private set; }
         public Vector3 CurrentPosition => _agent.transform.position;
 
-        public bool IsActive
-        {
-            get => !_agent.isStopped;
-            set => _agent.isStopped = !value;
-        }
+        public bool IsActive { get => !_agent.isStopped; set => _agent.isStopped = !value; }
 
         public bool IsNavigating
         {
@@ -35,8 +26,7 @@ namespace Shared.AI
                     return true;
 
                 bool targetPositionReached = !TargetPosition.HasValue || Mathf.Approximately(_agent.remainingDistance, 0f);
-                bool targetRotationReached = !TargetYaw.HasValue
-                                             || Mathf.Approximately(_agent.transform.rotation.eulerAngles.y, TargetYaw.Value);
+                bool targetRotationReached = !TargetYaw.HasValue || Mathf.Approximately(_agent.transform.rotation.eulerAngles.y, TargetYaw.Value);
 
                 return !(targetPositionReached && targetRotationReached);
             }
@@ -46,26 +36,14 @@ namespace Shared.AI
 
         public Quaternion CurrentRotation => _agent.transform.rotation;
 
-        public float TargetLinearVelocity
-        {
-            get => _agent.speed;
-            set => _agent.speed = value;
-        }
+        public float TargetLinearVelocity { get => _agent.speed; set => _agent.speed = value; }
 
-        public float TargetAngularVelocity
-        {
-            get => _agent.angularSpeed;
-            set => _agent.angularSpeed = value;
-        }
-#endregion
-
+        public float TargetAngularVelocity { get => _agent.angularSpeed; set => _agent.angularSpeed = value; }
+        
         readonly NavMeshAgent _agent;
         float _targetYawSetupFactor = 0.5f;
 
-        public NavMeshNavigationController(NavMeshAgent agent)
-        {
-            _agent = agent;
-        }
+        public NavMeshNavigationController(NavMeshAgent agent) => _agent = agent;
 
         public bool SetTarget(Vector3? position, float? targetYaw)
         {
@@ -74,7 +52,7 @@ namespace Shared.AI
                     return false;
 
             TargetPosition = position;
-            TargetYaw = (float?) Mathd.NormalizeAngleDegrees(targetYaw);
+            TargetYaw = (float?)Mathd.NormalizeAngleDegrees(targetYaw);
             return true;
         }
 
@@ -99,9 +77,7 @@ namespace Shared.AI
 
             float timeToRotate = angularDifference / _agent.angularSpeed;
             float remainingDistance = _agent.remainingDistance;
-            float remainingTime = Mathf.Approximately(_agent.speed, 0f)
-                ? 0f
-                : remainingDistance / _agent.speed;
+            float remainingTime = Mathf.Approximately(_agent.speed, 0f) ? 0f : remainingDistance / _agent.speed;
 
             if (timeToRotate > 0 && remainingTime / timeToRotate <= Mathf.Clamp01(TargetYawSetupFactor))
             {
@@ -110,9 +86,7 @@ namespace Shared.AI
                 _agent.transform.rotation = Quaternion.RotateTowards(currentRotation, targetRotation, Time.deltaTime * _agent.angularSpeed);
             }
             else
-            {
                 _agent.updateRotation = true;
-            }
         }
     }
 }

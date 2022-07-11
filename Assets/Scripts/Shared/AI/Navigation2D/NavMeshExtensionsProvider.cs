@@ -10,18 +10,13 @@ namespace NavMeshComponents.Extensions
         void Remove(NavMeshExtension extension);
     }
 
-    internal class NavMeshExtensionsProvider : INavMeshExtensionsProvider
+    class NavMeshExtensionsProvider : INavMeshExtensionsProvider
     {
+        public NavMeshExtension this[int index] => _extensions[index].Extension;
         readonly List<NavMeshExtensionMeta> _extensions = new();
 
         static readonly Comparer<NavMeshExtensionMeta> _comparer = Comparer<NavMeshExtensionMeta>.Create(
-            (x, y) => x.Order > y.Order
-                ? 1
-                : x.Order < y.Order
-                    ? -1
-                    : 0);
-
-        public NavMeshExtension this[int index] => _extensions[index].Extension;
+            (x, y) => x.Order > y.Order ? 1 : x.Order < y.Order ? -1 : 0);
 
         public int Count => _extensions.Count;
 
@@ -38,9 +33,6 @@ namespace NavMeshComponents.Extensions
                 _extensions.Insert(at, meta);
         }
 
-        public void Remove(NavMeshExtension extension)
-        {
-            _extensions.RemoveAll(x => x.Extension = extension);
-        }
+        public void Remove(NavMeshExtension extension) => _extensions.RemoveAll(x => x.Extension = extension);
     }
 }

@@ -8,7 +8,7 @@ namespace UnityEngine.AI
     public class NavMeshModifier : MonoBehaviour
     {
         public static List<NavMeshModifier> ActiveModifiers { get; } = new();
-        
+
         public bool OverrideArea { get => _overrideArea; set => _overrideArea = value; }
         [SerializeField]
         bool _overrideArea;
@@ -20,7 +20,7 @@ namespace UnityEngine.AI
         public bool IgnoreFromBuild { get => _ignoreFromBuild; set => _ignoreFromBuild = value; }
         [SerializeField]
         bool _ignoreFromBuild;
-        
+
         // List of agent types the modifier is applied for.
         // Special values: empty == None, m_AffectedAgents[0] =-1 == All.
         [SerializeField]
@@ -32,10 +32,7 @@ namespace UnityEngine.AI
                 ActiveModifiers.Add(this);
         }
 
-        void OnDisable()
-        {
-            ActiveModifiers.Remove(this);
-        }
+        void OnDisable() => ActiveModifiers.Remove(this);
 
         public bool AffectsAgentType(int agentTypeID)
         {
@@ -43,6 +40,7 @@ namespace UnityEngine.AI
                 return false;
             if (_affectedAgents[0] == -1)
                 return true;
+
             return _affectedAgents.IndexOf(agentTypeID) != -1;
         }
     }

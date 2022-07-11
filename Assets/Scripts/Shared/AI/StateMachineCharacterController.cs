@@ -3,17 +3,15 @@ using Shared.Interfaces;
 
 namespace Shared.AI
 {
-    public delegate void StateMachineControllerActionEvent(
-        [NotNull] StateMachineCharacterController sender, 
-        [NotNull] StateMachineActionBase action);
-    
+    public delegate void StateMachineControllerActionEvent([NotNull] StateMachineCharacterController sender, [NotNull] StateMachineActionBase action);
+
     public class StateMachineCharacterController : ICustomUpdate
     {
         public event StateMachineControllerActionEvent OnActionStateChanged;
         public event StateMachineControllerActionEvent OnCurrentActionChanged;
         public event StateMachineControllerActionEvent OnActionFinished;
         public event StateMachineControllerActionEvent OnActionFailed;
-        
+
         public readonly NavMeshNavigationController NavigationController;
         public readonly StateMachine StateMachine;
 
@@ -27,9 +25,6 @@ namespace Shared.AI
             StateMachine.OnCurrentActionChanged += (_, action) => OnCurrentActionChanged?.Invoke(this, action);
         }
 
-        public void CustomUpdate()
-        {
-            StateMachine.CustomUpdate();
-        }
+        public void CustomUpdate() => StateMachine.CustomUpdate();
     }
 }

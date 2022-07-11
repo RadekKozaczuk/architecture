@@ -32,8 +32,8 @@ namespace Shared.AI.NavigationTargets
         /// sum of of <paramref name="target" /> orientation and this angle. If the <paramref name="target" /> doesn't specify
         /// orientation, the orientation will be calculated to face the <paramref name="target" /> plus this angle.
         /// </param>
-        public OffsetNavigationTarget([NotNull] INavigationTarget target, float approachDistance,
-            float? approachAngle = null, float targetRelativeYaw = 0f)
+        public OffsetNavigationTarget([NotNull] INavigationTarget target, float approachDistance, float? approachAngle = null,
+            float targetRelativeYaw = 0f)
         {
             _target = target ?? throw new ArgumentNullException(nameof(target));
             _approachDistance = approachDistance;

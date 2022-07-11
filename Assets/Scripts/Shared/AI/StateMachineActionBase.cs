@@ -8,13 +8,14 @@ namespace Shared.AI
     public abstract class StateMachineActionBase
     {
         /// <summary>
-        /// Current action state
-        /// </summary>
-        internal StateMachineActionState CurrentState { get; set; }
-        /// <summary>
         /// Action failure reason
         /// </summary>
         public string FailureReason { get; protected set; }
+
+        /// <summary>
+        /// Current action state
+        /// </summary>
+        internal StateMachineActionState CurrentState { get; set; }
 
         /// <summary>
         /// Initializes the action. Fails if action is already started or completed.
@@ -32,6 +33,11 @@ namespace Shared.AI
                     throw new InvalidOperationException($"Cannot start action when in {CurrentState} state");
             }
         }
+
+        /// <summary>
+        /// Updates and progresses internal action state
+        /// </summary>
+        public abstract void Update();
 
         /// <summary>
         /// Requests the action to finish gracefully, e.g. finalize, dispose. An action might not transition to finished stated
@@ -52,10 +58,5 @@ namespace Shared.AI
                     throw new InvalidOperationException($"Cannot finish action when in {CurrentState} state");
             }
         }
-
-        /// <summary>
-        /// Updates and progresses internal action state
-        /// </summary>
-        public abstract void Update();
     }
 }

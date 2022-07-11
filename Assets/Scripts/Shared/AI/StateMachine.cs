@@ -23,9 +23,7 @@ namespace Shared.AI
 
         readonly List<StateMachineActionBase> _actions = new();
 
-        public StateMachineActionBase CurrentAction => _actions.Count > 0
-            ? _actions[0]
-            : null;
+        public StateMachineActionBase CurrentAction => _actions.Count > 0 ? _actions[0] : null;
 
         public IReadOnlyList<StateMachineActionBase> Actions => _actions;
 
@@ -110,7 +108,7 @@ namespace Shared.AI
 
         void RemoveAllQueuedActions()
         {
-            for (int i = _actions.Count - 1 ; i > 0 ; --i)
+            for (int i = _actions.Count - 1; i > 0; --i)
                 _actions.RemoveAt(i);
 
             if (CurrentAction == null)

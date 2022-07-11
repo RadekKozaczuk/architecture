@@ -10,14 +10,14 @@ namespace NavMeshComponents.Extensions
         public Bounds WorldBounds;
         public IEnumerable<GameObject> Roots;
 
+        Dictionary<Type, object> _extraState;
+
         public T GetExtraState<T>() where T : class, new()
         {
-            _mExtraState ??= new Dictionary<Type, object>();
-            if (!_mExtraState.TryGetValue(typeof(T), out object extra))
-                extra = _mExtraState[typeof(T)] = new T();
+            _extraState ??= new Dictionary<Type, object>();
+            if (!_extraState.TryGetValue(typeof(T), out object extra))
+                extra = _extraState[typeof(T)] = new T();
             return extra as T;
         }
-
-        Dictionary<Type, object> _mExtraState;
     }
 }

@@ -7,6 +7,9 @@ namespace UnityEngine.AI
 {
     class NavMeshBuilder2dState
     {
+        public IEnumerable<GameObject> Root => _root ?? GetRoot();
+        protected IEnumerable<GameObject> _root;
+        
         public Dictionary<Sprite, Mesh> map;
         public Dictionary<uint, Mesh> coliderMap;
         public Action<Object, NavMeshBuildSource> lookupCallback;
@@ -21,10 +24,7 @@ namespace UnityEngine.AI
         public CollectObjects2d CollectObjects;
         public GameObject parent;
         public bool hideEditorLogs;
-
-        public IEnumerable<GameObject> Root => _root ?? GetRoot();
-        protected IEnumerable<GameObject> _root;
-
+        
         public NavMeshBuilder2dState()
         {
             map = new Dictionary<Sprite, Mesh>();
@@ -62,10 +62,7 @@ namespace UnityEngine.AI
             return mesh;
         }
 
-        public void SetRoot(IEnumerable<GameObject> root)
-        {
-            _root = root;
-        }
+        public void SetRoot(IEnumerable<GameObject> root) => _root = root;
 
         public IEnumerable<GameObject> GetRoot()
         {
@@ -99,10 +96,11 @@ namespace UnityEngine.AI
             {
                 if (!it.activeSelf)
                     continue;
+
                 CollectSources(it, sources, builder);
             }
 
-            if (!builder.hideEditorLogs) 
+            if (!builder.hideEditorLogs)
                 Debug.Log("Sources " + sources.Count);
         }
 
@@ -146,26 +144,11 @@ namespace UnityEngine.AI
             }
         }
 
-        static void AddDefaultWalkableTilemap(List<NavMeshBuildSource> sources, NavMeshBuilder2dState builder, NavMeshModifier modifier)
-        {
-            var tilemap = modifier.GetComponent<Tilemap>();
-            if (tilemap == null)
-                return;
-
-            if (builder.compressBounds)
-                tilemap.CompressBounds();
-
-            if (!builder.hideEditorLogs)
-                Debug.Log($"Walkable Bounds [{tilemap.name}]: {tilemap.localBounds}");
-            NavMeshBuildSource box = BoxBoundSource(NavMeshSurface2d.GetWorldBounds(tilemap.transform.localToWorldMatrix, tilemap.localBounds));
-            box.area = builder.defaultArea;
-            sources.Add(box);
-        }
-
         public static void CollectSources(List<NavMeshBuildSource> sources, SpriteRenderer spriteRenderer, int area, NavMeshBuilder2dState builder)
         {
             if (spriteRenderer == null)
                 return;
+
             Mesh mesh = builder.GetMesh(spriteRenderer.sprite);
             if (mesh == null)
             {
@@ -179,9 +162,8 @@ namespace UnityEngine.AI
                 shape = NavMeshBuildSourceShape.Mesh,
                 component = spriteRenderer,
                 area = area,
-                transform = Matrix4x4.TRS(
-                    Vector3.Scale(spriteRenderer.transform.position, builder.overrideVector), spriteRenderer.transform.rotation,
-                    spriteRenderer.transform.lossyScale),
+                transform = Matrix4x4.TRS(Vector3.Scale(spriteRenderer.transform.position, builder.overrideVector),
+                                          spriteRenderer.transform.rotation, spriteRenderer.transform.lossyScale),
                 sourceObject = mesh
             };
             sources.Add(src);
@@ -209,9 +191,8 @@ namespace UnityEngine.AI
                 component = collider,
                 sourceObject = mesh,
                 transform = collider.attachedRigidbody
-                    ? Matrix4x4.TRS(
-                        Vector3.Scale(collider.attachedRigidbody.transform.position, builder.overrideVector),
-                        collider.attachedRigidbody.transform.rotation, Vector3.one)
+                    ? Matrix4x4.TRS(Vector3.Scale(collider.attachedRigidbody.transform.position, builder.overrideVector),
+                                    collider.attachedRigidbody.transform.rotation, Vector3.one)
                     : Matrix4x4.identity
             };
 
@@ -255,10 +236,43 @@ namespace UnityEngine.AI
             }
         }
 
-        static void CollectTile(
-            Tilemap tilemap, NavMeshBuilder2dState builder, Vector3Int vec3int, Vector3 size, Mesh sharedMesh, Quaternion rot,
-            ref NavMeshBuildSource src
-        )
+        public static Matrix4x4 GetCellTransformMatrix(Tilemap tilemap, Vector3 scale, Vector3Int vec3int) =>
+            Matrix4x4.TRS(Vector3.Scale(tilemap.GetCellCenterWorld(vec3int), scale) - tilemap.layoutGrid.cellGap, tilemap.transform.rotation,
+                          tilemap.transform.lossyScale)
+            * tilemap.orientationMatrix
+            * tilemap.GetTransformMatrix(vec3int);
+
+        internal static void Sprite2Mesh(Sprite sprite, Mesh mesh)
+        {
+            var vert = new Vector3[sprite.vertices.Length];
+            for (int i = 0; i < sprite.vertices.Length; i++)
+                vert[i] = new Vector3(sprite.vertices[i].x, sprite.vertices[i].y, 0);
+            mesh.vertices = vert;
+            mesh.uv = sprite.uv;
+            int[] tri = new int[sprite.triangles.Length];
+            for (int i = 0; i < sprite.triangles.Length; i++)
+                tri[i] = sprite.triangles[i];
+            mesh.triangles = tri;
+        }
+
+        static void AddDefaultWalkableTilemap(List<NavMeshBuildSource> sources, NavMeshBuilder2dState builder, NavMeshModifier modifier)
+        {
+            var tilemap = modifier.GetComponent<Tilemap>();
+            if (tilemap == null)
+                return;
+
+            if (builder.compressBounds)
+                tilemap.CompressBounds();
+
+            if (!builder.hideEditorLogs)
+                Debug.Log($"Walkable Bounds [{tilemap.name}]: {tilemap.localBounds}");
+            NavMeshBuildSource box = BoxBoundSource(NavMeshSurface2d.GetWorldBounds(tilemap.transform.localToWorldMatrix, tilemap.localBounds));
+            box.area = builder.defaultArea;
+            sources.Add(box);
+        }
+
+        static void CollectTile(Tilemap tilemap, NavMeshBuilder2dState builder, Vector3Int vec3int, Vector3 size, Mesh sharedMesh, Quaternion rot,
+            ref NavMeshBuildSource src)
         {
             if (!builder.overrideByGrid && tilemap.GetColliderType(vec3int) == Tile.ColliderType.Sprite)
             {
@@ -286,34 +300,10 @@ namespace UnityEngine.AI
             }
         }
 
-        public static Matrix4x4 GetCellTransformMatrix(Tilemap tilemap, Vector3 scale, Vector3Int vec3int)
-        {
-            return Matrix4x4.TRS(
-                       Vector3.Scale(tilemap.GetCellCenterWorld(vec3int), scale) - tilemap.layoutGrid.cellGap, tilemap.transform.rotation,
-                       tilemap.transform.lossyScale)
-                   * tilemap.orientationMatrix
-                   * tilemap.GetTransformMatrix(vec3int);
-        }
-
-        internal static void Sprite2Mesh(Sprite sprite, Mesh mesh)
-        {
-            var vert = new Vector3[sprite.vertices.Length];
-            for (int i = 0; i < sprite.vertices.Length; i++)
-                vert[i] = new Vector3(sprite.vertices[i].x, sprite.vertices[i].y, 0);
-            mesh.vertices = vert;
-            mesh.uv = sprite.uv;
-            int[] tri = new int[sprite.triangles.Length];
-            for (int i = 0; i < sprite.triangles.Length; i++)
-                tri[i] = sprite.triangles[i];
-            mesh.triangles = tri;
-        }
-
-        static NavMeshBuildSource BoxBoundSource(Bounds localBounds)
-        {
-            return new NavMeshBuildSource
+        static NavMeshBuildSource BoxBoundSource(Bounds localBounds) =>
+            new()
             {
                 transform = Matrix4x4.Translate(localBounds.center), shape = NavMeshBuildSourceShape.Box, size = localBounds.size, area = 0
             };
-        }
     }
 }

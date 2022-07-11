@@ -11,29 +11,14 @@ namespace NavMeshComponents.Extensions
     public class NavMeshCacheSources2d : NavMeshExtension
     {
         public bool IsDirty { get; protected set; }
-        
-        public int SourcesCount => Cache.Count;
-
-        bool _troll;
-        
-        public int CahcheCount => _lookup.Count;
-
-        internal bool Troll
-        {
-            get => _troll;
-            set
-            {
-                int i = 4;
-                _troll = value;
-            } 
-        }
-        
         public List<NavMeshBuildSource> Cache { get; private set; }
-        
+        public int SourcesCount => Cache.Count;
+        public int CacheCount => _lookup.Count;
+
         Dictionary<Object, NavMeshBuildSource> _lookup;
         Bounds _sourcesBounds;
         NavMeshBuilder2dState _state;
-        
+
         protected override void Awake()
         {
             _lookup = new Dictionary<Object, NavMeshBuildSource>();
@@ -44,11 +29,16 @@ namespace NavMeshComponents.Extensions
             base.Awake();
         }
 
+        void Update() => throw new NotImplementedException();
+
+        internal void LateUpdate() => throw new NotImplementedException();
+
         public bool AddSource(GameObject go, NavMeshBuildSource source)
         {
             bool res = _lookup.ContainsKey(go);
             if (res)
                 return UpdateSource(go);
+
             Cache.Add(source);
             _lookup.Add(go, source);
             IsDirty = true;
@@ -59,13 +49,13 @@ namespace NavMeshComponents.Extensions
         {
             if (!_lookup.ContainsKey(go))
                 return false;
-            
+
             IsDirty = true;
             NavMeshBuildSource source = _lookup[go];
             int idx = Cache.IndexOf(source);
             if (idx < 0)
                 return true;
-                
+
             source.transform = Matrix4x4.TRS(go.transform.position, go.transform.rotation, go.transform.lossyScale);
             Cache[idx] = source;
             _lookup[go] = source;
@@ -73,16 +63,11 @@ namespace NavMeshComponents.Extensions
             return true;
         }
 
-        void Update()
-        {
-            throw new NotImplementedException();
-        }
-
         public bool RemoveSource(GameObject gameObject)
         {
             if (!_lookup.ContainsKey(gameObject))
                 return false;
-            
+
             IsDirty = true;
             NavMeshBuildSource source = _lookup[gameObject];
             _lookup.Remove(gameObject);
@@ -97,15 +82,7 @@ namespace NavMeshComponents.Extensions
             return NavMeshBuilder.UpdateNavMeshDataAsync(data, NavMeshSurfaceOwner.GetBuildSettings(), Cache, _sourcesBounds);
         }
 
-        internal void LateUpdate()
-        {
-            throw new NotImplementedException();
-        }
-
-        public AsyncOperation UpdateNavMesh()
-        {
-            return UpdateNavMesh(NavMeshSurfaceOwner.NavMeshData);
-        }
+        public AsyncOperation UpdateNavMesh() => UpdateNavMesh(NavMeshSurfaceOwner.NavMeshData);
 
         public override void CollectSources(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navMeshState)
         {
@@ -115,17 +92,18 @@ namespace NavMeshComponents.Extensions
             _state.lookupCallback = LookupCallback;
         }
 
-        void LookupCallback(Object component, NavMeshBuildSource source)
-        {
-            if (component == null)
-                return;
-            _lookup.Add(component, source);
-        }
-
         public override void PostCollectSources(NavMeshSurface surface, List<NavMeshBuildSource> sources, NavMeshBuilderState navMeshState)
         {
             _sourcesBounds = navMeshState.WorldBounds;
             Cache = sources;
+        }
+
+        void LookupCallback(Object component, NavMeshBuildSource source)
+        {
+            if (component == null)
+                return;
+
+            _lookup.Add(component, source);
         }
     }
 }
