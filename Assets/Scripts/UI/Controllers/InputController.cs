@@ -8,10 +8,10 @@ namespace UI.Controllers
     /// InputHandler parses player's input and combines it into one universal set of commands.
     /// </summary>
     [UsedImplicitly]
-    class InputHandler : ICustomUpdate
+    class InputController : ICustomUpdate
     {
         [Preserve]
-        InputHandler() { }
+        InputController() { }
 
         public void CustomUpdate() { }
     }

@@ -8,7 +8,7 @@ namespace UI
         public override void InstallBindings()
         {
             Container.BindInterfacesAndSelfTo<UIMainController>().AsSingle().NonLazy();
-            Container.BindInterfacesAndSelfTo<InputHandler>().AsSingle();
+            Container.BindInterfacesAndSelfTo<InputController>().AsSingle();
         }
     }
 }

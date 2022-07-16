@@ -13,7 +13,7 @@ namespace UI.Controllers
     public class UIMainController : IInitializable, ICustomUpdate
     {
         [Inject]
-        readonly InputHandler _inputHandler;
+        readonly InputController _inputController;
 
         [Preserve]
         UIMainController() { }
@@ -25,7 +25,7 @@ namespace UI.Controllers
             if (GameStateSystem.CurrentState == GameState.Booting)
                 return;
 
-            _inputHandler.CustomUpdate();
+            _inputController.CustomUpdate();
 
             InputSystem.CustomUpdate();
         }
