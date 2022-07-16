@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace Presentation.Views
 {
+    [DisallowMultipleComponent]
     class VFXView : AbstractObjectView
     {
         [SerializeField]

@@ -16,8 +16,6 @@ namespace Presentation.ViewModels
         /// </summary>
         public static void RotateNpcToPlayer(int agentId)
         {
-            Debug.Log("rotate called");
-
             // TODO: use the id
             EnemyView view = PresentationSceneReferenceHolder.Wolf1;
             Transform target = PresentationSceneReferenceHolder.Target;

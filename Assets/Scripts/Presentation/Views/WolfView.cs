@@ -7,6 +7,7 @@ using Random = UnityEngine.Random;
 
 namespace Presentation.Views
 {
+    [DisallowMultipleComponent]
     class WolfView : EnemyView
     {
         enum WolfAIState

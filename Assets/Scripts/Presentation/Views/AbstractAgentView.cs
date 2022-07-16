@@ -1,4 +1,7 @@
-﻿namespace Presentation.Views
+﻿using UnityEngine;
+
+namespace Presentation.Views
 {
-    public class AbstractAgentView { }
+    [DisallowMultipleComponent]
+    class AbstractAgentView : MonoBehaviour { }
 }

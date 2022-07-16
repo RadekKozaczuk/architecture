@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 namespace UI.Views
 {
+    [DisallowMultipleComponent]
     class StartGameButtonView : MonoBehaviour
     {
         [SerializeField]

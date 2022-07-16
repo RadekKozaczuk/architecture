@@ -1,5 +1,4 @@
 using Common.Enums;
-using Common.Interfaces;
 using Common.Signals;
 using Common.Systems;
 using GameLogic.Config;
@@ -33,7 +32,10 @@ namespace GameLogic.Controllers
         GameLogicMainController() { }
 
         [UsedImplicitly]
-        public void Initialize() => SignalProcessor.AddReactiveController(this);
+        public void Initialize()
+        {
+            SignalProcessor.AddReactiveController(this);  
+        } 
 
         public void CustomUpdate()
         {
