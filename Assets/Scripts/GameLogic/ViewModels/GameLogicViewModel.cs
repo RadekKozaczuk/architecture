@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using Presentation.ViewModels;
 using Shared;
 using Shared.DependencyInjector;
+using Shared.DependencyInjector.Attributes;
 using Shared.DependencyInjector.Interfaces;
 
 namespace GameLogic.ViewModels

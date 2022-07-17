@@ -2,6 +2,7 @@ using Common.Enums;
 using Common.Systems;
 using JetBrains.Annotations;
 using Shared.DependencyInjector;
+using Shared.DependencyInjector.Attributes;
 using Shared.DependencyInjector.Interfaces;
 using Shared.Interfaces;
 using UI.Systems;
@@ -10,7 +11,7 @@ using UnityEngine.Scripting;
 namespace UI.Controllers
 {
     [UsedImplicitly]
-    public class UIMainController : IInitializable, ICustomUpdate
+    class UIMainController : IInitializable, ICustomUpdate
     {
         [Inject]
         readonly InputController _inputController;

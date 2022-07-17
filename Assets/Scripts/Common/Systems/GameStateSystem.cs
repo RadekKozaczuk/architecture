@@ -25,6 +25,7 @@ namespace Common.Systems
             // ReSharper disable once PossibleNullReferenceException
             OnStateChangeRequest.Invoke(state, args);
 
+        // ReSharper disable once PossibleNullReferenceException
         public static void ScheduleStateChange(GameState state, params string[] args) => OnScheduleStateChange.Invoke(state, args);
     }
 }

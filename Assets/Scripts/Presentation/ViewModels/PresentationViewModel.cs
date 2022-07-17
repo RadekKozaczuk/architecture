@@ -2,6 +2,7 @@ using Common.Enums;
 using JetBrains.Annotations;
 using Presentation.Controllers;
 using Shared.DependencyInjector;
+using Shared.DependencyInjector.Attributes;
 using Shared.DependencyInjector.Interfaces;
 
 namespace Presentation.ViewModels

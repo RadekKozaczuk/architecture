@@ -5,6 +5,7 @@ using GameLogic.Config;
 using JetBrains.Annotations;
 using Presentation.Controllers;
 using Shared.DependencyInjector;
+using Shared.DependencyInjector.Attributes;
 using Shared.DependencyInjector.Interfaces;
 using Shared.Interfaces;
 using Shared.SignalProcessing;

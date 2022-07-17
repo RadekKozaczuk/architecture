@@ -2,9 +2,6 @@ using Common;
 using JetBrains.Annotations;
 using Presentation.Controllers;
 using Presentation.ViewModels;
-using Shared.DependencyInjector;
-using Shared.DependencyInjector.Interfaces;
-using UI.Controllers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Scripting;
@@ -12,19 +9,10 @@ using UnityEngine.Scripting;
 namespace Boot.Controllers
 {
     [UsedImplicitly]
-    class FlowController : IInitializable
+    class FlowController
     {
-        internal static UIMainController UIMainController;
-
-        // this is just to make it visible for MainBootController
-        // TODO: I don't like this solution
-        [Inject]
-        readonly UIMainController _uiMainController;
-
         [Preserve]
         FlowController() => SceneManager.sceneLoaded += OnSceneLoaded;
-
-        public void Initialize() => UIMainController = _uiMainController;
 
         static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {

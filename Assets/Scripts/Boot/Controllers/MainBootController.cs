@@ -10,6 +10,7 @@ using Shared.DependencyInjector.Install;
 using Shared.Systems;
 using UI;
 using UI.Systems;
+using UI.ViewModels;
 using UnityEngine;
 using UnityEngine.EventSystems;
 #if UNITY_EDITOR
@@ -95,7 +96,7 @@ namespace Boot.Controllers
             if (_isCoreSceneLoaded)
             {
                 GameLogicViewModel.CustomUpdate();
-                FlowController.UIMainController.CustomUpdate();
+                UIViewModel.CustomUpdate();
                 _gameStateSystem.CustomUpdate();
             }
         }
