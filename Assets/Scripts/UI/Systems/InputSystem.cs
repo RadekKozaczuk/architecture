@@ -1,6 +1,3 @@
-using Presentation.ViewModels;
-using UnityEngine;
-
 namespace UI.Systems
 {
     public static class InputSystem

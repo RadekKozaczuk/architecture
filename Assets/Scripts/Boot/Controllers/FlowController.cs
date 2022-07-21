@@ -1,6 +1,5 @@
 using Common;
 using JetBrains.Annotations;
-using Presentation.Controllers;
 using Presentation.ViewModels;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -28,7 +27,6 @@ namespace Boot.Controllers
 #endif
 
                 MainBootController.OnCoreSceneLoaded();
-                PresentationMainController.OnCoreSceneLoaded();
                 PresentationViewModel.OnCoreSceneLoaded();
             }
         }

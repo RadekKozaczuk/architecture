@@ -4,6 +4,7 @@ using Shared.Interfaces;
 using UI.Config;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
 // ReSharper disable EventUnsubscriptionViaAnonymousDelegate
 
 namespace UI.Controllers
@@ -27,7 +28,7 @@ namespace UI.Controllers
         // Buttons
         readonly InputAction _esc;
         readonly InputAction _use;
-        
+
         InputController()
         {
             // TODO: to be fixed

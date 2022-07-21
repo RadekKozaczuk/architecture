@@ -3,9 +3,6 @@ using Common.Signals;
 using Common.Systems;
 using GameLogic.Config;
 using JetBrains.Annotations;
-using Presentation.Controllers;
-using Shared.DependencyInjector;
-using Shared.DependencyInjector.Attributes;
 using Shared.DependencyInjector.Interfaces;
 using Shared.Interfaces;
 using Shared.SignalProcessing;
@@ -23,20 +20,13 @@ namespace GameLogic.Controllers
     [ReactOnSignals]
     class GameLogicMainController : IInitializable, ICustomUpdate, ICustomFixedUpdate, ICustomLateUpdate
     {
-        // TODO: convert to constructor injection for better performance
-        [Inject]
-        readonly PresentationMainController _presentationMainController;
-
         static readonly GameplayConfig _gameplayConfig;
 
         [Preserve]
         GameLogicMainController() { }
 
         [UsedImplicitly]
-        public void Initialize()
-        {
-            SignalProcessor.AddReactiveController(this);  
-        } 
+        public void Initialize() => SignalProcessor.AddReactiveController(this);
 
         public void CustomUpdate()
         {

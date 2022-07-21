@@ -12,9 +12,11 @@ namespace UI.ViewModels
 
         [Inject]
         UIMainController _uiMainController;
-        
+
         public void Initialize() => _instance = this;
 
         public static void CustomUpdate() => _instance._uiMainController.CustomUpdate();
+
+        public static void OnUISceneLoaded() => UIMainController.OnUISceneLoaded();
     }
 }

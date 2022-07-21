@@ -1,10 +1,10 @@
 using System;
 using Common.Systems;
 using GameLogic.Controllers;
+using GameLogic.Systems;
 using JetBrains.Annotations;
 using Presentation.ViewModels;
 using Shared;
-using Shared.DependencyInjector;
 using Shared.DependencyInjector.Attributes;
 using Shared.DependencyInjector.Interfaces;
 
@@ -35,5 +35,9 @@ namespace GameLogic.ViewModels
         /// </summary>
         public static void ValidatePlayer(string accessCode, Action<bool> callback) =>
             StaticCoroutine.StartStaticCoroutine(JsonSystem.ValidateProfileAsync(accessCode, callback));
+
+        public static void GameplayOnEntry() => SomeSystem.IsActive = true;
+
+        public static void GameplayOnExit() => SomeSystem.IsActive = false;
     }
 }

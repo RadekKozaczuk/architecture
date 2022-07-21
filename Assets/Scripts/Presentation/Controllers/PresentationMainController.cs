@@ -6,9 +6,11 @@ using UnityEngine.Scripting;
 namespace Presentation.Controllers
 {
     [UsedImplicitly]
-    public class PresentationMainController : IInitializable, ICustomUpdate, ICustomFixedUpdate, ICustomLateUpdate
+    class PresentationMainController : IInitializable, ICustomUpdate, ICustomFixedUpdate, ICustomLateUpdate
     {
         static readonly VFXController _vfxController;
+
+        static bool _coreSceneLoaded;
 
         [Preserve]
         PresentationMainController() { }
@@ -17,6 +19,9 @@ namespace Presentation.Controllers
 
         public void CustomUpdate()
         {
+            if (!_coreSceneLoaded)
+                return;
+
             PresentationSceneReferenceHolder.Wolf1.CustomUpdate();
             PresentationSceneReferenceHolder.Wolf2.CustomUpdate();
         }
@@ -25,6 +30,6 @@ namespace Presentation.Controllers
 
         public void CustomLateUpdate() => _vfxController.CustomLateUpdate();
 
-        public static void OnCoreSceneLoaded() { }
+        internal static void OnCoreSceneLoaded() => _coreSceneLoaded = true;
     }
 }

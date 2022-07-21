@@ -1,5 +1,4 @@
 using JetBrains.Annotations;
-using Shared.DependencyInjector;
 using Shared.DependencyInjector.Attributes;
 using UI.Controllers;
 

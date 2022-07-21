@@ -79,6 +79,7 @@ namespace Boot.Controllers
             GameObject debugCommands = Instantiate(new GameObject(), Vector3.zero, Quaternion.identity);
             debugCommands.AddComponent<CommonDebugView>();
             debugCommands.AddComponent<GameLogicDebugView>();
+            // had to add it because if set in the line above, it was named "DebugCommands(Clone)" for some reason
             debugCommands.name
                 = "DebugCommands"; // had to add it because if set in the line above, it was named "DebugCommands(Clone)" for some reason
             DontDestroyOnLoad(debugCommands);
@@ -119,6 +120,8 @@ namespace Boot.Controllers
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
 
+            GameLogicViewModel.GameplayOnEntry();
+
             if (args != null && args.Contains("loadgame"))
             {
                 // load the game
@@ -130,6 +133,8 @@ namespace Boot.Controllers
             InputSystem.IsActive = false;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+
+            GameLogicViewModel.GameplayOnExit();
         }
     }
 }

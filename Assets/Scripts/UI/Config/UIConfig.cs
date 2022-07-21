@@ -9,7 +9,7 @@ namespace UI.Config
     {
         [SerializeField]
         internal InputActionAsset InputActionAsset;
-        
+
         [SerializeField]
         [Range(0, 0.3f)]
         [InfoBox("How high of a percent of the screen height player has to move finger for a swipe.", InfoMessageType.None)]

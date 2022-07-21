@@ -3,6 +3,10 @@ using UnityEngine;
 
 namespace Presentation
 {
+    /// <summary>
+    /// Keep in mind references stored here are only accessible AFTER Core scene is fully loaded up.
+    /// Use, for example, <see cref="Controllers.PresentationMainController._coreSceneLoaded" /> to control the execution.
+    /// </summary>
     public class PresentationSceneReferenceHolder : MonoBehaviour
     {
         public static AudioListener AudioListener;

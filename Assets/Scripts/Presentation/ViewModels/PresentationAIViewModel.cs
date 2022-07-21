@@ -43,9 +43,8 @@ namespace Presentation.ViewModels
         /// <param name="approachDistance"></param>
         /// <param name="approachAngle"></param>
         /// <param name="targetRelativeYaw"></param>
-        internal static void GoAndFaceTargetWithOffset(
-            EnemyView enemyView, int targetId, float approachDistance, float approachAngle = 0f, float targetRelativeYaw = 0f
-        )
+        internal static void GoAndFaceTargetWithOffset(EnemyView enemyView, int targetId, float approachDistance, float approachAngle = 0f,
+            float targetRelativeYaw = 0f)
         {
             Assert.True(approachDistance >= 0, "ApproachDistance cannot be lower than 0.");
             Assert.True(approachAngle is >= 0 and <= 360, "ApproachAngle must be a value from 0 to 360.");

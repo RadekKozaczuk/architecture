@@ -1,6 +1,5 @@
 using JetBrains.Annotations;
 using Presentation.ViewModels;
-using Shared.DependencyInjector;
 using Shared.DependencyInjector.Attributes;
 
 namespace Presentation
