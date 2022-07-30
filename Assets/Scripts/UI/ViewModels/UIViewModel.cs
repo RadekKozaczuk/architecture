@@ -15,7 +15,11 @@ namespace UI.ViewModels
 
         public void Initialize() => _instance = this;
 
+        public static void CustomFixedUpdate() => _instance._uiMainController.CustomFixedUpdate();
+        
         public static void CustomUpdate() => _instance._uiMainController.CustomUpdate();
+        
+        public static void CustomLateUpdate() => _instance._uiMainController.CustomLateUpdate();
 
         public static void OnUISceneLoaded() => UIMainController.OnUISceneLoaded();
     }

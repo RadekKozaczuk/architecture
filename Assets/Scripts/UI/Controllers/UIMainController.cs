@@ -11,7 +11,7 @@ namespace UI.Controllers
 {
     [ReactOnSignals]
     [UsedImplicitly]
-    class UIMainController : IInitializable, ICustomUpdate
+    class UIMainController : IInitializable, ICustomFixedUpdate, ICustomUpdate, ICustomLateUpdate 
     {
         [Inject]
         readonly InputController _inputController;
@@ -23,6 +23,8 @@ namespace UI.Controllers
 
         public void Initialize() => SignalProcessor.AddReactiveController(this);
 
+        public void CustomFixedUpdate() { }
+        
         public void CustomUpdate()
         {
             if (!_uiSceneLoaded)
@@ -32,6 +34,8 @@ namespace UI.Controllers
 
             InputSystem.CustomUpdate();
         }
+
+        public void CustomLateUpdate() { }
 
         internal static void OnUISceneLoaded() => _uiSceneLoaded = true;
 

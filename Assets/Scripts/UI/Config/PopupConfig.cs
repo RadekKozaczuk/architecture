@@ -8,7 +8,7 @@ namespace UI.Config
     [CreateAssetMenu(fileName = "PopupConfig", menuName = "Config/UI/PopupConfig")]
     class PopupConfig : ScriptableObject
     {
-        [InfoBox("Order should match PopupType enum.", InfoMessageType.None)]
+        [InfoBox("Order should match Common.Enums.PopupType enum.", InfoMessageType.None)]
         [SerializeField]
         internal AbstractPopupView[] PopupPrefabs;
 

@@ -6,6 +6,7 @@ using Common.Systems;
 using GameLogic;
 using GameLogic.ViewModels;
 using Presentation;
+using Presentation.ViewModels;
 using Shared.DependencyInjector.Install;
 using Shared.Systems;
 using UI;
@@ -89,7 +90,11 @@ namespace Boot.Controllers
         void FixedUpdate()
         {
             if (_isCoreSceneLoaded)
+            {
                 GameLogicViewModel.CustomFixedUpdate();
+                PresentationViewModel.CustomFixedUpdate();
+                UIViewModel.CustomFixedUpdate();
+            }
         }
 
         void Update()
@@ -97,15 +102,21 @@ namespace Boot.Controllers
             if (_isCoreSceneLoaded)
             {
                 GameLogicViewModel.CustomUpdate();
+                PresentationViewModel.CustomUpdate();
                 UIViewModel.CustomUpdate();
-                _gameStateSystem.CustomUpdate();
             }
+            
+            _gameStateSystem.CustomUpdate();
         }
 
         void LateUpdate()
         {
             if (_isCoreSceneLoaded)
+            {
                 GameLogicViewModel.CustomLateUpdate();
+                PresentationViewModel.CustomLateUpdate();
+                UIViewModel.CustomLateUpdate();
+            }
         }
 
         internal static void OnCoreSceneLoaded() => _isCoreSceneLoaded = true;

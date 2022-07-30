@@ -1,6 +1,7 @@
 using Common;
 using JetBrains.Annotations;
 using Presentation.ViewModels;
+using UI.ViewModels;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Scripting;
@@ -29,6 +30,9 @@ namespace Boot.Controllers
                 MainBootController.OnCoreSceneLoaded();
                 PresentationViewModel.OnCoreSceneLoaded();
             }
+            
+            if (scene.buildIndex == Constants.UIScene)
+                UIViewModel.OnUISceneLoaded();
         }
     }
 }

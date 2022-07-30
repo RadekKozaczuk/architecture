@@ -18,7 +18,7 @@ namespace GameLogic.Controllers
     /// </summary>
     [UsedImplicitly]
     [ReactOnSignals]
-    class GameLogicMainController : IInitializable, ICustomUpdate, ICustomFixedUpdate, ICustomLateUpdate
+    class GameLogicMainController : IInitializable, ICustomFixedUpdate, ICustomUpdate, ICustomLateUpdate
     {
         static readonly GameplayConfig _gameplayConfig;
 
@@ -28,13 +28,13 @@ namespace GameLogic.Controllers
         [UsedImplicitly]
         public void Initialize() => SignalProcessor.AddReactiveController(this);
 
+        public void CustomFixedUpdate() { }
+
         public void CustomUpdate()
         {
             if (GameStateSystem.CurrentState == GameState.Booting)
                 return;
         }
-
-        public void CustomFixedUpdate() { }
 
         public void CustomLateUpdate()
         {
