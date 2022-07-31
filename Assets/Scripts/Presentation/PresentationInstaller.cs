@@ -1,10 +1,10 @@
 using Presentation.Controllers;
 using Presentation.ViewModels;
-using Shared.DependencyInjector.Install;
+using Shared.DependencyInjector;
 
 namespace Presentation
 {
-    public class PresentationInstaller : Installer
+    public class PresentationInstaller : AbstractInstaller
     {
         public override void InstallBindings()
         {

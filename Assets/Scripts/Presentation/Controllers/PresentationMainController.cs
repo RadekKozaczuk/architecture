@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using Shared.DependencyInjector.Attributes;
 using Shared.DependencyInjector.Interfaces;
 using Shared.Interfaces;
 using UnityEngine.Scripting;
@@ -8,7 +9,8 @@ namespace Presentation.Controllers
     [UsedImplicitly]
     class PresentationMainController : IInitializable, ICustomFixedUpdate, ICustomUpdate, ICustomLateUpdate
     {
-        static readonly VFXController _vfxController;
+        [Inject]
+        readonly VFXController _vfxController;
 
         static bool _coreSceneLoaded;
 

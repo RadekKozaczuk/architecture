@@ -3,6 +3,7 @@ using Common.Signals;
 using Common.Systems;
 using GameLogic.Config;
 using JetBrains.Annotations;
+using Shared.DependencyInjector.Attributes;
 using Shared.DependencyInjector.Interfaces;
 using Shared.Interfaces;
 using Shared.SignalProcessing;
@@ -18,15 +19,12 @@ namespace GameLogic.Controllers
     /// </summary>
     [UsedImplicitly]
     [ReactOnSignals]
-    class GameLogicMainController : IInitializable, ICustomFixedUpdate, ICustomUpdate, ICustomLateUpdate
+    class GameLogicMainController : ICustomFixedUpdate, ICustomUpdate, ICustomLateUpdate
     {
         static readonly GameplayConfig _gameplayConfig;
 
         [Preserve]
         GameLogicMainController() { }
-
-        [UsedImplicitly]
-        public void Initialize() => SignalProcessor.AddReactiveController(this);
 
         public void CustomFixedUpdate() { }
 

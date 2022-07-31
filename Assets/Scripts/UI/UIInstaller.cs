@@ -1,10 +1,10 @@
-using Shared.DependencyInjector.Install;
+using Shared.DependencyInjector;
 using UI.Controllers;
 using UI.ViewModels;
 
 namespace UI
 {
-    public class UIInstaller : Installer
+    public class UIInstaller : AbstractInstaller
     {
         public override void InstallBindings()
         {

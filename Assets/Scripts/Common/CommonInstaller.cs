@@ -1,8 +1,8 @@
-using Shared.DependencyInjector.Install;
+using Shared.DependencyInjector;
 
 namespace Common
 {
-    public class CommonInstaller : Installer
+    public class CommonInstaller : AbstractInstaller
     {
         public override void InstallBindings() { }
     }

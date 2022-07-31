@@ -1,9 +1,9 @@
 using Boot.Controllers;
-using Shared.DependencyInjector.Install;
+using Shared.DependencyInjector;
 
 namespace Boot
 {
-    public class BootInstaller : Installer
+    public class BootInstaller : AbstractInstaller
     {
         public override void InstallBindings() => Container.BindInterfacesAndSelfTo<FlowController>().AsSingle().NonLazy();
     }

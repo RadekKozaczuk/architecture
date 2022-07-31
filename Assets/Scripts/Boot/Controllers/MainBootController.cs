@@ -7,7 +7,7 @@ using GameLogic;
 using GameLogic.ViewModels;
 using Presentation;
 using Presentation.ViewModels;
-using Shared.DependencyInjector.Install;
+using Shared.DependencyInjector;
 using Shared.Systems;
 using UI;
 using UI.Systems;
@@ -104,9 +104,8 @@ namespace Boot.Controllers
                 GameLogicViewModel.CustomUpdate();
                 PresentationViewModel.CustomUpdate();
                 UIViewModel.CustomUpdate();
+                _gameStateSystem.CustomUpdate();
             }
-            
-            _gameStateSystem.CustomUpdate();
         }
 
         void LateUpdate()

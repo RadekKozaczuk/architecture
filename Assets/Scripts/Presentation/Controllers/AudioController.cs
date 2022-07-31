@@ -2,7 +2,6 @@ using Common.Enums;
 using Common.Signals;
 using JetBrains.Annotations;
 using Presentation.Config;
-using Shared.DependencyInjector.Interfaces;
 using Shared.SignalProcessing;
 using UnityEngine;
 using UnityEngine.Scripting;
@@ -11,14 +10,12 @@ namespace Presentation.Controllers
 {
     [UsedImplicitly]
     [ReactOnSignals]
-    class AudioController : IInitializable
+    class AudioController
     {
         static readonly AudioConfig _config;
 
         [Preserve]
         AudioController() { }
-
-        public void Initialize() => SignalProcessor.AddReactiveController(this);
 
         internal void Play(Sound sound) =>
             // TODO: should be instantiated in a container

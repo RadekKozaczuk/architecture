@@ -1,7 +1,6 @@
 using Common.Signals;
 using JetBrains.Annotations;
 using Shared.DependencyInjector.Attributes;
-using Shared.DependencyInjector.Interfaces;
 using Shared.Interfaces;
 using Shared.SignalProcessing;
 using UI.Systems;
@@ -11,7 +10,7 @@ namespace UI.Controllers
 {
     [ReactOnSignals]
     [UsedImplicitly]
-    class UIMainController : IInitializable, ICustomFixedUpdate, ICustomUpdate, ICustomLateUpdate 
+    class UIMainController : ICustomFixedUpdate, ICustomUpdate, ICustomLateUpdate 
     {
         [Inject]
         readonly InputController _inputController;
@@ -20,8 +19,6 @@ namespace UI.Controllers
 
         [Preserve]
         UIMainController() { }
-
-        public void Initialize() => SignalProcessor.AddReactiveController(this);
 
         public void CustomFixedUpdate() { }
         

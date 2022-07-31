@@ -1,10 +1,10 @@
 using GameLogic.Controllers;
 using GameLogic.ViewModels;
-using Shared.DependencyInjector.Install;
+using Shared.DependencyInjector;
 
 namespace GameLogic
 {
-    public class GameLogicInstaller : Installer
+    public class GameLogicInstaller : AbstractInstaller
     {
         public override void InstallBindings()
         {
