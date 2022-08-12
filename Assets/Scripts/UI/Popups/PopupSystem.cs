@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Common.Enums;
 using Shared;
 using Shared.SignalProcessing;
 using UI.Config;
@@ -11,7 +12,7 @@ using UnityEngine.UI;
 namespace UI.Popups
 {
     [ReactOnSignals]
-    public static class PopupSystem
+    static class PopupSystem
     {
         internal static AbstractPopupView CurrentPopup { get; private set; }
 

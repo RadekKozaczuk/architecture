@@ -1,3 +1,4 @@
+using Common.Enums;
 using UnityEngine;
 
 namespace UI.Popups.Views

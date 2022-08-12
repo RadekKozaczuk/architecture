@@ -5,7 +5,7 @@ using Shared.DependencyInjector.Attributes;
 namespace Presentation
 {
     [UsedImplicitly]
-    public class PresentationReferenceHolder
+    class PresentationReferenceHolder
     {
         public static PresentationViewModel ViewModel => _instance._viewModel;
 

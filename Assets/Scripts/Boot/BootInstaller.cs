@@ -5,6 +5,6 @@ namespace Boot
 {
     public class BootInstaller : AbstractInstaller
     {
-        public override void InstallBindings() => Container.BindInterfacesAndSelfTo<FlowController>().AsSingle().NonLazy();
+        public override void InstallBindings() => Container.BindInterfacesAndSelfTo<FlowController>().AsSingle();
     }
 }

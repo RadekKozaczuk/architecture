@@ -7,10 +7,9 @@ namespace Presentation
     /// Keep in mind references stored here are only accessible AFTER Core scene is fully loaded up.
     /// Use, for example, <see cref="Controllers.PresentationMainController._coreSceneLoaded" /> to control the execution.
     /// </summary>
-    public class PresentationSceneReferenceHolder : MonoBehaviour
+    class PresentationSceneReferenceHolder : MonoBehaviour
     {
-        public static AudioListener AudioListener;
-
+        internal static AudioListener AudioListener;
         internal static Transform VfxContainer;
         internal static Light Light;
         internal static WolfView Wolf1;

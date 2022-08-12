@@ -1,8 +1,8 @@
 namespace UI.Systems
 {
-    public static class InputSystem
+    static class InputSystem
     {
-        public static bool IsActive;
+        internal static bool IsActive;
 
         internal static void CustomUpdate()
         {

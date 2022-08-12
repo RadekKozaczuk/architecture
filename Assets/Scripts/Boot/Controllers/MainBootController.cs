@@ -126,7 +126,7 @@ namespace Boot.Controllers
 
         static void GameplayOnEntry(string[] args = null)
         {
-            InputSystem.IsActive = true;
+            UIViewModel.GameplayOnEntry();
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
 
@@ -140,7 +140,7 @@ namespace Boot.Controllers
 
         static void GameplayOnExit(string[] args = null)
         {
-            InputSystem.IsActive = false;
+            UIViewModel.GameplayOnExit();
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
 

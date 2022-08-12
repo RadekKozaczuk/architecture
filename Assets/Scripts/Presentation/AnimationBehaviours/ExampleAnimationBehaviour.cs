@@ -3,7 +3,7 @@
 namespace Presentation.AnimationBehaviours
 {
     // AnimationBehaviours are extra pieces of code that we can add to animations in state machine.
-    class ExampleBehaviour : StateMachineBehaviour
+    class ExampleAnimationBehaviour : StateMachineBehaviour
     {
         public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) { }
 

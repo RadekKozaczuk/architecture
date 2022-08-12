@@ -14,7 +14,5 @@ namespace Common.Enums
 
     public enum Music { }
     
-    public enum PopupType
-    {
-    }
+    public enum PopupType { }
 }

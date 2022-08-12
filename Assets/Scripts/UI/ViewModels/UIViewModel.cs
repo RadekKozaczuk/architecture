@@ -2,6 +2,7 @@
 using Shared.DependencyInjector.Attributes;
 using Shared.DependencyInjector.Interfaces;
 using UI.Controllers;
+using UI.Systems;
 
 namespace UI.ViewModels
 {
@@ -22,5 +23,9 @@ namespace UI.ViewModels
         public static void CustomLateUpdate() => _instance._uiMainController.CustomLateUpdate();
 
         public static void OnUISceneLoaded() => UIMainController.OnUISceneLoaded();
+        
+        public static void GameplayOnEntry() => InputSystem.IsActive = true;
+        
+        public static void GameplayOnExit() => InputSystem.IsActive = true;
     }
 }
