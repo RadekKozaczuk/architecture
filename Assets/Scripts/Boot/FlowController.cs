@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Scripting;
 
-namespace Boot.Controllers
+namespace Boot
 {
     [UsedImplicitly]
     class FlowController
@@ -27,7 +27,7 @@ namespace Boot.Controllers
                 //debug.AddComponent<DebugCommandsView>();
 #endif
 
-                MainBootController.OnCoreSceneLoaded();
+                BootView.OnCoreSceneLoaded();
                 PresentationViewModel.OnCoreSceneLoaded();
             }
             

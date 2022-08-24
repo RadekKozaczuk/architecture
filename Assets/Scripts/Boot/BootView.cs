@@ -10,7 +10,6 @@ using Presentation.ViewModels;
 using Shared.DependencyInjector;
 using Shared.Systems;
 using UI;
-using UI.Systems;
 using UI.ViewModels;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -19,13 +18,13 @@ using Common.Views;
 using GameLogic.Views;
 #endif
 
-namespace Boot.Controllers
+namespace Boot
 {
     /// <summary>
     /// Contains all the high-level logic that cannot be executed from within <see cref="GameLogic" /> namespace.
     /// </summary>
     [DisallowMultipleComponent]
-    class MainBootController : MonoBehaviour
+    class BootView : MonoBehaviour
     {
         [SerializeField]
         EventSystem _eventSystem;
