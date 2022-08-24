@@ -178,7 +178,7 @@ GameObject:
   - component: {fileID: 720508758}
   - component: {fileID: 720508759}
   m_Layer: 0
-  m_Name: MainBootController
+  m_Name: Boot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -208,7 +208,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 720508757}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5447474e615331b48a7d3964d9516153, type: 3}
+  m_Script: {fileID: 11500000, guid: 89c21849d81153646a2361c8c4eb7839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _eventSystem: {fileID: 1503564974}
@@ -272,6 +272,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
   m_MoveRepeatDelay: 0.5
   m_MoveRepeatRate: 0.1
   m_XRTrackingOrigin: {fileID: 0}

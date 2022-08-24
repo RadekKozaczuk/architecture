@@ -25,9 +25,6 @@ namespace Presentation.Controllers
         {
             if (!_coreSceneLoaded)
                 return;
-
-            PresentationSceneReferenceHolder.Wolf1.CustomUpdate();
-            PresentationSceneReferenceHolder.Wolf2.CustomUpdate();
         }
 
         public void CustomLateUpdate() => _vfxController.CustomLateUpdate();

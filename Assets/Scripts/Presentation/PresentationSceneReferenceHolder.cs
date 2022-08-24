@@ -12,8 +12,6 @@ namespace Presentation
         internal static AudioListener AudioListener;
         internal static Transform VfxContainer;
         internal static Light Light;
-        internal static WolfView Wolf1;
-        internal static WolfView Wolf2;
         internal static Transform Target;
 
         [SerializeField]
@@ -26,12 +24,6 @@ namespace Presentation
         Light _light;
 
         [SerializeField]
-        WolfView _wolf1;
-
-        [SerializeField]
-        WolfView _wolf2;
-
-        [SerializeField]
         Transform _target;
 
         void Awake()
@@ -40,8 +32,6 @@ namespace Presentation
             VfxContainer = _vfxContainer;
 
             Light = _light;
-            Wolf1 = _wolf1;
-            Wolf2 = _wolf2;
             Target = _target;
         }
     }
