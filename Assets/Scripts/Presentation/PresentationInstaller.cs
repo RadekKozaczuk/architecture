@@ -9,11 +9,11 @@ namespace Presentation
         public override void InstallBindings()
         {
             // controllers
-            Container.BindInterfacesAndSelfTo<PresentationMainController>().AsSingle();
-            Container.BindInterfacesAndSelfTo<AudioController>().AsSingle();
-            Container.BindInterfacesAndSelfTo<VFXController>().AsSingle();
-            Container.BindInterfacesAndSelfTo<PresentationViewModel>().AsSingle();
-            Container.BindInterfacesAndSelfTo<PresentationReferenceHolder>().AsSingle();
+            Container.Bind<PresentationMainController>().AsSingle();
+            Container.Bind<AudioController>().AsSingle();
+            Container.Bind<VFXController>().AsSingle();
+            Container.Bind<PresentationViewModel>().AsSingle();
+            Container.Bind<PresentationReferenceHolder>().AsSingle();
         }
     }
 }

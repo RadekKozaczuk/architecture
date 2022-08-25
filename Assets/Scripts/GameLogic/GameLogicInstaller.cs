@@ -9,8 +9,8 @@ namespace GameLogic
         public override void InstallBindings()
         {
             // controllers
-            Container.BindInterfacesAndSelfTo<GameLogicMainController>().AsSingle();
-            Container.BindInterfacesAndSelfTo<GameLogicViewModel>().AsSingle();
+            Container.Bind<GameLogicMainController>().AsSingle();
+            Container.Bind<GameLogicViewModel>().AsSingle();
         }
     }
 }
