@@ -9,7 +9,7 @@ namespace UI
         public override void InstallBindings()
         {
             Container.BindInterfacesAndSelfTo<UIViewModel>().AsSingle();
-            Container.BindInterfacesAndSelfTo<UIMainController>().AsSingle();
+            Container.Bind<UIMainController>().AsSingle();
             Container.BindInterfacesAndSelfTo<InputController>().AsSingle();
         }
     }
