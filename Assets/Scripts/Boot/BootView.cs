@@ -38,14 +38,6 @@ namespace Boot
         {
             ConfigInjector.Run(new[] {"Boot", "Common", "GameLogic", "Presentation", "UI"});
 
-            SceneContext.Installers.Add(new BootInstaller());
-            SceneContext.Installers.Add(new CommonInstaller());
-            SceneContext.Installers.Add(new GameLogicInstaller());
-            SceneContext.Installers.Add(new PresentationInstaller());
-            SceneContext.Installers.Add(new UIInstaller());
-
-            SceneContext.Run();
-
             _gameStateSystem = new GameStateMachine<GameState>(
                 new[]
                 {
