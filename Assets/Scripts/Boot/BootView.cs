@@ -3,13 +3,9 @@ using Common;
 using Common.Config;
 using Common.Enums;
 using Common.Systems;
-using GameLogic;
 using GameLogic.ViewModels;
-using Presentation;
 using Presentation.ViewModels;
-using Shared.DependencyInjector;
 using Shared.Systems;
-using UI;
 using UI.ViewModels;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -36,7 +32,7 @@ namespace Boot
 
         void Start()
         {
-            ConfigInjector.Run(new[] {"Boot", "Common", "GameLogic", "Presentation", "UI"});
+            Injector.Run(new[] {"Boot", "Common", "GameLogic", "Presentation", "UI"});
 
             _gameStateSystem = new GameStateMachine<GameState>(
                 new[]
