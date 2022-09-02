@@ -5,6 +5,7 @@ using Common.Enums;
 using Common.Systems;
 using GameLogic.ViewModels;
 using Presentation.ViewModels;
+using Shared.DependencyInjector.Systems;
 using Shared.Systems;
 using UI.ViewModels;
 using UnityEngine;
