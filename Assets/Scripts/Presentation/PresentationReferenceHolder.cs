@@ -17,7 +17,7 @@ namespace Presentation
         static PresentationReferenceHolder _instance;
 
         [Inject]
-        PresentationViewModel _viewModel;
+        readonly PresentationViewModel _viewModel;
 
         PresentationReferenceHolder() => _instance = this;
     }

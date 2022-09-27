@@ -15,7 +15,7 @@ namespace Presentation.ViewModels
         readonly AudioController _audioController;
 
         [Inject]
-        PresentationMainController _presentationMainController;
+        readonly PresentationMainController _presentationMainController;
 
         public void Initialize() => _instance = this;
 

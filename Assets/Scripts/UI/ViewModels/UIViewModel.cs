@@ -12,7 +12,7 @@ namespace UI.ViewModels
         static UIViewModel _instance;
 
         [Inject]
-        UIMainController _uiMainController;
+        readonly UIMainController _uiMainController;
 
         public void Initialize() => _instance = this;
 

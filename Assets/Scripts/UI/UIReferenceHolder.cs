@@ -17,7 +17,7 @@ namespace UI
         static UIReferenceHolder _instance;
 
         [Inject]
-        UIMainController _mainController;
+        readonly UIMainController _mainController;
 
         UIReferenceHolder() => _instance = this;
     }

@@ -16,7 +16,7 @@ namespace GameLogic.ViewModels
         static GameLogicViewModel _instance;
 
         [Inject]
-        GameLogicMainController _gameLogicMainController;
+        readonly GameLogicMainController _gameLogicMainController;
 
         public void Initialize() => _instance = this;
 
