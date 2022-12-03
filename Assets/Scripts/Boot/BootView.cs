@@ -1,15 +1,18 @@
 using System;
 using Common;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
 using Common.Config;
+#endif
 using Common.Enums;
 using Common.Systems;
 using GameLogic.ViewModels;
 using Presentation.ViewModels;
-using Shared.DependencyInjector.Systems;
 using Shared.Systems;
 using UI.ViewModels;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
+using Presentation.Views;
 #if UNITY_EDITOR
 using Common.Views;
 using GameLogic.Views;
@@ -29,11 +32,13 @@ namespace Boot
         static bool _isCoreSceneLoaded;
         static GameStateMachine<GameState> _gameStateSystem;
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         static DebugConfig _config;
+#endif
 
         void Start()
         {
-            Injector.Run(new[] {"Boot", "Common", "GameLogic", "Presentation", "UI"});
+            Injector.Run();
 
             _gameStateSystem = new GameStateMachine<GameState>(
                 new[]
@@ -48,7 +53,12 @@ namespace Boot
                     (GameState.Booting, null, null),
                     (GameState.MainMenu, MainMenuOnEntry, MainMenuOnExit),
                     (GameState.Gameplay, GameplayOnEntry, GameplayOnExit)
-                }, GameState.Booting, _config.LogRequestedStateChange);
+                }, GameState.Booting
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                , _config.LogRequestedStateChange);
+#else
+            );
+#endif
 
             GameStateSystem.OnStateChangeRequest += _gameStateSystem.RequestStateChange;
             GameStateSystem.OnScheduleStateChange += _gameStateSystem.ScheduleStateChange;
@@ -67,10 +77,10 @@ namespace Boot
 #if UNITY_EDITOR
             GameObject debugCommands = Instantiate(new GameObject(), Vector3.zero, Quaternion.identity);
             debugCommands.AddComponent<CommonDebugView>();
+            debugCommands.AddComponent<PresentationDebugView>();
             debugCommands.AddComponent<GameLogicDebugView>();
             // had to add it because if set in the line above, it was named "DebugCommands(Clone)" for some reason
-            debugCommands.name
-                = "DebugCommands"; // had to add it because if set in the line above, it was named "DebugCommands(Clone)" for some reason
+            debugCommands.name = "DebugCommands";
             DontDestroyOnLoad(debugCommands);
 #endif
         }

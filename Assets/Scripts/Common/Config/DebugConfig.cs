@@ -12,7 +12,7 @@ namespace Common.Config
         public bool LogSystemExecutionOrder;
 
         /// <summary>
-        /// Logs all added <see cref="Shared.SignalProcessing.AbstractSignal" />.
+        /// Logs all added <see cref="Shared.AbstractSignal" />.
         /// </summary>
         public bool LogAddedSignals;
 

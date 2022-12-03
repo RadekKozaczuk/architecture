@@ -1,4 +1,4 @@
-using Shared.SignalProcessing;
+using Shared;
 
 namespace Common.Signals
 {

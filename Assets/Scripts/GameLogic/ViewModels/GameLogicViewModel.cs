@@ -1,12 +1,12 @@
 using System;
 using Common.Systems;
+using ControlFlow.DependencyInjector.Attributes;
+using ControlFlow.DependencyInjector.Interfaces;
 using GameLogic.Controllers;
 using GameLogic.Systems;
 using JetBrains.Annotations;
 using Presentation.ViewModels;
 using Shared;
-using Shared.DependencyInjector.Attributes;
-using Shared.DependencyInjector.Interfaces;
 
 namespace GameLogic.ViewModels
 {

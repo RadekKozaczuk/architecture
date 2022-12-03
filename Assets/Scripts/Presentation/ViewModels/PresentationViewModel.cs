@@ -1,8 +1,8 @@
 using Common.Enums;
+using ControlFlow.DependencyInjector.Attributes;
+using ControlFlow.DependencyInjector.Interfaces;
 using JetBrains.Annotations;
 using Presentation.Controllers;
-using Shared.DependencyInjector.Attributes;
-using Shared.DependencyInjector.Interfaces;
 
 namespace Presentation.ViewModels
 {
@@ -20,13 +20,13 @@ namespace Presentation.ViewModels
         public void Initialize() => _instance = this;
 
         public static void CustomUpdate() => _instance._presentationMainController.CustomUpdate();
-        
+
         public static void CustomFixedUpdate() => _instance._presentationMainController.CustomFixedUpdate();
 
         public static void CustomLateUpdate() => _instance._presentationMainController.CustomLateUpdate();
 
         public void PlayMusic(Music music) => _audioController.Play(music);
-        
+
         public static void OnCoreSceneLoaded() => PresentationMainController.OnCoreSceneLoaded();
 
         public static void GameplayOnEntry()

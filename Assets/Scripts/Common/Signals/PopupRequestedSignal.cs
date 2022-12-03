@@ -1,5 +1,5 @@
 ﻿using Common.Enums;
-using Shared.SignalProcessing;
+using Shared;
 
 namespace Common.Signals
 {

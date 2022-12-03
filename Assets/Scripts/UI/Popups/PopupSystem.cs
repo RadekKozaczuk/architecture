@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Common.Enums;
+using ControlFlow.SignalProcessing;
 using Shared;
-using Shared.SignalProcessing;
 using UI.Config;
 using UI.Popups.Views;
 using UnityEngine;

@@ -1,7 +1,7 @@
 #if UNITY_EDITOR
 using Common.Config;
 using Common.Signals;
-using Shared.SignalProcessing;
+using Shared.Systems;
 using Sirenix.OdinInspector;
 using UnityEngine;
 

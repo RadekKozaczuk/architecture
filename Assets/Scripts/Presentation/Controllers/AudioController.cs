@@ -1,8 +1,8 @@
 using Common.Enums;
 using Common.Signals;
+using ControlFlow.SignalProcessing;
 using JetBrains.Annotations;
 using Presentation.Config;
-using Shared.SignalProcessing;
 using UnityEngine;
 using UnityEngine.Scripting;
 

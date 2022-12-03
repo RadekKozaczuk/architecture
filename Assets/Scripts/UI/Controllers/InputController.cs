@@ -1,6 +1,6 @@
 using System;
+using ControlFlow.Interfaces;
 using JetBrains.Annotations;
-using Shared.Interfaces;
 using UI.Config;
 using UnityEngine;
 using UnityEngine.InputSystem;

@@ -30,7 +30,7 @@ namespace Boot
                 BootView.OnCoreSceneLoaded();
                 PresentationViewModel.OnCoreSceneLoaded();
             }
-            
+
             if (scene.buildIndex == Constants.UIScene)
                 UIViewModel.OnUISceneLoaded();
         }
