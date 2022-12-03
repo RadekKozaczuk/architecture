@@ -1,8 +1,5 @@
 using System;
 using Common;
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-using Common.Config;
-#endif
 using Common.Enums;
 using Common.Systems;
 using GameLogic.ViewModels;
@@ -11,9 +8,11 @@ using Shared.Systems;
 using UI.ViewModels;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
-using Presentation.Views;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+using Common.Config;
+#endif
 #if UNITY_EDITOR
+using Presentation.Views;
 using Common.Views;
 using GameLogic.Views;
 #endif
@@ -73,6 +72,12 @@ namespace Boot
             Application.SetStackTraceLogType(LogType.Warning, StackTraceLogType.ScriptOnly);
             Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.ScriptOnly);
             Application.SetStackTraceLogType(LogType.Exception, StackTraceLogType.ScriptOnly);
+
+#if UNITY_ANDROID || UNITY_IOS
+            Application.targetFrameRate = 30;
+#else
+            Application.targetFrameRate = 120;
+#endif
 
 #if UNITY_EDITOR
             GameObject debugCommands = Instantiate(new GameObject(), Vector3.zero, Quaternion.identity);

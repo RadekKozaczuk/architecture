@@ -21,7 +21,7 @@ namespace UI.Controllers
     /// </summary>
     [ReactOnSignals]
     [UsedImplicitly]
-    class UIMainController : ICustomFixedUpdate, ICustomUpdate, ICustomLateUpdate 
+    class UIMainController : ICustomFixedUpdate, ICustomUpdate, ICustomLateUpdate
     {
         [Inject]
         readonly InputController _inputController;
@@ -48,6 +48,7 @@ namespace UI.Controllers
         internal static void OnUISceneLoaded() => _uiSceneLoaded = true;
 
         [React]
+        [Preserve]
         void OnSomeSignal(InventoryChangedSignal _) { }
     }
 }

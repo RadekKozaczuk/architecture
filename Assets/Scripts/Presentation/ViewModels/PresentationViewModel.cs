@@ -3,11 +3,12 @@ using ControlFlow.DependencyInjector.Attributes;
 using ControlFlow.DependencyInjector.Interfaces;
 using JetBrains.Annotations;
 using Presentation.Controllers;
+using UnityEngine.Scripting;
 
 namespace Presentation.ViewModels
 {
     [UsedImplicitly]
-    public partial class PresentationViewModel : IInitializable
+    public class PresentationViewModel : IInitializable
     {
         static PresentationViewModel _instance;
 
@@ -16,6 +17,9 @@ namespace Presentation.ViewModels
 
         [Inject]
         readonly PresentationMainController _presentationMainController;
+
+        [Preserve]
+        PresentationViewModel() { }
 
         public void Initialize() => _instance = this;
 

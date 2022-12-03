@@ -43,6 +43,7 @@ namespace Presentation.Controllers
         }
 
         [React]
+        [Preserve]
         void OnPlaySound(PlaySoundSignal signal) => Play(signal.Position);
     }
 }

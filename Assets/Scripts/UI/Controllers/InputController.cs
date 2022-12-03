@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using UI.Config;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Scripting;
 
 // ReSharper disable EventUnsubscriptionViaAnonymousDelegate
 
@@ -29,6 +30,7 @@ namespace UI.Controllers
         readonly InputAction _esc;
         readonly InputAction _use;
 
+        [Preserve]
         InputController()
         {
             // TODO: to be fixed

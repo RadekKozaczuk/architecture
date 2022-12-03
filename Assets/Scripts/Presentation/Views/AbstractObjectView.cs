@@ -1,4 +1,6 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
 using System;
+#endif
 using UnityEngine;
 
 namespace Presentation.Views

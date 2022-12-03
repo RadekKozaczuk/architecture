@@ -7,6 +7,7 @@ using GameLogic.Systems;
 using JetBrains.Annotations;
 using Presentation.ViewModels;
 using Shared;
+using UnityEngine.Scripting;
 
 namespace GameLogic.ViewModels
 {
@@ -17,6 +18,9 @@ namespace GameLogic.ViewModels
 
         [Inject]
         readonly GameLogicMainController _gameLogicMainController;
+
+        [Preserve]
+        GameLogicViewModel() { }
 
         public void Initialize() => _instance = this;
 

@@ -6,7 +6,7 @@ namespace Presentation
 {
     /// <summary>
     /// Reference holders allow use to us injected classes in static classes.
-    /// We cannot use <see cref="InjectAttribute"/> in static classes as static objects are not controlled via <see cref="Shared.Systems.Injector"/>.
+    /// We cannot use <see cref="InjectAttribute" /> in static classes as static objects are not controlled via <see cref="Shared.Systems.Injector" />.
     /// Do not confuse reference holders with scene reference holders are these are two different things.
     /// </summary>
     [UsedImplicitly]

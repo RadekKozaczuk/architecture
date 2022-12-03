@@ -3,6 +3,7 @@ using ControlFlow.DependencyInjector.Interfaces;
 using JetBrains.Annotations;
 using UI.Controllers;
 using UI.Systems;
+using UnityEngine.Scripting;
 
 namespace UI.ViewModels
 {
@@ -13,6 +14,9 @@ namespace UI.ViewModels
 
         [Inject]
         readonly UIMainController _uiMainController;
+
+        [Preserve]
+        UIViewModel() { }
 
         public void Initialize() => _instance = this;
 

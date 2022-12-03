@@ -2,7 +2,9 @@ using Common;
 using JetBrains.Annotations;
 using Presentation.ViewModels;
 using UI.ViewModels;
+#if UNITY_EDITOR
 using UnityEngine;
+#endif
 using UnityEngine.SceneManagement;
 using UnityEngine.Scripting;
 
