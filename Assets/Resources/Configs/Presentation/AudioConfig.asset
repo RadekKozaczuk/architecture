@@ -14,4 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AudioSourcePrefab: {fileID: 0}
   Sounds: []
-  Music: []
+  _music:
+  - m_AssetGUID: d80be2c1fcbd1ee4b90e7bba860825ba
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0

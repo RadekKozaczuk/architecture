@@ -28,6 +28,14 @@ namespace UI.ViewModels
 
         public static void OnUISceneLoaded() => UIMainController.OnUISceneLoaded();
 
+        public static void BootingOnEntry() { }
+
+        public static void BootingOnExit() { }
+
+        public static void MainMenuOnEntry() { }
+
+        public static void MainMenuOnExit() { }
+
         public static void GameplayOnEntry() => InputSystem.IsActive = true;
 
         public static void GameplayOnExit() => InputSystem.IsActive = true;

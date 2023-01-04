@@ -21,7 +21,7 @@ namespace Presentation.Controllers
             // TODO: should be instantiated in a container
             InstantiateAudioObject(Vector3.zero, _config.Sounds[(int)sound]);
 
-        internal void Play(Music music) => InstantiateAudioObject(Vector3.zero, _config.Music[(int)music]);
+        internal void Play(Music music) => InstantiateAudioObject(Vector3.zero, _config.GetMusic(music));
 
         void Play(Vector3 position)
         {

@@ -2,6 +2,7 @@ using Common.Enums;
 using ControlFlow.DependencyInjector.Attributes;
 using ControlFlow.DependencyInjector.Interfaces;
 using JetBrains.Annotations;
+using Presentation.Config;
 using Presentation.Controllers;
 using UnityEngine.Scripting;
 
@@ -11,6 +12,8 @@ namespace Presentation.ViewModels
     public class PresentationViewModel : IInitializable
     {
         static PresentationViewModel _instance;
+
+        static readonly AudioConfig _audioConfig;
 
         [Inject]
         readonly AudioController _audioController;
@@ -33,6 +36,14 @@ namespace Presentation.ViewModels
 
         public static void OnCoreSceneLoaded() => PresentationMainController.OnCoreSceneLoaded();
 
+        public static void BootingOnEntry() => _audioConfig.LoadMusic(Music.MainMenu);
+
+        public static void BootingOnExit() { }
+
+        public static void MainMenuOnEntry() { }
+
+        public static void MainMenuOnExit() => _audioConfig.UnloadMusic(Music.MainMenu);
+
         public static void GameplayOnEntry()
         {
             //SomeSystem.IsActive = true;
@@ -41,6 +52,7 @@ namespace Presentation.ViewModels
         public static void GameplayOnExit()
         {
             //SomeSystem.IsActive = false;
+            _audioConfig.LoadMusic(Music.MainMenu);
         }
     }
 }

@@ -12,7 +12,10 @@ namespace Common.Enums
         Button
     }
 
-    public enum Music { }
+    public enum Music
+    {
+        MainMenu
+    }
 
     public enum PopupType { }
 }
