@@ -1,0 +1,34 @@
+{
+    "name": "InputActions",
+    "maps": [
+        {
+            "name": "Player",
+            "id": "327c6329-d1a6-48ca-868e-a9644ea235c0",
+            "actions": [
+                {
+                    "name": "Quit/Return",
+                    "type": "Button",
+                    "id": "6af5c871-33c2-42fe-a646-a3a10014abb3",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "65e7396f-2201-4cbc-ab8d-c9de87c56000",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Quit/Return",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

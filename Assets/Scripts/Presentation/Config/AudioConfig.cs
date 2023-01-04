@@ -1,5 +1,6 @@
 using Common;
 using Common.Enums;
+using Shared;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -45,6 +46,10 @@ namespace Presentation.Config
         /// <summary>
         /// Gets music asset reference.
         /// </summary>
-        internal AudioClip GetMusic(Music music) => _loadedMusic[(int)music];
+        internal AudioClip GetMusic(Music music)
+        {
+            Assert.IsNotNull(_loadedMusic[(int)music]);
+            return _loadedMusic[(int)music];
+        }
     }
 }

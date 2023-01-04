@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f712259be6674edb81593d28b29aaf24, type: 3}
   m_Name: UIConfig
   m_EditorClassIdentifier: 
+  InputActionAsset: {fileID: -944628639613478452, guid: d304856d3c9d1504c993edfe6aa33fee, type: 3}
   SwipeMinPercentage: 0.2

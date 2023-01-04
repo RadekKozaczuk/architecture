@@ -1,5 +1,4 @@
 using Common.Signals;
-using ControlFlow.DependencyInjector.Attributes;
 using ControlFlow.Interfaces;
 using ControlFlow.SignalProcessing;
 using JetBrains.Annotations;
@@ -23,9 +22,6 @@ namespace UI.Controllers
     [UsedImplicitly]
     class UIMainController : ICustomFixedUpdate, ICustomUpdate, ICustomLateUpdate
     {
-        [Inject]
-        readonly InputController _inputController;
-
         static bool _uiSceneLoaded;
 
         [Preserve]
@@ -37,10 +33,6 @@ namespace UI.Controllers
         {
             if (!_uiSceneLoaded)
                 return;
-
-            _inputController.CustomUpdate();
-
-            InputSystem.CustomUpdate();
         }
 
         public void CustomLateUpdate() { }
