@@ -1,5 +1,5 @@
+using Common;
 using Common.Enums;
-using Shared;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -20,6 +20,8 @@ namespace Presentation.Config
         AssetReferenceAudioClip[] _music;
 
         AudioClip[] _loadedMusic;
+
+        internal void Initialize() => _loadedMusic = new AudioClip[_music.Length];
 
         /// <summary>
         /// Loads music asset into memory.

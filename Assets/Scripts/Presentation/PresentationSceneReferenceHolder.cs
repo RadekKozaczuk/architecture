@@ -11,7 +11,8 @@ namespace Presentation
         internal static AudioListener AudioListener;
         internal static Transform VfxContainer;
         internal static Light Light;
-        internal static Transform Target;
+        internal static Camera MainMenuCamera;
+        internal static Camera GameplayCamera;
 
         [SerializeField]
         AudioListener _audioListener;
@@ -23,15 +24,18 @@ namespace Presentation
         Light _light;
 
         [SerializeField]
-        Transform _target;
+        Camera _mainCamera;
+
+        [SerializeField]
+        Camera _gameplayCamera;
 
         void Awake()
         {
             AudioListener = _audioListener;
             VfxContainer = _vfxContainer;
-
             Light = _light;
-            Target = _target;
+            MainMenuCamera = _mainCamera;
+            GameplayCamera = _gameplayCamera;
         }
     }
 }

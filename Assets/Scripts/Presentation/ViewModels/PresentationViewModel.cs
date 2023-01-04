@@ -24,7 +24,11 @@ namespace Presentation.ViewModels
         [Preserve]
         PresentationViewModel() { }
 
-        public void Initialize() => _instance = this;
+        public void Initialize()
+        {
+            _instance = this;
+            _audioConfig.Initialize();
+        }
 
         public static void CustomUpdate() => _instance._presentationMainController.CustomUpdate();
 
@@ -38,13 +42,19 @@ namespace Presentation.ViewModels
 
         public static void BootingOnExit() => _audioConfig.LoadMusic(Music.MainMenu);
 
-        public static void MainMenuOnEntry() { }
+        public static void MainMenuOnEntry()
+        {
+            PresentationSceneReferenceHolder.GameplayCamera.gameObject.SetActive(false);
+            PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(true);
+        }
 
         public static void MainMenuOnExit() => _audioConfig.UnloadMusic(Music.MainMenu);
 
         public static void GameplayOnEntry()
         {
             //SomeSystem.IsActive = true;
+            PresentationSceneReferenceHolder.GameplayCamera.gameObject.SetActive(true);
+            PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(false);
         }
 
         public static void GameplayOnExit()
