@@ -40,8 +40,6 @@ namespace GameLogic.ViewModels
         public static void ValidatePlayer(string accessCode, Action<bool> callback) =>
             StaticCoroutine.StartStaticCoroutine(JsonSystem.ValidateProfileAsync(accessCode, callback));
 
-        public static void BootingOnEntry() { }
-
         public static void BootingOnExit() { }
 
         public static void MainMenuOnEntry() { }

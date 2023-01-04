@@ -36,9 +36,7 @@ namespace Presentation.ViewModels
 
         public static void OnCoreSceneLoaded() => PresentationMainController.OnCoreSceneLoaded();
 
-        public static void BootingOnEntry() => _audioConfig.LoadMusic(Music.MainMenu);
-
-        public static void BootingOnExit() { }
+        public static void BootingOnExit() => _audioConfig.LoadMusic(Music.MainMenu);
 
         public static void MainMenuOnEntry() { }
 

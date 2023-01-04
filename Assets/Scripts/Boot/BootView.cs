@@ -49,7 +49,7 @@ namespace Boot
                 },
                 new (GameState, Action<string[]>, Action<string[]>)[]
                 {
-                    (GameState.Booting, BootingOnEntry, BootingOnExit),
+                    (GameState.Booting, null, BootingOnExit),
                     (GameState.MainMenu, MainMenuOnEntry, MainMenuOnExit),
                     (GameState.Gameplay, GameplayOnEntry, GameplayOnExit)
                 }, GameState.Booting
@@ -122,13 +122,6 @@ namespace Boot
         }
 
         internal static void OnCoreSceneLoaded() => _isCoreSceneLoaded = true;
-
-        static void BootingOnEntry(string[] args = null)
-        {
-            GameLogicViewModel.BootingOnEntry();
-            PresentationViewModel.BootingOnEntry();
-            UIViewModel.BootingOnEntry();
-        }
 
         static void BootingOnExit(string[] args = null)
         {
