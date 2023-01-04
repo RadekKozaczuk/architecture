@@ -44,11 +44,18 @@ namespace Presentation.ViewModels
 
         public static void MainMenuOnEntry()
         {
+            PresentationSceneReferenceHolder.MusicAudioSource.clip = _audioConfig.GetMusic(Music.MainMenu);
+            PresentationSceneReferenceHolder.MusicAudioSource.Play();
             PresentationSceneReferenceHolder.GameplayCamera.gameObject.SetActive(false);
             PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(true);
         }
 
-        public static void MainMenuOnExit() => _audioConfig.UnloadMusic(Music.MainMenu);
+        public static void MainMenuOnExit()
+        {
+            PresentationSceneReferenceHolder.MusicAudioSource.Stop();
+            PresentationSceneReferenceHolder.MusicAudioSource.clip = null;
+            _audioConfig.UnloadMusic(Music.MainMenu);
+        }
 
         public static void GameplayOnEntry()
         {
