@@ -49,7 +49,7 @@ namespace Boot
                 },
                 new (GameState, Action<string[]>, Action<string[]>)[]
                 {
-                    (GameState.Booting, null, null),
+                    (GameState.Booting, null, BootingOnExit),
                     (GameState.MainMenu, MainMenuOnEntry, MainMenuOnExit),
                     (GameState.Gameplay, GameplayOnEntry, GameplayOnExit)
                 }, GameState.Booting
@@ -123,31 +123,49 @@ namespace Boot
 
         internal static void OnCoreSceneLoaded() => _isCoreSceneLoaded = true;
 
-        static void MainMenuOnEntry(string[] args = null) { }
+        static void BootingOnExit(string[] args = null)
+        {
+            GameLogicViewModel.BootingOnExit();
+            PresentationViewModel.BootingOnExit();
+            UIViewModel.BootingOnExit();
+        }
 
-        static void MainMenuOnExit(string[] args = null) { }
+        static void MainMenuOnEntry(string[] args = null)
+        {
+            GameLogicViewModel.MainMenuOnEntry();
+            PresentationViewModel.MainMenuOnEntry();
+            UIViewModel.MainMenuOnEntry();
+        }
+
+        static void MainMenuOnExit(string[] args = null)
+        {
+            GameLogicViewModel.MainMenuOnExit();
+            PresentationViewModel.MainMenuOnExit();
+            UIViewModel.MainMenuOnExit();
+        }
 
         static void GameplayOnEntry(string[] args = null)
         {
-            UIViewModel.GameplayOnEntry();
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-
             GameLogicViewModel.GameplayOnEntry();
 
             if (args != null && args.Contains("loadgame"))
             {
                 // load the game
             }
+
+            PresentationViewModel.GameplayOnEntry();
+            UIViewModel.GameplayOnEntry();
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
 
         static void GameplayOnExit(string[] args = null)
         {
+            GameLogicViewModel.GameplayOnExit();
+            PresentationViewModel.GameplayOnExit();
             UIViewModel.GameplayOnExit();
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-
-            GameLogicViewModel.GameplayOnExit();
         }
     }
 }

@@ -8,13 +8,11 @@ namespace Presentation
     /// </summary>
     class PresentationSceneReferenceHolder : MonoBehaviour
     {
-        internal static AudioListener AudioListener;
         internal static Transform VfxContainer;
         internal static Light Light;
-        internal static Transform Target;
-
-        [SerializeField]
-        AudioListener _audioListener;
+        internal static Camera MainMenuCamera;
+        internal static Camera GameplayCamera;
+        internal static AudioSource MusicAudioSource;
 
         [SerializeField]
         Transform _vfxContainer;
@@ -23,15 +21,21 @@ namespace Presentation
         Light _light;
 
         [SerializeField]
-        Transform _target;
+        Camera _mainCamera;
+
+        [SerializeField]
+        Camera _gameplayCamera;
+
+        [SerializeField]
+        AudioSource _musicAudioSource;
 
         void Awake()
         {
-            AudioListener = _audioListener;
             VfxContainer = _vfxContainer;
-
             Light = _light;
-            Target = _target;
+            MainMenuCamera = _mainCamera;
+            GameplayCamera = _gameplayCamera;
+            MusicAudioSource = _musicAudioSource;
         }
     }
 }

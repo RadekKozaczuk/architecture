@@ -1,4 +1,3 @@
-using Common.Config;
 using Common.Enums;
 
 namespace Common.Systems
@@ -15,8 +14,6 @@ namespace Common.Systems
 
         // ReSharper disable once PossibleNullReferenceException
         public static GameState CurrentState => OnGetCurrentGameState.Invoke();
-
-        static readonly DebugConfig _config;
 
         /// <summary>
         /// Actual state change may be delayed in time. Consecutive calls are not allowed.

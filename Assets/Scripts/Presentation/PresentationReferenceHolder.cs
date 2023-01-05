@@ -1,6 +1,8 @@
 using ControlFlow.DependencyInjector.Attributes;
 using JetBrains.Annotations;
+using Presentation.Controllers;
 using Presentation.ViewModels;
+using UnityEngine.Scripting;
 
 namespace Presentation
 {
@@ -12,13 +14,19 @@ namespace Presentation
     [UsedImplicitly]
     class PresentationReferenceHolder
     {
-        public static PresentationViewModel ViewModel => _instance._viewModel;
+        internal static PresentationViewModel ViewModel => _instance._viewModel;
+
+        internal static AudioController AudioController => _instance._audioController;
 
         static PresentationReferenceHolder _instance;
 
         [Inject]
         readonly PresentationViewModel _viewModel;
 
+        [Inject]
+        readonly AudioController _audioController;
+
+        [Preserve]
         PresentationReferenceHolder() => _instance = this;
     }
 }

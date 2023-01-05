@@ -1,5 +1,7 @@
+using Common;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Presentation.Config
 {
@@ -9,11 +11,13 @@ namespace Presentation.Config
         [SerializeField]
         internal AudioSource AudioSourcePrefab;
 
-        [InfoBox("Order must match the Sound enum.", InfoMessageType.None)]
+        [InfoBox("Element order must match the Sound enum.", InfoMessageType.None)]
         [SerializeField]
         internal AudioClip[] Sounds;
 
+        [FormerlySerializedAs("_music")]
+        [InfoBox("Element order must match the Music enum.", InfoMessageType.None)]
         [SerializeField]
-        internal AudioClip[] Music;
+        internal AssetReferenceAudioClip[] Music;
     }
 }

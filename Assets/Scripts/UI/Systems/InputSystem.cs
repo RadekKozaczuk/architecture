@@ -1,23 +1,24 @@
+using Common.Enums;
+using Common.Systems;
+using UI.Config;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
 namespace UI.Systems
 {
     static class InputSystem
     {
-        internal static bool IsActive;
+        static readonly UIConfig _uiConfig;
 
-        internal static void CustomUpdate()
+        internal static void Initialize()
         {
-            if (!IsActive)
-                return;
+            // MainMenu bindings
+            InputActionMap mainMenu = _uiConfig.InputActionAsset.FindActionMap("MainMenu");
+            mainMenu.FindAction("Quit").performed += _ => Application.Quit();
 
-            // TODO: use new InputSystem
-            /*if (Input.GetKeyDown(KeyCode.Alpha1))
-                PresentationViewModel.FirstWolfGo();
-
-            if (Input.GetKeyDown(KeyCode.Alpha2))
-                PresentationViewModel.SecondWolfGo();*/
-
-            /*if (Input.GetKeyDown(KeyCode.Escape))
-                Application.Quit();*/
+            // Gameplay bindings
+            InputActionMap gameplay = _uiConfig.InputActionAsset.FindActionMap("Gameplay");
+            gameplay.FindAction("Quit").performed += _ => GameStateSystem.RequestStateChange(GameState.MainMenu);
         }
     }
 }
