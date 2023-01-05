@@ -27,7 +27,6 @@ namespace Presentation.ViewModels
         public void Initialize()
         {
             _instance = this;
-            _audioConfig.Initialize();
         }
 
         public static void CustomUpdate() => _instance._presentationMainController.CustomUpdate();
@@ -36,25 +35,20 @@ namespace Presentation.ViewModels
 
         public static void CustomLateUpdate() => _instance._presentationMainController.CustomLateUpdate();
 
-        public void PlayMusic(Music music) => _audioController.Play(music);
-
         public static void OnCoreSceneLoaded() => PresentationMainController.OnCoreSceneLoaded();
 
-        public static void BootingOnExit() => _audioConfig.LoadMusic(Music.MainMenu);
+        public static void BootingOnExit() => PresentationReferenceHolder.AudioController.LoadMusic(Music.MainMenu);
 
         public static void MainMenuOnEntry()
         {
-            PresentationSceneReferenceHolder.MusicAudioSource.clip = _audioConfig.GetMusic(Music.MainMenu);
-            PresentationSceneReferenceHolder.MusicAudioSource.Play();
+            PresentationReferenceHolder.AudioController.PlayMusicWhenReady(Music.MainMenu);
             PresentationSceneReferenceHolder.GameplayCamera.gameObject.SetActive(false);
             PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(true);
         }
 
         public static void MainMenuOnExit()
         {
-            PresentationSceneReferenceHolder.MusicAudioSource.Stop();
-            PresentationSceneReferenceHolder.MusicAudioSource.clip = null;
-            _audioConfig.UnloadMusic(Music.MainMenu);
+            PresentationReferenceHolder.AudioController.StopMusic();
         }
 
         public static void GameplayOnEntry()
@@ -67,7 +61,7 @@ namespace Presentation.ViewModels
         public static void GameplayOnExit()
         {
             //SomeSystem.IsActive = false;
-            _audioConfig.LoadMusic(Music.MainMenu);
+            PresentationReferenceHolder.AudioController.LoadMusic(Music.MainMenu);
         }
     }
 }
