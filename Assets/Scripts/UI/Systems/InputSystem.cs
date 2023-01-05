@@ -12,16 +12,13 @@ namespace UI.Systems
 
         internal static void Initialize()
         {
-            InputActionMap inputActionMap = _uiConfig.InputActionAsset.FindActionMap("Player");
+            // MainMenu bindings
+            InputActionMap mainMenu = _uiConfig.InputActionAsset.FindActionMap("MainMenu");
+            mainMenu.FindAction("Quit").performed += _ => Application.Quit();
 
-            // Buttons
-            inputActionMap.FindAction("Quit/Return").performed += context =>
-            {
-                if (GameStateSystem.CurrentState == GameState.Gameplay)
-                    GameStateSystem.RequestStateChange(GameState.MainMenu);
-                else if (GameStateSystem.CurrentState == GameState.MainMenu)
-                    Application.Quit();
-            };
+            // Gameplay bindings
+            InputActionMap gameplay = _uiConfig.InputActionAsset.FindActionMap("Gameplay");
+            gameplay.FindAction("Quit").performed += _ => GameStateSystem.RequestStateChange(GameState.MainMenu);
         }
     }
 }

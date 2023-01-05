@@ -21,6 +21,7 @@ namespace Presentation.Controllers
 
         Music? _currentMusic;
 
+        [Preserve]
         AudioController()
         {
             _loadedMusic = new AudioClip[_config.Music.Length];
@@ -34,9 +35,7 @@ namespace Presentation.Controllers
         {
             int id = (int)music;
 
-            Assert.IsNull(_loadedMusic[id], "It is invalid to request to load a music when the music is already loaded into memory");
-
-            // todo: add another assertion that checks if the loading operation is already started but haven't finished yet
+            Assert.IsNull(_loadedMusic[id], "Request to load music when the music is already loaded into memory is invalid.");
 
             _asyncOperationHandles[id] = _config.Music[id].LoadAssetAsync<AudioClip>();
             _asyncOperationHandles[id].Completed += asyncOperationHandle => _loadedMusic[id] = asyncOperationHandle.Result;
@@ -51,17 +50,15 @@ namespace Presentation.Controllers
 
             Assert.IsNotNull(_loadedMusic[id], "It is invalid to request to unload a music when the music is already unloaded from memory");
 
-            // todo: add another assertion that checks if the unloading operation is already started but haven't finished yet
-
             _loadedMusic[id] = null;
             _config.Music[id].ReleaseAsset();
         }
 
         /// <summary>
         /// Tells controller to play the music as soon it is loaded into memory.
-        /// If the music is already it loaded into memory controller will start to play it immediately.
-        /// If the <see cref="LoadMusic"/> method was called but it has not finished yet, controller will wait for it to finish and then play the music.
-        /// If the <see cref="LoadMusic"/> method was not called, controller will call it first, and then wait for it to finish and then play the music.
+        /// If the music is already loaded into memory controller will start to play it immediately.
+        /// If the <see cref="LoadMusic"/> method was called but it has not finished yet, controller will wait for it to finish, and then play the music.
+        /// If the <see cref="LoadMusic"/> method was not called, controller will call it first, and then wait for it to finish, and then play the music.
         /// </summary>
         internal void PlayMusicWhenReady(Music music)
         {
@@ -121,7 +118,7 @@ namespace Presentation.Controllers
         }
 
         // TODO: in future add pooling
-        void InstantiateAudioObject(Vector3 position, AudioClip clip)
+        static void InstantiateAudioObject(Vector3 position, AudioClip clip)
         {
             AudioSource audioSource = Object.Instantiate(_config.AudioSourcePrefab, position, Quaternion.identity);
 

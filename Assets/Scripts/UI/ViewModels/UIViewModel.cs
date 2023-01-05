@@ -36,12 +36,12 @@ namespace UI.ViewModels
 
         public static void BootingOnExit() { }
 
-        public static void MainMenuOnEntry() { }
+        public static void MainMenuOnEntry() => _uiConfig.InputActionAsset.FindActionMap("MainMenu").Enable();
 
-        public static void MainMenuOnExit() { }
+        public static void MainMenuOnExit() => _uiConfig.InputActionAsset.FindActionMap("MainMenu").Disable();
 
-        public static void GameplayOnEntry() => _uiConfig.InputActionAsset.FindActionMap("Player").Enable();
+        public static void GameplayOnEntry() => _uiConfig.InputActionAsset.FindActionMap("Gameplay").Enable();
 
-        public static void GameplayOnExit() => _uiConfig.InputActionAsset.FindActionMap("Player").Disable();
+        public static void GameplayOnExit() => _uiConfig.InputActionAsset.FindActionMap("Gameplay").Disable();
     }
 }

@@ -2,11 +2,39 @@
     "name": "InputActions",
     "maps": [
         {
-            "name": "Player",
+            "name": "MainMenu",
+            "id": "79189bc8-6123-40ef-b9a4-f6096672af4e",
+            "actions": [
+                {
+                    "name": "Quit",
+                    "type": "Button",
+                    "id": "e3418382-93a6-40e9-bb85-990b408178c0",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "f30de7f2-2841-4b87-b74e-03ae4493c504",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Quit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Gameplay",
             "id": "327c6329-d1a6-48ca-868e-a9644ea235c0",
             "actions": [
                 {
-                    "name": "Quit/Return",
+                    "name": "Quit",
                     "type": "Button",
                     "id": "6af5c871-33c2-42fe-a646-a3a10014abb3",
                     "expectedControlType": "Button",
@@ -23,7 +51,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Quit/Return",
+                    "action": "Quit",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

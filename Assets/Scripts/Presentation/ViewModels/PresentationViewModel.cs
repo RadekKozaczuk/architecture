@@ -24,10 +24,7 @@ namespace Presentation.ViewModels
         [Preserve]
         PresentationViewModel() { }
 
-        public void Initialize()
-        {
-            _instance = this;
-        }
+        public void Initialize() => _instance = this;
 
         public static void CustomUpdate() => _instance._presentationMainController.CustomUpdate();
 
