@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Common.Enums;
 using ControlFlow.DependencyInjector.Interfaces;
@@ -16,8 +17,7 @@ namespace Presentation.Controllers
     {
         static readonly VFXConfig _config;
 
-        static readonly Dictionary<VFX, MemoryPool<ParticleEffectView>> _poolDictionary = new ();
-        static readonly MemoryPool<ParticleEffectView> _particleEffectPool = new();
+        static readonly MemoryPool<ParticleEffectView>[] _pools = new MemoryPool<ParticleEffectView>[Enum.GetNames(typeof(VFX)).Length];
         static readonly List<ParticleEffectView> _particleEffects = new();
 
         VFX _vfx;
@@ -29,7 +29,8 @@ namespace Presentation.Controllers
         public void Initialize()
         {
             // for all vfx
-            _poolDictionary.Add(VFX.HitEffect, new MemoryPool<ParticleEffectView>(CustomAlloc, null, CustomReturn));
+            for (int i = 0; i < Enum.GetNames(typeof(VFX)).Length; i++)
+                _pools[i] = new MemoryPool<ParticleEffectView>(CustomAlloc, null, CustomReturn);
         }
 
         public void CustomLateUpdate()
@@ -40,10 +41,7 @@ namespace Presentation.Controllers
                 if (view.IsAlive)
                     continue;
 
-                _poolDictionary.TryGetValue(view.VfxType, out MemoryPool<ParticleEffectView> pool);
-
-                // ReSharper disable once PossibleNullReferenceException
-                pool.Return(view);
+                _pools[(int)view.VfxType].Return(view);
                 _particleEffects.RemoveAt(i);
             }
         }
@@ -53,15 +51,12 @@ namespace Presentation.Controllers
             _vfx = vfx;
             _position = position;
 
-            _poolDictionary.TryGetValue(vfx, out MemoryPool<ParticleEffectView> pool);
-
-            // ReSharper disable once PossibleNullReferenceException
-            ParticleEffectView view = pool.Get();
+            ParticleEffectView view = _pools[(int)vfx].Get();
             view.Play();
             _particleEffects.Add(view);
         }
 
-        ParticleEffectView CustomAlloc() => Object.Instantiate(_config.ParticleEffects[(int)_vfx], _position, Quaternion.identity, PresentationSceneReferenceHolder.VfxContainer);
+        ParticleEffectView CustomAlloc() => UnityEngine.Object.Instantiate(_config.ParticleEffects[(int)_vfx], _position, Quaternion.identity, PresentationSceneReferenceHolder.VfxContainer);
 
         static void CustomReturn(ParticleEffectView view) => view.gameObject.SetActive(false);
     }

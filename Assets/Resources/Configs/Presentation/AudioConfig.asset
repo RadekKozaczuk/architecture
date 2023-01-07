@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a61ab515fcc744f68ab90c1b042d30df, type: 3}
   m_Name: AudioConfig
   m_EditorClassIdentifier: 
-  AudioSourcePrefab: {fileID: 0}
+  AudioSourcePrefab: {fileID: 270683169326500953, guid: 201f3027257a0384c91e03f12f4cce60, type: 3}
   Sounds:
   - {fileID: 8300000, guid: 9c948bca85a4b974aa2bf04aa651f988, type: 3}
   - {fileID: 8300000, guid: 0b5cf9ec6c6d5844a9ef49861f441286, type: 3}

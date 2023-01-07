@@ -1,5 +1,8 @@
+using System.Collections.Generic;
 using Common.Enums;
 using Common.Signals;
+using ControlFlow.Interfaces;
+using ControlFlow.Pooling;
 using ControlFlow.SignalProcessing;
 using JetBrains.Annotations;
 using Presentation.Config;
@@ -10,22 +13,43 @@ using UnityEngine.Scripting;
 
 namespace Presentation.Controllers
 {
+    /// <summary>
+    /// Music is loaded in and out of memory dynamically when needed. Sound clips are constantly present in the memory.
+    /// </summary>
     [UsedImplicitly]
     [ReactOnSignals]
-    class AudioController
+    class AudioController : ICustomLateUpdate
     {
         static readonly AudioConfig _config;
 
         readonly AudioClip[] _loadedMusic;
         readonly AsyncOperationHandle<AudioClip>[] _asyncOperationHandles;
+        static readonly List<AudioSource> _soundAudioSources = new();
+        readonly MemoryPool<AudioSource> _pool;
 
         Music? _currentMusic;
+        Vector3 _position;
 
         [Preserve]
         AudioController()
         {
             _loadedMusic = new AudioClip[_config.Music.Length];
             _asyncOperationHandles = new AsyncOperationHandle<AudioClip>[_config.Music.Length];
+            _pool = new MemoryPool<AudioSource>(CustomAlloc, null, CustomReturn);
+        }
+
+        public void CustomLateUpdate()
+        {
+            for (int i = 0; i < _soundAudioSources.Count; i++)
+            {
+                AudioSource source = _soundAudioSources[i];
+                if (source.isPlaying)
+                    continue;
+
+                // todo: add pooling
+                _pool.Return(source);
+                _soundAudioSources.RemoveAt(i);
+            }
         }
 
         /// <summary>
@@ -79,7 +103,7 @@ namespace Presentation.Controllers
             }
             else
             {
-                _asyncOperationHandles[id].Completed += asyncOperationHandle => HandleMusic();
+                _asyncOperationHandles[id].Completed += _ => HandleMusic();
             }
 
             void HandleMusic()
@@ -105,31 +129,20 @@ namespace Presentation.Controllers
             _currentMusic = null;
         }
 
-        internal void Play(Sound sound) =>
-            // TODO: should be instantiated in a container
-            InstantiateAudioObject(Vector3.zero, _config.Sounds[(int)sound]);
-
-        void Play(Vector3 position)
+        internal static void PlaySound(Sound sound, Vector3 position)
         {
-            AudioClip audioClip = null;
-
-            if (audioClip != null)
-                InstantiateAudioObject(position, audioClip);
-        }
-
-        // TODO: in future add pooling
-        static void InstantiateAudioObject(Vector3 position, AudioClip clip)
-        {
-            AudioSource audioSource = Object.Instantiate(_config.AudioSourcePrefab, position, Quaternion.identity);
-
-            audioSource.clip = clip;
-            audioSource.Play();
-
-            Object.Destroy(audioSource.gameObject, audioSource.clip.length);
+            AudioSource source = Object.Instantiate(_config.AudioSourcePrefab, position, Quaternion.identity, PresentationSceneReferenceHolder.AudioContainer);
+            source.clip = _config.Sounds[(int)sound];
+            source.Play();
+            _soundAudioSources.Add(source);
         }
 
         [React]
         [Preserve]
-        void OnPlaySound(PlaySoundSignal signal) => Play(signal.Position);
+        void OnPlaySound(PlaySoundSignal signal) { }
+
+        AudioSource CustomAlloc() => Object.Instantiate(_config.AudioSourcePrefab, _position, Quaternion.identity, PresentationSceneReferenceHolder.AudioContainer);
+
+        static void CustomReturn(AudioSource source) => source.gameObject.SetActive(false);
     }
 }

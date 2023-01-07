@@ -23,6 +23,9 @@ namespace Presentation.Controllers
         [Inject]
         readonly VFXController _vfxController;
 
+        [Inject]
+        readonly AudioController _audioController;
+
         static bool _coreSceneLoaded;
 
         [Preserve]
@@ -38,7 +41,11 @@ namespace Presentation.Controllers
                 return;
         }
 
-        public void CustomLateUpdate() => _vfxController.CustomLateUpdate();
+        public void CustomLateUpdate()
+        {
+            _vfxController.CustomLateUpdate();
+            _audioController.CustomLateUpdate();
+        }
 
         internal static void OnCoreSceneLoaded() => _coreSceneLoaded = true;
     }

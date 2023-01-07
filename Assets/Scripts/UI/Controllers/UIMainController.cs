@@ -2,7 +2,6 @@ using Common.Signals;
 using ControlFlow.Interfaces;
 using ControlFlow.SignalProcessing;
 using JetBrains.Annotations;
-using UI.Systems;
 using UnityEngine.Scripting;
 
 namespace UI.Controllers

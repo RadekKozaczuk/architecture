@@ -60,9 +60,10 @@ namespace Presentation.ViewModels
             {
                 float x = Random.Range(-5, 5);
                 float z = Random.Range(-5, 5);
-                float delay = Random.Range(0, 4);
+                int soundId = Random.Range(0, 4);
 
-                 PresentationReferenceHolder.VFXController.SpawnParticleEffect(VFX.HitEffect, new Vector3(x, 0f, z));
+                PresentationReferenceHolder.VFXController.SpawnParticleEffect(VFX.HitEffect, new Vector3(x, 0f, z));
+                AudioController.PlaySound((Sound)soundId, new Vector3(x, 0f, z));
             }
         }
 
