@@ -13,8 +13,12 @@ MonoBehaviour:
   m_Name: AudioConfig
   m_EditorClassIdentifier: 
   AudioSourcePrefab: {fileID: 0}
-  Sounds: []
-  _music:
+  Sounds:
+  - {fileID: 8300000, guid: 9c948bca85a4b974aa2bf04aa651f988, type: 3}
+  - {fileID: 8300000, guid: 0b5cf9ec6c6d5844a9ef49861f441286, type: 3}
+  - {fileID: 8300000, guid: a3fe7648c24f6194bad6cdfd064db196, type: 3}
+  - {fileID: 8300000, guid: 79d828851830ca24688879147edd2279, type: 3}
+  Music:
   - m_AssetGUID: d80be2c1fcbd1ee4b90e7bba860825ba
     m_SubObjectName: 
     m_SubObjectType: 

@@ -27,13 +27,13 @@ namespace UI.Controllers
         [Preserve]
         UIMainController() { }
 
-        public void CustomFixedUpdate() { }
-
         public void CustomUpdate()
         {
             if (!_uiSceneLoaded)
                 return;
         }
+
+        public void CustomFixedUpdate() { }
 
         public void CustomLateUpdate() { }
 

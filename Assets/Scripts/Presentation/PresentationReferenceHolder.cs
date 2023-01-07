@@ -18,6 +18,8 @@ namespace Presentation
 
         internal static AudioController AudioController => _instance._audioController;
 
+        internal static VFXController VFXController => _instance._vfxController;
+
         static PresentationReferenceHolder _instance;
 
         [Inject]
@@ -25,6 +27,9 @@ namespace Presentation
 
         [Inject]
         readonly AudioController _audioController;
+
+        [Inject]
+        readonly VFXController _vfxController;
 
         [Preserve]
         PresentationReferenceHolder() => _instance = this;

@@ -1,5 +1,8 @@
 using System.Collections.Generic;
+using Common.Enums;
+using ControlFlow.DependencyInjector.Interfaces;
 using ControlFlow.Interfaces;
+using ControlFlow.Pooling;
 using JetBrains.Annotations;
 using Presentation.Config;
 using Presentation.Views;
@@ -9,67 +12,57 @@ using UnityEngine.Scripting;
 namespace Presentation.Controllers
 {
     [UsedImplicitly]
-    class VFXController : ICustomLateUpdate
+    class VFXController : IInitializable, ICustomLateUpdate
     {
-        abstract class AbstractVfxLocalData
-        {
-            internal readonly VFXView Vfx;
-
-            /// <summary>
-            /// Time until destruction in seconds.
-            /// Nulls means the vfx never dies.
-            /// </summary>
-            internal float? TimeLeft;
-
-            protected AbstractVfxLocalData(VFXView view, float? timeLeft = null)
-            {
-                Vfx = view;
-                TimeLeft = timeLeft;
-            }
-        }
-
-        /// <summary>
-        /// Used when the VFX is associated with a given position in space.
-        /// </summary>
-        // ReSharper disable once InconsistentNaming
-        class VfxLocalData_Position : AbstractVfxLocalData
-        {
-            internal readonly int Id;
-
-            internal VfxLocalData_Position(int id, VFXView vfx, float? timeLeft = null)
-                : base(vfx, timeLeft) =>
-                Id = id;
-        }
-
         static readonly VFXConfig _config;
 
-        // key is VFX instance, value is its lifetime
-        // TODO: change to dictionary with id
-        // ReSharper disable once IdentifierTypo
-        readonly List<VfxLocalData_Position> _vfxsAtPositions = new();
+        static readonly Dictionary<VFX, MemoryPool<ParticleEffectView>> _poolDictionary = new ();
+        static readonly MemoryPool<ParticleEffectView> _particleEffectPool = new();
+        static readonly List<ParticleEffectView> _particleEffects = new();
 
-        static int _idCounter;
+        VFX _vfx;
+        Vector3 _position;
 
         [Preserve]
         VFXController() { }
 
+        public void Initialize()
+        {
+            // for all vfx
+            _poolDictionary.Add(VFX.HitEffect, new MemoryPool<ParticleEffectView>(CustomAlloc, null, CustomReturn));
+        }
+
         public void CustomLateUpdate()
         {
-            _vfxsAtPositions.RemoveAll(HasExpired);
-
-            bool HasExpired(AbstractVfxLocalData data)
+            for (int i = 0; i < _particleEffects.Count; i++)
             {
-                if (!data.TimeLeft.HasValue)
-                    return false;
+                ParticleEffectView view = _particleEffects[i];
+                if (view.IsAlive)
+                    continue;
 
-                data.TimeLeft = data.TimeLeft.Value - Time.deltaTime;
+                _poolDictionary.TryGetValue(view.VfxType, out MemoryPool<ParticleEffectView> pool);
 
-                if (data.TimeLeft.Value > 0)
-                    return false;
-
-                Object.Destroy(data.Vfx.gameObject);
-                return true;
+                // ReSharper disable once PossibleNullReferenceException
+                pool.Return(view);
+                _particleEffects.RemoveAt(i);
             }
         }
+
+        internal void SpawnParticleEffect(VFX vfx, Vector3 position)
+        {
+            _vfx = vfx;
+            _position = position;
+
+            _poolDictionary.TryGetValue(vfx, out MemoryPool<ParticleEffectView> pool);
+
+            // ReSharper disable once PossibleNullReferenceException
+            ParticleEffectView view = pool.Get();
+            view.Play();
+            _particleEffects.Add(view);
+        }
+
+        ParticleEffectView CustomAlloc() => Object.Instantiate(_config.ParticleEffects[(int)_vfx], _position, Quaternion.identity, PresentationSceneReferenceHolder.VfxContainer);
+
+        static void CustomReturn(ParticleEffectView view) => view.gameObject.SetActive(false);
     }
 }

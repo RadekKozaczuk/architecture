@@ -1,7 +1,6 @@
 using Common;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Presentation.Config
 {
@@ -15,7 +14,6 @@ namespace Presentation.Config
         [SerializeField]
         internal AudioClip[] Sounds;
 
-        [FormerlySerializedAs("_music")]
         [InfoBox("Element order must match the Music enum.", InfoMessageType.None)]
         [SerializeField]
         internal AssetReferenceAudioClip[] Music;

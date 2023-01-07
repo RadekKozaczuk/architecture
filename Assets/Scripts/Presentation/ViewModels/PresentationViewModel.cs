@@ -4,6 +4,7 @@ using ControlFlow.DependencyInjector.Interfaces;
 using JetBrains.Annotations;
 using Presentation.Config;
 using Presentation.Controllers;
+using UnityEngine;
 using UnityEngine.Scripting;
 
 namespace Presentation.ViewModels
@@ -17,6 +18,9 @@ namespace Presentation.ViewModels
 
         [Inject]
         readonly AudioController _audioController;
+
+        [Inject]
+        readonly VFXController _vfxController;
 
         [Inject]
         readonly PresentationMainController _presentationMainController;
@@ -43,16 +47,23 @@ namespace Presentation.ViewModels
             PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(true);
         }
 
-        public static void MainMenuOnExit()
-        {
-            PresentationReferenceHolder.AudioController.StopMusic();
-        }
+        public static void MainMenuOnExit() => PresentationReferenceHolder.AudioController.StopMusic();
 
         public static void GameplayOnEntry()
         {
             //SomeSystem.IsActive = true;
             PresentationSceneReferenceHolder.GameplayCamera.gameObject.SetActive(true);
             PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(false);
+
+            // spawn 10 VFXs around the player
+            for (int i = 0; i < 10; i++)
+            {
+                float x = Random.Range(-5, 5);
+                float z = Random.Range(-5, 5);
+                float delay = Random.Range(0, 4);
+
+                 PresentationReferenceHolder.VFXController.SpawnParticleEffect(VFX.HitEffect, new Vector3(x, 0f, z));
+            }
         }
 
         public static void GameplayOnExit()

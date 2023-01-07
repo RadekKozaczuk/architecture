@@ -17,7 +17,6 @@ namespace Common
         // Masks
         public static readonly int PropsMask = 1 << Props;
         public static readonly int CollectiblesMask = 1 << Collectibles;
-        public static readonly int PropsAndPlayersMask = LayerMask.GetMask("Props", "Players");
         public static readonly int PropsAndCollectiblesAndNpcsMask = LayerMask.GetMask("Props", "Collectibles", "Npcs");
 
         public static void ChangeLayer(GameObject gameObject, int layer, bool withChildren = true)

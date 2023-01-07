@@ -7,8 +7,12 @@ namespace Presentation.Config
     [CreateAssetMenu(fileName = "VFXConfig", menuName = "Config/Presentation/VFXConfig")]
     class VFXConfig : ScriptableObject
     {
-        [InfoBox("Order must match the VFX enum.", InfoMessageType.None)]
+        [InfoBox("Visual Effects done in Unity's Particle System. The order of elements must match the VFX enum.", InfoMessageType.None)]
         [SerializeField]
-        internal VFXView[] VfxPrefabs;
+        internal ParticleEffectView[] ParticleEffects;
+
+        [InfoBox("Visual Effects done in Unity's VFX Graph. The order of elements must match the VFX enum.", InfoMessageType.None)]
+        [SerializeField]
+        internal GameObject[] VisualEffects; // todo: prefab and actual type to be done
     }
 }

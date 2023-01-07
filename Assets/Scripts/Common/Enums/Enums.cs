@@ -9,7 +9,10 @@ namespace Common.Enums
 
     public enum Sound
     {
-        Button
+        ArtilleryShotHeavy,
+        ExplosionInTightSpace,
+        ExplosionNearby,
+        ExplosionWithRubbleDebris
     }
 
     public enum Music
@@ -18,4 +21,9 @@ namespace Common.Enums
     }
 
     public enum PopupType { }
+
+    public enum VFX
+    {
+        HitEffect
+    }
 }

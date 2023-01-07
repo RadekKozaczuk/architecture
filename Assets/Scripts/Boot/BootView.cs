@@ -155,8 +155,8 @@ namespace Boot
 
             PresentationViewModel.GameplayOnEntry();
             UIViewModel.GameplayOnEntry();
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            //Cursor.lockState = CursorLockMode.Locked;
+            //Cursor.visible = false;
         }
 
         static void GameplayOnExit(string[] args = null)
@@ -164,8 +164,8 @@ namespace Boot
             GameLogicViewModel.GameplayOnExit();
             PresentationViewModel.GameplayOnExit();
             UIViewModel.GameplayOnExit();
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            //Cursor.lockState = CursorLockMode.None;
+            //Cursor.visible = true;
         }
     }
 }
