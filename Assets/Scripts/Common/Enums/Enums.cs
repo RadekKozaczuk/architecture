@@ -20,10 +20,10 @@ namespace Common.Enums
         MainMenu
     }
 
-    public enum PopupType { }
-
     public enum VFX
     {
         HitEffect
     }
+
+    public enum PopupType { }
 }

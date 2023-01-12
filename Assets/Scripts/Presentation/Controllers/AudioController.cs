@@ -139,7 +139,7 @@ namespace Presentation.Controllers
 
         [React]
         [Preserve]
-        void OnPlaySound(PlaySoundSignal signal) { }
+        void OnPlaySound(PlaySoundSignal signal) => PlaySound(signal.SoundType, signal.Position);
 
         AudioSource CustomAlloc() => Object.Instantiate(_config.AudioSourcePrefab, _position, Quaternion.identity, PresentationSceneReferenceHolder.AudioContainer);
 
