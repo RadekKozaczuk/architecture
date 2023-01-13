@@ -31,4 +31,4 @@ jobs:
       # Runs a single command using the runners shell
       # chmod +x <file_name> adds execute permissions
       - name: Run a one-line script
-        run: chmod +x ./scripts/branch-cleanup.sh && ./scripts/branch-cleanup.sh false
+        run: chmod +x ./.github/scripts/branch-cleanup.sh && ./.github/scripts/branch-cleanup.sh false
