@@ -29,13 +29,13 @@ namespace Boot
     class BootView : MonoBehaviour
     {
         [SerializeField]
-        EventSystem _eventSystem;
+        EventSystem _eventSystem = null!;
 
         static bool _isCoreSceneLoaded;
-        static GameStateMachine<GameState> _gameStateSystem;
+        static GameStateMachine<GameState> _gameStateSystem = null!;
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-        static DebugConfig _config;
+        static DebugConfig _config = null!;
 #endif
 
         void Start()
