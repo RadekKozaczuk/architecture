@@ -49,7 +49,7 @@ namespace Boot
                     (GameState.MainMenu, GameState.Gameplay, null, () => new[] {Constants.MainMenuScene}),
                     (GameState.Gameplay, GameState.MainMenu, () => new[] {Constants.MainMenuScene}, ScenesToUnloadFromGameplayToMainMenu)
                 },
-                new (GameState, Action<string[]>?, Action<string[]>?)[]
+                new (GameState, Action?, Action?)[]
                 {
                     (GameState.Booting, null, BootingOnExit),
                     (GameState.MainMenu, MainMenuOnEntry, MainMenuOnExit),
@@ -125,48 +125,47 @@ namespace Boot
 
         internal static void OnCoreSceneLoaded() => _isCoreSceneLoaded = true;
 
-        static void BootingOnExit(string[]? args = null)
+        static void BootingOnExit()
         {
             GameLogicViewModel.BootingOnExit();
             PresentationViewModel.BootingOnExit();
             UIViewModel.BootingOnExit();
         }
 
-        static void MainMenuOnEntry(string[]? args = null)
+        static void MainMenuOnEntry()
         {
             GameLogicViewModel.MainMenuOnEntry();
             PresentationViewModel.MainMenuOnEntry();
             UIViewModel.MainMenuOnEntry();
         }
 
-        static void MainMenuOnExit(string[]? args = null)
+        static void MainMenuOnExit()
         {
             GameLogicViewModel.MainMenuOnExit();
             PresentationViewModel.MainMenuOnExit();
             UIViewModel.MainMenuOnExit();
         }
 
-        static void GameplayOnEntry(string[]? args = null)
+        static void GameplayOnEntry()
         {
             GameLogicViewModel.GameplayOnEntry();
-
-            if (args != null && args.Contains("loadgame"))
-            {
-                // load the game
-            }
-
             PresentationViewModel.GameplayOnEntry();
             UIViewModel.GameplayOnEntry();
+
+            // save/load logic
+            if (CommonData.LoadRequested)
+            {
+                CommonData.LoadRequested = false;
+            }
+
+            int sceneToLoad = CommonData.CurrentLevel.HasValue ? Constants.Level0Scene : Constants.HubScene;
+            SceneManager.LoadSceneAsync(sceneToLoad, LoadSceneMode.Additive);
+
             //Cursor.lockState = CursorLockMode.Locked;
             //Cursor.visible = false;
-
-            if (args == null)
-                return;
-
-            SceneManager.LoadSceneAsync(args[0], LoadSceneMode.Additive);
         }
 
-        static void GameplayOnExit(string[]? args = null)
+        static void GameplayOnExit()
         {
             GameLogicViewModel.GameplayOnExit();
             PresentationViewModel.GameplayOnExit();

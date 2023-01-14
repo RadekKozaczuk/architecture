@@ -3,7 +3,6 @@ using Common.Systems;
 using ControlFlow.DependencyInjector.Attributes;
 using ControlFlow.DependencyInjector.Interfaces;
 using GameLogic.Controllers;
-using GameLogic.Systems;
 using JetBrains.Annotations;
 using Presentation.ViewModels;
 using Shared;
@@ -46,8 +45,8 @@ namespace GameLogic.ViewModels
 
         public static void MainMenuOnExit() { }
 
-        public static void GameplayOnEntry() => SomeSystem.IsActive = true;
+        public static void GameplayOnEntry() { }
 
-        public static void GameplayOnExit() => SomeSystem.IsActive = false;
+        public static void GameplayOnExit() { }
     }
 }

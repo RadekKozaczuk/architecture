@@ -32,13 +32,24 @@ namespace Presentation.Views
             gameObject.SetActive(true);
 
             for (int i = 0; i < _particleSystems.Count; i++)
-                _particleSystems[i].Play();
+            {
+                ParticleSystem ps = _particleSystems[i];
+                RandomizeColors(ps);
+                ps.Play();
+            }
         }
 
-        internal void Reset()
+        // example of how we can control particles' parameters
+        static void RandomizeColors(ParticleSystem ps)
         {
-            for (int i = 0; i < _particleSystems.Count; i++)
-                _particleSystems[i].Stop();
+            // todo: something does not work here - it does not change the values
+            /*ParticleSystem.ColorOverLifetimeModule colorOverLifetime = ps.colorOverLifetime;
+            colorOverLifetime.color.gradient.colorKeys[0].color.r = Random.Range(0, 1);
+            colorOverLifetime.color.gradient.colorKeys[0].color.g = Random.Range(0, 1);
+            colorOverLifetime.color.gradient.colorKeys[0].color.b = Random.Range(0, 1);
+            colorOverLifetime.color.gradient.colorKeys[1].color.r = Random.Range(0, 1);
+            colorOverLifetime.color.gradient.colorKeys[1].color.g = Random.Range(0, 1);
+            colorOverLifetime.color.gradient.colorKeys[1].color.b = Random.Range(0, 1);*/
         }
     }
 }
