@@ -25,7 +25,7 @@ namespace Presentation.Controllers
         readonly AudioClip[] _loadedMusic;
         readonly AsyncOperationHandle<AudioClip>[] _asyncOperationHandles;
         static readonly List<AudioSource> _soundAudioSources = new();
-        readonly MemoryPool<AudioSource> _pool;
+        readonly ObjectPool<AudioSource> _pool;
 
         Music? _currentMusic;
         Vector3 _position;
@@ -35,7 +35,7 @@ namespace Presentation.Controllers
         {
             _loadedMusic = new AudioClip[_config.Music.Length];
             _asyncOperationHandles = new AsyncOperationHandle<AudioClip>[_config.Music.Length];
-            _pool = new MemoryPool<AudioSource>(CustomAlloc, null, CustomReturn);
+            _pool = new ObjectPool<AudioSource>(CustomAlloc, null, CustomReturn);
         }
 
         public void CustomLateUpdate()

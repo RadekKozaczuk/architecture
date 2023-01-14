@@ -1,4 +1,6 @@
+#nullable enable
 using System;
+using System.Collections.Generic;
 using Common;
 using Common.Enums;
 using Common.Systems;
@@ -8,6 +10,7 @@ using Shared.Systems;
 using UI.ViewModels;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 using Common.Config;
 #endif
@@ -40,14 +43,13 @@ namespace Boot
             Injector.Run();
 
             _gameStateSystem = new GameStateMachine<GameState>(
-                new[]
+                new List<(GameState from, GameState to, Func<int[]>? scenesToLoad, Func<int[]>? scenesToUnload)>
                 {
-                    (GameState.Booting, GameState.MainMenu, new[] {Constants.MainMenuScene, Constants.CoreScene, Constants.UIScene},
-                     Array.Empty<int>()),
-                    (GameState.MainMenu, GameState.Gameplay, Array.Empty<int>(), new[] {Constants.MainMenuScene}),
-                    (GameState.Gameplay, GameState.MainMenu, new[] {Constants.MainMenuScene}, Array.Empty<int>())
+                    (GameState.Booting, GameState.MainMenu, () => new[] {Constants.MainMenuScene, Constants.CoreScene, Constants.UIScene}, null),
+                    (GameState.MainMenu, GameState.Gameplay, null, () => new[] {Constants.MainMenuScene}),
+                    (GameState.Gameplay, GameState.MainMenu, () => new[] {Constants.MainMenuScene}, ScenesToUnloadFromGameplayToMainMenu)
                 },
-                new (GameState, Action<string[]>, Action<string[]>)[]
+                new (GameState, Action?, Action?)[]
                 {
                     (GameState.Booting, null, BootingOnExit),
                     (GameState.MainMenu, MainMenuOnEntry, MainMenuOnExit),
@@ -123,49 +125,73 @@ namespace Boot
 
         internal static void OnCoreSceneLoaded() => _isCoreSceneLoaded = true;
 
-        static void BootingOnExit(string[] args = null)
+        static void BootingOnExit()
         {
             GameLogicViewModel.BootingOnExit();
             PresentationViewModel.BootingOnExit();
             UIViewModel.BootingOnExit();
         }
 
-        static void MainMenuOnEntry(string[] args = null)
+        static void MainMenuOnEntry()
         {
             GameLogicViewModel.MainMenuOnEntry();
             PresentationViewModel.MainMenuOnEntry();
             UIViewModel.MainMenuOnEntry();
         }
 
-        static void MainMenuOnExit(string[] args = null)
+        static void MainMenuOnExit()
         {
             GameLogicViewModel.MainMenuOnExit();
             PresentationViewModel.MainMenuOnExit();
             UIViewModel.MainMenuOnExit();
         }
 
-        static void GameplayOnEntry(string[] args = null)
+        static void GameplayOnEntry()
         {
             GameLogicViewModel.GameplayOnEntry();
-
-            if (args != null && args.Contains("loadgame"))
-            {
-                // load the game
-            }
-
             PresentationViewModel.GameplayOnEntry();
             UIViewModel.GameplayOnEntry();
+
+            // save/load logic
+            if (CommonData.LoadRequested)
+            {
+                CommonData.LoadRequested = false;
+            }
+
+            int sceneToLoad = CommonData.IsInHubLocation ? Constants.HubScene : Constants.Level0Scene;
+            SceneManager.LoadSceneAsync(sceneToLoad, LoadSceneMode.Additive);
+
             //Cursor.lockState = CursorLockMode.Locked;
             //Cursor.visible = false;
         }
 
-        static void GameplayOnExit(string[] args = null)
+        static void GameplayOnExit()
         {
             GameLogicViewModel.GameplayOnExit();
             PresentationViewModel.GameplayOnExit();
             UIViewModel.GameplayOnExit();
             //Cursor.lockState = CursorLockMode.None;
             //Cursor.visible = true;
+        }
+
+        /// <summary>
+        /// Returns ids of all currently open scenes except for <see cref="Constants.CoreScene"/>, <see cref="Constants.MainMenuScene"/>, and <see cref="Constants.UIScene"/>
+        /// </summary>
+        static int[] ScenesToUnloadFromGameplayToMainMenu()
+        {
+            int countLoaded = SceneManager.sceneCount;
+            var scenesToUnload = new List<int>(countLoaded);
+
+            for (int i = 0; i < countLoaded; i++)
+            {
+                Scene scene = SceneManager.GetSceneAt(i);
+                if (scene.buildIndex is Constants.CoreScene or Constants.MainMenuScene or Constants.UIScene)
+                    continue;
+
+                scenesToUnload.Add(scene.buildIndex);
+            }
+
+            return scenesToUnload.ToArray();
         }
     }
 }

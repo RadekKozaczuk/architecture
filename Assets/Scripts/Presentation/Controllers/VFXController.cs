@@ -17,7 +17,7 @@ namespace Presentation.Controllers
     {
         static readonly VFXConfig _config;
 
-        static readonly MemoryPool<ParticleEffectView>[] _pools = new MemoryPool<ParticleEffectView>[Enum.GetNames(typeof(VFX)).Length];
+        static readonly ObjectPool<ParticleEffectView>[] _pools = new ObjectPool<ParticleEffectView>[Enum.GetNames(typeof(VFX)).Length];
         static readonly List<ParticleEffectView> _particleEffects = new();
 
         VFX _vfx;
@@ -30,7 +30,7 @@ namespace Presentation.Controllers
         {
             // for all vfx
             for (int i = 0; i < Enum.GetNames(typeof(VFX)).Length; i++)
-                _pools[i] = new MemoryPool<ParticleEffectView>(CustomAlloc, null, CustomReturn);
+                _pools[i] = new ObjectPool<ParticleEffectView>(CustomAlloc, null, CustomReturn);
         }
 
         public void CustomLateUpdate()
