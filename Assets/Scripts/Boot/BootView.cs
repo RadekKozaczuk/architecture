@@ -158,7 +158,7 @@ namespace Boot
                 CommonData.LoadRequested = false;
             }
 
-            int sceneToLoad = CommonData.IsInHubLocation ? Constants.HubScene : Constants.Level0Scene;
+            int sceneToLoad = CommonData.CurrentLevel.HasValue ? Constants.Level0Scene : Constants.HubScene;
             SceneManager.LoadSceneAsync(sceneToLoad, LoadSceneMode.Additive);
 
             //Cursor.lockState = CursorLockMode.Locked;

@@ -13,40 +13,8 @@ namespace Common
         public static bool LoadRequested;
 
         /// <summary>
-        /// Indicates if player is in the HubLocation.
-        /// Setting it to true will automatically set <see cref="CurrentLevel"/> to null.
+        /// If null then player is in a hub location, otherwise in a level specified by the given id.
         /// </summary>
-        public static bool IsInHubLocation
-        {
-            get => _isInHubLocation;
-            set
-            {
-                if (value)
-                {
-                    _isInHubLocation = true;
-                    _currentLevel = null;
-                }
-                else
-                {
-                    _isInHubLocation = false;
-                }
-            }
-        }
-        static bool _isInHubLocation = true;
-
-        /// <summary>
-        /// Indicates if player is in a level, and if so tells the level id.
-        /// Setting this value will automatically set <see cref="IsInHubLocation"/>.
-        /// </summary>
-        public static int? CurrentLevel
-        {
-            get => _currentLevel;
-            set
-            {
-                _currentLevel = value;
-                _isInHubLocation = value == null;
-            }
-        }
-        static int? _currentLevel;
+        public static int? CurrentLevel;
     }
 }
