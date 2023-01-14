@@ -8,6 +8,7 @@ using Shared.Systems;
 using UI.ViewModels;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 using Common.Config;
 #endif
@@ -157,6 +158,11 @@ namespace Boot
             UIViewModel.GameplayOnEntry();
             //Cursor.lockState = CursorLockMode.Locked;
             //Cursor.visible = false;
+
+            if (args == null)
+                return;
+
+            SceneManager.LoadSceneAsync(args[0], LoadSceneMode.Additive);
         }
 
         static void GameplayOnExit(string[] args = null)

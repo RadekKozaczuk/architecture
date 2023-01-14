@@ -72,5 +72,25 @@ namespace Presentation.ViewModels
             //SomeSystem.IsActive = false;
             PresentationReferenceHolder.AudioController.LoadMusic(Music.MainMenu);
         }
+
+        public static void MoveUp()
+        {
+
+        }
+
+        public static void MoveDown()
+        {
+
+        }
+
+        public static void MoveLeft()
+        {
+
+        }
+
+        public static void MoveRight()
+        {
+
+        }
     }
 }

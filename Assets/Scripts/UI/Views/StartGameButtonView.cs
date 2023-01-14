@@ -11,6 +11,6 @@ namespace UI.Views
         [SerializeField]
         Button _button;
 
-        void Awake() => _button.onClick.AddListener(() => GameStateSystem.RequestStateChange(GameState.Gameplay));
+        void Awake() => _button.onClick.AddListener(() => GameStateSystem.RequestStateChange(GameState.Gameplay, "HubScene"));
     }
 }

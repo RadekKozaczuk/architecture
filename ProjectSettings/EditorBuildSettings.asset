@@ -17,6 +17,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/UIScene.unity
     guid: ad48878816800f54394151a9d08fc824
+  - enabled: 1
+    path: Assets/Scenes/Levels/HubScene.unity
+    guid: 78e97315bfae6dc4eab84bc226ff6748
+  - enabled: 1
+    path: Assets/Scenes/Levels/Level0Scene.unity
+    guid: 81322ad4fa838ef4285dd9df9ef71755
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 22b664409a921a444948ec6e76921cc4, type: 2}
     com.unity.input.settings: {fileID: 11400000, guid: de60c8331f704e04bbab099578a55891, type: 2}
