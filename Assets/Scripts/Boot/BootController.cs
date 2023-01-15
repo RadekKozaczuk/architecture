@@ -8,10 +8,10 @@ using UnityEngine.Scripting;
 namespace Boot
 {
     [UsedImplicitly]
-    class FlowController
+    class BootController
     {
         [Preserve]
-        FlowController() => SceneManager.sceneLoaded += OnSceneLoaded;
+        BootController() => SceneManager.sceneLoaded += OnSceneLoaded;
 
         static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
@@ -24,6 +24,10 @@ namespace Boot
 
             if (scene.buildIndex == Constants.UIScene)
                 UIViewModel.OnUISceneLoaded();
+
+            // any level scene
+            if (scene.buildIndex >= 4)
+                PresentationViewModel.LoadLevelData();
         }
     }
 }

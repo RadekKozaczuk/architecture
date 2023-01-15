@@ -1,4 +1,4 @@
-using UnityEngine;
+using Presentation.Views;
 
 namespace Presentation
 {
@@ -7,6 +7,6 @@ namespace Presentation
     /// </summary>
     static class PresentationData
     {
-        internal static GameObject Player;
+        internal static PlayerView Player;
     }
 }

@@ -51,12 +51,11 @@ namespace Presentation.ViewModels
 
         public static void GameplayOnEntry()
         {
-            //SomeSystem.IsActive = true;
             PresentationSceneReferenceHolder.GameplayCamera.gameObject.SetActive(true);
             PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(false);
 
-            // spawn 10 VFXs around the player
-            for (int i = 0; i < 10; i++)
+            // spawn 5 VFXs around the player
+            for (int i = 0; i < 5; i++)
             {
                 float x = Random.Range(-5, 5);
                 float z = Random.Range(-5, 5);
@@ -67,30 +66,44 @@ namespace Presentation.ViewModels
             }
         }
 
-        public static void GameplayOnExit()
+        public static void GameplayOnExit() => PresentationReferenceHolder.AudioController.LoadMusic(Music.MainMenu);
+
+        public static void LoadLevelData()
         {
-            //SomeSystem.IsActive = false;
-            PresentationReferenceHolder.AudioController.LoadMusic(Music.MainMenu);
+            var levelSceneReferenceHolder = GameObject.FindWithTag("LevelSceneReferenceHolder").GetComponent<LevelSceneReferenceHolder>();
+            PresentationData.Player = levelSceneReferenceHolder.Player;
         }
 
         public static void MoveUp()
         {
-
+            Transform transform = PresentationData.Player.transform;
+            Vector3 pos = transform.position;
+            pos.z += 0.5f;
+            transform.position = pos;
         }
 
         public static void MoveDown()
         {
-
+            Transform transform = PresentationData.Player.transform;
+            Vector3 pos = transform.position;
+            pos.z -= 0.5f;
+            transform.position = pos;
         }
 
         public static void MoveLeft()
         {
-
+            Transform transform = PresentationData.Player.transform;
+            Vector3 pos = transform.position;
+            pos.x -= 0.5f;
+            transform.position = pos;
         }
 
         public static void MoveRight()
         {
-
+            Transform transform = PresentationData.Player.transform;
+            Vector3 pos = transform.position;
+            pos.x += 0.5f;
+            transform.position = pos;
         }
     }
 }

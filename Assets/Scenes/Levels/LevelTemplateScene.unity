@@ -383,7 +383,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8992717468355117415, guid: 2160e9fea7be0ab43b1fd9eeffa2e80e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3
+      value: -4
       objectReference: {fileID: 0}
     - target: {fileID: 8992717468355117415, guid: 2160e9fea7be0ab43b1fd9eeffa2e80e, type: 3}
       propertyPath: m_LocalRotation.w
@@ -437,8 +437,8 @@ GameObject:
   - component: {fileID: 1969557344}
   - component: {fileID: 1969557345}
   m_Layer: 0
-  m_Name: LevelData
-  m_TagString: Untagged
+  m_Name: LevelSceneReferenceHolder
+  m_TagString: LevelSceneReferenceHolder
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
