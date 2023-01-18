@@ -180,6 +180,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "DebugCommands",
+            "id": "f66e197f-09a2-4477-b40a-ed0a5a770bf9",
+            "actions": [
+                {
+                    "name": "ToggleConsole",
+                    "type": "Button",
+                    "id": "9dd6f3df-11d2-4f68-8a51-2f68ad6f4f0d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "dedaccf8-bd4c-4017-b2d1-a9d2db685f50",
+                    "path": "<Keyboard>/backquote",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ToggleConsole",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []
