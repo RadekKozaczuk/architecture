@@ -74,6 +74,11 @@ namespace Presentation.ViewModels
             PresentationData.Player = levelSceneReferenceHolder.Player;
         }
 
+        public static void Movement(Vector2 movementInput)
+        {
+            PresentationData.Player.Move(movementInput.normalized);
+        }
+
         public static void MoveUp()
         {
             Transform transform = PresentationData.Player.transform;
