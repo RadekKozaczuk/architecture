@@ -72,7 +72,8 @@ namespace Presentation.Controllers
         {
             int id = (int)music;
 
-            Assert.IsNotNull(_loadedMusic[id], "It is invalid to request to unload a music when the music is already unloaded from memory");
+            Assert.IsNotNull(_loadedMusic[id],
+                             "It is invalid to request to unload a music when the music is already unloaded from memory.");
 
             _loadedMusic[id] = null;
             _config.Music[id].ReleaseAsset();
