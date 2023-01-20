@@ -15,7 +15,7 @@ namespace UI.Views
 
         void ToggleConsole(InputAction.CallbackContext callbackContext)
         {
-            if (!callbackContext.action.triggered) 
+            if (!callbackContext.action.triggered)
                 return;
 
             if (_debugConsole.activeSelf)
