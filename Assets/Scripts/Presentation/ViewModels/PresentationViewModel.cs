@@ -1,9 +1,11 @@
+using System.IO;
 using Common.Enums;
 using ControlFlow.DependencyInjector.Attributes;
 using ControlFlow.DependencyInjector.Interfaces;
 using JetBrains.Annotations;
 using Presentation.Config;
 using Presentation.Controllers;
+using Shared.Systems;
 using UnityEngine;
 using UnityEngine.Scripting;
 
@@ -74,41 +76,22 @@ namespace Presentation.ViewModels
             PresentationData.Player = levelSceneReferenceHolder.Player;
         }
 
-        public static void Movement(Vector2 movementInput)
+        public static void Movement(Vector2 movementInput) => PresentationData.Player.Move(movementInput.normalized);
+
+        public static void SaveGame(BinaryWriter writer)
         {
-            PresentationData.Player.Move(movementInput.normalized);
+            Transform playerTransform = PresentationData.Player.transform;
+
+            SaveLoadSystem.Write(writer, playerTransform.position);
+            SaveLoadSystem.Write(writer, playerTransform.rotation);
         }
 
-        public static void MoveUp()
+        public static void SaveGame(BinaryReader reader)
         {
-            Transform transform = PresentationData.Player.transform;
-            Vector3 pos = transform.position;
-            pos.z += 0.5f;
-            transform.position = pos;
-        }
+            Transform playerTransform = PresentationData.Player.transform;
 
-        public static void MoveDown()
-        {
-            Transform transform = PresentationData.Player.transform;
-            Vector3 pos = transform.position;
-            pos.z -= 0.5f;
-            transform.position = pos;
-        }
-
-        public static void MoveLeft()
-        {
-            Transform transform = PresentationData.Player.transform;
-            Vector3 pos = transform.position;
-            pos.x -= 0.5f;
-            transform.position = pos;
-        }
-
-        public static void MoveRight()
-        {
-            Transform transform = PresentationData.Player.transform;
-            Vector3 pos = transform.position;
-            pos.x += 0.5f;
-            transform.position = pos;
+            playerTransform.position = SaveLoadSystem.ReadVector3(reader);
+            playerTransform.rotation = SaveLoadSystem.ReadQuaternion(reader);
         }
     }
 }

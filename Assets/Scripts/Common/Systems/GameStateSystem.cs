@@ -1,26 +1,27 @@
+#nullable enable
 using Common.Enums;
 
 namespace Common.Systems
 {
-    public delegate void RequestStateChange(GameState requested);
-    public delegate void ScheduleStateChange(GameState requested);
+    public delegate void RequestStateChange(GameState requested, int[]? additionalScenesToLoad = null, int[]? additionalScenesToUnload = null);
+    public delegate void ScheduleStateChange(GameState requested, int[]? additionalScenesToLoad = null, int[]? additionalScenesToUnload = null);
     public delegate GameState GetCurrentGameState();
 
     public static class GameStateSystem
     {
-        public static event RequestStateChange OnStateChangeRequest;
-        public static event ScheduleStateChange OnScheduleStateChange;
-        public static event GetCurrentGameState OnGetCurrentGameState;
+        public static event RequestStateChange OnStateChangeRequest = null!;
+        public static event ScheduleStateChange OnScheduleStateChange = null!;
+        public static event GetCurrentGameState OnGetCurrentGameState = null!;
 
-        // ReSharper disable once PossibleNullReferenceException
         public static GameState CurrentState => OnGetCurrentGameState.Invoke();
 
         /// <summary>
         /// Actual state change may be delayed in time. Consecutive calls are not allowed.
         /// </summary>
-        public static void RequestStateChange(GameState state) => OnStateChangeRequest.Invoke(state);
+        public static void RequestStateChange(GameState state, int[]? additionalScenesToLoad = null, int[]? additionalScenesToUnload = null)
+            => OnStateChangeRequest.Invoke(state, additionalScenesToLoad, additionalScenesToUnload);
 
-        // ReSharper disable once PossibleNullReferenceException
-        public static void ScheduleStateChange(GameState state) => OnScheduleStateChange.Invoke(state);
+        public static void ScheduleStateChange(GameState state, int[]? additionalScenesToLoad = null, int[]? additionalScenesToUnload = null)
+            => OnScheduleStateChange.Invoke(state, additionalScenesToLoad, additionalScenesToUnload);
     }
 }
