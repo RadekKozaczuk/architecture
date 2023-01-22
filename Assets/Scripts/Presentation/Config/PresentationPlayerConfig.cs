@@ -13,6 +13,6 @@ namespace Presentation.Config
         [MaxValue(1000)]
         [SerializeField]
         [InfoBox("In Unity units per second.", InfoMessageType.None)]
-        internal float PlayerSpeed = 100;
+        internal float PlayerSpeed = 10;
     }
 }
