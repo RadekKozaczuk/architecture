@@ -1,3 +1,4 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -33,3 +34,4 @@ namespace Common.Config
         public bool ShowInputLog;
     }
 }
+#endif
