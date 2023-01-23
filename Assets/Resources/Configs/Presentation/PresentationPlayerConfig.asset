@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: PresentationPlayerConfig
   m_EditorClassIdentifier: 
   PlayerPrefab: {fileID: 8992717468355117414, guid: 2160e9fea7be0ab43b1fd9eeffa2e80e, type: 3}
-  PlayerSpeed: 10
+  PlayerSpeed: 7
