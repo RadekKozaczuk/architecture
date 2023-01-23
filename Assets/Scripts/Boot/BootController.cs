@@ -24,10 +24,6 @@ namespace Boot
 
             if (scene.buildIndex == Constants.UIScene)
                 UIViewModel.OnUISceneLoaded();
-
-            // any level scene
-            if (scene.buildIndex >= 4)
-                PresentationViewModel.LoadLevelData();
         }
     }
 }

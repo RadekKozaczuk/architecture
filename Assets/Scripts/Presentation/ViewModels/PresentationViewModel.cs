@@ -56,6 +56,10 @@ namespace Presentation.ViewModels
             PresentationSceneReferenceHolder.GameplayCamera.gameObject.SetActive(true);
             PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(false);
 
+            // load level data
+            var levelSceneReferenceHolder = GameObject.FindWithTag("LevelSceneReferenceHolder").GetComponent<LevelSceneReferenceHolder>();
+            PresentationData.Player = levelSceneReferenceHolder.Player;
+
             // spawn 5 VFXs around the player
             for (int i = 0; i < 5; i++)
             {
@@ -69,12 +73,6 @@ namespace Presentation.ViewModels
         }
 
         public static void GameplayOnExit() => PresentationReferenceHolder.AudioController.LoadMusic(Music.MainMenu);
-
-        public static void LoadLevelData()
-        {
-            var levelSceneReferenceHolder = GameObject.FindWithTag("LevelSceneReferenceHolder").GetComponent<LevelSceneReferenceHolder>();
-            PresentationData.Player = levelSceneReferenceHolder.Player;
-        }
 
         public static void Movement(Vector2 movementInput) => PresentationData.Player.Move(movementInput.normalized);
 

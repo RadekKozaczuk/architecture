@@ -16,6 +16,9 @@ namespace Common.Systems
         public static GameState CurrentState => OnGetCurrentGameState.Invoke();
 
         /// <summary>
+        /// Keep in mind that scenes to load and unload are defined in <see cref="Shared.Systems.GameStateMachine"/>'s constructor.
+        /// Additional scenes defined here are special cases that does not occur all the time and therefore could not be defined in the constructor.
+        /// Scenes should not overlap with the ones defined in the constructor.
         /// Actual state change may be delayed in time. Consecutive calls are not allowed.
         /// </summary>
         public static void RequestStateChange(GameState state, int[]? additionalScenesToLoad = null, int[]? additionalScenesToUnload = null)

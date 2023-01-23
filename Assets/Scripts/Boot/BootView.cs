@@ -47,7 +47,8 @@ namespace Boot
                 {
                     (GameState.Booting, GameState.MainMenu, () => new[] {Constants.MainMenuScene, Constants.CoreScene, Constants.UIScene}, null),
                     (GameState.MainMenu, GameState.Gameplay, null, () => new[] {Constants.MainMenuScene}),
-                    (GameState.Gameplay, GameState.MainMenu, () => new[] {Constants.MainMenuScene}, ScenesToUnloadFromGameplayToMainMenu)
+                    (GameState.Gameplay, GameState.MainMenu, () => new[] {Constants.MainMenuScene}, ScenesToUnloadFromGameplayToMainMenu),
+                    (GameState.Gameplay, GameState.Gameplay, ScenesToLoadFromGameplayToGameplay, ScenesToUnloadFromGameplayToGameplay)
                 },
                 new (GameState, Action?, Action?)[]
                 {
@@ -188,5 +189,9 @@ namespace Boot
 
             return scenesToUnload.ToArray();
         }
+
+        static int[] ScenesToLoadFromGameplayToGameplay() => new [] {CommonData.CurrentLevel.HasValue ? CommonData.CurrentLevel.Value + 1 : Constants.Level0Scene};
+
+        static int[] ScenesToUnloadFromGameplayToGameplay() => new [] {CommonData.CurrentLevel.HasValue ? CommonData.CurrentLevel.Value : Constants.HubScene};
     }
 }
