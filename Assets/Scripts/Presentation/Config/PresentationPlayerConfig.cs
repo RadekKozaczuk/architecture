@@ -10,9 +10,9 @@ namespace Presentation.Config
         internal GameObject PlayerPrefab;
 
         [Min(0)]
-        [MaxValue(1000)]
+        [MaxValue(100)]
         [SerializeField]
         [InfoBox("In Unity units per second.", InfoMessageType.None)]
-        internal float PlayerSpeed = 100;
+        internal float PlayerSpeed = 7;
     }
 }
