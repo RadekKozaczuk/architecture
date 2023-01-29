@@ -12,10 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ac351f39c7648f6897b78273aacd9e2, type: 3}
   m_Name: PopupConfig
   m_EditorClassIdentifier: 
-  PopupPrefabs: []
-  BlockingPanelPrefab: {fileID: 0}
-  FadeInDuration: 0
-  FadeOutDuration: 0
-  InventoryElementPrefab: {fileID: 0}
-  InventoryEmptySlotPrefab: {fileID: 0}
-  ToolsColumnCount: 4
+  PopupPrefabs:
+  - {fileID: 8040681762666931589, guid: 67e4a8fe6ff5b0e45be3ef6369dfe9f1, type: 3}
+  BlockingPanelPrefab: {fileID: 4949133293988579618, guid: 28a5d583bf7f1d74195181a7b7c45f7e, type: 3}

@@ -25,5 +25,8 @@ namespace Common.Enums
         HitEffect
     }
 
-    public enum PopupType { }
+    public enum PopupType
+    {
+        QuitGame
+    }
 }

@@ -48,5 +48,9 @@ namespace GameLogic.ViewModels
         public static void GameplayOnEntry() { }
 
         public static void GameplayOnExit() { }
+
+        public static void SaveGame() { }
+
+        public static void LoadGame() { }
     }
 }

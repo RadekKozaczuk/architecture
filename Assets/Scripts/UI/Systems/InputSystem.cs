@@ -2,6 +2,7 @@ using Common.Enums;
 using Common.Systems;
 using Presentation.ViewModels;
 using UI.Config;
+using UI.Popups;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -32,7 +33,7 @@ namespace UI.Systems
 
             // Gameplay bindings
             InputActionMap gameplay = _uiConfig.InputActionAsset.FindActionMap(GameplayActionMap);
-            gameplay.FindAction(Quit).performed += _ => GameStateSystem.RequestStateChange(GameState.MainMenu);
+            gameplay.FindAction(Quit).performed += _ => QuitAction();
 
             // Popups bindings
             _movementAction = gameplay.FindAction(Movement);
@@ -44,6 +45,14 @@ namespace UI.Systems
         {
             if (_movementDown)
                 PresentationViewModel.Movement(_movementAction.ReadValue<Vector2>());
+        }
+
+        static void QuitAction()
+        {
+            if (PopupSystem.CurrentPopup == null)
+                PopupSystem.ShowPopup(PopupType.QuitGame);
+            else
+                PopupSystem.CloseCurrentPopup();
         }
     }
 }

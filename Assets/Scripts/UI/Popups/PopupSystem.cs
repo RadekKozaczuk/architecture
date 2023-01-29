@@ -1,3 +1,4 @@
+#nullable enable
 using System.Collections.Generic;
 using Common.Enums;
 using ControlFlow.SignalProcessing;
@@ -7,16 +8,14 @@ using UI.Popups.Views;
 using UnityEngine;
 using UnityEngine.UI;
 
-// ReSharper disable PossibleNullReferenceException
-
 namespace UI.Popups
 {
     [ReactOnSignals]
     static class PopupSystem
     {
-        internal static AbstractPopupView CurrentPopup { get; private set; }
+        internal static AbstractPopupView? CurrentPopup { get; private set; }
 
-        static Image _blockingPanel;
+        static Image? _blockingPanel;
         static readonly Queue<(PopupType type, bool blockingPanel, object parameter)> _scheduledPopups = new();
         static readonly PopupConfig _config;
 
@@ -47,10 +46,10 @@ namespace UI.Popups
                 if (blockingPanel)
                 {
                     _blockingPanel = Object.Instantiate(_config.BlockingPanelPrefab, UISceneReferenceHolder.PopupContainer);
-                    popup = Object.Instantiate(prefab, _blockingPanel.transform);
+                    popup = Object.Instantiate(prefab, _blockingPanel.transform)!;
                 }
                 else
-                    popup = Object.Instantiate(prefab, UISceneReferenceHolder.PopupContainer);
+                    popup = Object.Instantiate(prefab, UISceneReferenceHolder.PopupContainer)!;
 
                 CurrentPopup = popup;
             }
@@ -62,7 +61,7 @@ namespace UI.Popups
         {
             Assert.False(CurrentPopup == null, "You cannot call CloseCurrentPopup if there is no active popup.");
 
-            CurrentPopup.Close();
+            CurrentPopup!.Close();
             GameObject popupGo = CurrentPopup.gameObject;
             popupGo.SetActive(false);
             Object.Destroy(popupGo);
