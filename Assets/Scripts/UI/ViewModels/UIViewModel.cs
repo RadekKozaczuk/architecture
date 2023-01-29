@@ -3,8 +3,8 @@ using ControlFlow.DependencyInjector.Interfaces;
 using JetBrains.Annotations;
 using UI.Config;
 using UI.Controllers;
+using UI.Systems;
 using UnityEngine.Scripting;
-using InputSystem = UI.Systems.InputSystem;
 
 namespace UI.ViewModels
 {

@@ -31,7 +31,7 @@ namespace UI.Views
         static void NewGame()
         {
             int sceneId = CommonData.CurrentLevel.HasValue ? Constants.Level0Scene : Constants.HubScene;
-            GameStateSystem.RequestStateChange(GameState.Gameplay, new []{sceneId});
+            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {sceneId});
         }
 
         static void LoadGame()

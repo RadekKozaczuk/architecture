@@ -15,6 +15,7 @@ using UnityEngine.SceneManagement;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 using Common.Config;
 #endif
+
 #if UNITY_EDITOR
 using Presentation.Views;
 using Common.Views;
@@ -175,8 +176,8 @@ namespace Boot
         }
 
         /// <summary>
-        /// Returns ids of all currently open scenes except for <see cref="Constants.CoreScene"/>, <see cref="Constants.MainMenuScene"/>,
-        /// and <see cref="Constants.UIScene"/>
+        /// Returns ids of all currently open scenes except for <see cref="Constants.CoreScene" />, <see cref="Constants.MainMenuScene" />,
+        /// and <see cref="Constants.UIScene" />
         /// </summary>
         static int[]? ScenesToLoadFromMainMenuToGameplay()
         {
@@ -189,15 +190,15 @@ namespace Boot
                 int _ = reader.ReadByte(); // save game version
                 CommonData.CurrentLevel = reader.ReadByte();
 
-                return new [] {CommonData.CurrentLevel.Value};
+                return new[] {CommonData.CurrentLevel.Value};
             }
 
             return null;
         }
 
         /// <summary>
-        /// Returns ids of all currently open scenes except for <see cref="Constants.CoreScene"/>, <see cref="Constants.MainMenuScene"/>,
-        /// and <see cref="Constants.UIScene"/>
+        /// Returns ids of all currently open scenes except for <see cref="Constants.CoreScene" />, <see cref="Constants.MainMenuScene" />,
+        /// and <see cref="Constants.UIScene" />
         /// </summary>
         static int[] ScenesToUnloadFromGameplayToMainMenu()
         {
@@ -216,10 +217,10 @@ namespace Boot
             return scenesToUnload.ToArray();
         }
 
-        static int[] ScenesToLoadFromGameplayToGameplay()
-            => new [] {CommonData.CurrentLevel.HasValue ? CommonData.CurrentLevel.Value + 1 : Constants.Level0Scene};
+        static int[] ScenesToLoadFromGameplayToGameplay() =>
+            new[] {CommonData.CurrentLevel.HasValue ? CommonData.CurrentLevel.Value + 1 : Constants.Level0Scene};
 
-        static int[] ScenesToUnloadFromGameplayToGameplay()
-            => new [] {CommonData.CurrentLevel.HasValue ? CommonData.CurrentLevel.Value : Constants.HubScene};
+        static int[] ScenesToUnloadFromGameplayToGameplay() =>
+            new[] {CommonData.CurrentLevel.HasValue ? CommonData.CurrentLevel.Value : Constants.HubScene};
     }
 }
