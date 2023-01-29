@@ -10,6 +10,10 @@ using UnityEngine.UI;
 
 namespace UI.Popups
 {
+    /// <summary>
+    /// Popup systems automatically calls SetActive(true) on each instantiated popup. It is a good practice to make popup
+    /// prefabs inactive so that all the changes done to the prefab during <see cref="AbstractPopupView.Initialize"/> call are not visible to the player.
+    /// </summary>
     [ReactOnSignals]
     static class PopupSystem
     {
