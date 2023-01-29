@@ -18,7 +18,7 @@ namespace UI.Views
     {
         [SerializeField]
         TMP_InputField _commandInputField;
-        [SerializeField] 
+        [SerializeField]
         TMP_Text _placeholderText;
         [SerializeField]
         GameObject _debugConsole;
@@ -31,8 +31,8 @@ namespace UI.Views
 
         void Awake()
         {
-            var fieldInfo = typeof(DebugCommands).GetFields(BindingFlags.NonPublic | BindingFlags.Static)
-                .FirstOrDefault(x => x.Name == CommandsFieldName);
+            FieldInfo fieldInfo = typeof(DebugCommands).GetFields(BindingFlags.NonPublic | BindingFlags.Static)
+                                                       .FirstOrDefault(x => x.Name == CommandsFieldName);
             if (fieldInfo == null)
                 return;
 
@@ -73,7 +73,7 @@ namespace UI.Views
             {
                 _debugConsole.SetActive(true);
                 _commandInputField.ActivateInputField();
-                UpdatePlaceholderText(PlaceholderDefaultText);
+                _placeholderText.text = PlaceholderDefaultText;
             }
         }
 
@@ -93,11 +93,11 @@ namespace UI.Views
             if (!_supportedCommands.Any())
             {
                 Debug.Log("Supported Commands are empty");
-                UpdatePlaceholderText(NoCommandAvailableText);
+                _placeholderText.text = NoCommandAvailableText;
                 return;
             }
 
-            var commandToInvoke = _supportedCommands.FirstOrDefault(x => x.name == command);
+            (Action action, string name, string description, string assembly) commandToInvoke = _supportedCommands.FirstOrDefault(x => x.name == command);
             if (commandToInvoke.action == null)
             {
                 Debug.Log($"Received command: {command} was not found.");
@@ -122,30 +122,25 @@ namespace UI.Views
             {
                 _currentBestMatch = string.Empty;
                 placeholderText = PlaceholderDefaultText;
-                UpdatePlaceholderText(placeholderText);
+                _placeholderText.text = placeholderText;
 
                 return;
             }
-            
-            var find = _supportedCommands.Where(x => x.name.StartsWith(partOfCommand)).ToList();
+
+            List<(Action action, string name, string description, string assembly)> find = _supportedCommands.Where(x => x.name.StartsWith(partOfCommand)).ToList();
             if (find.Count == 1)
             {
                 _currentBestMatch = placeholderText = find.First().name;
             }
             else
             {
-                var foundCommand = find.FirstOrDefault();
+                (Action action, string name, string description, string assembly) foundCommand = find.FirstOrDefault();
                 string currentCommandName = foundCommand.name ?? _supportedCommands.First().name;
 
                 _currentBestMatch = placeholderText = currentCommandName;
             }
 
-            UpdatePlaceholderText(placeholderText);
-        }
-
-        void UpdatePlaceholderText(string text)
-        {
-            _placeholderText.text = text;
+            _placeholderText.text = placeholderText;
         }
 
         void ClearInputField()
