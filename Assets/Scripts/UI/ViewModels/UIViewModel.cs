@@ -32,7 +32,11 @@ namespace UI.ViewModels
 
         public static void CustomLateUpdate() => _instance._uiMainController.CustomLateUpdate();
 
-        public static void OnUISceneLoaded() => UIMainController.OnUISceneLoaded();
+        public static void OnUISceneLoaded()
+        {
+            UIMainController.OnUISceneLoaded();
+            _uiConfig.InputActionAsset.FindActionMap(UIConstants.DebugCommandsMap).Enable();
+        }
 
         public static void BootingOnExit() { }
 

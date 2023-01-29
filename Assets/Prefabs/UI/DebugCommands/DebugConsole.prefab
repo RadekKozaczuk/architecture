@@ -243,7 +243,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1368048663407062259}
   - component: {fileID: 1368048663407062258}
-  - component: {fileID: 1368048663407062269}
   m_Layer: 0
   m_Name: DebugConsole
   m_TagString: Untagged
@@ -287,92 +286,6 @@ MonoBehaviour:
   _commandInputField: {fileID: 1368048663835677576}
   _placeholderText: {fileID: 1368048662836594667}
   _debugConsole: {fileID: 1368048663252233474}
---- !u!114 &1368048663407062269
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1368048663407062256}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: d304856d3c9d1504c993edfe6aa33fee, type: 3}
-  m_NotificationBehavior: 2
-  m_UIInputModule: {fileID: 0}
-  m_DeviceLostEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_DeviceRegainedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ControlsChangedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ActionEvents:
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: e3418382-93a6-40e9-bb85-990b408178c0
-    m_ActionName: MainMenu/Quit[/Keyboard/escape]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 6af5c871-33c2-42fe-a646-a3a10014abb3
-    m_ActionName: Gameplay/Quit[/Keyboard/escape]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 70a2b909-669b-4734-9167-159117a18ded
-    m_ActionName: Gameplay/Move Up[/Keyboard/w,/Keyboard/upArrow]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 38057915-8358-468d-896e-dec31976cfc6
-    m_ActionName: Gameplay/Move Down[/Keyboard/s,/Keyboard/downArrow]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 501c301f-0e83-47a4-b309-da583fd9eacf
-    m_ActionName: Gameplay/Move Left[/Keyboard/a,/Keyboard/leftArrow]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: bc86ca99-b785-4e61-a574-3d73dc3e490a
-    m_ActionName: Gameplay/Move Right[/Keyboard/d,/Keyboard/rightArrow]
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1368048663407062258}
-        m_TargetAssemblyTypeName: GameLogic.Views.DebugConsoleView, UI
-        m_MethodName: ToggleConsole
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: 9dd6f3df-11d2-4f68-8a51-2f68ad6f4f0d
-    m_ActionName: DebugCommands/ToggleConsole[/Keyboard/backquote]
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1368048663407062258}
-        m_TargetAssemblyTypeName: UI.Views.DebugConsoleView, UI
-        m_MethodName: TakeBestMatchAsCommand
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: 9b4597e2-0a6e-42a7-b913-8c33345c15c4
-    m_ActionName: DebugCommands/TakeBestMatch[/Keyboard/tab]
-  m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
-  m_DefaultActionMap: DebugCommands
-  m_SplitScreenIndex: -1
-  m_Camera: {fileID: 0}
 --- !u!1 &1368048663736027986
 GameObject:
   m_ObjectHideFlags: 0

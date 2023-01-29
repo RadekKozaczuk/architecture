@@ -1,7 +1,12 @@
+using UI.Views;
+
 namespace UI
 {
     /// <summary>
     /// Assembly-level data.
     /// </summary>
-    static class UIData { }
+    static class UIData
+    {
+        internal static DebugConsoleView DebugConsoleView;
+    }
 }

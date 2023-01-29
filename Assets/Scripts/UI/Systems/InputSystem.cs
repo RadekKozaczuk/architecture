@@ -12,6 +12,9 @@ namespace UI.Systems
         const string Quit = "Quit";
         const string Movement = "Movement";
 
+        const string ToggleConsole = "ToggleConsole";
+        const string TakeBestMatch = "TakeBestMatch";
+
         static readonly UIConfig _uiConfig;
 
         static InputAction _movementAction;
@@ -37,6 +40,11 @@ namespace UI.Systems
             // Popups bindings
             InputActionMap popup = _uiConfig.InputActionAsset.FindActionMap(UIConstants.PopupActionMap);
             popup.FindAction(Quit).performed += _ => PopupSystem.CloseCurrentPopup();
+
+            // DebugCommands bindings
+            InputActionMap debugCommands = _uiConfig.InputActionAsset.FindActionMap(UIConstants.DebugCommandsMap);
+            debugCommands.FindAction(ToggleConsole).performed += _ => UIData.DebugConsoleView.ToggleConsole(_);
+            debugCommands.FindAction(TakeBestMatch).performed += _ => UIData.DebugConsoleView.TakeBestMatchAsCommand();
         }
 
         internal static void CustomUpdate()

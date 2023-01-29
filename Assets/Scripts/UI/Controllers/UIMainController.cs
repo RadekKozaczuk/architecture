@@ -3,6 +3,8 @@ using ControlFlow.Interfaces;
 using ControlFlow.SignalProcessing;
 using JetBrains.Annotations;
 using UI.Systems;
+using UI.Views;
+using UnityEngine;
 using UnityEngine.Scripting;
 
 namespace UI.Controllers
@@ -32,7 +34,11 @@ namespace UI.Controllers
             if (!_uiSceneLoaded)
                 return;
 
+            if (UIData.DebugConsoleView == null)
+                UIData.DebugConsoleView = Object.FindObjectOfType<DebugConsoleView>();
+
             InputSystem.CustomUpdate();
+            UIData.DebugConsoleView?.UpdatePlaceholderText();
         }
 
         public void CustomFixedUpdate() { }

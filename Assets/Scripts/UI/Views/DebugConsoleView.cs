@@ -3,13 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Common;
 using Shared.CheatEngine;
 using TMPro;
-using UI.ViewModels;
+using UI.Config;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UI;
 
 namespace UI.Views
 {
@@ -23,6 +21,7 @@ namespace UI.Views
         [SerializeField]
         GameObject _debugConsole;
 
+        static readonly UIConfig _uiConfig = null!;
         const string CommandsFieldName = "_commands";
         const string PlaceholderDefaultText = "Enter command...";
         const string NoCommandAvailableText = "No command available";
@@ -39,24 +38,26 @@ namespace UI.Views
             _supportedCommands = (List<(Action action, string name, string description, string assembly)>)fieldInfo.GetValue(null);
         }
 
-        void Update()
+        internal void UpdatePlaceholderText()
         {
             string currentPlaceholderText = _placeholderText.text;
 
-            if (string.IsNullOrEmpty(_commandInputField.text) && string.IsNullOrEmpty(currentPlaceholderText)  && !_placeholderText.isActiveAndEnabled)
+            if (string.IsNullOrEmpty(_commandInputField.text) && string.IsNullOrEmpty(currentPlaceholderText) &&
+                !_placeholderText.isActiveAndEnabled)
             {
                 _placeholderText.text = PlaceholderDefaultText;
                 _placeholderText.enabled = true;
                 return;
             }
 
-            if (!string.IsNullOrEmpty(_commandInputField.text) && !string.IsNullOrEmpty(currentPlaceholderText) && currentPlaceholderText != PlaceholderDefaultText)
+            if (!string.IsNullOrEmpty(_commandInputField.text) && !string.IsNullOrEmpty(currentPlaceholderText) &&
+                currentPlaceholderText != PlaceholderDefaultText)
             {
                 _placeholderText.enabled = true;
             }
         }
 
-        void ToggleConsole(InputAction.CallbackContext callbackContext)
+        internal void ToggleConsole(InputAction.CallbackContext callbackContext)
         {
             _placeholderText.text = PlaceholderDefaultText;
             _placeholderText.enabled = true;
@@ -68,13 +69,21 @@ namespace UI.Views
             if (_debugConsole.activeSelf)
             {
                 _debugConsole.SetActive(false);
+                _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap).Enable();
             }
             else
             {
                 _debugConsole.SetActive(true);
                 _commandInputField.ActivateInputField();
                 _placeholderText.text = PlaceholderDefaultText;
+                _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap).Disable();
             }
+        }
+
+        internal void TakeBestMatchAsCommand()
+        {
+            _commandInputField.text = _currentBestMatch;
+            _commandInputField.MoveTextEnd(false); //Fixing caret position
         }
 
         void CallCommand(string command)
@@ -92,26 +101,15 @@ namespace UI.Views
         {
             if (!_supportedCommands.Any())
             {
-                Debug.Log("Supported Commands are empty");
                 _placeholderText.text = NoCommandAvailableText;
                 return;
             }
 
             (Action action, string name, string description, string assembly) commandToInvoke = _supportedCommands.FirstOrDefault(x => x.name == command);
             if (commandToInvoke.action == null)
-            {
-                Debug.Log($"Received command: {command} was not found.");
                 return;
-            }
 
-            Debug.Log($"Calling command named: {commandToInvoke.name}, {commandToInvoke.description}");
             commandToInvoke.action.Invoke();
-        }
-
-        void TakeBestMatchAsCommand()
-        {
-            _commandInputField.text = _currentBestMatch;
-            _commandInputField.caretPosition = _commandInputField.text.Length;
         }
 
         void GetBestMatch(string partOfCommand)

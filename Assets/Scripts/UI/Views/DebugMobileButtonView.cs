@@ -1,5 +1,6 @@
 #if (UNITY_EDITOR || DEVELOPMENT_BUILD) && (UNITY_ANDROID || UNITY_IPHONE)
 using System;
+using UI.Config;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -9,9 +10,7 @@ namespace UI.Views
     [DisallowMultipleComponent]
     class DebugMobileButtonView : MonoBehaviour, IPointerClickHandler
     {
-        [Tooltip("Duration between 3 clicks in seconds")]
-        [Range(0.01f, 0.5f)]
-        public float TripleClickDuration = 0.5f;
+        static readonly UIDebugConfig _uiDebugConfig = null!;
 
         [SerializeField]
         internal DebugMobileConsoleView DebugMobileConsole;
@@ -30,7 +29,7 @@ namespace UI.Views
         public void OnPointerClick(PointerEventData eventData)
         {
             double elapsedSeconds = (DateTime.Now - _firstClickTime).TotalSeconds;
-            if (elapsedSeconds > TripleClickDuration)
+            if (elapsedSeconds > _uiDebugConfig.TripleClickDuration)
                 _clicks = 0;
 
             _clicks++;
@@ -41,7 +40,7 @@ namespace UI.Views
             }
             else if (_clicks > 2)
             {
-                if (!(elapsedSeconds <= TripleClickDuration))
+                if (!(elapsedSeconds <= _uiDebugConfig.TripleClickDuration))
                 {
                     return;
                 }
