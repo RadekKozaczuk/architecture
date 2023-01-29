@@ -91,7 +91,6 @@ namespace UI.Views
             if (string.IsNullOrEmpty(command))
                 return;
 
-            Debug.Log(command);
             ManageReceivedCommand(command);
 
             ClearInputField();
