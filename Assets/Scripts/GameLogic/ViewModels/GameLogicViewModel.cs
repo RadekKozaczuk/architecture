@@ -3,6 +3,7 @@ using Common.Systems;
 using ControlFlow.DependencyInjector.Attributes;
 using ControlFlow.DependencyInjector.Interfaces;
 using GameLogic.Controllers;
+using GameLogic.Systems;
 using JetBrains.Annotations;
 using Presentation.ViewModels;
 using Shared;
@@ -49,8 +50,14 @@ namespace GameLogic.ViewModels
 
         public static void GameplayOnExit() { }
 
-        public static void SaveGame() { }
+        public static void SaveGame()
+        {
+            SaveLoadSystem.SaveGame();
+        }
 
-        public static void LoadGame() { }
+        public static void LoadGame()
+        {
+            SaveLoadSystem.LoadGame();
+        }
     }
 }

@@ -17,7 +17,7 @@ namespace UI.Popups
 
         static Image? _blockingPanel;
         static readonly Queue<(PopupType type, bool blockingPanel, object parameter)> _scheduledPopups = new();
-        static readonly PopupConfig _config;
+        static readonly PopupConfig _config = null!;
 
         /// <summary>
         /// </summary>
@@ -51,6 +51,8 @@ namespace UI.Popups
                 else
                     popup = Object.Instantiate(prefab, UISceneReferenceHolder.PopupContainer)!;
 
+                popup.Initialize();
+                popup.gameObject.SetActive(true);
                 CurrentPopup = popup;
             }
             else

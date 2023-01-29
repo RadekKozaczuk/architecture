@@ -1,4 +1,5 @@
-﻿using Common.Enums;
+﻿using Common;
+using Common.Enums;
 using Common.Systems;
 using GameLogic.ViewModels;
 using UnityEngine;
@@ -30,6 +31,8 @@ namespace UI.Popups.Views
             _hub.onClick.AddListener(HubAction);
             _mainMenu.onClick.AddListener(MainMenuAction);
         }
+
+        internal override void Initialize() => _hub.interactable = CommonData.CurrentLevel != null;
 
         static void SaveGameAction()
         {

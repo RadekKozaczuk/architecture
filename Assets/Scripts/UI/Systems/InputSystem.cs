@@ -1,5 +1,4 @@
 using Common.Enums;
-using Common.Systems;
 using Presentation.ViewModels;
 using UI.Config;
 using UI.Popups;
@@ -50,7 +49,9 @@ namespace UI.Systems
         static void QuitAction()
         {
             if (PopupSystem.CurrentPopup == null)
+            {
                 PopupSystem.ShowPopup(PopupType.QuitGame);
+            }
             else
                 PopupSystem.CloseCurrentPopup();
         }

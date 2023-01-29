@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Common;
 using Presentation.ViewModels;
 using UnityEngine;
 
@@ -28,10 +29,10 @@ namespace GameLogic.Systems
             byte[] data = File.ReadAllBytes(_savePath);
             BinaryReader reader = new(new MemoryStream(data));
 
-            /*int varaint = reader.ReadByte();
-            int level = reader.ReadByte();*/
+            int _ = reader.ReadByte(); // save game version
+            CommonData.CurrentLevel = reader.ReadByte();
 
-            //PresentationViewModel.LoadGame(reader);
+            PresentationViewModel.LoadGame(reader);
         }
     }
 }

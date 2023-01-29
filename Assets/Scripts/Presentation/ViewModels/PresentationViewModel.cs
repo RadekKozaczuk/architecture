@@ -80,16 +80,16 @@ namespace Presentation.ViewModels
         {
             Transform playerTransform = PresentationData.Player.transform;
 
-            SaveLoadSystem.Write(writer, playerTransform.position);
-            SaveLoadSystem.Write(writer, playerTransform.rotation);
+            SaveLoadUtils.Write(writer, playerTransform.position);
+            SaveLoadUtils.Write(writer, playerTransform.rotation);
         }
 
-        public static void SaveGame(BinaryReader reader)
+        public static void LoadGame(BinaryReader reader)
         {
             Transform playerTransform = PresentationData.Player.transform;
 
-            playerTransform.position = SaveLoadSystem.ReadVector3(reader);
-            playerTransform.rotation = SaveLoadSystem.ReadQuaternion(reader);
+            playerTransform.position = SaveLoadUtils.ReadVector3(reader);
+            playerTransform.rotation = SaveLoadUtils.ReadQuaternion(reader);
         }
     }
 }
