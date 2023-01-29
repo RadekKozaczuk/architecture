@@ -1,7 +1,7 @@
 using Common.Enums;
-using Common.Systems;
 using Presentation.ViewModels;
 using UI.Config;
+using UI.Popups;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,26 +10,39 @@ namespace UI.Systems
     static class InputSystem
     {
         const string Quit = "Quit";
-        const string MoveUp = "Move Up";
-        const string MoveDown = "Move Down";
-        const string MoveLeft = "Move Left";
-        const string MoveRight = "Move Right";
+        const string Movement = "Movement";
 
         static readonly UIConfig _uiConfig;
+
+        static InputAction _movementAction;
+
+        /// <summary>
+        /// True if movement action is pressed down.
+        /// </summary>
+        static bool _movementDown;
 
         internal static void Initialize()
         {
             // MainMenu bindings
-            InputActionMap mainMenu = _uiConfig.InputActionAsset.FindActionMap("MainMenu");
+            InputActionMap mainMenu = _uiConfig.InputActionAsset.FindActionMap(UIConstants.MainMenuActionMap);
             mainMenu.FindAction(Quit).performed += _ => Application.Quit();
 
             // Gameplay bindings
-            InputActionMap gameplay = _uiConfig.InputActionAsset.FindActionMap("Gameplay");
-            gameplay.FindAction(Quit).performed += _ => GameStateSystem.RequestStateChange(GameState.MainMenu);
-            gameplay.FindAction(MoveUp).performed += _ => PresentationViewModel.MoveUp();
-            gameplay.FindAction(MoveDown).performed += _ => PresentationViewModel.MoveDown();
-            gameplay.FindAction(MoveLeft).performed += _ => PresentationViewModel.MoveLeft();
-            gameplay.FindAction(MoveRight).performed += _ => PresentationViewModel.MoveRight();
+            InputActionMap gameplay = _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap);
+            gameplay.FindAction(Quit).performed += _ => PopupSystem.ShowPopup(PopupType.QuitGame);
+            _movementAction = gameplay.FindAction(Movement);
+            _movementAction.performed += _ => _movementDown = true;
+            _movementAction.canceled += _ => _movementDown = false;
+
+            // Popups bindings
+            InputActionMap popup = _uiConfig.InputActionAsset.FindActionMap(UIConstants.PopupActionMap);
+            popup.FindAction(Quit).performed += _ => PopupSystem.CloseCurrentPopup();
+        }
+
+        internal static void CustomUpdate()
+        {
+            if (_movementDown)
+                PresentationViewModel.Movement(_movementAction.ReadValue<Vector2>());
         }
     }
 }

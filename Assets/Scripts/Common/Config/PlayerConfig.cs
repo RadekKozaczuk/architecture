@@ -9,7 +9,14 @@ namespace Common.Config
         /// <summary>
         /// Player's max health.
         /// </summary>
-        public ushort MaxHealth = 100;
+        [Min(0)]
+        public int MaxHealth = 100;
+
+        /// <summary>
+        /// Player's speed.
+        /// </summary>
+        [Min(0)]
+        public int Speed = 5;
 
         [Range(1, 10)]
         [SuffixLabel("m")]

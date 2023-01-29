@@ -10,6 +10,8 @@ namespace UI.Popups.Views
 
         protected AbstractPopupView(PopupType type) => Type = type;
 
+        internal virtual void Initialize() { }
+
         internal virtual void Close() { }
     }
 }

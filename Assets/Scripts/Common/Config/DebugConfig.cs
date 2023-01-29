@@ -1,3 +1,4 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -37,3 +38,4 @@ namespace Common.Config
         public GameObject DebugConsolePrefab;
     }
 }
+#endif

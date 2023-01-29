@@ -1,9 +1,11 @@
+using System.IO;
 using Common.Enums;
 using ControlFlow.DependencyInjector.Attributes;
 using ControlFlow.DependencyInjector.Interfaces;
 using JetBrains.Annotations;
 using Presentation.Config;
 using Presentation.Controllers;
+using Shared.Systems;
 using UnityEngine;
 using UnityEngine.Scripting;
 
@@ -54,6 +56,10 @@ namespace Presentation.ViewModels
             PresentationSceneReferenceHolder.GameplayCamera.gameObject.SetActive(true);
             PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(false);
 
+            // load level data
+            var levelSceneReferenceHolder = GameObject.FindWithTag("LevelSceneReferenceHolder").GetComponent<LevelSceneReferenceHolder>();
+            PresentationData.Player = levelSceneReferenceHolder.Player;
+
             // spawn 5 VFXs around the player
             for (int i = 0; i < 5; i++)
             {
@@ -68,42 +74,22 @@ namespace Presentation.ViewModels
 
         public static void GameplayOnExit() => PresentationReferenceHolder.AudioController.LoadMusic(Music.MainMenu);
 
-        public static void LoadLevelData()
+        public static void Movement(Vector2 movementInput) => PresentationData.Player.Move(movementInput.normalized);
+
+        public static void SaveGame(BinaryWriter writer)
         {
-            var levelSceneReferenceHolder = GameObject.FindWithTag("LevelSceneReferenceHolder").GetComponent<LevelSceneReferenceHolder>();
-            PresentationData.Player = levelSceneReferenceHolder.Player;
+            Transform playerTransform = PresentationData.Player.transform;
+
+            SaveLoadUtils.Write(writer, playerTransform.position);
+            SaveLoadUtils.Write(writer, playerTransform.rotation);
         }
 
-        public static void MoveUp()
+        public static void LoadGame(BinaryReader reader)
         {
-            Transform transform = PresentationData.Player.transform;
-            Vector3 pos = transform.position;
-            pos.z += 0.5f;
-            transform.position = pos;
-        }
+            Transform playerTransform = PresentationData.Player.transform;
 
-        public static void MoveDown()
-        {
-            Transform transform = PresentationData.Player.transform;
-            Vector3 pos = transform.position;
-            pos.z -= 0.5f;
-            transform.position = pos;
-        }
-
-        public static void MoveLeft()
-        {
-            Transform transform = PresentationData.Player.transform;
-            Vector3 pos = transform.position;
-            pos.x -= 0.5f;
-            transform.position = pos;
-        }
-
-        public static void MoveRight()
-        {
-            Transform transform = PresentationData.Player.transform;
-            Vector3 pos = transform.position;
-            pos.x += 0.5f;
-            transform.position = pos;
+            playerTransform.position = SaveLoadUtils.ReadVector3(reader);
+            playerTransform.rotation = SaveLoadUtils.ReadQuaternion(reader);
         }
     }
 }

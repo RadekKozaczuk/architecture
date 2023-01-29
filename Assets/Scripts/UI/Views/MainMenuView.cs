@@ -1,4 +1,5 @@
-﻿using Common.Enums;
+﻿using Common;
+using Common.Enums;
 using Common.Systems;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,8 +23,21 @@ namespace UI.Views
 
         void Awake()
         {
-            _newGame.onClick.AddListener(() => GameStateSystem.RequestStateChange(GameState.Gameplay));
+            _newGame.onClick.AddListener(NewGame);
+            _loadGame.onClick.AddListener(LoadGame);
             _quit.onClick.AddListener(Application.Quit);
+        }
+
+        static void NewGame()
+        {
+            int sceneId = CommonData.CurrentLevel.HasValue ? Constants.Level0Scene : Constants.HubScene;
+            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {sceneId});
+        }
+
+        static void LoadGame()
+        {
+            CommonData.LoadRequested = true;
+            GameStateSystem.RequestStateChange(GameState.Gameplay);
         }
     }
 }

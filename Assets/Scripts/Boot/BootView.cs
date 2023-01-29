@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using Common;
 using Common.Enums;
 using Common.Systems;
@@ -15,6 +16,7 @@ using UnityEngine.SceneManagement;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 using Common.Config;
 #endif
+
 #if UNITY_EDITOR
 using Presentation.Views;
 using Common.Views;
@@ -44,11 +46,12 @@ namespace Boot
             Injector.Run();
 
             _gameStateSystem = new GameStateMachine<GameState>(
-                new List<(GameState from, GameState to, Func<int[]>? scenesToLoad, Func<int[]>? scenesToUnload)>
+                new List<(GameState from, GameState to, Func<int[]?>? scenesToLoad, Func<int[]?>? scenesToUnload)>
                 {
                     (GameState.Booting, GameState.MainMenu, () => new[] {Constants.MainMenuScene, Constants.CoreScene, Constants.UIScene}, null),
-                    (GameState.MainMenu, GameState.Gameplay, null, () => new[] {Constants.MainMenuScene}),
-                    (GameState.Gameplay, GameState.MainMenu, () => new[] {Constants.MainMenuScene}, ScenesToUnloadFromGameplayToMainMenu)
+                    (GameState.MainMenu, GameState.Gameplay, ScenesToLoadFromMainMenuToGameplay, () => new[] {Constants.MainMenuScene}),
+                    (GameState.Gameplay, GameState.MainMenu, () => new[] {Constants.MainMenuScene}, ScenesToUnloadFromGameplayToMainMenu),
+                    (GameState.Gameplay, GameState.Gameplay, ScenesToLoadFromGameplayToGameplay, ScenesToUnloadFromGameplayToGameplay)
                 },
                 new (GameState, Action?, Action?)[]
                 {
@@ -163,10 +166,8 @@ namespace Boot
             if (CommonData.LoadRequested)
             {
                 CommonData.LoadRequested = false;
+                GameLogicViewModel.LoadGame();
             }
-
-            int sceneToLoad = CommonData.CurrentLevel.HasValue ? Constants.Level0Scene : Constants.HubScene;
-            SceneManager.LoadSceneAsync(sceneToLoad, LoadSceneMode.Additive);
 
             //Cursor.lockState = CursorLockMode.Locked;
             //Cursor.visible = false;
@@ -182,7 +183,29 @@ namespace Boot
         }
 
         /// <summary>
-        /// Returns ids of all currently open scenes except for <see cref="Constants.CoreScene"/>, <see cref="Constants.MainMenuScene"/>, and <see cref="Constants.UIScene"/>
+        /// Returns ids of all currently open scenes except for <see cref="Constants.CoreScene" />, <see cref="Constants.MainMenuScene" />,
+        /// and <see cref="Constants.UIScene" />
+        /// </summary>
+        static int[]? ScenesToLoadFromMainMenuToGameplay()
+        {
+            if (CommonData.LoadRequested)
+            {
+                const string SaveFileName = "savegame.sav";
+                byte[] data = File.ReadAllBytes(SaveFileName);
+                BinaryReader reader = new(new MemoryStream(data));
+
+                int _ = reader.ReadByte(); // save game version
+                CommonData.CurrentLevel = reader.ReadByte();
+
+                return new[] {CommonData.CurrentLevel.Value};
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Returns ids of all currently open scenes except for <see cref="Constants.CoreScene" />, <see cref="Constants.MainMenuScene" />,
+        /// and <see cref="Constants.UIScene" />
         /// </summary>
         static int[] ScenesToUnloadFromGameplayToMainMenu()
         {
