@@ -1,6 +1,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Common;
 using Common.Enums;
 using Common.Systems;
@@ -90,6 +91,10 @@ namespace Boot
             debugCommands.name = "DebugCommands";
             DontDestroyOnLoad(debugCommands);
 #endif
+
+#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && (UNITY_ANDROID || UNITY_IPHONE || UNITY_STANDALONE_WIN)
+            CommonDebugCommands.InitializeDebugCommands();
+#endif
         }
 
         void FixedUpdate()
@@ -137,6 +142,8 @@ namespace Boot
             GameLogicViewModel.MainMenuOnEntry();
             PresentationViewModel.MainMenuOnEntry();
             UIViewModel.MainMenuOnEntry();
+
+            InstantiateAndPositionDebugObjects();
         }
 
         static void MainMenuOnExit()
@@ -192,6 +199,35 @@ namespace Boot
             }
 
             return scenesToUnload.ToArray();
+        }
+
+        static void InstantiateAndPositionDebugObjects()
+        {
+            var uiScene = SceneManager.GetSceneByBuildIndex(Constants.UIScene);
+            var canvasScreenSpace = uiScene.GetRootGameObjects().First(x => x.name == "CanvasScreenSpace");
+
+#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && (UNITY_ANDROID || UNITY_IPHONE)
+            var height = canvasScreenSpace.GetComponent<RectTransform>().rect.height;
+
+            GameObject debugMobileConsole = Instantiate(_config.DebugMobileConsolePrefab, Vector3.zero, Quaternion.identity);
+            debugMobileConsole.name = "DebugMobileConsole";
+            debugMobileConsole.transform.SetParent(canvasScreenSpace.transform, false);
+
+            GameObject debugMobileButton = Instantiate(_config.DebugMobileButtonPrefab, Vector3.zero, Quaternion.identity);
+            debugMobileButton.name = "DebugMobileButton";
+            debugMobileButton.transform.SetParent(canvasScreenSpace.transform);
+            var rectButtonComponent = debugMobileButton.GetComponent<RectTransform>();
+            rectButtonComponent.transform.SetPositionAndRotation(new Vector3(rectButtonComponent.rect.width / 2, height - rectButtonComponent.rect.height / 2, -1), Quaternion.identity);
+#endif
+
+
+#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && UNITY_STANDALONE_WIN
+            GameObject debugConsole = Instantiate(_config.DebugConsolePrefab, Vector3.zero, Quaternion.identity);
+            debugConsole.name = "DebugConsole";
+            debugConsole.transform.SetParent(canvasScreenSpace.transform, false);
+            var debugConsoleComponent = debugConsole.GetComponent<RectTransform>();
+            debugConsoleComponent.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 0, debugConsoleComponent.rect.height);
+#endif
         }
     }
 }

@@ -1,3 +1,4 @@
+#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && (UNITY_ANDROID || UNITY_IPHONE)
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,8 @@ namespace UI.Views
     class DebugMobileConsoleView : MonoBehaviour
     {
         [SerializeField]
-        GameObject _mobileDebugConsole;
+        internal GameObject MobileDebugConsoleBackground;
+        internal Button DebugMobileButton;
         [SerializeField]
         GameObject _scrollContentGameObject;
         [SerializeField]
@@ -26,10 +28,8 @@ namespace UI.Views
         const string TextGameObjectName = "Text";
         const string CommandsFieldName = "_commands";
 
-        void Awake()
+        void Start()
         {
-            CommonDebugCommands.InitializeDebugCommands();
-
             var fieldInfo = typeof(DebugCommands).GetFields(BindingFlags.NonPublic | BindingFlags.Static).FirstOrDefault(x => x.Name == CommandsFieldName);
             if (fieldInfo == null)
                 return;
@@ -50,7 +50,8 @@ namespace UI.Views
 
         void CloseConsole()
         {
-            _mobileDebugConsole.SetActive(false);
+            MobileDebugConsoleBackground.SetActive(false);
+            DebugMobileButton.interactable = true;
         }
 
         void FixScrollContentSize()
@@ -62,3 +63,4 @@ namespace UI.Views
         }
     }
 }
+#endif

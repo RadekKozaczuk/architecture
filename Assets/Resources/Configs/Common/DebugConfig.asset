@@ -17,3 +17,6 @@ MonoBehaviour:
   LogRequestedStateChange: 0
   LogPlayerPosition: 0
   ShowInputLog: 0
+  DebugMobileButtonPrefab: {fileID: 1166935600446303237, guid: c03f31b7cb1fcff4b9951ab064d245d2, type: 3}
+  DebugMobileConsolePrefab: {fileID: 1397740784254656510, guid: f2507e279e757a346b8d6e0776b45442, type: 3}
+  DebugConsolePrefab: {fileID: 1368048663407062256, guid: 35d9cb4588e922143b1a16946f77ef85, type: 3}

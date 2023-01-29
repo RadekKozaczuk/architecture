@@ -1,3 +1,4 @@
+#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && (UNITY_ANDROID || UNITY_IPHONE)
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -13,16 +14,21 @@ namespace UI.Views
         public float TripleClickDuration = 0.5f;
 
         [SerializeField]
-        GameObject _debugMobileConsole;
+        internal DebugMobileConsoleView DebugMobileConsole;
         [SerializeField]
         Button _button;
 
         DateTime _firstClickTime;
         byte _clicks;
 
+        void Start()
+        {
+            DebugMobileConsole = FindObjectOfType<DebugMobileConsoleView>();
+            DebugMobileConsole.DebugMobileButton = _button;
+        }
+
         public void OnPointerClick(PointerEventData eventData)
         {
-#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && (UNITY_ANDROID || UNITY_IPHONE)
             double elapsedSeconds = (DateTime.Now - _firstClickTime).TotalSeconds;
             if (elapsedSeconds > TripleClickDuration)
                 _clicks = 0;
@@ -42,10 +48,11 @@ namespace UI.Views
 
                 if (_button.interactable)
                 {
-                    _debugMobileConsole.SetActive(true);
+                    DebugMobileConsole.MobileDebugConsoleBackground.SetActive(true);
+                    _button.interactable = false;
                 }
             }
-#endif
         }
     }
 }
+#endif
