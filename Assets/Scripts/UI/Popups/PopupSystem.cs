@@ -20,11 +20,10 @@ namespace UI.Popups
         internal static AbstractPopupView? CurrentPopup { get; private set; }
 
         static Image? _blockingPanel;
-        static readonly Queue<(PopupType type, bool blockingPanel, object parameter)> _scheduledPopups = new();
+        static readonly Queue<(PopupType type, bool blockingPanel, object? parameter)> _scheduledPopups = new();
         static readonly PopupConfig _config = null!;
+        static readonly UIConfig _uiConfig = null!;
 
-        /// <summary>
-        /// </summary>
         public static void ShowPopup(params PopupType[] popupTypes)
         {
             Assert.False(popupTypes.Length == 0, "You cannot show zero popups.");
@@ -45,6 +44,9 @@ namespace UI.Popups
                 AbstractPopupView prefab = _config.PopupPrefabs[(int)popupType];
 
                 Assert.False(prefab == null, "Prefab cannot be null.");
+
+                _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap).Disable();
+                _uiConfig.InputActionAsset.FindActionMap(UIConstants.PopupActionMap).Enable();
 
                 AbstractPopupView popup;
                 if (blockingPanel)
@@ -81,7 +83,7 @@ namespace UI.Popups
             }
 
             CurrentPopup = null;
-            ShowNextPopupFromQueue();
+            ShowNextPopupFromQueueIfAny();
         }
 
         internal static void ClosePopup(AbstractPopupView popup)
@@ -102,7 +104,7 @@ namespace UI.Popups
             }
 
             CurrentPopup = null;
-            ShowNextPopupFromQueue();
+            ShowNextPopupFromQueueIfAny();
         }
 
         internal static PopupType? CurrentPopupType()
@@ -113,10 +115,14 @@ namespace UI.Popups
             return CurrentPopup.Type;
         }
 
-        static void ShowNextPopupFromQueue()
+        static void ShowNextPopupFromQueueIfAny()
         {
             if (_scheduledPopups.Count == 0)
+            {
+                _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap).Enable();
+                _uiConfig.InputActionAsset.FindActionMap(UIConstants.PopupActionMap).Disable();
                 return;
+            }
 
             (PopupType type, bool blockingPanel, object _) = _scheduledPopups.Dequeue();
             ShowPopup(type, blockingPanel);

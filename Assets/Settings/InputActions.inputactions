@@ -175,6 +175,34 @@
                     "isPartOfComposite": true
                 }
             ]
+        },
+        {
+            "name": "Popup",
+            "id": "ad153b8d-0241-4826-a557-fe9d3d2f7462",
+            "actions": [
+                {
+                    "name": "Quit",
+                    "type": "Button",
+                    "id": "609c7001-d338-4384-ac62-6136bc89ac87",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "a873a0dd-90fa-45c5-96a8-56e46001d8aa",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Quit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

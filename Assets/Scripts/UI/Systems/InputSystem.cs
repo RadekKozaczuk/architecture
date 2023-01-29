@@ -9,9 +9,6 @@ namespace UI.Systems
 {
     static class InputSystem
     {
-        const string MainMenuActionMap = "MainMenu";
-        const string GameplayActionMap = "Gameplay";
-
         const string Quit = "Quit";
         const string Movement = "Movement";
 
@@ -27,33 +24,25 @@ namespace UI.Systems
         internal static void Initialize()
         {
             // MainMenu bindings
-            InputActionMap mainMenu = _uiConfig.InputActionAsset.FindActionMap(MainMenuActionMap);
+            InputActionMap mainMenu = _uiConfig.InputActionAsset.FindActionMap(UIConstants.MainMenuActionMap);
             mainMenu.FindAction(Quit).performed += _ => Application.Quit();
 
             // Gameplay bindings
-            InputActionMap gameplay = _uiConfig.InputActionAsset.FindActionMap(GameplayActionMap);
-            gameplay.FindAction(Quit).performed += _ => QuitAction();
-
-            // Popups bindings
+            InputActionMap gameplay = _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap);
+            gameplay.FindAction(Quit).performed += _ => PopupSystem.ShowPopup(PopupType.QuitGame);
             _movementAction = gameplay.FindAction(Movement);
             _movementAction.performed += _ => _movementDown = true;
             _movementAction.canceled += _ => _movementDown = false;
+
+            // Popups bindings
+            InputActionMap popup = _uiConfig.InputActionAsset.FindActionMap(UIConstants.PopupActionMap);
+            popup.FindAction(Quit).performed += _ => PopupSystem.CloseCurrentPopup();
         }
 
         internal static void CustomUpdate()
         {
             if (_movementDown)
                 PresentationViewModel.Movement(_movementAction.ReadValue<Vector2>());
-        }
-
-        static void QuitAction()
-        {
-            if (PopupSystem.CurrentPopup == null)
-            {
-                PopupSystem.ShowPopup(PopupType.QuitGame);
-            }
-            else
-                PopupSystem.CloseCurrentPopup();
         }
     }
 }
