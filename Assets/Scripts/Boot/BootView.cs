@@ -5,9 +5,11 @@ using System.Linq;
 using System.IO;
 using Common;
 using Common.Enums;
+using Common.Signals;
 using Common.Systems;
 using GameLogic.ViewModels;
 using Presentation.ViewModels;
+using Shared.CheatEngine;
 using Shared.Systems;
 using UI.ViewModels;
 using UnityEngine;
@@ -95,8 +97,16 @@ namespace Boot
             DontDestroyOnLoad(debugCommands);
 #endif
 
-#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && (UNITY_ANDROID || UNITY_IPHONE || UNITY_STANDALONE_WIN)
-            CommonDebugCommands.InitializeDebugCommands();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            DebugCommands.AddCommand(() =>
+            {
+                SignalProcessor.SendSignal(new MissionCompleteSignal());
+            }, "Win Mission", "Instantly wins the mission.");
+
+            DebugCommands.AddCommand(() =>
+            {
+                SignalProcessor.SendSignal(new MissionFailedSignal());
+            }, "Fail Mission", "Instantly wins the current mission.");
 #endif
         }
 
