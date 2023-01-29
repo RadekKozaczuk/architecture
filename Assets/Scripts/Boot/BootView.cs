@@ -46,12 +46,12 @@ namespace Boot
             Injector.Run();
 
             _gameStateSystem = new GameStateMachine<GameState>(
-                new List<(GameState from, GameState to, Func<int[]?>? scenesToLoad, Func<int[]?>? scenesToUnload)>
+                new List<(GameState from, GameState to, Func<(int[]?, int[]?)>? scenesToLoadUnload)>
                 {
-                    (GameState.Booting, GameState.MainMenu, () => new[] {Constants.MainMenuScene, Constants.CoreScene, Constants.UIScene}, null),
-                    (GameState.MainMenu, GameState.Gameplay, ScenesToLoadFromMainMenuToGameplay, () => new[] {Constants.MainMenuScene}),
-                    (GameState.Gameplay, GameState.MainMenu, () => new[] {Constants.MainMenuScene}, ScenesToUnloadFromGameplayToMainMenu),
-                    (GameState.Gameplay, GameState.Gameplay, ScenesToLoadFromGameplayToGameplay, ScenesToUnloadFromGameplayToGameplay)
+                    (GameState.Booting, GameState.MainMenu, () => (new[] {Constants.MainMenuScene, Constants.CoreScene, Constants.UIScene}, null)),
+                    (GameState.MainMenu, GameState.Gameplay, () => (ScenesToLoadFromMainMenuToGameplay(), new[] {Constants.MainMenuScene})),
+                    (GameState.Gameplay, GameState.MainMenu, () => (new[] {Constants.MainMenuScene}, ScenesToUnloadFromGameplayToMainMenu())),
+                    (GameState.Gameplay, GameState.Gameplay, ScenesToLoadUnloadFromGameplayToGameplay)
                 },
                 new (GameState, Action?, Action?)[]
                 {
@@ -222,6 +222,18 @@ namespace Boot
             }
 
             return scenesToUnload.ToArray();
+        }
+
+        static (int[]? scenesToLoad, int[]? scenesToUnload) ScenesToLoadUnloadFromGameplayToGameplay()
+        {
+            if (CommonData.CurrentLevel.HasValue)
+            {
+                CommonData.CurrentLevel += 1;
+                return (new[] {CommonData.CurrentLevel.Value}, new[] {CommonData.CurrentLevel.Value - 1});
+            }
+
+            CommonData.CurrentLevel = Constants.Level0Scene;
+            return (new[] {Constants.Level0Scene}, new [] {Constants.HubScene});
         }
 
         static void InstantiateAndPositionDebugObjects()
