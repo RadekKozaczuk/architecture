@@ -1,4 +1,3 @@
-#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && UNITY_STANDALONE_WIN
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +31,7 @@ namespace UI.Views
         {
             FieldInfo fieldInfo = typeof(DebugCommands).GetFields(BindingFlags.NonPublic | BindingFlags.Static)
                                                        .FirstOrDefault(x => x.Name == CommandsFieldName);
+
             if (fieldInfo == null)
                 return;
 
@@ -42,19 +42,19 @@ namespace UI.Views
         {
             string currentPlaceholderText = _placeholderText.text;
 
-            if (string.IsNullOrEmpty(_commandInputField.text) && string.IsNullOrEmpty(currentPlaceholderText) &&
-                !_placeholderText.isActiveAndEnabled)
+            if (string.IsNullOrEmpty(_commandInputField.text)
+                && string.IsNullOrEmpty(currentPlaceholderText)
+                && !_placeholderText.isActiveAndEnabled)
             {
                 _placeholderText.text = PlaceholderDefaultText;
                 _placeholderText.enabled = true;
                 return;
             }
 
-            if (!string.IsNullOrEmpty(_commandInputField.text) && !string.IsNullOrEmpty(currentPlaceholderText) &&
-                currentPlaceholderText != PlaceholderDefaultText)
-            {
+            if (!string.IsNullOrEmpty(_commandInputField.text)
+                && !string.IsNullOrEmpty(currentPlaceholderText)
+                && currentPlaceholderText != PlaceholderDefaultText)
                 _placeholderText.enabled = true;
-            }
         }
 
         internal void ToggleConsole(InputAction.CallbackContext callbackContext)
@@ -83,7 +83,7 @@ namespace UI.Views
         internal void TakeBestMatchAsCommand()
         {
             _commandInputField.text = _currentBestMatch;
-            _commandInputField.MoveTextEnd(false); //Fixing caret position
+            _commandInputField.MoveTextEnd(false);
         }
 
         void CallCommand(string command)
@@ -105,10 +105,8 @@ namespace UI.Views
             }
 
             (Action action, string name, string description, string assembly) commandToInvoke = _supportedCommands.FirstOrDefault(x => x.name == command);
-            if (commandToInvoke.action == null)
-                return;
 
-            commandToInvoke.action.Invoke();
+            commandToInvoke.action?.Invoke();
         }
 
         void GetBestMatch(string partOfCommand)
@@ -147,4 +145,3 @@ namespace UI.Views
         }
     }
 }
-#endif

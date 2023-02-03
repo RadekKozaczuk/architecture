@@ -1,4 +1,3 @@
-#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && (UNITY_ANDROID || UNITY_IPHONE)
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,10 +15,9 @@ namespace UI.Views
         [SerializeField]
         internal GameObject MobileDebugConsoleBackground;
         internal Button DebugMobileButton;
+
         [SerializeField]
         GameObject _scrollContentGameObject;
-        [SerializeField]
-        GameObject _commandPrefab;
 
         List<(Action action, string name, string description, string assembly)> _supportedCommands;
 
@@ -29,14 +27,15 @@ namespace UI.Views
 
         void Start()
         {
-            var fieldInfo = typeof(DebugCommands).GetFields(BindingFlags.NonPublic | BindingFlags.Static).FirstOrDefault(x => x.Name == CommandsFieldName);
+            FieldInfo fieldInfo = typeof(DebugCommands).GetFields(BindingFlags.NonPublic | BindingFlags.Static).FirstOrDefault(x => x.Name == CommandsFieldName);
             if (fieldInfo == null)
                 return;
 
             _supportedCommands = (List<(Action action, string name, string description, string assembly)>)fieldInfo.GetValue(null);
-            foreach (var supportedCommand in _supportedCommands)
+            foreach ((Action action, string name, string description, string assembly) supportedCommand in _supportedCommands)
             {
-                var newButton = Instantiate(_commandPrefab, _scrollContentGameObject.transform);
+                // todo: prefab should be taken from configs
+                GameObject newButton = Instantiate(_commandPrefab, _scrollContentGameObject.transform);
 
                 var button = newButton.transform.Find(ButtonGameObjectName).GetComponent<Button>();
 
@@ -62,4 +61,3 @@ namespace UI.Views
         }
     }
 }
-#endif

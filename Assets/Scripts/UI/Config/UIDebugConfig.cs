@@ -1,4 +1,3 @@
-#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && (UNITY_ANDROID || UNITY_IPHONE)
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -12,6 +11,8 @@ namespace UI.Config
         [Range(0.01f, 0.5f)]
         [SuffixLabel("s")]
         internal float TripleClickDuration = 0.5f;
+
+        [SerializeField]
+        GameObject _commandPrefab;
     }
 }
-#endif

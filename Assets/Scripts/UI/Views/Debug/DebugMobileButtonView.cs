@@ -1,4 +1,3 @@
-#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && (UNITY_ANDROID || UNITY_IPHONE)
 using System;
 using UI.Config;
 using UnityEngine;
@@ -22,6 +21,8 @@ namespace UI.Views
 
         void Start()
         {
+            // todo: the reference should be in UI scene reference holder or in a parent view
+            // we never look for things
             DebugMobileConsole = FindObjectOfType<DebugMobileConsoleView>();
             DebugMobileConsole.DebugMobileButton = _button;
         }
@@ -40,13 +41,15 @@ namespace UI.Views
             }
             else if (_clicks > 2)
             {
-                if (!(elapsedSeconds <= _uiDebugConfig.TripleClickDuration))
-                {
+                if (elapsedSeconds > _uiDebugConfig.TripleClickDuration)
                     return;
-                }
 
                 if (_button.interactable)
                 {
+                    // todo 
+                    // UISceneReferenceHolder.MobileDebugConsoleBackground.SetActive(true);
+
+                    // not this
                     DebugMobileConsole.MobileDebugConsoleBackground.SetActive(true);
                     _button.interactable = false;
                 }
@@ -54,4 +57,3 @@ namespace UI.Views
         }
     }
 }
-#endif
