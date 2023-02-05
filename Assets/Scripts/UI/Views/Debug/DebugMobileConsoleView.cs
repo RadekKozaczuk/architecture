@@ -5,7 +5,6 @@ using System.Reflection;
 using Common.Config;
 using Shared.CheatEngine;
 using TMPro;
-using UI.Config;
 using UnityEngine;
 using UnityEngine.UI;
 
