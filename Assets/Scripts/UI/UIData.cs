@@ -8,5 +8,6 @@ namespace UI
     static class UIData
     {
         internal static DebugConsoleView DebugConsoleView;
+        internal static DebugMobileConsoleView DebugMobileConsole;
     }
 }

@@ -29,6 +29,8 @@ namespace UI.Views
 
         void Awake()
         {
+            UIData.DebugConsoleView = this;
+
             FieldInfo fieldInfo = typeof(DebugCommands).GetFields(BindingFlags.NonPublic | BindingFlags.Static)
                                                        .FirstOrDefault(x => x.Name == CommandsFieldName);
 

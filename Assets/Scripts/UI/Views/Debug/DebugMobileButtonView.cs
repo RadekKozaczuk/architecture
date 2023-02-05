@@ -12,8 +12,6 @@ namespace UI.Views
         static readonly UIDebugConfig _uiDebugConfig = null!;
 
         [SerializeField]
-        internal DebugMobileConsoleView DebugMobileConsole;
-        [SerializeField]
         Button _button;
 
         DateTime _firstClickTime;
@@ -21,10 +19,7 @@ namespace UI.Views
 
         void Start()
         {
-            // todo: the reference should be in UI scene reference holder or in a parent view
-            // we never look for things
-            DebugMobileConsole = FindObjectOfType<DebugMobileConsoleView>();
-            DebugMobileConsole.DebugMobileButton = _button;
+            UIData.DebugMobileConsole.DebugMobileButton = _button;
         }
 
         public void OnPointerClick(PointerEventData eventData)
@@ -46,11 +41,7 @@ namespace UI.Views
 
                 if (_button.interactable)
                 {
-                    // todo 
-                    // UISceneReferenceHolder.MobileDebugConsoleBackground.SetActive(true);
-
-                    // not this
-                    DebugMobileConsole.MobileDebugConsoleBackground.SetActive(true);
+                    UIData.DebugMobileConsole.MobileDebugConsoleBackground.SetActive(true);
                     _button.interactable = false;
                 }
             }

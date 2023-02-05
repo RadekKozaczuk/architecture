@@ -34,9 +34,6 @@ namespace UI.Controllers
             if (!_uiSceneLoaded)
                 return;
 
-            if (UIData.DebugConsoleView == null)
-                UIData.DebugConsoleView = Object.FindObjectOfType<DebugConsoleView>();
-
             InputSystem.CustomUpdate();
             UIData.DebugConsoleView?.UpdatePlaceholderText();
         }

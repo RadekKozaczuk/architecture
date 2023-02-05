@@ -496,7 +496,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MobileDebugConsoleBackground: {fileID: 1397740784138589194}
   _scrollContentGameObject: {fileID: 1397740782314542617}
-  _commandPrefab: {fileID: 5732516144648881804, guid: 81aea3866e0e3f3498e89a0207400cc9, type: 3}
 --- !u!1 &1397740784342236694
 GameObject:
   m_ObjectHideFlags: 0

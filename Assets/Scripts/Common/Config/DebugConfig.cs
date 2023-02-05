@@ -36,6 +36,7 @@ namespace Common.Config
         public GameObject DebugMobileButtonPrefab;
         public GameObject DebugMobileConsolePrefab;
         public GameObject DebugConsolePrefab;
+        public GameObject CommandPrefab;
     }
 }
 #endif

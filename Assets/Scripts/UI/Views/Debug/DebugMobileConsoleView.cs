@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Common.Config;
 using Shared.CheatEngine;
 using TMPro;
+using UI.Config;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +14,8 @@ namespace UI.Views
     [DisallowMultipleComponent]
     class DebugMobileConsoleView : MonoBehaviour
     {
+        static DebugConfig _config = null!;
+
         [SerializeField]
         internal GameObject MobileDebugConsoleBackground;
         internal Button DebugMobileButton;
@@ -27,6 +31,8 @@ namespace UI.Views
 
         void Start()
         {
+            UIData.DebugMobileConsole = this;
+
             FieldInfo fieldInfo = typeof(DebugCommands).GetFields(BindingFlags.NonPublic | BindingFlags.Static).FirstOrDefault(x => x.Name == CommandsFieldName);
             if (fieldInfo == null)
                 return;
@@ -34,8 +40,7 @@ namespace UI.Views
             _supportedCommands = (List<(Action action, string name, string description, string assembly)>)fieldInfo.GetValue(null);
             foreach ((Action action, string name, string description, string assembly) supportedCommand in _supportedCommands)
             {
-                // todo: prefab should be taken from configs
-                GameObject newButton = Instantiate(_commandPrefab, _scrollContentGameObject.transform);
+                GameObject newButton = Instantiate(_config.CommandPrefab, _scrollContentGameObject.transform);
 
                 var button = newButton.transform.Find(ButtonGameObjectName).GetComponent<Button>();
 
