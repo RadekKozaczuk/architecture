@@ -13,8 +13,6 @@ namespace UI.Views
     [DisallowMultipleComponent]
     class DebugMobileConsoleView : MonoBehaviour
     {
-        [SerializeField]
-        internal GameObject MobileDebugConsoleBackground;
         internal Button DebugMobileButton;
 
         [SerializeField]
@@ -27,7 +25,7 @@ namespace UI.Views
         const string TextGameObjectName = "Text";
         const string CommandsFieldName = "_commands";
 
-        void Start()
+        void Awake()
         {
             UIData.DebugMobileConsole = this;
 
@@ -51,8 +49,8 @@ namespace UI.Views
 
         void CloseConsole()
         {
-            MobileDebugConsoleBackground.SetActive(false);
             DebugMobileButton.interactable = true;
+            Destroy(gameObject);
         }
 
         void FixScrollContentSize()

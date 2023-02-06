@@ -57,9 +57,6 @@ namespace UI.Controllers
             //#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && (UNITY_ANDROID || UNITY_IPHONE)
             float height = UISceneReferenceHolder.Canvas.GetComponent<RectTransform>().rect.height;
 
-            DebugMobileConsoleView debugMobileConsole = Object.Instantiate(_config.MobileConsolePrefab, Vector3.zero, Quaternion.identity, UISceneReferenceHolder.Canvas.transform);
-            debugMobileConsole.name = "DebugMobileConsole";
-
             DebugMobileButtonView debugMobileButton = Object.Instantiate(_config.MobileButtonPrefab, Vector3.zero, Quaternion.identity, UISceneReferenceHolder.Canvas.transform);
             debugMobileButton.name = "DebugMobileButton";
             var rectButtonComponent = debugMobileButton.GetComponent<RectTransform>();
