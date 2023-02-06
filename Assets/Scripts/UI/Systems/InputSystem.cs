@@ -1,6 +1,7 @@
 using Common.Enums;
 using Presentation.ViewModels;
 using UI.Config;
+using UI.Controllers;
 using UI.Popups;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -46,7 +47,7 @@ namespace UI.Systems
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             // DebugCommands bindings
             InputActionMap debugCommands = _uiConfig.InputActionAsset.FindActionMap(UIConstants.DebugCommandsMap);
-            debugCommands.FindAction(ToggleConsole).performed += _ => UIData.DebugConsoleView.ToggleConsole();
+            debugCommands.FindAction(ToggleConsole).performed += _ => UIMainController.InstantiateDebugConsole();
             debugCommands.FindAction(TakeBestMatch).performed += _ => UIData.DebugConsoleView.TakeBestMatchAsCommand();
 #endif
         }

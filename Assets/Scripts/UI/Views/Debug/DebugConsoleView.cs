@@ -4,9 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Shared.CheatEngine;
 using TMPro;
-using UI.Config;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace UI.Views
 {
@@ -20,7 +18,6 @@ namespace UI.Views
         [SerializeField]
         GameObject _debugConsole;
 
-        static readonly UIConfig _uiConfig = null!;
         const string CommandsFieldName = "_commands";
         const string PlaceholderDefaultText = "Enter command...";
         const string NoCommandAvailableText = "No command available";
@@ -57,26 +54,6 @@ namespace UI.Views
                 && !string.IsNullOrEmpty(currentPlaceholderText)
                 && currentPlaceholderText != PlaceholderDefaultText)
                 _placeholderText.enabled = true;
-        }
-
-        internal void ToggleConsole()
-        {
-            _placeholderText.text = PlaceholderDefaultText;
-            _placeholderText.enabled = true;
-            _commandInputField.text = string.Empty;
-
-            if (_debugConsole.activeSelf)
-            {
-                _debugConsole.SetActive(false);
-                _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap).Enable();
-            }
-            else
-            {
-                _debugConsole.SetActive(true);
-                _commandInputField.ActivateInputField();
-                _placeholderText.text = PlaceholderDefaultText;
-                _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap).Disable();
-            }
         }
 
         internal void TakeBestMatchAsCommand()
