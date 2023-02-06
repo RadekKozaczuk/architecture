@@ -15,8 +15,6 @@ namespace UI.Views
         TMP_InputField _commandInputField;
         [SerializeField]
         TMP_Text _placeholderText;
-        [SerializeField]
-        GameObject _debugConsole;
 
         const string CommandsFieldName = "_commands";
         const string PlaceholderDefaultText = "Enter command...";
