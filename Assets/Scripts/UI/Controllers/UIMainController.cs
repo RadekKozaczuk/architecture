@@ -2,7 +2,10 @@ using Common.Signals;
 using ControlFlow.Interfaces;
 using ControlFlow.SignalProcessing;
 using JetBrains.Annotations;
+using UI.Config;
 using UI.Systems;
+using UI.Views;
+using UnityEngine;
 using UnityEngine.Scripting;
 
 namespace UI.Controllers
@@ -23,6 +26,7 @@ namespace UI.Controllers
     class UIMainController : ICustomFixedUpdate, ICustomUpdate, ICustomLateUpdate
     {
         static bool _uiSceneLoaded;
+        static readonly UIDebugConfig _config;
 
         [Preserve]
         UIMainController() { }
@@ -33,17 +37,44 @@ namespace UI.Controllers
                 return;
 
             InputSystem.CustomUpdate();
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             UIData.DebugConsoleView?.UpdatePlaceholderText();
+#endif
         }
 
         public void CustomFixedUpdate() { }
 
         public void CustomLateUpdate() { }
 
-        internal static void OnUISceneLoaded() => _uiSceneLoaded = true;
+        internal static void OnUISceneLoaded()
+        {
+            _uiSceneLoaded = true;
+
+//#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && (UNITY_ANDROID || UNITY_IPHONE)
+            float height = UISceneReferenceHolder.Canvas.GetComponent<RectTransform>().rect.height;
+
+            DebugMobileConsoleView debugMobileConsole = Object.Instantiate(_config.MobileConsolePrefab, Vector3.zero, Quaternion.identity, UISceneReferenceHolder.Canvas.transform);
+            debugMobileConsole.name = "DebugMobileConsole";
+
+            DebugMobileButtonView debugMobileButton = Object.Instantiate(_config.MobileButtonPrefab, Vector3.zero, Quaternion.identity, UISceneReferenceHolder.Canvas.transform);
+            debugMobileButton.name = "DebugMobileButton";
+            var rectButtonComponent = debugMobileButton.GetComponent<RectTransform>();
+            Rect rect = rectButtonComponent.rect;
+            rectButtonComponent.transform.SetPositionAndRotation(new Vector3(rect.width / 2, height - rect.height / 2, -1), Quaternion.identity);
+//#endif
+
+/*#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && UNITY_STANDALONE_WIN
+            GameObject debugConsole = Instantiate(_config.DebugConsolePrefab, Vector3.zero, Quaternion.identity);
+            debugConsole.name = "DebugConsole";
+            debugConsole.transform.SetParent(canvasScreenSpace.transform, false);
+            var debugConsoleComponent = debugConsole.GetComponent<RectTransform>();
+            debugConsoleComponent.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 0, debugConsoleComponent.rect.height);
+#endif*/
+        }
 
         [React]
         [Preserve]
-        void OnSomeSignal(InventoryChangedSignal _) { }
+        void OnInventoryChangedSignal(InventoryChangedSignal _) { }
     }
 }

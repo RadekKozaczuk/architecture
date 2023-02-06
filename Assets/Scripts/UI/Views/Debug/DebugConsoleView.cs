@@ -59,14 +59,11 @@ namespace UI.Views
                 _placeholderText.enabled = true;
         }
 
-        internal void ToggleConsole(InputAction.CallbackContext callbackContext)
+        internal void ToggleConsole()
         {
             _placeholderText.text = PlaceholderDefaultText;
             _placeholderText.enabled = true;
             _commandInputField.text = string.Empty;
-
-            if (!callbackContext.action.triggered)
-                return;
 
             if (_debugConsole.activeSelf)
             {

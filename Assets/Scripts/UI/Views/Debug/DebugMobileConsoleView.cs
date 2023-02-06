@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Common.Config;
 using Shared.CheatEngine;
 using TMPro;
+using UI.Config;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,8 +13,6 @@ namespace UI.Views
     [DisallowMultipleComponent]
     class DebugMobileConsoleView : MonoBehaviour
     {
-        static DebugConfig _config = null!;
-
         [SerializeField]
         internal GameObject MobileDebugConsoleBackground;
         internal Button DebugMobileButton;
@@ -23,6 +21,7 @@ namespace UI.Views
         GameObject _scrollContentGameObject;
 
         List<(Action action, string name, string description, string assembly)> _supportedCommands;
+        static readonly UIDebugConfig _config = null!;
 
         const string ButtonGameObjectName = "Button";
         const string TextGameObjectName = "Text";

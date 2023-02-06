@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1166935600446303234}
+  - component: {fileID: 1166935600446303235}
   - component: {fileID: 1166935600446303246}
   - component: {fileID: 1166935600446303233}
   - component: {fileID: 1166935600446303232}
-  - component: {fileID: 1166935600446303235}
   m_Layer: 0
   m_Name: DebugMobileButton
   m_TagString: Untagged
@@ -40,6 +40,19 @@ RectTransform:
   m_AnchoredPosition: {x: 50, y: -50}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1166935600446303235
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1166935600446303237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2085f54b9d5e474fba1e4e07388a57b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _button: {fileID: 1166935600446303232}
 --- !u!222 &1166935600446303246
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -122,19 +135,3 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &1166935600446303235
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1166935600446303237}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2085f54b9d5e474fba1e4e07388a57b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TripleClickDuration: 0.5
-  DebugMobileConsole: {fileID: 0}
-  DebugMobileConsoleGameObject: {fileID: 0}
-  _button: {fileID: 1166935600446303232}

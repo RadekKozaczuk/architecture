@@ -32,11 +32,6 @@ namespace Common.Config
         /// </summary>
         [InfoBox("Shows input registered.", InfoMessageType.None)]
         public bool ShowInputLog;
-
-        public GameObject DebugMobileButtonPrefab;
-        public GameObject DebugMobileConsolePrefab;
-        public GameObject DebugConsolePrefab;
-        public GameObject CommandPrefab;
     }
 }
 #endif

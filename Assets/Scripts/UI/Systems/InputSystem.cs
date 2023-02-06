@@ -12,8 +12,10 @@ namespace UI.Systems
         const string Quit = "Quit";
         const string Movement = "Movement";
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         const string ToggleConsole = "ToggleConsole";
         const string TakeBestMatch = "TakeBestMatch";
+#endif
 
         static readonly UIConfig _uiConfig;
 
@@ -41,10 +43,12 @@ namespace UI.Systems
             InputActionMap popup = _uiConfig.InputActionAsset.FindActionMap(UIConstants.PopupActionMap);
             popup.FindAction(Quit).performed += _ => PopupSystem.CloseCurrentPopup();
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             // DebugCommands bindings
             InputActionMap debugCommands = _uiConfig.InputActionAsset.FindActionMap(UIConstants.DebugCommandsMap);
-            debugCommands.FindAction(ToggleConsole).performed += _ => UIData.DebugConsoleView.ToggleConsole(_);
+            debugCommands.FindAction(ToggleConsole).performed += _ => UIData.DebugConsoleView.ToggleConsole();
             debugCommands.FindAction(TakeBestMatch).performed += _ => UIData.DebugConsoleView.TakeBestMatchAsCommand();
+#endif
         }
 
         internal static void CustomUpdate()

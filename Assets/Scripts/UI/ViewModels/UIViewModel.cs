@@ -35,7 +35,10 @@ namespace UI.ViewModels
         public static void OnUISceneLoaded()
         {
             UIMainController.OnUISceneLoaded();
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             _uiConfig.InputActionAsset.FindActionMap(UIConstants.DebugCommandsMap).Enable();
+#endif
         }
 
         public static void BootingOnExit() { }
