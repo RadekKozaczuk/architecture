@@ -213,6 +213,18 @@ namespace Boot
 
         static (int[]? scenesToLoad, int[]? scenesToUnload) ScenesToLoadUnloadFromGameplayToGameplay()
         {
+            if (CommonData.LoadRequested)
+            {
+                byte[] data = File.ReadAllBytes(Path.Combine(Application.persistentDataPath, "savegame.sav"));
+                CommonData.SaveGameReader = new BinaryReader(new MemoryStream(data));
+
+                int _ = CommonData.SaveGameReader.ReadByte(); // save game version
+                int currentLevel = (int)CommonData.CurrentLevel;
+                CommonData.CurrentLevel = (Level)CommonData.SaveGameReader.ReadByte();
+
+                return (new[] {(int)CommonData.CurrentLevel}, new[] {currentLevel});
+            }
+
             if (CommonData.CurrentLevel == Level.HubLocation)
             {
                 CommonData.CurrentLevel += 1;

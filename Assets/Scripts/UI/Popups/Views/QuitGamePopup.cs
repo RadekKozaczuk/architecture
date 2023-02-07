@@ -33,7 +33,7 @@ namespace UI.Popups.Views
             _mainMenu.onClick.AddListener(MainMenuAction);
         }
 
-        internal override void Initialize() => _hub.interactable = CommonData.CurrentLevel != null;
+        internal override void Initialize() => _hub.interactable = CommonData.CurrentLevel != Level.HubLocation;
 
         void SaveGameAction()
         {
@@ -43,7 +43,9 @@ namespace UI.Popups.Views
 
         static void LoadGameAction()
         {
-            GameLogicViewModel.LoadGame();
+            PopupSystem.CloseCurrentPopup();
+            CommonData.LoadRequested = true;
+            GameStateSystem.RequestStateChange(GameState.Gameplay);
         }
 
         static void HubAction()
