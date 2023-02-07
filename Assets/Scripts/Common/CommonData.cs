@@ -1,3 +1,6 @@
+using System.IO;
+using Common.Enums;
+
 namespace Common
 {
     /// <summary>
@@ -12,9 +15,8 @@ namespace Common
         /// </summary>
         public static bool LoadRequested;
 
-        /// <summary>
-        /// If null then player is in a hub location, otherwise in a level specified by the given id.
-        /// </summary>
-        public static int? CurrentLevel;
+        public static Level CurrentLevel;
+
+        public static BinaryReader SaveGameReader;
     }
 }

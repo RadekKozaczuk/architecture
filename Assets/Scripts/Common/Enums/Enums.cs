@@ -15,6 +15,12 @@ namespace Common.Enums
         ExplosionWithRubbleDebris
     }
 
+    public enum Level
+    {
+        HubLocation = 4,
+        Level0 = 5
+    }
+
     public enum Music
     {
         MainMenu
