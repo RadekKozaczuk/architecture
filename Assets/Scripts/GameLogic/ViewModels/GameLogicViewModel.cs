@@ -1,4 +1,5 @@
 using System;
+using Common;
 using Common.Systems;
 using ControlFlow.DependencyInjector.Attributes;
 using ControlFlow.DependencyInjector.Interfaces;
@@ -48,7 +49,11 @@ namespace GameLogic.ViewModels
 
         public static void MainMenuOnExit() { }
 
-        public static void GameplayOnEntry() { }
+        public static void GameplayOnEntry()
+        {
+            if (CommonData.LoadRequested)
+                SaveLoadSystem.LoadGame();
+        }
 
         public static void GameplayOnExit() { }
 
@@ -59,7 +64,6 @@ namespace GameLogic.ViewModels
 
         public static void LoadGame()
         {
-            SaveLoadSystem.LoadGame();
         }
     }
 }

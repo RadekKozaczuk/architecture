@@ -155,15 +155,12 @@ namespace Boot
             PresentationViewModel.GameplayOnEntry();
             UIViewModel.GameplayOnEntry();
 
-            // save/load logic
             if (CommonData.LoadRequested)
             {
                 CommonData.LoadRequested = false;
-                GameLogicViewModel.LoadGame();
+                CommonData.SaveGameReader.Close();
+                CommonData.SaveGameReader = null;
             }
-
-            //Cursor.lockState = CursorLockMode.Locked;
-            //Cursor.visible = false;
         }
 
         static void GameplayOnExit()
@@ -171,8 +168,6 @@ namespace Boot
             GameLogicViewModel.GameplayOnExit();
             PresentationViewModel.GameplayOnExit();
             UIViewModel.GameplayOnExit();
-            //Cursor.lockState = CursorLockMode.None;
-            //Cursor.visible = true;
         }
 
         /// <summary>
@@ -183,14 +178,13 @@ namespace Boot
         {
             if (CommonData.LoadRequested)
             {
-                const string SaveFileName = "savegame.sav";
-                byte[] data = File.ReadAllBytes(SaveFileName);
-                BinaryReader reader = new(new MemoryStream(data));
+                byte[] data = File.ReadAllBytes(Path.Combine(Application.persistentDataPath, "savegame.sav"));
+                CommonData.SaveGameReader = new BinaryReader(new MemoryStream(data));
 
-                int _ = reader.ReadByte(); // save game version
-                CommonData.CurrentLevel = reader.ReadByte();
+                int _ = CommonData.SaveGameReader.ReadByte(); // save game version
+                CommonData.CurrentLevel = (Level)CommonData.SaveGameReader.ReadByte();
 
-                return new[] {CommonData.CurrentLevel.Value};
+                return new[] {(int)CommonData.CurrentLevel};
             }
 
             return null;
@@ -219,14 +213,14 @@ namespace Boot
 
         static (int[]? scenesToLoad, int[]? scenesToUnload) ScenesToLoadUnloadFromGameplayToGameplay()
         {
-            if (CommonData.CurrentLevel.HasValue)
+            if (CommonData.CurrentLevel == Level.HubLocation)
             {
                 CommonData.CurrentLevel += 1;
-                return (new[] {CommonData.CurrentLevel.Value}, new[] {CommonData.CurrentLevel.Value - 1});
+                return (new[] {(int)CommonData.CurrentLevel}, new[] {(int)CommonData.CurrentLevel - 1});
             }
 
-            CommonData.CurrentLevel = Constants.Level0Scene;
-            return (new[] {Constants.Level0Scene}, new [] {Constants.HubScene});
+            CommonData.CurrentLevel = Level.Level0;
+            return (new[] {(int)Level.Level0}, new [] {(int)Level.HubLocation});
         }
     }
 }

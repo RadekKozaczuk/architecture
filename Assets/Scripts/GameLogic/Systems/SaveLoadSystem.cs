@@ -16,12 +16,11 @@ namespace GameLogic.Systems
         {
             // save version
             const byte Version = 0;
-            const byte Level = 0;
             BinaryWriter writer = new(File.Open(_savePath, FileMode.Create));
 
             // player
             writer.Write(Version);
-            writer.Write(Level);
+            writer.Write((byte)CommonData.CurrentLevel);
 
             PresentationViewModel.SaveGame(writer);
 
@@ -30,13 +29,6 @@ namespace GameLogic.Systems
 
         internal static void LoadGame()
         {
-            byte[] data = File.ReadAllBytes(_savePath);
-            BinaryReader reader = new(new MemoryStream(data));
-
-            int _ = reader.ReadByte(); // save game version
-            CommonData.CurrentLevel = reader.ReadByte();
-
-            PresentationViewModel.LoadGame(reader);
         }
     }
 }
