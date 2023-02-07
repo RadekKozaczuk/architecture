@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using Common.Config;
+using Common.Factories;
 using Common.Signals;
 using Shared.Systems;
 using Sirenix.OdinInspector;
@@ -16,11 +17,11 @@ namespace Common.Views
 
         [InfoBox("Instantly fails the mission for this player.", InfoMessageType.None)]
         [Button]
-        void FailMission() => SignalProcessor.SendSignal(new MissionFailedSignal());
+        void FailMission() => SignalFactory.SendMissionFailedSignal();
 
         [InfoBox("Instantly completes the mission for this player.", InfoMessageType.None)]
         [Button]
-        void CompleteMission() => SignalProcessor.SendSignal(new MissionCompleteSignal());
+        void CompleteMission() => SignalFactory.SendMissionCompleteSignal();
     }
 }
 #endif
