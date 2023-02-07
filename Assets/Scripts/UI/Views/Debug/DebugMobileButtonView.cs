@@ -10,10 +10,10 @@ namespace UI.Views
     [DisallowMultipleComponent]
     class DebugMobileButtonView : MonoBehaviour, IPointerClickHandler
     {
-        static readonly UIDebugConfig _uiDebugConfig = null!;
-
         [SerializeField]
-        Button _button;
+        internal Button Button;
+
+        static readonly UIDebugConfig _uiDebugConfig = null!;
 
         DateTime _firstClickTime;
         byte _clicks;
@@ -35,24 +35,25 @@ namespace UI.Views
                 if (elapsedSeconds > _uiDebugConfig.TripleClickDuration)
                     return;
 
-                if (_button.interactable)
+                if (Button.interactable)
                 {
                     InstantiateMobileDebugConsole();
-                    _button.interactable = false;
+                    Button.interactable = false;
                 }
             }
         }
 
-        void InstantiateMobileDebugConsole()
+        static void InstantiateMobileDebugConsole()
         {
-            DebugMobileConsoleView debugMobileConsole = Instantiate(_uiDebugConfig.MobileConsolePrefab, new Vector3(0, 0, -1),
-                Quaternion.identity, UISceneReferenceHolder.Canvas.transform);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            DebugMobileConsoleView debugMobileConsole = Instantiate(_uiDebugConfig.MobileConsolePrefab, new Vector3(0, 0, -1), Quaternion.identity,
+                                                                    UISceneReferenceHolder.Canvas.transform);
             debugMobileConsole.name = "DebugMobileConsole";
-            var rectMobileConsoleComponent = debugMobileConsole.GetComponent<RectTransform>(); //rename
-            rectMobileConsoleComponent.offsetMin = new Vector2(0, 0);
-            rectMobileConsoleComponent.offsetMax = new Vector2(0, 0);
-
-            UIData.DebugMobileConsole.DebugMobileButton = _button;
+            UIData.DebugMobileConsole = debugMobileConsole;
+            var rect = debugMobileConsole.GetComponent<RectTransform>();
+            rect.offsetMin = new Vector2(0, 0);
+            rect.offsetMax = new Vector2(0, 0);
+#endif
         }
     }
 }

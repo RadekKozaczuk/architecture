@@ -13,8 +13,7 @@ namespace UI.Views
     [DisallowMultipleComponent]
     class DebugMobileConsoleView : MonoBehaviour
     {
-        internal Button DebugMobileButton;
-
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         [SerializeField]
         GameObject _scrollContentGameObject;
 
@@ -27,8 +26,6 @@ namespace UI.Views
 
         void Awake()
         {
-            UIData.DebugMobileConsole = this;
-
             FieldInfo fieldInfo = typeof(DebugCommands).GetFields(BindingFlags.NonPublic | BindingFlags.Static).FirstOrDefault(x => x.Name == CommandsFieldName);
             if (fieldInfo == null)
                 return;
@@ -49,7 +46,6 @@ namespace UI.Views
 
         void CloseConsole()
         {
-            DebugMobileButton.interactable = true;
             Destroy(gameObject);
         }
 
@@ -60,5 +56,6 @@ namespace UI.Views
             _scrollContentGameObject.GetComponent<RectTransform>()
                 .SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, debugCommandSizeY * _supportedCommands.Count);
         }
+#endif
     }
 }

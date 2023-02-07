@@ -27,9 +27,12 @@ namespace UI.Controllers
     class UIMainController : ICustomFixedUpdate, ICustomUpdate, ICustomLateUpdate
     {
         static bool _uiSceneLoaded;
+        static readonly UIConfig _uiConfig = null!;
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         static readonly UIDebugConfig _config;
         static bool _debugConsoleInstantiated;
-        static readonly UIConfig _uiConfig = null!;
+#endif
 
         [Preserve]
         UIMainController() { }
@@ -42,7 +45,8 @@ namespace UI.Controllers
             InputSystem.CustomUpdate();
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            UIData.DebugConsoleView?.UpdatePlaceholderText();
+            if (UIData.DebugConsoleView != null)
+                UIData.DebugConsoleView.UpdatePlaceholderText();
 #endif
         }
 
@@ -54,7 +58,7 @@ namespace UI.Controllers
         {
             _uiSceneLoaded = true;
 
-            //#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && (UNITY_ANDROID || UNITY_IPHONE)
+#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && (UNITY_ANDROID || UNITY_IPHONE)
             float height = UISceneReferenceHolder.Canvas.GetComponent<RectTransform>().rect.height;
 
             DebugMobileButtonView debugMobileButton = Object.Instantiate(_config.MobileButtonPrefab, Vector3.zero, Quaternion.identity, UISceneReferenceHolder.Canvas.transform);
@@ -62,12 +66,12 @@ namespace UI.Controllers
             var rectButtonComponent = debugMobileButton.GetComponent<RectTransform>();
             Rect rect = rectButtonComponent.rect;
             rectButtonComponent.transform.SetPositionAndRotation(new Vector3(rect.width / 2, height - rect.height / 2, -1), Quaternion.identity);
-            //#endif
+#endif
         }
 
+#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && UNITY_STANDALONE_WIN
         internal static void InstantiateDebugConsole()
         {
-#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && UNITY_STANDALONE_WIN
             if (_debugConsoleInstantiated)
             {
                 Object.Destroy(UIData.DebugConsoleView.gameObject);
@@ -80,13 +84,12 @@ namespace UI.Controllers
             DebugConsoleView debugConsole = Object.Instantiate(_config.ConsolePrefab, Vector3.zero, Quaternion.identity);
             debugConsole.name = "DebugConsole";
             debugConsole.transform.SetParent(UISceneReferenceHolder.Canvas.transform, false);
-            var debugConsoleComponent = debugConsole.GetComponent<RectTransform>();
-            debugConsoleComponent.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 0, debugConsoleComponent.rect.height);
+            UIData.DebugConsoleView = debugConsole;
             _debugConsoleInstantiated = true;
 
             _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap).Disable();
-#endif
         }
+#endif
 
         [React]
         [Preserve]

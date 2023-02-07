@@ -11,6 +11,7 @@ namespace UI.Views
     [DisallowMultipleComponent]
     class DebugConsoleView : MonoBehaviour
     {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         [SerializeField]
         TMP_InputField _commandInputField;
         [SerializeField]
@@ -24,8 +25,6 @@ namespace UI.Views
 
         void Awake()
         {
-            UIData.DebugConsoleView = this;
-
             FieldInfo fieldInfo = typeof(DebugCommands).GetFields(BindingFlags.NonPublic | BindingFlags.Static)
                                                        .FirstOrDefault(x => x.Name == CommandsFieldName);
 
@@ -117,5 +116,6 @@ namespace UI.Views
             _commandInputField.text = string.Empty;
             _commandInputField.ActivateInputField();
         }
+#endif
     }
 }
