@@ -23,7 +23,7 @@ namespace UI.Views
         List<(Action action, string name, string description, string assembly)> _supportedCommands;
         string _currentBestMatch;
 
-        void Awake()
+        void Start()
         {
             FieldInfo fieldInfo = typeof(DebugCommands).GetFields(BindingFlags.NonPublic | BindingFlags.Static)
                                                        .FirstOrDefault(x => x.Name == CommandsFieldName);
@@ -32,6 +32,7 @@ namespace UI.Views
                 return;
 
             _supportedCommands = (List<(Action action, string name, string description, string assembly)>)fieldInfo.GetValue(null);
+            _commandInputField.ActivateInputField();
         }
 
         internal void UpdatePlaceholderText()
