@@ -7,6 +7,8 @@ namespace GameLogic.Systems
 {
     static class SaveLoadSystem
     {
+        internal static bool SaveFileExist => File.Exists(_savePath);
+
         const string SaveFileName = "savegame.sav";
         static readonly string _savePath = Path.Combine(Application.persistentDataPath, SaveFileName);
 
@@ -22,6 +24,8 @@ namespace GameLogic.Systems
             writer.Write(Level);
 
             PresentationViewModel.SaveGame(writer);
+
+            writer.Close();
         }
 
         internal static void LoadGame()

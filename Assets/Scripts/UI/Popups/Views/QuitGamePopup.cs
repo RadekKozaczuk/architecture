@@ -28,15 +28,17 @@ namespace UI.Popups.Views
         {
             _saveGame.onClick.AddListener(SaveGameAction);
             _loadGame.onClick.AddListener(LoadGameAction);
+            _loadGame.interactable = GameLogicViewModel.SaveFileExist;
             _hub.onClick.AddListener(HubAction);
             _mainMenu.onClick.AddListener(MainMenuAction);
         }
 
         internal override void Initialize() => _hub.interactable = CommonData.CurrentLevel != null;
 
-        static void SaveGameAction()
+        void SaveGameAction()
         {
             GameLogicViewModel.SaveGame();
+            _loadGame.interactable = GameLogicViewModel.SaveFileExist;
         }
 
         static void LoadGameAction()

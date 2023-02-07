@@ -14,6 +14,8 @@ namespace GameLogic.ViewModels
     [UsedImplicitly]
     public class GameLogicViewModel : IInitializable
     {
+        public static bool SaveFileExist => SaveLoadSystem.SaveFileExist;
+
         static GameLogicViewModel _instance;
 
         [Inject]

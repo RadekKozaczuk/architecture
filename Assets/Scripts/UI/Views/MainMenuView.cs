@@ -1,6 +1,8 @@
-﻿using Common;
+﻿using System.IO;
+using Common;
 using Common.Enums;
 using Common.Systems;
+using GameLogic.ViewModels;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,6 +27,7 @@ namespace UI.Views
         {
             _newGame.onClick.AddListener(NewGame);
             _loadGame.onClick.AddListener(LoadGame);
+            _loadGame.interactable = GameLogicViewModel.SaveFileExist;
             _quit.onClick.AddListener(Application.Quit);
         }
 
