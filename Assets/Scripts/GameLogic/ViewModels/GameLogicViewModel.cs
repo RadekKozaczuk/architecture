@@ -1,4 +1,5 @@
 using System;
+using Common;
 using Common.Systems;
 using ControlFlow.DependencyInjector.Attributes;
 using ControlFlow.DependencyInjector.Interfaces;
@@ -14,6 +15,8 @@ namespace GameLogic.ViewModels
     [UsedImplicitly]
     public class GameLogicViewModel : IInitializable
     {
+        public static bool SaveFileExist => SaveLoadSystem.SaveFileExist;
+
         static GameLogicViewModel _instance;
 
         [Inject]
@@ -46,7 +49,11 @@ namespace GameLogic.ViewModels
 
         public static void MainMenuOnExit() { }
 
-        public static void GameplayOnEntry() { }
+        public static void GameplayOnEntry()
+        {
+            if (CommonData.LoadRequested)
+                SaveLoadSystem.LoadGame();
+        }
 
         public static void GameplayOnExit() { }
 
@@ -57,7 +64,6 @@ namespace GameLogic.ViewModels
 
         public static void LoadGame()
         {
-            SaveLoadSystem.LoadGame();
         }
     }
 }

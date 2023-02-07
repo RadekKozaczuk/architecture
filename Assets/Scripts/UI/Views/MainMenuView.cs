@@ -1,6 +1,7 @@
 ﻿using Common;
 using Common.Enums;
 using Common.Systems;
+using GameLogic.ViewModels;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,13 +26,14 @@ namespace UI.Views
         {
             _newGame.onClick.AddListener(NewGame);
             _loadGame.onClick.AddListener(LoadGame);
+            _loadGame.interactable = GameLogicViewModel.SaveFileExist;
             _quit.onClick.AddListener(Application.Quit);
         }
 
         static void NewGame()
         {
-            int sceneId = CommonData.CurrentLevel.HasValue ? Constants.Level0Scene : Constants.HubScene;
-            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {sceneId});
+            CommonData.CurrentLevel = Level.HubLocation;
+            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
         }
 
         static void LoadGame()

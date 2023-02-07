@@ -1,4 +1,5 @@
 using System.IO;
+using Common;
 using Common.Enums;
 using ControlFlow.DependencyInjector.Attributes;
 using ControlFlow.DependencyInjector.Interfaces;
@@ -60,6 +61,15 @@ namespace Presentation.ViewModels
             var levelSceneReferenceHolder = GameObject.FindWithTag("LevelSceneReferenceHolder").GetComponent<LevelSceneReferenceHolder>();
             PresentationData.Player = levelSceneReferenceHolder.Player;
 
+            if (CommonData.LoadRequested)
+            {
+                Vector3 position = SaveLoadUtils.ReadVector3(CommonData.SaveGameReader);
+                Quaternion rotation = SaveLoadUtils.ReadQuaternion(CommonData.SaveGameReader);
+                Transform transform = PresentationData.Player.transform;
+                transform.position = position;
+                transform.rotation = rotation;
+            }
+
             // spawn 5 VFXs around the player
             for (int i = 0; i < 5; i++)
             {
@@ -82,14 +92,6 @@ namespace Presentation.ViewModels
 
             SaveLoadUtils.Write(writer, playerTransform.position);
             SaveLoadUtils.Write(writer, playerTransform.rotation);
-        }
-
-        public static void LoadGame(BinaryReader reader)
-        {
-            Transform playerTransform = PresentationData.Player.transform;
-
-            playerTransform.position = SaveLoadUtils.ReadVector3(reader);
-            playerTransform.rotation = SaveLoadUtils.ReadQuaternion(reader);
         }
     }
 }
