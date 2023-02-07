@@ -5,6 +5,7 @@ using ControlFlow.Interfaces;
 using ControlFlow.SignalProcessing;
 using GameLogic.Config;
 using JetBrains.Annotations;
+using Shared.Systems;
 using UnityEngine.Scripting;
 
 namespace GameLogic.Controllers
@@ -41,6 +42,8 @@ namespace GameLogic.Controllers
         {
             if (GameStateSystem.CurrentState == GameState.Booting)
                 return;
+
+            SignalProcessor.ExecuteSentSignals();
         }
 
         [React]
