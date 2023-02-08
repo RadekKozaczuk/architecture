@@ -37,7 +37,7 @@ namespace Boot
         static GameStateMachine<GameState> _gameStateSystem = null!;
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-        static DebugConfig _config = null!;
+        static readonly DebugConfig _config = null!;
 #endif
 
         void Start()
@@ -59,7 +59,7 @@ namespace Boot
                     (GameState.Gameplay, GameplayOnEntry, GameplayOnExit)
                 }, GameState.Booting
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-                , _config.LogRequestedStateChange);
+                , _config is null ? false : _config.LogRequestedStateChange);
 #else
             );
 #endif
