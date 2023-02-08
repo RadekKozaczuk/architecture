@@ -9,10 +9,18 @@ namespace UI
     class UISceneReferenceHolder : MonoBehaviour
     {
         internal static Transform PopupContainer;
+        internal static Canvas Canvas;
 
         [SerializeField]
         Transform _popupContainer;
 
-        void Awake() => PopupContainer = _popupContainer;
+        [SerializeField]
+        Canvas _canvas;
+
+        void Awake()
+        {
+            PopupContainer = _popupContainer;
+            Canvas = _canvas;
+        }
     }
 }

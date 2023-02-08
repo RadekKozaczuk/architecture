@@ -1,12 +1,15 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using Common;
 using Common.Enums;
+using Common.Signals;
 using Common.Systems;
 using GameLogic.ViewModels;
 using Presentation.ViewModels;
+using Shared.CheatEngine;
 using Shared.Systems;
 using UI.ViewModels;
 using UnityEngine;
@@ -92,6 +95,18 @@ namespace Boot
             // had to add it because if set in the line above, it was named "DebugCommands(Clone)" for some reason
             debugCommands.name = "DebugCommands";
             DontDestroyOnLoad(debugCommands);
+#endif
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            DebugCommands.AddCommand(() =>
+            {
+                SignalProcessor.SendSignal(new MissionCompleteSignal());
+            }, "Win Mission", "Instantly wins the mission.");
+
+            DebugCommands.AddCommand(() =>
+            {
+                SignalProcessor.SendSignal(new MissionFailedSignal());
+            }, "Fail Mission", "Instantly wins the current mission.");
 #endif
         }
 

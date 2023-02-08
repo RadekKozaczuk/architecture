@@ -2,8 +2,12 @@ using Common.Signals;
 using ControlFlow.Interfaces;
 using ControlFlow.SignalProcessing;
 using JetBrains.Annotations;
+using UI.Config;
 using UI.Systems;
+using UI.Views;
+using UnityEngine;
 using UnityEngine.Scripting;
+using Object = UnityEngine.Object;
 
 namespace UI.Controllers
 {
@@ -23,6 +27,12 @@ namespace UI.Controllers
     class UIMainController : ICustomFixedUpdate, ICustomUpdate, ICustomLateUpdate
     {
         static bool _uiSceneLoaded;
+        static readonly UIConfig _uiConfig = null!;
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        static readonly UIDebugConfig _config;
+        static bool _debugConsoleInstantiated;
+#endif
 
         [Preserve]
         UIMainController() { }
@@ -33,16 +43,56 @@ namespace UI.Controllers
                 return;
 
             InputSystem.CustomUpdate();
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (UIData.DebugConsoleView != null)
+                UIData.DebugConsoleView.UpdatePlaceholderText();
+#endif
         }
 
         public void CustomFixedUpdate() { }
 
         public void CustomLateUpdate() { }
 
-        internal static void OnUISceneLoaded() => _uiSceneLoaded = true;
+        internal static void OnUISceneLoaded()
+        {
+            _uiSceneLoaded = true;
+
+#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && (UNITY_ANDROID || UNITY_IPHONE)
+            float height = UISceneReferenceHolder.Canvas.GetComponent<RectTransform>().rect.height;
+
+            DebugMobileButtonView debugMobileButton = Object.Instantiate(_config.MobileButtonPrefab, Vector3.zero, Quaternion.identity, UISceneReferenceHolder.Canvas.transform);
+            debugMobileButton.name = "DebugMobileButton";
+            var rectButtonComponent = debugMobileButton.GetComponent<RectTransform>();
+            Rect rect = rectButtonComponent.rect;
+            rectButtonComponent.transform.SetPositionAndRotation(new Vector3(rect.width / 2, height - rect.height / 2, -1), Quaternion.identity);
+#endif
+        }
+
+#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && UNITY_STANDALONE_WIN
+        internal static void InstantiateDebugConsole()
+        {
+            if (_debugConsoleInstantiated)
+            {
+                Object.Destroy(UIData.DebugConsoleView.gameObject);
+                _debugConsoleInstantiated = false;
+
+                _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap).Enable();
+                return;
+            }
+
+            DebugConsoleView debugConsole = Object.Instantiate(_config.ConsolePrefab, Vector3.zero, Quaternion.identity);
+            debugConsole.name = "DebugConsole";
+            debugConsole.transform.SetParent(UISceneReferenceHolder.Canvas.transform, false);
+            UIData.DebugConsoleView = debugConsole;
+            _debugConsoleInstantiated = true;
+
+            _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap).Disable();
+        }
+#endif
 
         [React]
         [Preserve]
-        void OnSomeSignal(InventoryChangedSignal _) { }
+        void OnInventoryChangedSignal(InventoryChangedSignal _) { }
     }
 }

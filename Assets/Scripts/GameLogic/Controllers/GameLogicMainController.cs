@@ -24,8 +24,6 @@ namespace GameLogic.Controllers
     [ReactOnSignals]
     class GameLogicMainController : ICustomFixedUpdate, ICustomUpdate, ICustomLateUpdate
     {
-        static readonly GameplayConfig _gameplayConfig;
-
         [Preserve]
         GameLogicMainController() { }
 
