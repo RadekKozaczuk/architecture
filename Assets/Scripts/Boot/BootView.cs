@@ -20,8 +20,6 @@ using Common.Config;
 using Presentation.Views;
 using Common.Views;
 using GameLogic.Views;
-using System.Reflection;
-using System.Linq;
 #endif
 
 namespace Boot
@@ -95,12 +93,6 @@ namespace Boot
             debugCommands.name = "DebugCommands";
             DontDestroyOnLoad(debugCommands);
 #endif
-
-            var commonAssembly = Assembly.Load("Common");
-            var signals = (from t in commonAssembly.GetTypes()
-                           where t.IsClass && t.Namespace == "Common.Signals"
-                           select t).ToArray();
-            SignalProcessor.PopulateSignalsToExecute(signals);
         }
 
         void FixedUpdate()
