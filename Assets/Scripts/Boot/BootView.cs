@@ -1,7 +1,6 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
 using Common;
 using Common.Enums;
@@ -62,6 +61,9 @@ namespace Boot
                     (GameState.Gameplay, GameplayOnEntry, GameplayOnExit)
                 }, GameState.Booting
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+                // ReSharper disable once MergeConditionalExpression
+                // ReSharper disable once SimplifyConditionalTernaryExpression
                 , _config is null ? false : _config.LogRequestedStateChange);
 #else
             );
