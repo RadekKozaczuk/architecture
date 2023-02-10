@@ -39,6 +39,8 @@ namespace Boot
         static GameStateMachine<GameState> _gameStateSystem = null!;
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+        // readonly fields are initialized only at the start and the null-forgiving operator is only a hint for the compiler.
+        // Ultimately it will be null when readonly unless set differently.
         static readonly DebugConfig _config = null!;
 #endif
 
