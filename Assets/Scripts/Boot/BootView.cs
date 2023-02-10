@@ -1,7 +1,6 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
 using Common;
 using Common.Enums;
@@ -40,7 +39,9 @@ namespace Boot
         static GameStateMachine<GameState> _gameStateSystem = null!;
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-        static DebugConfig _config = null!;
+        // readonly fields are initialized only at the start and the null-forgiving operator is only a hint for the compiler.
+        // Ultimately it will be null when readonly unless set differently.
+        static readonly DebugConfig _config = null!;
 #endif
 
         void Start()
@@ -62,7 +63,10 @@ namespace Boot
                     (GameState.Gameplay, GameplayOnEntry, GameplayOnExit)
                 }, GameState.Booting
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-                , _config.LogRequestedStateChange);
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+                // ReSharper disable once MergeConditionalExpression
+                // ReSharper disable once SimplifyConditionalTernaryExpression
+                , _config is null ? false : _config.LogRequestedStateChange);
 #else
             );
 #endif
