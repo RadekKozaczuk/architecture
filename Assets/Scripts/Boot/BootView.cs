@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.IO;
 using Common;
 using Common.Enums;
+using Common.Signals;
 using Common.Systems;
 using GameLogic.ViewModels;
 using Presentation.ViewModels;
+using Shared.CheatEngine;
 using Shared.Systems;
 using UI.ViewModels;
 using UnityEngine;
@@ -37,6 +39,8 @@ namespace Boot
         static GameStateMachine<GameState> _gameStateSystem = null!;
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+        // readonly fields are initialized only at the start and the null-forgiving operator is only a hint for the compiler.
+        // Ultimately it will be null when readonly unless set differently.
         static readonly DebugConfig _config = null!;
 #endif
 
@@ -59,6 +63,9 @@ namespace Boot
                     (GameState.Gameplay, GameplayOnEntry, GameplayOnExit)
                 }, GameState.Booting
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+                // ReSharper disable once MergeConditionalExpression
+                // ReSharper disable once SimplifyConditionalTernaryExpression
                 , _config is null ? false : _config.LogRequestedStateChange);
 #else
             );
@@ -92,6 +99,18 @@ namespace Boot
             // had to add it because if set in the line above, it was named "DebugCommands(Clone)" for some reason
             debugCommands.name = "DebugCommands";
             DontDestroyOnLoad(debugCommands);
+#endif
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            DebugCommands.AddCommand(() =>
+            {
+                SignalProcessor.SendSignal(new MissionCompleteSignal());
+            }, "Win Mission", "Instantly wins the mission.");
+
+            DebugCommands.AddCommand(() =>
+            {
+                SignalProcessor.SendSignal(new MissionFailedSignal());
+            }, "Fail Mission", "Instantly wins the current mission.");
 #endif
         }
 
