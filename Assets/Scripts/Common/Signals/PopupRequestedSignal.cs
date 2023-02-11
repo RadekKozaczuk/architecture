@@ -5,8 +5,11 @@ namespace Common.Signals
 {
     public sealed class PopupRequestedSignal : AbstractSignal
     {
-        public readonly PopupType PopupType;
+        public PopupType PopupType;
 
         public PopupRequestedSignal(PopupType popupType) => PopupType = popupType;
+
+        public PopupRequestedSignal()
+            : this(default) { }
     }
 }
