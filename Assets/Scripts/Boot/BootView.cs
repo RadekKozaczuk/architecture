@@ -22,7 +22,6 @@ using Common.Config;
 using Presentation.Views;
 using Common.Views;
 using GameLogic.Views;
-using Common.Factories;
 #endif
 
 namespace Boot
@@ -105,12 +104,12 @@ namespace Boot
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             DebugCommands.AddCommand(() =>
             {
-                SignalFactory.SendMissionCompleteSignal();
+                SignalProcessor.SendSignal(new MissionCompleteSignal());
             }, "Win Mission", "Instantly wins the mission.");
 
             DebugCommands.AddCommand(() =>
             {
-                SignalFactory.SendMissionFailedSignal();
+                SignalProcessor.SendSignal(new MissionFailedSignal());
             }, "Fail Mission", "Instantly wins the current mission.");
 #endif
         }
