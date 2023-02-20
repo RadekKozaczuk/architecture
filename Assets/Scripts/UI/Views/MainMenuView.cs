@@ -4,6 +4,9 @@ using Common.Systems;
 using GameLogic.ViewModels;
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace UI.Views
 {
@@ -27,7 +30,7 @@ namespace UI.Views
             _newGame.onClick.AddListener(NewGame);
             _loadGame.onClick.AddListener(LoadGame);
             _loadGame.interactable = GameLogicViewModel.SaveFileExist;
-            _quit.onClick.AddListener(Application.Quit);
+            _quit.onClick.AddListener(Quit);
         }
 
         static void NewGame()
@@ -40,6 +43,15 @@ namespace UI.Views
         {
             CommonData.LoadRequested = true;
             GameStateSystem.RequestStateChange(GameState.Gameplay);
+        }
+
+        static void Quit()
+        {
+#if UNITY_EDITOR
+            EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
         }
     }
 }
