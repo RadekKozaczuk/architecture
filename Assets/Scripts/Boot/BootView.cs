@@ -96,8 +96,6 @@ namespace Boot
             debugCommands.AddComponent<CommonDebugView>();
             debugCommands.AddComponent<PresentationDebugView>();
             debugCommands.AddComponent<GameLogicDebugView>();
-            // had to add it because if set in the line above, it was named "DebugCommands(Clone)" for some reason
-            debugCommands.name = "DebugCommands";
             DontDestroyOnLoad(debugCommands);
 #endif
 
