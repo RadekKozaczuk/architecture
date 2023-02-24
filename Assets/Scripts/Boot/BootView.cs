@@ -92,7 +92,7 @@ namespace Boot
 #endif
 
 #if UNITY_EDITOR
-            GameObject debugCommands = Instantiate(new GameObject(), Vector3.zero, Quaternion.identity);
+            var debugCommands = new GameObject("DebugCommands");
             debugCommands.AddComponent<CommonDebugView>();
             debugCommands.AddComponent<PresentationDebugView>();
             debugCommands.AddComponent<GameLogicDebugView>();
