@@ -3,24 +3,36 @@ using Common.Config;
 using Common.Signals;
 using Shared.Systems;
 using Sirenix.OdinInspector;
+using System.Collections.Generic;
+using System;
 using UnityEngine;
+using System.Reflection;
+using Shared.CheatEngine;
+using System.Linq;
 
 namespace Common.Views
 {
     [DisallowMultipleComponent]
     public class CommonDebugView : MonoBehaviour
     {
-        static readonly DebugConfig _debugConfig;
+		const string CommandsFieldName = "_commands";
+		List<(Action<int> action, string name, bool parameters, string description, string assembly)> _supportedCommands;
+		static readonly DebugConfig _debugConfig;
 
-        void Awake() => DontDestroyOnLoad(gameObject);
+		public List<(Action<int> action, string name, bool parameters, string description, string assembly)> SupportedCommands() {
+			return _supportedCommands;
+		}
 
-        [InfoBox("Instantly fails the mission for this player.", InfoMessageType.None)]
-        [Button]
-        void FailMission() => SignalProcessor.SendSignal(new MissionFailedSignal());
+		void Start() {
+			FieldInfo fieldInfo = typeof(DebugCommands).GetFields(BindingFlags.NonPublic | BindingFlags.Static)
+													   .FirstOrDefault(x => x.Name == CommandsFieldName);
 
-        [InfoBox("Instantly completes the mission for this player.", InfoMessageType.None)]
-        [Button]
-        void CompleteMission() => SignalProcessor.SendSignal(new MissionCompleteSignal());
-    }
+			if (fieldInfo == null)
+				return;
+
+			_supportedCommands = (List<(Action<int> action, string name, bool parameters, string description, string assembly)>)fieldInfo.GetValue(null);
+		}
+
+	}
 }
 #endif

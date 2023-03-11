@@ -20,22 +20,22 @@ namespace UI.Views
         const string CommandsFieldName = "_commands";
         const string PlaceholderDefaultText = "Enter command...";
         const string NoCommandAvailableText = "No command available";
-        List<(Action action, string name, string description, string assembly)> _supportedCommands;
+        List<(Action<int> action, string name, bool parameters, string description, string assembly)> _supportedCommands;
         string _currentBestMatch;
 
-        void Start()
+		void Start()
         {
-            FieldInfo fieldInfo = typeof(DebugCommands).GetFields(BindingFlags.NonPublic | BindingFlags.Static)
+			FieldInfo fieldInfo = typeof(DebugCommands).GetFields(BindingFlags.NonPublic | BindingFlags.Static)
                                                        .FirstOrDefault(x => x.Name == CommandsFieldName);
 
             if (fieldInfo == null)
                 return;
 
-            _supportedCommands = (List<(Action action, string name, string description, string assembly)>)fieldInfo.GetValue(null);
-            _commandInputField.ActivateInputField();
+            _supportedCommands = (List<(Action<int> action, string name, bool parameters, string description, string assembly)>)fieldInfo.GetValue(null);
+			_commandInputField.ActivateInputField();
         }
 
-        internal void UpdatePlaceholderText()
+		internal void UpdatePlaceholderText()
         {
             string currentPlaceholderText = _placeholderText.text;
 
@@ -78,9 +78,16 @@ namespace UI.Views
                 return;
             }
 
-            (Action action, string name, string description, string assembly) commandToInvoke = _supportedCommands.FirstOrDefault(x => x.name == command);
+            string[] splittedCommand = command.Split(' ');
+            command = splittedCommand[0];
 
-            commandToInvoke.action?.Invoke();
+            (Action<int> action, string name, bool parameters, string description, string assembly) commandToInvoke = _supportedCommands.FirstOrDefault(x => x.name == command);
+            if (commandToInvoke.parameters == true) {
+                commandToInvoke.action?.Invoke(int.Parse(splittedCommand[1]));
+            }
+            else {
+                commandToInvoke.action?.Invoke(0);
+            }
         }
 
         void GetBestMatch(string partOfCommand)
@@ -96,14 +103,14 @@ namespace UI.Views
                 return;
             }
 
-            List<(Action action, string name, string description, string assembly)> find = _supportedCommands.Where(x => x.name.StartsWith(partOfCommand)).ToList();
+            List<(Action<int> action, string name, bool parameters, string description, string assembly)> find = _supportedCommands.Where(x => x.name.StartsWith(partOfCommand)).ToList();
             if (find.Count == 1)
             {
                 _currentBestMatch = placeholderText = find.First().name;
             }
             else
             {
-                (Action action, string name, string description, string assembly) foundCommand = find.FirstOrDefault();
+                (Action<int> action, string name, bool parameters, string description, string assembly) foundCommand = find.FirstOrDefault();
                 string currentCommandName = foundCommand.name ?? _supportedCommands.First().name;
 
                 _currentBestMatch = placeholderText = currentCommandName;

@@ -100,19 +100,27 @@ namespace Boot
 #endif
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            DebugCommands.AddCommand(() =>
-            {
-                SignalProcessor.SendSignal(new MissionCompleteSignal());
-            }, "Win Mission", "Instantly wins the mission.");
 
-            DebugCommands.AddCommand(() =>
-            {
-                SignalProcessor.SendSignal(new MissionFailedSignal());
-            }, "Fail Mission", "Instantly wins the current mission.");
+            DebugCommands.AddCommand((value) => {
+                SignalProcessor.SendSignal(new GiveGoldSignal(value));
+            }, "test", true, "test command");
+			DebugCommands.AddCommand((value) => {
+				SignalProcessor.SendSignal(new MissionCompleteSignal());
+			}, "win_mission", false, "Instantly wins the mission.");
+
+			DebugCommands.AddCommand((value) => {
+				SignalProcessor.SendSignal(new MissionFailedSignal());
+			}, "fail_mission", false, "Instantly fail current mission.");
+			DebugCommands.AddCommand((value) => {
+                SignalProcessor.SendSignal(new GiveGoldSignal(value));
+            }, "give gold", true, "Give gold");
+
+
+
 #endif
-        }
+		}
 
-        void FixedUpdate()
+		void FixedUpdate()
         {
             if (_isCoreSceneLoaded)
             {
