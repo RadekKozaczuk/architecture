@@ -101,15 +101,18 @@ namespace Boot
 #endif
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-			DebugCommands.AddCommand(_ => {
+			DebugCommands.AddCommand(_ =>
+            {
 				SignalProcessor.SendSignal(new MissionCompleteSignal());
 			}, "win_mission", false, "Instantly wins the mission.");
 
-			DebugCommands.AddCommand(_ => {
+			DebugCommands.AddCommand(_ =>
+            {
 				SignalProcessor.SendSignal(new MissionFailedSignal());
 			}, "fail_mission", false, "Instantly fail current mission.");
 
-            DebugCommands.AddCommand(value => {
+            DebugCommands.AddCommand(value =>
+            {
                 MyDebug.Log($"Parametrized debug command called with the parameter equal to {value}");
             }, "give_gold", true, "Give gold");
 #endif

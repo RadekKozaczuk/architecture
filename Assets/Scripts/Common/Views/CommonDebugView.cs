@@ -19,11 +19,13 @@ namespace Common.Views
 		List<(Action<int> action, string name, bool parameters, string description, string assembly)> _supportedCommands;
 		static readonly DebugConfig _debugConfig;
 
-		public List<(Action<int> action, string name, bool parameters, string description, string assembly)> SupportedCommands() {
+		public List<(Action<int> action, string name, bool parameters, string description, string assembly)> SupportedCommands()
+		{
 			return _supportedCommands;
 		}
 
-		void Start() {
+		void Start()
+		{
 			FieldInfo fieldInfo = typeof(DebugCommands).GetFields(BindingFlags.NonPublic | BindingFlags.Static)
 													   .FirstOrDefault(x => x.Name == CommandsFieldName);
 

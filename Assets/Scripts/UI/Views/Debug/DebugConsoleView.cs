@@ -82,10 +82,12 @@ namespace UI.Views
             command = splittedCommand[0];
 
             (Action<int> action, string name, bool parameters, string description, string assembly) commandToInvoke = _supportedCommands.FirstOrDefault(x => x.name == command);
-            if (commandToInvoke.parameters == true) {
+            if (commandToInvoke.parameters == true)
+            {
                 commandToInvoke.action?.Invoke(int.Parse(splittedCommand[1]));
             }
-            else {
+            else
+            {
                 commandToInvoke.action?.Invoke(0);
             }
         }
