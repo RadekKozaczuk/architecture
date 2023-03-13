@@ -49,9 +49,6 @@ namespace GameLogic.Controllers
         void OnMissionFailed(MissionFailedSignal _) { }
 		[React]
 		[Preserve]
-		void OnMissionWinned(MissionCompleteSignal _) { }
-		[React]
-		[Preserve]
-		void OnGivenGold(GiveGoldSignal _) { }
+		void OnMissionComplete(MissionCompleteSignal _) { }
 	}
 }
