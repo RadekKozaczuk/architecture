@@ -103,7 +103,7 @@ namespace Boot
 
             DebugCommands.AddCommand((value) => {
                 SignalProcessor.SendSignal(new GiveGoldSignal(value));
-            }, "test", true, "test command");
+            }, "test", false, "test command");
 			DebugCommands.AddCommand((value) => {
 				SignalProcessor.SendSignal(new MissionCompleteSignal());
 			}, "win_mission", false, "Instantly wins the mission.");
@@ -113,7 +113,7 @@ namespace Boot
 			}, "fail_mission", false, "Instantly fail current mission.");
 			DebugCommands.AddCommand((value) => {
                 SignalProcessor.SendSignal(new GiveGoldSignal(value));
-            }, "give gold", true, "Give gold");
+            }, "give_gold", true, "Give gold");
 
 
 

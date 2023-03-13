@@ -6,6 +6,8 @@ using System;
 using Shared.CheatEngine;
 using System.Reflection;
 using System.Linq;
+using ControlFlow.SignalProcessing;
+using UnityEngine.Scripting;
 
 namespace Common.Views {
 	[CustomEditor(typeof(CommonDebugView))]
@@ -17,7 +19,12 @@ namespace Common.Views {
 
 			foreach ((Action<int> action, string name, bool parameters, string description, string assembly) command in debugView.SupportedCommands()) {
 				GUILayout.Label(command.description);
-				if (GUILayout.Button(command.name)) {
+				string[] commandWords = command.name.Split("_");
+				string commandName= "";
+				foreach (string word in commandWords) {
+					commandName += word + " ";
+				}
+				if (GUILayout.Button(commandName)) {
 					command.action?.Invoke(0);
 				}
 			}
