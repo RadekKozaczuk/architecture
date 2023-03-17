@@ -81,10 +81,11 @@ namespace UI.Controllers
                 return;
             }
 
-            DebugConsoleView debugConsole = Object.Instantiate(_config.ConsolePrefab, Vector3.zero, Quaternion.identity);
+            GameObject debugConsole = new GameObject("DebugConsole");
+            debugConsole.AddComponent<DebugConsoleView>();
             debugConsole.name = "DebugConsole";
             debugConsole.transform.SetParent(UISceneReferenceHolder.Canvas.transform, false);
-            UIData.DebugConsoleView = debugConsole;
+            UIData.DebugConsoleView = debugConsole.GetComponent<DebugConsoleView>();
             _debugConsoleInstantiated = true;
 
             _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap).Disable();
