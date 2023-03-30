@@ -33,7 +33,7 @@ namespace UI.Views
 
         void SpawnConsole()
         {
-            var rectTransform = this.gameObject.AddComponent<RectTransform>();
+            var rectTransform = gameObject.AddComponent<RectTransform>();
             rectTransform.sizeDelta = new Vector2(Screen.width - 50f, 50);
             rectTransform.anchorMax = new Vector2(0.5f, 1);
             rectTransform.anchorMin = new Vector2(0.5f, 1);
@@ -183,11 +183,11 @@ namespace UI.Views
                 return;
             }
 
-            string[] splittedCommand = command.Split(' ');
-            command = splittedCommand[0];
+            string[] splitCommand = command.Split(' ');
+            command = splitCommand[0];
 
             (Action<int> action, string name, bool parameters, string description, string assembly) commandToInvoke = _supportedCommands.FirstOrDefault(x => x.name == command);
-            commandToInvoke.action?.Invoke(commandToInvoke.parameters ? int.Parse(splittedCommand[1]) : 0);
+            commandToInvoke.action?.Invoke(commandToInvoke.parameters ? int.Parse(splitCommand[1]) : 0);
         }
 
         void GetBestMatch(string partOfCommand)
