@@ -46,8 +46,10 @@ namespace UI.Views
         static void InstantiateMobileDebugConsole()
         {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            DebugMobileConsoleView debugMobileConsole = Instantiate(_uiDebugConfig.MobileConsolePrefab, new Vector3(0, 0, -1), Quaternion.identity,
+            DebugMobileConsoleView debugMobileConsole = Instantiate(_uiDebugConfig.MobileConsolePrefab,
+                                                                    new Vector3(0, 0, -1), Quaternion.identity,
                                                                     UISceneReferenceHolder.Canvas.transform);
+
             debugMobileConsole.name = "DebugMobileConsole";
             UIData.DebugMobileConsole = debugMobileConsole;
             var rect = debugMobileConsole.GetComponent<RectTransform>();

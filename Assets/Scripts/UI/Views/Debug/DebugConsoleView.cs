@@ -20,54 +20,54 @@ namespace UI.Views
         const string CommandsFieldName = "_commands";
         const string PlaceholderDefaultText = "Enter command...";
         const string NoCommandAvailableText = "No command available";
-        List<string> _commandsHistory = new List<string>();
+        readonly List<string> _commandsHistory = new();
         List<(Action<int> action, string name, bool parameters, string description, string assembly)> _supportedCommands;
         string _currentBestMatch;
-        private Color _backgroundColor = new Color(0f, 0f, 0f, 0.42f);
-        private bool _showingHistory = false;
+        readonly Color _backgroundColor = new(0f, 0f, 0f, 0.42f);
+        bool _showingHistory;
 
-		private void Awake()
+        void Awake()
         {
             SpawnConsole();
 		}
 
         void SpawnConsole()
         {
-            RectTransform rectTransform = this.gameObject.AddComponent<RectTransform>();
+            var rectTransform = this.gameObject.AddComponent<RectTransform>();
             rectTransform.sizeDelta = new Vector2(Screen.width - 50f, 50);
             rectTransform.anchorMax = new Vector2(0.5f, 1);
             rectTransform.anchorMin = new Vector2(0.5f, 1);
             rectTransform.pivot = new Vector2(0.5f, 1);
 
             //Background Image Setup
-            Image backgroundImage = new GameObject("DebugConsoleBackground").AddComponent<Image>();
+            var backgroundImage = new GameObject("DebugConsoleBackground").AddComponent<Image>();
             backgroundImage.transform.SetParent(this.transform);
-            RectTransform imageRect = backgroundImage.gameObject.GetComponent<RectTransform>();
+            var imageRect = backgroundImage.gameObject.GetComponent<RectTransform>();
             SetRectTransform(imageRect);
             backgroundImage.color = _backgroundColor;
 
-            TextMeshProUGUI placeholder = new GameObject("Placeholder").AddComponent<TextMeshProUGUI>();
-			TextMeshProUGUI inputText = new GameObject("Input text").AddComponent<TextMeshProUGUI>();
-            RectMask2D TextArea = new GameObject("Text Area").AddComponent<RectMask2D>();
+            var placeholder = new GameObject("Placeholder").AddComponent<TextMeshProUGUI>();
+			var inputText = new GameObject("Input text").AddComponent<TextMeshProUGUI>();
+            var textArea = new GameObject("Text Area").AddComponent<RectMask2D>();
 
             //Input Field Setup
-            GameObject inputFieldGO = new GameObject("Input field");
-            inputFieldGO.transform.SetParent(backgroundImage.transform);
-            inputFieldGO.AddComponent<RectTransform>();
-            inputFieldGO.AddComponent<TMP_InputField>();
-            _commandInputField = inputFieldGO.GetComponent<TMP_InputField>();
-            _commandInputField.textViewport = TextArea.GetComponent<RectTransform>();
+            var inputFieldGo = new GameObject("Input field");
+            inputFieldGo.transform.SetParent(backgroundImage.transform);
+            inputFieldGo.AddComponent<RectTransform>();
+            inputFieldGo.AddComponent<TMP_InputField>();
+            _commandInputField = inputFieldGo.GetComponent<TMP_InputField>();
+            _commandInputField.textViewport = textArea.GetComponent<RectTransform>();
             _commandInputField.textComponent = inputText.GetComponent<TextMeshProUGUI>();
             _commandInputField.placeholder = placeholder.GetComponent<TextMeshProUGUI>();
             _commandInputField.onValueChanged.AddListener(GetBestMatch);
             _commandInputField.onEndEdit.AddListener(CallCommand);
 
-            SetRectTransform(inputFieldGO.GetComponent<RectTransform>());
+            SetRectTransform(inputFieldGo.GetComponent<RectTransform>());
 
-            placeholder.transform.SetParent(TextArea.transform);
-            TextArea.transform.SetParent(inputFieldGO.transform);
-            SetRectTransform(TextArea.GetComponent<RectTransform>());
-			inputText.transform.SetParent(TextArea.transform);
+            placeholder.transform.SetParent(textArea.transform);
+            textArea.transform.SetParent(inputFieldGo.transform);
+            SetRectTransform(textArea.GetComponent<RectTransform>());
+			inputText.transform.SetParent(textArea.transform);
             SetRectTransform(inputText.GetComponent<RectTransform>());
             _placeholderText = placeholder;
             _placeholderText.color = new Color(0f, 0f, 0.05f, 0.5f);
@@ -75,16 +75,16 @@ namespace UI.Views
             SetRectTransform(placeholder.GetComponent<RectTransform>());
 
             //Show history button setup
-            Button showMoreButton = new GameObject("Show More").AddComponent<Button>();
+            var showMoreButton = new GameObject("Show More").AddComponent<Button>();
             showMoreButton.transform.SetParent(backgroundImage.transform);
-            Image buttonImage = showMoreButton.gameObject.AddComponent<Image>();
+            var buttonImage = showMoreButton.gameObject.AddComponent<Image>();
             buttonImage.color = Color.black;
             showMoreButton.GetComponent<RectTransform>().sizeDelta = new Vector2(50f, 25f);
             showMoreButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -25f);
             showMoreButton.onClick.AddListener(ShowCommandsHistory);
 		}
 
-		private void SetRectTransform(RectTransform rt)
+        static void SetRectTransform(RectTransform rt)
         {
 			rt.anchorMax = new Vector2(1f, 1f);
 			rt.anchorMin = new Vector2(0f, 0f);
@@ -94,7 +94,7 @@ namespace UI.Views
 			rt.offsetMin = new Vector2(0f, 0f);
 		}
 
-        private void ShowCommandsHistory()
+        void ShowCommandsHistory()
         {
             if (_showingHistory) {
                 Destroy(_commandsHistoryHolder.gameObject);
@@ -108,16 +108,19 @@ namespace UI.Views
             _commandsHistoryHolder.transform.SetParent(this.transform);
             _commandsHistoryHolder.transform.SetAsFirstSibling();
             SetRectTransform(_commandsHistoryHolder);
-            Image commandsHistoryBackground = new GameObject("HistoryBackground").AddComponent<Image>();
+
+            var commandsHistoryBackground = new GameObject("HistoryBackground").AddComponent<Image>();
             commandsHistoryBackground.color = _backgroundColor;
             commandsHistoryBackground.transform.SetParent(_commandsHistoryHolder.transform);
             commandsHistoryBackground.GetComponent<RectTransform>().sizeDelta = new Vector2(Screen.width - 50f, 50f * commandsCount);
 			_commandsHistoryHolder.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -25f*(commandsCount+1));
             commandsHistoryBackground.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, 0f);
-			for (int i = 0; i < commandsCount; i++) {
-                TextMeshProUGUI commandHistory = new GameObject("history").AddComponent<TextMeshProUGUI>();
+
+            for (int i = 0; i < commandsCount; i++)
+            {
+                var commandHistory = new GameObject("history").AddComponent<TextMeshProUGUI>();
                 commandHistory.transform.SetParent(_commandsHistoryHolder.transform);
-                RectTransform commandHistoryRect = commandHistory.GetComponent<RectTransform>();
+                var commandHistoryRect = commandHistory.GetComponent<RectTransform>();
                 commandHistoryRect.sizeDelta = new Vector2(Screen.width - 50f, 50f);
                 commandHistoryRect.anchoredPosition = new Vector2(0f, commandsCount * 25f - 50f * i - 25f);
                 commandHistory.text = _commandsHistory[commandsCount - i - 1];
@@ -184,14 +187,7 @@ namespace UI.Views
             command = splittedCommand[0];
 
             (Action<int> action, string name, bool parameters, string description, string assembly) commandToInvoke = _supportedCommands.FirstOrDefault(x => x.name == command);
-            if (commandToInvoke.parameters == true)
-            {
-                commandToInvoke.action?.Invoke(int.Parse(splittedCommand[1]));
-            }
-            else
-            {
-                commandToInvoke.action?.Invoke(0);
-            }
+            commandToInvoke.action?.Invoke(commandToInvoke.parameters ? int.Parse(splittedCommand[1]) : 0);
         }
 
         void GetBestMatch(string partOfCommand)
