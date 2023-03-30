@@ -1,8 +1,5 @@
 #if UNITY_EDITOR
 using Common.Config;
-using Common.Signals;
-using Shared.Systems;
-using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
@@ -34,7 +31,6 @@ namespace Common.Views
 
 			_supportedCommands = (List<(Action<int> action, string name, bool parameters, string description, string assembly)>)fieldInfo.GetValue(null);
 		}
-
 	}
 }
 #endif
