@@ -31,6 +31,18 @@ namespace UI.Views
             SpawnConsole();
 		}
 
+        void Start()
+        {
+            FieldInfo fieldInfo = typeof(DebugCommands).GetFields(BindingFlags.NonPublic | BindingFlags.Static)
+                                                       .FirstOrDefault(x => x.Name == CommandsFieldName);
+
+            if (fieldInfo == null)
+                return;
+
+            _supportedCommands = (List<(Action<int> action, string name, bool parameters, string description, string assembly)>)fieldInfo.GetValue(null);
+            _commandInputField.ActivateInputField();
+        }
+
         void SpawnConsole()
         {
             var rectTransform = gameObject.AddComponent<RectTransform>();
@@ -96,11 +108,13 @@ namespace UI.Views
 
         void ShowCommandsHistory()
         {
-            if (_showingHistory) {
+            if (_showingHistory)
+            {
                 Destroy(_commandsHistoryHolder.gameObject);
                 _showingHistory = false;
                 return;
             }
+
             _showingHistory = true;
             int commandsCount = _commandsHistory.Count <= 5 ? _commandsHistory.Count : 5;
 
@@ -126,18 +140,6 @@ namespace UI.Views
                 commandHistory.text = _commandsHistory[commandsCount - i - 1];
                 commandHistory.alignment = TextAlignmentOptions.CaplineLeft;
             }
-        }
-
-		void Start()
-        {
-			FieldInfo fieldInfo = typeof(DebugCommands).GetFields(BindingFlags.NonPublic | BindingFlags.Static)
-                                                       .FirstOrDefault(x => x.Name == CommandsFieldName);
-
-            if (fieldInfo == null)
-                return;
-
-            _supportedCommands = (List<(Action<int> action, string name, bool parameters, string description, string assembly)>)fieldInfo.GetValue(null);
-			_commandInputField.ActivateInputField();
         }
 
 		internal void UpdatePlaceholderText()
