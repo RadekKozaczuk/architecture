@@ -7,6 +7,7 @@ using UI.Systems;
 using UI.Views;
 using UnityEngine;
 using UnityEngine.Scripting;
+using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 namespace UI.Controllers
@@ -61,15 +62,18 @@ namespace UI.Controllers
 #if (UNITY_EDITOR || DEVELOPMENT_BUILD) && (UNITY_ANDROID || UNITY_IPHONE)
             float height = UISceneReferenceHolder.Canvas.GetComponent<RectTransform>().rect.height;
 
-            DebugMobileButtonView debugMobileButton = Object.Instantiate(_config.MobileButtonPrefab, Vector3.zero, Quaternion.identity, UISceneReferenceHolder.Canvas.transform);
-            debugMobileButton.name = "DebugMobileButton";
+			GameObject debugMobileButton = new GameObject("DebugConsole");
+
+            debugMobileButton.AddComponent<RectTransform>();
+			debugMobileButton.AddComponent<DebugMobileButtonView>();
+			debugMobileButton.transform.SetParent(UISceneReferenceHolder.Canvas.transform, false);
             var rectButtonComponent = debugMobileButton.GetComponent<RectTransform>();
             Rect rect = rectButtonComponent.rect;
             rectButtonComponent.transform.SetPositionAndRotation(new Vector3(rect.width / 2, height - rect.height / 2, -1), Quaternion.identity);
 #endif
         }
 
-#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && UNITY_STANDALONE_WIN
+#if (UNITY_EDITOR || DEVELOPMENT_BUILD)
         internal static void InstantiateDebugConsole()
         {
             if (_debugConsoleInstantiated)
@@ -92,7 +96,7 @@ namespace UI.Controllers
         }
 #endif
 
-        [React]
+		[React]
         [Preserve]
         void OnInventoryChangedSignal(InventoryChangedSignal _) { }
     }
