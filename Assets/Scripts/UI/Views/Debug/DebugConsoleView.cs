@@ -185,11 +185,12 @@ namespace UI.Views
                 return;
             }
 
-            string[] splitCommand = command.Split(' ');
-            command = splitCommand[0];
+			string[] splitCommand = command.Split(' ');
+			command = splitCommand[0];
+			string commandValue = splitCommand.Length > 1 ? splitCommand[1] : "0";
 
-            (Action<int> action, string name, bool parameters, string description, string assembly) commandToInvoke = _supportedCommands.FirstOrDefault(x => x.name == command);
-            commandToInvoke.action?.Invoke(commandToInvoke.parameters ? int.Parse(splitCommand[1]) : 0);
+			(Action<int> action, string name, bool parameters, string description, string assembly) commandToInvoke = _supportedCommands.FirstOrDefault(x => x.name == command);
+            commandToInvoke.action?.Invoke(commandToInvoke.parameters ? int.Parse(commandValue) : 0);
         }
 
         void GetBestMatch(string partOfCommand)

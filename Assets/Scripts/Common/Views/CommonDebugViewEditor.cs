@@ -8,6 +8,8 @@ namespace Common.Views
 	[CustomEditor(typeof(CommonDebugView))]
 	public class CommonDebugViewEditor : Editor
 	{
+		int value = 5;
+
 		public override void OnInspectorGUI()
 		{
 			DrawDefaultInspector();
@@ -22,8 +24,11 @@ namespace Common.Views
 				foreach (string word in commandWords)
 					commandName += word + " ";
 
+				if(command.parameters == true)
+					value = EditorGUILayout.IntField(value);
+
 				if (GUILayout.Button(commandName))
-					command.action?.Invoke(0);
+					command.action?.Invoke(command.parameters ? value : 0);
 			}
 		}
 	}
