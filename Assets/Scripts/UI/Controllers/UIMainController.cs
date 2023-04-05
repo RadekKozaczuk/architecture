@@ -2,6 +2,7 @@ using Common.Signals;
 using ControlFlow.Interfaces;
 using ControlFlow.SignalProcessing;
 using JetBrains.Annotations;
+using Shared.CheatEngine;
 using UI.Config;
 using UI.Systems;
 using UI.Views;
@@ -60,16 +61,7 @@ namespace UI.Controllers
             _uiSceneLoaded = true;
 
 #if (UNITY_EDITOR || DEVELOPMENT_BUILD) && (UNITY_ANDROID || UNITY_IPHONE)
-            float height = UISceneReferenceHolder.Canvas.GetComponent<RectTransform>().rect.height;
-
-			GameObject debugMobileButton = new GameObject("DebugConsole");
-
-            debugMobileButton.AddComponent<RectTransform>();
-			debugMobileButton.AddComponent<DebugMobileButtonView>();
-			debugMobileButton.transform.SetParent(UISceneReferenceHolder.Canvas.transform, false);
-            var rectButtonComponent = debugMobileButton.GetComponent<RectTransform>();
-            Rect rect = rectButtonComponent.rect;
-            rectButtonComponent.transform.SetPositionAndRotation(new Vector3(rect.width / 2, height - rect.height / 2, -1), Quaternion.identity);
+            DebugCommands.CreateA(UISceneReferenceHolder.Canvas.GetComponent<RectTransform>().rect.height, UISceneReferenceHolder.Canvas.transform);
 #endif
         }
 
@@ -85,7 +77,7 @@ namespace UI.Controllers
                 return;
             }
 
-            GameObject debugConsole = new GameObject("DebugConsole");
+            var debugConsole = new GameObject("DebugConsole");
             debugConsole.AddComponent<DebugConsoleView>();
             debugConsole.name = "DebugConsole";
             debugConsole.transform.SetParent(UISceneReferenceHolder.Canvas.transform, false);
