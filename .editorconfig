@@ -1,4 +1,4 @@
 [*]
 dotnet_analyzer_diagnostic.category-RAD.severity = none
-[**/Scripts/**.cs]
+[Assets/Scripts/**.cs]
 dotnet_analyzer_diagnostic.category-RAD.severity = error
