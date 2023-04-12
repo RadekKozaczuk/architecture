@@ -21,7 +21,6 @@ using Shared;
 
 #if UNITY_EDITOR
 using Presentation.Views;
-using Common.Views;
 using GameLogic.Views;
 #endif
 

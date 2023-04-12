@@ -1,5 +1,6 @@
 using Common.Enums;
 using Presentation.ViewModels;
+using Shared.CheatEngine;
 using UI.Config;
 using UI.Controllers;
 using UI.Popups;
@@ -48,7 +49,7 @@ namespace UI.Systems
             // DebugCommands bindings
             InputActionMap debugCommands = _uiConfig.InputActionAsset.FindActionMap(UIConstants.DebugCommandsMap);
             debugCommands.FindAction(ToggleConsole).performed += _ => UIMainController.InstantiateDebugConsole();
-            debugCommands.FindAction(TakeBestMatch).performed += _ => UIData.DebugConsoleView.TakeBestMatchAsCommand();
+            debugCommands.FindAction(TakeBestMatch).performed += _ => DebugUIData.DebugConsoleView.TakeBestMatchAsCommand();
 #endif
         }
 

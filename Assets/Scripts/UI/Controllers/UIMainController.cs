@@ -31,11 +31,6 @@ namespace UI.Controllers
         static bool _uiSceneLoaded;
         static readonly UIConfig _uiConfig = null!;
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-        static readonly UIDebugConfig _config;
-        static bool _debugConsoleInstantiated;
-#endif
-
         [Preserve]
         UIMainController() { }
 
@@ -47,8 +42,8 @@ namespace UI.Controllers
             InputSystem.CustomUpdate();
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            if (UIData.DebugConsoleView != null)
-                UIData.DebugConsoleView.UpdatePlaceholderText();
+            if (DebugUIData.DebugConsoleView != null)
+                DebugUIData.DebugConsoleView.UpdatePlaceholderText();
 #endif
         }
 
@@ -61,30 +56,14 @@ namespace UI.Controllers
             _uiSceneLoaded = true;
 
 #if (UNITY_EDITOR || DEVELOPMENT_BUILD) && (UNITY_ANDROID || UNITY_IPHONE)
-            DebugCommands.CreateA(UISceneReferenceHolder.Canvas.GetComponent<RectTransform>().rect.height, UISceneReferenceHolder.Canvas.transform);
+            DebugCommands.CreateMobileConsole(UISceneReferenceHolder.Canvas.GetComponent<RectTransform>().rect.height, UISceneReferenceHolder.Canvas.transform);
 #endif
-        }
+		}
 
 #if (UNITY_EDITOR || DEVELOPMENT_BUILD)
-        internal static void InstantiateDebugConsole()
+		internal static void InstantiateDebugConsole()
         {
-            if (_debugConsoleInstantiated)
-            {
-                Object.Destroy(UIData.DebugConsoleView.gameObject);
-                _debugConsoleInstantiated = false;
-
-                _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap).Enable();
-                return;
-            }
-
-            var debugConsole = new GameObject("DebugConsole");
-            debugConsole.AddComponent<DebugConsoleView>();
-            debugConsole.name = "DebugConsole";
-            debugConsole.transform.SetParent(UISceneReferenceHolder.Canvas.transform, false);
-            UIData.DebugConsoleView = debugConsole.GetComponent<DebugConsoleView>();
-            _debugConsoleInstantiated = true;
-
-            _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap).Disable();
+            DebugCommands.CreateConsole(UISceneReferenceHolder.Canvas.transform, _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap));
         }
 #endif
 

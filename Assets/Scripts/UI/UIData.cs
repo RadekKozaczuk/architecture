@@ -1,4 +1,5 @@
 using UI.Views;
+using Shared.CheatEngine;
 
 namespace UI
 {
@@ -7,9 +8,6 @@ namespace UI
     /// </summary>
     static class UIData
     {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-        internal static DebugConsoleView DebugConsoleView;
-        internal static DebugMobileConsoleView DebugMobileConsole;
-#endif
+
     }
 }
