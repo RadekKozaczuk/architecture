@@ -86,10 +86,6 @@ namespace Boot
             Application.targetFrameRate = 120;
 #endif
 
-#if UNITY_EDITOR
-            DebugCommands.CreateDebugView();
-#endif
-
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 			DebugCommands.AddCommand(_ =>
             {

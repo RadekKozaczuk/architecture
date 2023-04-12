@@ -29,7 +29,6 @@ namespace UI.Controllers
     class UIMainController : ICustomFixedUpdate, ICustomUpdate, ICustomLateUpdate
     {
         static bool _uiSceneLoaded;
-        static readonly UIConfig _uiConfig = null!;
 
         [Preserve]
         UIMainController() { }
@@ -59,13 +58,6 @@ namespace UI.Controllers
             DebugCommands.CreateMobileConsole(UISceneReferenceHolder.Canvas.GetComponent<RectTransform>().rect.height, UISceneReferenceHolder.Canvas.transform);
 #endif
 		}
-
-#if (UNITY_EDITOR || DEVELOPMENT_BUILD)
-		internal static void InstantiateDebugConsole()
-        {
-            DebugCommands.CreateConsole(UISceneReferenceHolder.Canvas.transform, _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap));
-        }
-#endif
 
 		[React]
         [Preserve]
