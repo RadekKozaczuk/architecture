@@ -19,11 +19,6 @@ using Common.Config;
 using Shared;
 #endif
 
-#if UNITY_EDITOR
-using Presentation.Views;
-using GameLogic.Views;
-#endif
-
 namespace Boot
 {
     /// <summary>
@@ -92,11 +87,7 @@ namespace Boot
 #endif
 
 #if UNITY_EDITOR
-            var debugCommands = new GameObject("DebugCommands");
-            debugCommands.AddComponent<CommonDebugView>();
-            debugCommands.AddComponent<PresentationDebugView>();
-            debugCommands.AddComponent<GameLogicDebugView>();
-            DontDestroyOnLoad(debugCommands);
+            DebugCommands.CreateDebugView();
 #endif
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
