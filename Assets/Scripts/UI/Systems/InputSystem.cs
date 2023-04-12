@@ -1,8 +1,7 @@
 using Common.Enums;
 using Presentation.ViewModels;
-using Shared.CheatEngine;
+using Shared.DebugCommands;
 using UI.Config;
-using UI.Controllers;
 using UI.Popups;
 using UnityEngine;
 using UnityEngine.InputSystem;

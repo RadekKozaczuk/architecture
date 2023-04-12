@@ -1,5 +1,5 @@
 using UI.Views;
-using Shared.CheatEngine;
+using Shared.DebugCommands;
 
 namespace UI
 {

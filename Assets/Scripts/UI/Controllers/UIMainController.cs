@@ -2,7 +2,7 @@ using Common.Signals;
 using ControlFlow.Interfaces;
 using ControlFlow.SignalProcessing;
 using JetBrains.Annotations;
-using Shared.CheatEngine;
+using Shared.DebugCommands;
 using UI.Systems;
 using UnityEngine.Scripting;
 
@@ -36,8 +36,9 @@ namespace UI.Controllers
             InputSystem.CustomUpdate();
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            if (DebugUIData.DebugConsoleView != null)
-                DebugUIData.DebugConsoleView.UpdatePlaceholderText();
+            // should be DebugCommands.CustomUpdate() so the internal data is hidden
+            //if (DebugUIData.DebugConsoleView != null)
+                //DebugUIData.DebugConsoleView.UpdatePlaceholderText();
 #endif
         }
 

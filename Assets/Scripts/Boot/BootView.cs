@@ -8,7 +8,7 @@ using Common.Signals;
 using Common.Systems;
 using GameLogic.ViewModels;
 using Presentation.ViewModels;
-using Shared.CheatEngine;
+using Shared.DebugCommands;
 using Shared.Systems;
 using UI.ViewModels;
 using UnityEngine;
