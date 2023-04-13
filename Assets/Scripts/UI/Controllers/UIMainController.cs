@@ -50,7 +50,7 @@ namespace UI.Controllers
             _uiSceneLoaded = true;
 
 #if (UNITY_EDITOR || DEVELOPMENT_BUILD) && (UNITY_ANDROID || UNITY_IPHONE)
-            DebugCommands.CreateMobileConsole(UISceneReferenceHolder.Canvas.GetComponent<RectTransform>().rect.height, UISceneReferenceHolder.Canvas.transform);
+            DebugCommandSystem.CreateMobileConsole(UISceneReferenceHolder.Canvas.GetComponent<RectTransform>().rect.height, UISceneReferenceHolder.Canvas.transform);
 #endif
 		}
 

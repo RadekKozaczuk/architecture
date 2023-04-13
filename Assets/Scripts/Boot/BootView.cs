@@ -29,7 +29,11 @@ namespace Boot
         [SerializeField]
         EventSystem _eventSystem = null!;
 
-        static bool _isCoreSceneLoaded;
+        [SerializeField]
+        [Range(0.1f, 0.5f)]
+        float _tripleClickDuration = 0.5f;
+
+		static bool _isCoreSceneLoaded;
         static GameStateMachine<GameState> _gameStateSystem = null!;
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -40,7 +44,7 @@ namespace Boot
 
         void Start()
         {
-            Architecture.Initialize(0.5f); // todo: tutaj przekaż to co w debug command configu było wcześniej
+            Architecture.Initialize(_tripleClickDuration);
 
             _gameStateSystem = new GameStateMachine<GameState>(
                 new List<(GameState from, GameState to, Func<(int[]?, int[]?)>? scenesToLoadUnload)>
