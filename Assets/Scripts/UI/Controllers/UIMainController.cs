@@ -45,16 +45,9 @@ namespace UI.Controllers
 
         public void CustomLateUpdate() { }
 
-        internal static void OnUISceneLoaded()
-        {
-            _uiSceneLoaded = true;
+        internal static void OnUISceneLoaded() => _uiSceneLoaded = true;
 
-#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && (UNITY_ANDROID || UNITY_IPHONE)
-            DebugCommandSystem.CreateMobileConsole(UISceneReferenceHolder.Canvas.GetComponent<RectTransform>().rect.height, UISceneReferenceHolder.Canvas.transform);
-#endif
-		}
-
-		[React]
+        [React]
         [Preserve]
         void OnInventoryChangedSignal(InventoryChangedSignal _) { }
     }

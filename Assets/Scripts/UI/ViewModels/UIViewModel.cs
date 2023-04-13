@@ -39,6 +39,10 @@ namespace UI.ViewModels
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             _uiConfig.InputActionAsset.FindActionMap(UIConstants.DebugCommandsMap).Enable();
 #endif
+
+#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && (UNITY_ANDROID || UNITY_IPHONE)
+            Shared.DebugCommands.DebugCommandSystem.CreateMobileConsole(UISceneReferenceHolder.Canvas);
+#endif
         }
 
         public static void BootingOnExit() { }
