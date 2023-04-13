@@ -38,10 +38,11 @@ namespace UI.ViewModels
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             _uiConfig.InputActionAsset.FindActionMap(UIConstants.DebugCommandsMap).Enable();
+            Shared.DebugCommands.DebugCommandSystem.Canvas = UISceneReferenceHolder.Canvas;
 #endif
 
 #if (UNITY_EDITOR || DEVELOPMENT_BUILD) && (UNITY_ANDROID || UNITY_IPHONE)
-            Shared.DebugCommands.DebugCommandSystem.CreateMobileConsole(UISceneReferenceHolder.Canvas);
+            Shared.DebugCommands.DebugCommandSystem.CreateMobileConsole();
 #endif
         }
 

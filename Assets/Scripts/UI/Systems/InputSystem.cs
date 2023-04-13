@@ -47,7 +47,21 @@ namespace UI.Systems
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             // DebugCommands bindings
             InputActionMap debugCommands = _uiConfig.InputActionAsset.FindActionMap(UIConstants.DebugCommandsMap);
-            debugCommands.FindAction(ToggleConsole).performed += _ => DebugCommandSystem.CreateConsole(UISceneReferenceHolder.Canvas.transform, _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap));
+            debugCommands.FindAction(ToggleConsole).performed += _ =>
+            {
+                InputActionMap gamePlayActionMap = _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap);
+
+                if (DebugCommandSystem.IsConsoleOpen)
+                {
+                    DebugCommandSystem.CloseConsole();
+                    gamePlayActionMap.Enable();
+                }
+                else
+                {
+                    DebugCommandSystem.OpenConsole();
+                    gamePlayActionMap.Disable();
+                }
+            };
             debugCommands.FindAction(TakeBestMatch).performed += _ => DebugCommandSystem.TakeBestMatchAsCommand();
 #endif
         }
