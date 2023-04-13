@@ -7,15 +7,17 @@ using Common.Enums;
 using Common.Systems;
 using GameLogic.ViewModels;
 using Presentation.ViewModels;
+#if (UNITY_EDITOR || DEVELOPMENT_BUILD)
 using Shared.DebugCommands;
+#endif
 using Shared.Systems;
 using UI.ViewModels;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using Shared;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 using Common.Config;
-using Shared;
 #endif
 
 namespace Boot

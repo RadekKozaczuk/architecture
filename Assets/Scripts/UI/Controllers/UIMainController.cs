@@ -2,10 +2,11 @@ using Common.Signals;
 using ControlFlow.Interfaces;
 using ControlFlow.SignalProcessing;
 using JetBrains.Annotations;
-using Shared.DebugCommands;
 using UI.Systems;
-using UnityEngine;
 using UnityEngine.Scripting;
+#if (UNITY_EDITOR || DEVELOPMENT_BUILD)
+using Shared.DebugCommands;
+#endif
 
 namespace UI.Controllers
 {

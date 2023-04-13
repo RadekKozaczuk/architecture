@@ -1,5 +1,4 @@
 using UI.Views;
-using Shared.DebugCommands;
 
 namespace UI
 {
