@@ -36,9 +36,7 @@ namespace UI.Controllers
             InputSystem.CustomUpdate();
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            // should be DebugCommands.CustomUpdate() so the internal data is hidden
-            //if (DebugUIData.DebugConsoleView != null)
-                //DebugUIData.DebugConsoleView.UpdatePlaceholderText();
+            DebugCommands.CustomUpdate();
 #endif
         }
 
