@@ -37,7 +37,7 @@ namespace UI.Controllers
             InputSystem.CustomUpdate();
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            DebugCommands.CustomUpdate();
+            DebugCommandSystem.CustomUpdate();
 #endif
         }
 

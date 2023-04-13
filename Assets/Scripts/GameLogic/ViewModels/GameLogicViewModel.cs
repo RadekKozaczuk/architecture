@@ -1,5 +1,6 @@
 using System;
 using Common;
+using Common.Signals;
 using Common.Systems;
 using ControlFlow.DependencyInjector.Attributes;
 using ControlFlow.DependencyInjector.Interfaces;
@@ -8,6 +9,7 @@ using GameLogic.Systems;
 using JetBrains.Annotations;
 using Presentation.ViewModels;
 using Shared;
+using Shared.Systems;
 using UnityEngine.Scripting;
 
 namespace GameLogic.ViewModels
@@ -65,5 +67,9 @@ namespace GameLogic.ViewModels
         public static void LoadGame()
         {
         }
+
+        public static void WinMission() => SignalProcessor.SendSignal(new MissionCompleteSignal());
+
+        public static void FailMission() => SignalProcessor.SendSignal(new MissionFailedSignal());
     }
 }

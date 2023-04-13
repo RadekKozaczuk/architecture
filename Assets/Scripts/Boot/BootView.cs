@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using Common;
 using Common.Enums;
-using Common.Signals;
 using Common.Systems;
 using GameLogic.ViewModels;
 using Presentation.ViewModels;
@@ -41,7 +40,7 @@ namespace Boot
 
         void Start()
         {
-            Injector.Run();
+            Architecture.Initialize(0.5f); // todo: tutaj przekaż to co w debug command configu było wcześniej
 
             _gameStateSystem = new GameStateMachine<GameState>(
                 new List<(GameState from, GameState to, Func<(int[]?, int[]?)>? scenesToLoadUnload)>
@@ -87,17 +86,17 @@ namespace Boot
 #endif
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-			DebugCommands.AddCommand(_ =>
+			DebugCommandSystem.AddCommand(_ =>
             {
-				SignalProcessor.SendSignal(new MissionCompleteSignal());
+				GameLogicViewModel.WinMission();
 			}, "win_mission", false, "Instantly wins the mission.");
 
-			DebugCommands.AddCommand(_ =>
+			DebugCommandSystem.AddCommand(_ =>
             {
-				SignalProcessor.SendSignal(new MissionFailedSignal());
-			}, "fail_mission", false, "Instantly fail current mission.");
+				GameLogicViewModel.FailMission();
+			}, "fail_mission", false, "Instantly fails current mission.");
 
-            DebugCommands.AddCommand(value =>
+            DebugCommandSystem.AddCommand(value =>
             {
                 MyDebug.Log($"Parametrized debug command called with the parameter equal to {value}");
             }, "give_gold", true, "Give gold");
