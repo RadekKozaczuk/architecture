@@ -4,24 +4,18 @@ using System.Collections.Generic;
 using System.IO;
 using Common;
 using Common.Enums;
-using Common.Signals;
 using Common.Systems;
 using GameLogic.ViewModels;
 using Presentation.ViewModels;
-using Shared.CheatEngine;
 using Shared.Systems;
 using UI.ViewModels;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using Shared;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 using Common.Config;
-#endif
-
-#if UNITY_EDITOR
-using Presentation.Views;
-using Common.Views;
-using GameLogic.Views;
+using Shared.DebugCommands;
 #endif
 
 namespace Boot
@@ -46,7 +40,7 @@ namespace Boot
 
         void Start()
         {
-            Injector.Run();
+            Architecture.Initialize();
 
             _gameStateSystem = new GameStateMachine<GameState>(
                 new List<(GameState from, GameState to, Func<(int[]?, int[]?)>? scenesToLoadUnload)>
@@ -91,28 +85,25 @@ namespace Boot
             Application.targetFrameRate = 120;
 #endif
 
-#if UNITY_EDITOR
-            var debugCommands = new GameObject("DebugCommands");
-            debugCommands.AddComponent<CommonDebugView>();
-            debugCommands.AddComponent<PresentationDebugView>();
-            debugCommands.AddComponent<GameLogicDebugView>();
-            DontDestroyOnLoad(debugCommands);
-#endif
-
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            DebugCommands.AddCommand(() =>
+			DebugCommandSystem.AddCommand(_ =>
             {
-                SignalProcessor.SendSignal(new MissionCompleteSignal());
-            }, "Win Mission", "Instantly wins the mission.");
+				GameLogicViewModel.WinMission();
+			}, "win_mission", false, "Instantly wins the mission.");
 
-            DebugCommands.AddCommand(() =>
+			DebugCommandSystem.AddCommand(_ =>
             {
-                SignalProcessor.SendSignal(new MissionFailedSignal());
-            }, "Fail Mission", "Instantly wins the current mission.");
+				GameLogicViewModel.FailMission();
+			}, "fail_mission", false, "Instantly fails current mission.");
+
+            DebugCommandSystem.AddCommand(value =>
+            {
+                MyDebug.Log($"Parametrized debug command called with the parameter equal to {value}");
+            }, "give_gold", true, "Give gold");
 #endif
-        }
+		}
 
-        void FixedUpdate()
+		void FixedUpdate()
         {
             if (_isCoreSceneLoaded)
             {

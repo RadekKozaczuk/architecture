@@ -22,7 +22,6 @@ namespace GameLogic.Controllers
     /// <see cref="ICustomLateUpdate" /> interface.
     /// </summary>
     [UsedImplicitly]
-    [ReactOnSignals]
     class GameLogicMainController : ICustomFixedUpdate, ICustomUpdate, ICustomLateUpdate
     {
         [Preserve]
@@ -43,9 +42,5 @@ namespace GameLogic.Controllers
 
             SignalProcessor.ExecuteSentSignals();
         }
-
-        [React]
-        [Preserve]
-        void OnMissionFailed(MissionFailedSignal _) { }
-    }
+	}
 }

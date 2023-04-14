@@ -1,7 +1,9 @@
 using Common.Enums;
 using Presentation.ViewModels;
+#if (UNITY_EDITOR || DEVELOPMENT_BUILD)
+using Shared.DebugCommands;
+#endif
 using UI.Config;
-using UI.Controllers;
 using UI.Popups;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -47,8 +49,22 @@ namespace UI.Systems
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             // DebugCommands bindings
             InputActionMap debugCommands = _uiConfig.InputActionAsset.FindActionMap(UIConstants.DebugCommandsMap);
-            debugCommands.FindAction(ToggleConsole).performed += _ => UIMainController.InstantiateDebugConsole();
-            debugCommands.FindAction(TakeBestMatch).performed += _ => UIData.DebugConsoleView.TakeBestMatchAsCommand();
+            debugCommands.FindAction(ToggleConsole).performed += _ =>
+            {
+                InputActionMap gamePlayActionMap = _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap);
+
+                if (DebugCommandSystem.IsConsoleOpen)
+                {
+                    DebugCommandSystem.CloseConsole();
+                    gamePlayActionMap.Enable();
+                }
+                else
+                {
+                    DebugCommandSystem.OpenConsole();
+                    gamePlayActionMap.Disable();
+                }
+            };
+            debugCommands.FindAction(TakeBestMatch).performed += _ => DebugCommandSystem.TakeBestMatchAsCommand();
 #endif
         }
 
