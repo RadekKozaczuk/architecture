@@ -40,7 +40,7 @@ namespace Boot
 
         void Start()
         {
-            Architecture.Initialize();
+            Architecture.Initialize(true);
 
             _gameStateSystem = new GameStateMachine<GameState>(
                 new List<(GameState from, GameState to, Func<(int[]?, int[]?)>? scenesToLoadUnload)>
