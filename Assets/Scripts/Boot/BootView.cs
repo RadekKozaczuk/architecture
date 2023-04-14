@@ -32,6 +32,9 @@ namespace Boot
         static bool _isCoreSceneLoaded;
         static GameStateMachine<GameState> _gameStateSystem = null!;
 
+        [SerializeField]
+        bool _fpsLogging;
+
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         // readonly fields are initialized only at the start and the null-forgiving operator is only a hint for the compiler.
         // Ultimately it will be null when readonly unless set differently.
@@ -40,7 +43,7 @@ namespace Boot
 
         void Start()
         {
-            Architecture.Initialize(true);
+            Architecture.Initialize(_fpsLogging);
 
             _gameStateSystem = new GameStateMachine<GameState>(
                 new List<(GameState from, GameState to, Func<(int[]?, int[]?)>? scenesToLoadUnload)>
