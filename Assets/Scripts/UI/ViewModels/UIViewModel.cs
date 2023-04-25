@@ -40,10 +40,6 @@ namespace UI.ViewModels
             _uiConfig.InputActionAsset.FindActionMap(UIConstants.DebugCommandsMap).Enable();
             Shared.DebugCommands.DebugCommandSystem.CanvasFunction = () => UISceneReferenceHolder.Canvas;
 #endif
-
-#if (UNITY_EDITOR || DEVELOPMENT_BUILD) && (UNITY_ANDROID || UNITY_IPHONE)
-            Shared.DebugCommands.DebugCommandSystem.CreateMobileConsole();
-#endif
         }
 
         public static void BootingOnExit() { }

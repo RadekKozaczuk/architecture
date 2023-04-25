@@ -113,8 +113,11 @@ namespace Boot
                 GameLogicViewModel.CustomFixedUpdate();
                 PresentationViewModel.CustomFixedUpdate();
                 UIViewModel.CustomFixedUpdate();
-            }
-        }
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+				DebugCommandSystem.CustomUpdate();
+#endif
+			}
+		}
 
         void Update()
         {

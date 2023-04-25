@@ -36,10 +36,6 @@ namespace UI.Controllers
                 return;
 
             InputSystem.CustomUpdate();
-
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            DebugCommandSystem.CustomUpdate();
-#endif
         }
 
         public void CustomFixedUpdate() { }
