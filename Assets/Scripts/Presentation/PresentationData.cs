@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Presentation.Views;
 
 namespace Presentation
@@ -8,5 +9,6 @@ namespace Presentation
     static class PresentationData
     {
         internal static PlayerView Player;
+        internal static readonly List<PlayerNetworkView> NetworkPlayers = new ();
     }
 }

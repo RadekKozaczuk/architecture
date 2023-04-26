@@ -15,6 +15,16 @@ namespace Common
         /// </summary>
         public static bool LoadRequested;
 
+        /// <summary>
+        /// Has game been run in multiplayer mode.
+        /// </summary>
+        public static bool IsMultiplayer;
+
+        // todo: cant be true if is Multiplayer is false
+        public static bool IsClient;
+
+        public static bool IsServer;
+
         public static Level CurrentLevel;
 
         public static BinaryReader SaveGameReader;

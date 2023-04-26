@@ -7,7 +7,7 @@ namespace Presentation
     class LevelSceneReferenceHolder : MonoBehaviour
     {
         [SerializeField]
-        internal PlayerView Player;
+        internal SpawnPointView[] SpawnPoints;
 
         [SerializeField]
         internal List<Collider2D> Colliders;

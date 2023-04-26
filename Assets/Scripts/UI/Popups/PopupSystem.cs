@@ -86,6 +86,7 @@ namespace UI.Popups
             ShowNextPopupFromQueueIfAny();
         }
 
+        //Code analyzer disable RAD214 **Reason**
         internal static void ClosePopup(AbstractPopupView popup)
         {
             Assert.False(CurrentPopup == null, "You cannot call ClosePopup if there is no active popup.");

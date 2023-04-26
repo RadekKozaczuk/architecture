@@ -93,7 +93,7 @@ namespace Presentation.Controllers
             {
                 HandleMusic();
             }
-            else if(_asyncOperationHandles[id].IsDone)
+            else if (_asyncOperationHandles[id].IsDone)
             {
                 _asyncOperationHandles[id] = _config.Music[id].LoadAssetAsync<AudioClip>();
                 _asyncOperationHandles[id].Completed += asyncOperationHandle =>
