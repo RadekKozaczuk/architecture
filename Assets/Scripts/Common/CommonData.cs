@@ -23,6 +23,11 @@ namespace Common
         // todo: cant be true if is Multiplayer is false
         public static bool IsClient;
 
+        /// <summary>
+        /// We cannot use <see cref="NetworkManager.IsServer"/> as that field can be true together with <see cref="NetworkManager.IsClient"/>
+        /// when the game is run on a host.
+        /// Our IsServer will be true only when the given instance is hosting or running the server.
+        /// </summary>
         public static bool IsServer;
 
         public static Level CurrentLevel;

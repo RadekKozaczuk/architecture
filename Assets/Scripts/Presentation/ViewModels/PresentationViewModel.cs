@@ -32,10 +32,32 @@ namespace Presentation.ViewModels
         [Inject]
         readonly PresentationMainController _presentationMainController;
 
+        readonly List<ulong> _clientIds = new();
+
         [Preserve]
         PresentationViewModel() { }
 
-        public void Initialize() => _instance = this;
+        public void Initialize()
+        {
+            _instance = this;
+
+            // this is called for the host too
+            NetworkManager.Singleton.OnClientConnectedCallback += clientId =>
+            {
+                if (CommonData.IsServer)
+                {
+                    Debug.Log($"ON CLIENT CONNECTED {clientId}");
+                    _clientIds.Add(clientId);
+
+                    // we can only give the ownership to the client when the client exists
+                    if (clientId == 1)
+                    {
+                        Debug.Log($"CHANGE OWNERSHIP {_clientIds[1]}");
+                        PresentationData.NetworkPlayers[1].NetworkObj.ChangeOwnership(_clientIds[1]);
+                    }
+                }
+            };
+        }
 
         public static void CustomUpdate() => _instance._presentationMainController.CustomUpdate();
 
@@ -67,7 +89,8 @@ namespace Presentation.ViewModels
                     spawnPoint = levelSceneReferenceHolder.SpawnPoints[0].transform;
 
                     // spawn locally
-                    PlayerNetworkView player = Object.Instantiate(_playerConfig.PlayerServerPrefab, spawnPoint.position, spawnPoint.rotation, container);
+                    PlayerNetworkView player = Object.Instantiate(
+                        _playerConfig.PlayerServerPrefab, spawnPoint.position, spawnPoint.rotation, container);
                     PresentationData.NetworkPlayers.Add(player);
 
                     // spawn over the network
