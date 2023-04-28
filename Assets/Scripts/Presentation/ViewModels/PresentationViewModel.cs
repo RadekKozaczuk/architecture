@@ -33,6 +33,7 @@ namespace Presentation.ViewModels
         readonly PresentationMainController _presentationMainController;
 
         readonly List<ulong> _clientIds = new();
+        static LevelSceneReferenceHolder _level;
 
         [Preserve]
         PresentationViewModel() { }
@@ -44,16 +45,24 @@ namespace Presentation.ViewModels
             // this is called for the host too
             NetworkManager.Singleton.OnClientConnectedCallback += clientId =>
             {
+                Debug.Log($"ON CLIENT CONNECTED {clientId}");
                 if (CommonData.IsServer)
                 {
-                    Debug.Log($"ON CLIENT CONNECTED {clientId}");
                     _clientIds.Add(clientId);
 
                     // we can only give the ownership to the client when the client exists
                     if (clientId == 1)
                     {
                         Debug.Log($"CHANGE OWNERSHIP {_clientIds[1]}");
-                        PresentationData.NetworkPlayers[1].NetworkObj.ChangeOwnership(_clientIds[1]);
+                        Transform spawnPoint = _level.SpawnPoints[1].transform;
+                        PlayerNetworkView player = Object.Instantiate(
+                            _playerConfig.PlayerClientPrefab, spawnPoint.position,
+                            spawnPoint.rotation, PresentationSceneReferenceHolder.PlayerContainer);
+
+                        PresentationData.NetworkPlayers.Add(player);
+
+                        // spawn over the network
+                        player.NetworkObj.SpawnWithOwnership(_clientIds[1], true);
                     }
                 }
             };
@@ -73,7 +82,7 @@ namespace Presentation.ViewModels
         public static void OnLevelSceneLoaded()
         {
             // load level data
-            var levelSceneReferenceHolder = GameObject.FindWithTag("LevelSceneReferenceHolder").GetComponent<LevelSceneReferenceHolder>();
+            _level = GameObject.FindWithTag("LevelSceneReferenceHolder").GetComponent<LevelSceneReferenceHolder>();
 
             Transform container = PresentationSceneReferenceHolder.PlayerContainer;
             Transform spawnPoint;
@@ -82,11 +91,12 @@ namespace Presentation.ViewModels
             {
                 if (CommonData.IsClient)
                 {
-                    NetworkManager.Singleton.StartClient();
+                    bool flag = NetworkManager.Singleton.StartClient();
+                    Debug.Log($"Client started successfully: {flag}, id: {NetworkManager.Singleton.LocalClientId}");
                 }
                 else if (CommonData.IsServer)
                 {
-                    spawnPoint = levelSceneReferenceHolder.SpawnPoints[0].transform;
+                    spawnPoint = _level.SpawnPoints[0].transform;
 
                     // spawn locally
                     PlayerNetworkView player = Object.Instantiate(
@@ -96,20 +106,13 @@ namespace Presentation.ViewModels
                     // spawn over the network
                     player.NetworkObj.Spawn(true);
 
-                    // spawn locally
-                    player = Object.Instantiate(
-                        _playerConfig.PlayerClientPrefab, levelSceneReferenceHolder.SpawnPoints[1].transform.position,
-                        Quaternion.identity, container);
-
-                    PresentationData.NetworkPlayers.Add(player);
-
-                    // spawn over the network
-                    player.NetworkObj.Spawn(true);
+                    // todo and then delete it on client connect
+                    // spawn the single player version
                 }
             }
             else
             {
-                spawnPoint = levelSceneReferenceHolder.SpawnPoints[0].transform;
+                spawnPoint = _level.SpawnPoints[0].transform;
 
                 // single player
                 PlayerView player = Object.Instantiate(_playerConfig.PlayerPrefab, spawnPoint.position, spawnPoint.rotation, container);

@@ -1,4 +1,4 @@
-﻿using Presentation.Config;
+using Presentation.Config;
 using Shared;
 using Unity.Netcode;
 using UnityEngine;
@@ -23,16 +23,23 @@ namespace Presentation.Views
             if (!IsOwner)
                 return;
 
+            Debug.Log("Player Move");
             Vector3 movement = new Vector3(v.x, 0, v.y) * _playerConfig.PlayerSpeed;
             transform.Translate(movement * Time.deltaTime);
         }
 
         public override void OnNetworkSpawn()
         {
-            _hp.OnValueChanged += (byte prevVal, byte newVal) =>
+            if (IsOwner)
+            {
+                Debug.Log("OnNetworkSpawn");
+                PresentationData.NetworkPlayers.Add(this);
+            }
+
+            /*_hp.OnValueChanged += (byte prevVal, byte newVal) =>
             {
                 Debug.Log("fdg");
-            };
+            };*/
             base.OnNetworkSpawn();
         }
 

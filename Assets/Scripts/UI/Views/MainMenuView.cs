@@ -50,6 +50,8 @@ namespace UI.Views
             GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
             CommonData.IsMultiplayer = true;
             CommonData.IsServer = true;
+
+            GameLogicViewModel.NetworkSetup();
             NetworkManager.Singleton.StartHost();
         }
 
