@@ -1,6 +1,6 @@
 using Common.Enums;
 using Presentation.ViewModels;
-#if (UNITY_EDITOR || DEVELOPMENT_BUILD)
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
 using Shared.DebugCommands;
 #endif
 using UI.Config;
