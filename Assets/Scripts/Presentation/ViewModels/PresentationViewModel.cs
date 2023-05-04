@@ -59,7 +59,7 @@ namespace Presentation.ViewModels
                             _playerConfig.PlayerClientPrefab, spawnPoint.position,
                             spawnPoint.rotation, PresentationSceneReferenceHolder.PlayerContainer);
 
-                        PresentationData.NetworkPlayers.Add(player);
+                        PresentationData.NetworkPlayers[1] = player;
 
                         // spawn over the network
                         player.NetworkObj.SpawnWithOwnership(_clientIds[1], true);
@@ -85,7 +85,6 @@ namespace Presentation.ViewModels
             _level = GameObject.FindWithTag("LevelSceneReferenceHolder").GetComponent<LevelSceneReferenceHolder>();
 
             Transform container = PresentationSceneReferenceHolder.PlayerContainer;
-            Transform spawnPoint;
 
             if (CommonData.IsMultiplayer)
             {
@@ -96,27 +95,20 @@ namespace Presentation.ViewModels
                 }
                 else if (CommonData.IsServer)
                 {
-                    spawnPoint = _level.SpawnPoints[0].transform;
+                    Transform spawnPoint = _level.SpawnPoints[0].transform;
 
                     // spawn locally
                     PlayerNetworkView player = Object.Instantiate(
                         _playerConfig.PlayerServerPrefab, spawnPoint.position, spawnPoint.rotation, container);
-                    PresentationData.NetworkPlayers.Add(player);
+                    PresentationData.NetworkPlayers[(int)PlayerId.Player2] = player;
 
                     // spawn over the network
                     player.NetworkObj.Spawn(true);
-
-                    // todo and then delete it on client connect
-                    // spawn the single player version
                 }
             }
             else
             {
-                spawnPoint = _level.SpawnPoints[0].transform;
-
-                // single player
-                PlayerView player = Object.Instantiate(_playerConfig.PlayerPrefab, spawnPoint.position, spawnPoint.rotation, container);
-                PresentationData.Player = player;
+                SpawnSinglePlayer(_level.GetSpawnPoint(PlayerId.Player1));
             }
 
             if (CommonData.LoadRequested)
@@ -163,10 +155,13 @@ namespace Presentation.ViewModels
         {
             if (CommonData.IsMultiplayer)
             {
-                List<PlayerNetworkView> players = PresentationData.NetworkPlayers;
-                for (int i = 0; i < players.Count; i++)
+                PlayerNetworkView[] players = PresentationData.NetworkPlayers;
+                for (int i = 0; i < players.Length; i++)
                 {
                     PlayerNetworkView player = players[i];
+                    if (player == null)
+                        continue;
+
                     if (player.NetworkObj.IsOwner)
                         player.Move(movementInput.normalized);
                 }
@@ -183,6 +178,14 @@ namespace Presentation.ViewModels
 
             SaveLoadUtils.Write(writer, player.position);
             SaveLoadUtils.Write(writer, player.rotation);
+        }
+
+        static void SpawnSinglePlayer(Transform spawnPoint)
+        {
+            PlayerView player = Object.Instantiate(
+                _playerConfig.PlayerPrefab, spawnPoint.position, spawnPoint.rotation, PresentationSceneReferenceHolder.PlayerContainer);
+            PresentationData.Player = player;
+            PresentationData.InstantiatedSpPlayers[1] = player;
         }
     }
 }

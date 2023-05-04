@@ -1,3 +1,4 @@
+using Common.Enums;
 using Presentation.Config;
 using Shared;
 using Unity.Netcode;
@@ -33,7 +34,7 @@ namespace Presentation.Views
             if (IsOwner)
             {
                 Debug.Log("OnNetworkSpawn");
-                PresentationData.NetworkPlayers.Add(this);
+                PresentationData.NetworkPlayers[(int)PlayerId.Player2] = this;
             }
 
             /*_hp.OnValueChanged += (byte prevVal, byte newVal) =>

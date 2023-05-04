@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Common.Enums;
 using Presentation.Views;
 using UnityEngine;
 
@@ -6,6 +7,8 @@ namespace Presentation
 {
     class LevelSceneReferenceHolder : MonoBehaviour
     {
+        internal Transform GetSpawnPoint(PlayerId playerId) => SpawnPoints[(int)playerId].transform;
+
         [SerializeField]
         internal SpawnPointView[] SpawnPoints;
 
