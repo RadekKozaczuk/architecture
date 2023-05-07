@@ -39,6 +39,7 @@ namespace UI.ViewModels
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             _uiConfig.InputActionAsset.FindActionMap(UIConstants.DebugCommandsMap).Enable();
             Shared.DebugCommands.DebugCommandSystem.CanvasFunction = () => UISceneReferenceHolder.Canvas;
+            Shared.DebugCommands.DebugCommandSystem.OnUISceneLoaded();
 #endif
         }
 
