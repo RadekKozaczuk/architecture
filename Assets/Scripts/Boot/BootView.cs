@@ -13,6 +13,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using Shared;
+using UnityEngine.UIElements;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 using Common.Config;
 using Shared.DebugCommands;
@@ -89,20 +90,18 @@ namespace Boot
 #endif
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-			DebugCommandSystem.AddCommand(_ =>
+			new DebugCommand("win_mission", "Instantly wins the mission.", () =>
+			{
+                GameLogicViewModel.WinMission();
+			});
+            new DebugCommand("fail_mission", "Instantly fails current mission.", () =>
+			{
+                GameLogicViewModel.FailMission();
+			});
+            new DebugCommand<int>("give_gold", "Give gold", 100, 0, 1000, (value) =>
             {
-				GameLogicViewModel.WinMission();
-			}, "win_mission", false, "Instantly wins the mission.");
-
-			DebugCommandSystem.AddCommand(_ =>
-            {
-				GameLogicViewModel.FailMission();
-			}, "fail_mission", false, "Instantly fails current mission.");
-
-            DebugCommandSystem.AddCommand(value =>
-            {
-                MyDebug.Log($"Parametrized debug command called with the parameter equal to {value}");
-            }, "give_gold", true, "Give gold");
+				MyDebug.Log($"Parametrized debug command called with the parameter equal to {value}");
+			});
 #endif
 		}
 
