@@ -100,7 +100,7 @@ namespace Presentation.ViewModels
                     // spawn locally
                     PlayerNetworkView player = Object.Instantiate(
                         _playerConfig.PlayerServerPrefab, spawnPoint.position, spawnPoint.rotation, container);
-                    PresentationData.NetworkPlayers[(int)PlayerId.Player2] = player;
+                    PresentationData.NetworkPlayers[(int)PlayerId.Player1] = player;
 
                     // spawn over the network
                     player.NetworkObj.Spawn(true);
