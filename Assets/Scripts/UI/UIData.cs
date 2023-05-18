@@ -1,5 +1,3 @@
-using UI.Views;
-
 namespace UI
 {
     /// <summary>

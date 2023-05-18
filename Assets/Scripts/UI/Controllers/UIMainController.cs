@@ -4,7 +4,7 @@ using ControlFlow.SignalProcessing;
 using JetBrains.Annotations;
 using UI.Systems;
 using UnityEngine.Scripting;
-#if (UNITY_EDITOR || DEVELOPMENT_BUILD)
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
 using Shared.DebugCommands;
 #endif
 

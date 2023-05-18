@@ -47,12 +47,12 @@ namespace Boot
             Architecture.Initialize(_fpsLogging);
 
             _gameStateSystem = new GameStateMachine<GameState>(
-                new List<(GameState from, GameState to, Func<(int[]?, int[]?)>? scenesToLoadUnload)>
+                new List<(GameState from, GameState to, Func<(int[]?, int[]?)>? scenesToLoadUnload, Action? betweenLoadAndUnload)>
                 {
-                    (GameState.Booting, GameState.MainMenu, () => (new[] {Constants.MainMenuScene, Constants.CoreScene, Constants.UIScene}, null)),
-                    (GameState.MainMenu, GameState.Gameplay, () => (ScenesToLoadFromMainMenuToGameplay(), new[] {Constants.MainMenuScene})),
-                    (GameState.Gameplay, GameState.MainMenu, () => (new[] {Constants.MainMenuScene}, ScenesToUnloadFromGameplayToMainMenu())),
-                    (GameState.Gameplay, GameState.Gameplay, ScenesToLoadUnloadFromGameplayToGameplay)
+                    (GameState.Booting, GameState.MainMenu, () => (new[] {Constants.MainMenuScene, Constants.CoreScene, Constants.UIScene}, null), null),
+                    (GameState.MainMenu, GameState.Gameplay, () => (ScenesToLoadFromMainMenuToGameplay(), new[] {Constants.MainMenuScene}), null),
+                    (GameState.Gameplay, GameState.MainMenu, () => (new[] {Constants.MainMenuScene}, ScenesToUnloadFromGameplayToMainMenu()), null),
+                    (GameState.Gameplay, GameState.Gameplay, ScenesToLoadUnloadFromGameplayToGameplay, null)
                 },
                 new (GameState, Action?, Action?)[]
                 {
