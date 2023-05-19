@@ -88,11 +88,10 @@ namespace Boot
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             DebugCommandSystem.Add("win_mission", "Instantly wins the mission.", GameLogicViewModel.WinMission);
             DebugCommandSystem.Add("fail_mission", "Instantly fails current mission.", GameLogicViewModel.FailMission);
-            // todo: do that too
-            /*new DebugCommand<int>("give_gold", "Give gold", 100, 0, 1000, value =>
+            DebugCommandSystem.AddParameterized<int>("give_gold", "Give gold", 100f, 0f, 1000f, value =>
             {
-				MyDebug.Log($"Parametrized debug command called with the parameter equal to {value}");
-			});*/
+                MyDebug.Log($"Parametrized debug command called with the parameter equal to {value}");
+            });
 #endif
 		}
 
