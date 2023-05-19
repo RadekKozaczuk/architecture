@@ -526,7 +526,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09282304f52849fc96c70bcd9e9be860, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpawnPoints:
+  _spawnPoints:
   - {fileID: 1439662912}
   - {fileID: 1617604260}
   Colliders: []

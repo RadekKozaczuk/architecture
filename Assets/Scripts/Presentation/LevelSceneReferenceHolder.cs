@@ -7,10 +7,12 @@ namespace Presentation
 {
     class LevelSceneReferenceHolder : MonoBehaviour
     {
-        internal Transform GetSpawnPoint(PlayerId playerId) => SpawnPoints[(int)playerId].transform;
+        // todo: add assertion that checks if spawn points are not duplicated
+
+        internal Transform GetSpawnPoint(PlayerId playerId) => _spawnPoints[(int)playerId].transform;
 
         [SerializeField]
-        internal SpawnPointView[] SpawnPoints;
+        SpawnPointView[] _spawnPoints;
 
         [SerializeField]
         internal List<Collider2D> Colliders;

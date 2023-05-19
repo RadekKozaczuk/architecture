@@ -54,7 +54,7 @@ namespace Presentation.ViewModels
                     if (clientId == 1)
                     {
                         Debug.Log($"CHANGE OWNERSHIP {_clientIds[1]}");
-                        Transform spawnPoint = _level.SpawnPoints[1].transform;
+                        Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player2).transform;
                         PlayerNetworkView player = Object.Instantiate(
                             _playerConfig.PlayerClientPrefab, spawnPoint.position,
                             spawnPoint.rotation, PresentationSceneReferenceHolder.PlayerContainer);
@@ -95,7 +95,7 @@ namespace Presentation.ViewModels
                 }
                 else if (CommonData.IsServer)
                 {
-                    Transform spawnPoint = _level.SpawnPoints[0].transform;
+                    Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player1).transform;
 
                     // spawn locally
                     PlayerNetworkView player = Object.Instantiate(
@@ -180,12 +180,23 @@ namespace Presentation.ViewModels
             SaveLoadUtils.Write(writer, player.rotation);
         }
 
+        /// <summary>
+        /// If player instance already exists it simply moves it to the spawn point.
+        /// </summary>
         static void SpawnSinglePlayer(Transform spawnPoint)
         {
-            PlayerView player = Object.Instantiate(
-                _playerConfig.PlayerPrefab, spawnPoint.position, spawnPoint.rotation, PresentationSceneReferenceHolder.PlayerContainer);
-            PresentationData.Player = player;
-            PresentationData.InstantiatedSpPlayers[1] = player;
+            if (PresentationData.Player == null)
+            {
+                PlayerView player = Object.Instantiate(
+                    _playerConfig.PlayerPrefab, spawnPoint.position, spawnPoint.rotation, PresentationSceneReferenceHolder.PlayerContainer);
+                PresentationData.Player = player;
+            }
+            else
+            {
+                Transform transform = PresentationData.Player.transform;
+                transform.position = spawnPoint.position;
+                transform.rotation = spawnPoint.rotation;
+            }
         }
     }
 }
