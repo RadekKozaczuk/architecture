@@ -1,10 +1,16 @@
-﻿using Common;
+﻿using System;
+using Common;
 using Common.Enums;
 using Common.Systems;
 using GameLogic.ViewModels;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.Services.Authentication;
+using Unity.Services.Core;
+using Unity.Services.Lobbies;
+using Unity.Services.Lobbies.Models;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -44,8 +50,18 @@ namespace UI.Views
             GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
         }
 
-        static void Coop()
+        static async void Coop()
         {
+            await UnityServices.InitializeAsync();
+
+            AuthenticationService.Instance.SignedIn += () =>
+            {
+                Debug.Log("Sign In " + AuthenticationService.Instance.PlayerId);
+            };
+
+            // this will create an account automatically without need to provide password or username 
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+
             CommonData.CurrentLevel = Level.HubLocation;
             GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
             CommonData.IsMultiplayer = true;
