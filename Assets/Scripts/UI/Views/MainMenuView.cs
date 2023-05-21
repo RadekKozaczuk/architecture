@@ -8,7 +8,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
-using Unity.Services.Lobbies;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -51,16 +50,6 @@ namespace UI.Views
 
         static async void Coop()
         {
-            await UnityServices.InitializeAsync();
-
-            AuthenticationService.Instance.SignedIn += () =>
-            {
-                Debug.Log("Sign In " + AuthenticationService.Instance.PlayerId);
-            };
-
-            // this will create an account automatically without need to provide password or username
-            await AuthenticationService.Instance.SignInAnonymouslyAsync();
-
             PopupSystem.ShowPopup(PopupType.LobbyList);
 
             return;

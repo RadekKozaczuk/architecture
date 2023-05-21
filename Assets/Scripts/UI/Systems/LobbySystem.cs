@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Shared;
@@ -26,8 +27,17 @@ namespace UI.Systems
         static float _heartbeatTimer;
         static float _lobbyUpdateTimer;
 
+        const float LobbyQueryRate = 1.1f;
+        static float _lobbyQueryTimer;
+        static Action<List<(string lobbyName, int playerCount, int playerMax)>> _pendingLobbyQueryCallback;
+
         internal static void CustomUpdate()
         {
+            if (_lobbyQueryTimer > 0)
+                _lobbyQueryTimer -= Time.deltaTime;
+            else if (_pendingLobbyQueryCallback != null)
+                ExecuteLobbyQueryCallback();
+
             if (_joinedLobby == null)
                 return;
 
@@ -63,7 +73,26 @@ namespace UI.Systems
             }
         }
 
-        internal static async Task<List<(string lobbyName, int playerCount, int playerMax)>> ListLobbies()
+        internal static void GetLobbies(Action<List<(string lobbyName, int playerCount, int playerMax)>> callback)
+        {
+            Assert.IsNotNull(callback, "callback function cannot be null.");
+
+            _pendingLobbyQueryCallback = callback;
+        }
+
+        static async void ExecuteLobbyQueryCallback()
+        {
+            _lobbyQueryTimer = LobbyQueryRate;
+            List<(string lobbyName, int playerCount, int playerMax)> lobbies = await QueryLobbies();
+            _pendingLobbyQueryCallback.Invoke(lobbies);
+            _pendingLobbyQueryCallback = null;
+        }
+
+        /// <summary>
+        /// Rate limit for lobby querying is 1 query per second.
+        /// Calling this method more often will result in an error.
+        /// </summary>
+        static async Task<List<(string lobbyName, int playerCount, int playerMax)>> QueryLobbies()
         {
             List<(string, int, int)> list = new();
             try

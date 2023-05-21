@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
-using Common;
+﻿using System;
+using System.Collections.Generic;
 using Common.Enums;
-using Common.Systems;
 using GameLogic.ViewModels;
 using UI.Config;
 using UI.Systems;
 using UI.Views;
+using Unity.Services.Authentication;
+using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -40,21 +41,44 @@ namespace UI.Popups.Views
 
         internal override void Initialize()
         {
-            //_hub.interactable = CommonData.CurrentLevel != Level.HubLocation;
+            Troll();
         }
 
-        async void RefreshAction()
+        internal override void Close()
         {
-            List<(string, int, int)> qq = await LobbySystem.ListLobbies();
+            // todo: do we need to deinititialize unity serices?
 
-            foreach ((string lobbyName, int playerCount, int playerMax) in qq)
+            AuthenticationService.Instance.SignOut();
+        }
+
+        async void Troll()
+        {
+            await UnityServices.InitializeAsync();
+
+            AuthenticationService.Instance.SignedIn += () =>
+            {
+                Debug.Log("Sign In " + AuthenticationService.Instance.PlayerId);
+                _refresh.interactable = true;
+                _join.interactable = true;
+                _create.interactable = true;
+            };
+
+            // this will create an account automatically without need to provide password or username
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        }
+
+        void RefreshAction()
+        {
+            LobbySystem.GetLobbies(LobbyQueryResultCallback);
+        }
+
+        void LobbyQueryResultCallback(List<(string lobbyName, int playerCount, int playerMax)> lobbies)
+        {
+            foreach ((string lobbyName, int playerCount, int playerMax) in lobbies)
             {
                 LobbyListElementView view = Instantiate(_config.LobbyListElement, _list.transform);
                 view.Initialize(lobbyName, playerCount, playerMax);
             }
-
-            //GameLogicViewModel.SaveGame();
-            //_loadGame.interactable = GameLogicViewModel.SaveFileExist;
         }
 
         static void JoinAction()
