@@ -33,7 +33,8 @@ namespace Common.Enums
 
     public enum PopupType
     {
-        QuitGame
+        QuitGame,
+        LobbyList
     }
 
     public enum PlayerId

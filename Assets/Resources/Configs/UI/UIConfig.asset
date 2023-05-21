@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InputActionAsset: {fileID: -944628639613478452, guid: d304856d3c9d1504c993edfe6aa33fee, type: 3}
   SwipeMinPercentage: 0.2
+  LobbyListElement: {fileID: 8581436061393823233, guid: b44a6980699c9cf4aafd2738daa06453, type: 3}

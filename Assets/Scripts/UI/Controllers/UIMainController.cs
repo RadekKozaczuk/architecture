@@ -5,6 +5,7 @@ using ControlFlow.SignalProcessing;
 using JetBrains.Annotations;
 using Shared;
 using UI.Systems;
+using Unity.Services.Authentication;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
@@ -32,9 +33,6 @@ namespace UI.Controllers
     {
         static bool _uiSceneLoaded;
 
-        Lobby _hostLobby;
-        float _heartbeatTimer;
-
         [Preserve]
         UIMainController() { }
 
@@ -49,10 +47,7 @@ namespace UI.Controllers
             DebugCommandSystem.CustomUpdate();
 #endif
 
-            if (_hostLobby == null)
-                return;
-
-            HandleLobbyHeartbeat();
+            LobbySystem.CustomUpdate();
         }
 
         public void CustomFixedUpdate() { }
@@ -60,114 +55,6 @@ namespace UI.Controllers
         public void CustomLateUpdate() { }
 
         internal static void OnUISceneLoaded() => _uiSceneLoaded = true;
-
-        // lobbies are automatically turn inactive if the lobby does not recieve any data
-        // for 30 seconds
-        async void CreateLobby()
-        {
-            try
-            {
-                string lobbyName = "MyLobby";
-                int maxPlayers = 4;
-                var options = new CreateLobbyOptions
-                {
-                    IsPrivate = false,
-                    Player = GetPlayer()
-                };
-
-                _hostLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
-
-                Debug.Log("Created lobby " + _hostLobby.Name + " " + _hostLobby.MaxPlayers);
-            }
-            catch (LobbyServiceException e)
-            {
-                Debug.Log(e);
-            }
-        }
-
-        async void ListLobbies()
-        {
-            try
-            {
-                var options = new QueryLobbiesOptions {Count = 25};
-
-                QueryResponse queryResponse = await Lobbies.Instance.QueryLobbiesAsync(options);
-                Debug.Log("Lobbies found: " + queryResponse.Results.Count);
-
-                foreach (Lobby lobby in queryResponse.Results)
-                {
-                    Debug.Log(lobby.Name + " " + lobby.MaxPlayers);
-                }
-            }
-            catch (LobbyServiceException e)
-            {
-                Debug.Log(e);
-            }
-        }
-
-        async void JoinLobby(string lobbyCode)
-        {
-            try
-            {
-                var options = new JoinLobbyByCodeOptions
-                {
-                    Player = GetPlayer()
-                };
-
-                Lobby lobby = await Lobbies.Instance.JoinLobbyByCodeAsync(lobbyCode, options);
-                Debug.Log("Joined lobby");
-                PrintPlayers(lobby);
-            }
-            catch (LobbyServiceException e)
-            {
-                Debug.Log(e);
-            }
-        }
-
-        async void QuickJoinLobby()
-        {
-            try
-            {
-                await Lobbies.Instance.QuickJoinLobbyAsync();
-                Debug.Log("Joined lobby");
-            }
-            catch (LobbyServiceException e)
-            {
-                Debug.Log(e);
-            }
-        }
-
-        static void PrintPlayers(Lobby lobby)
-        {
-            foreach (Player player in lobby.Players)
-            {
-                Debug.Log($"Player info, id: {player.Id}, name: {player.Data["playerName"].Value}");
-            }
-        }
-
-        static Player GetPlayer() =>
-            new()
-            {
-                Data = new Dictionary<string, PlayerDataObject>
-                {
-                    {"playerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, "name1")}
-                }
-            };
-
-        /// <summary>
-        /// Lobbies becomes inactive after 30s. In order to prevent that we have to ping it every 20s or so.
-        /// </summary>
-        void HandleLobbyHeartbeat()
-        {
-            Assert.IsNotNull(_hostLobby, $"This method should not be called if {nameof(_hostLobby)} variable is null");
-
-            _heartbeatTimer -= Time.deltaTime;
-            if (_heartbeatTimer < 0f)
-            {
-                _heartbeatTimer = 20;
-                LobbyService.Instance.SendHeartbeatPingAsync(_hostLobby.Id);
-            }
-        }
 
         [React]
         [Preserve]
