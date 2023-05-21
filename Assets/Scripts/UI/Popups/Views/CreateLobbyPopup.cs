@@ -17,6 +17,9 @@ namespace UI.Popups.Views
         Slider _slider;
 
         [SerializeField]
+        TextMeshProUGUI _playerCount;
+
+        [SerializeField]
         Button _create;
 
         static readonly UIConfig _config;
@@ -25,34 +28,19 @@ namespace UI.Popups.Views
 
         void Awake()
         {
-            _input.onValueChanged.AddListener(JoinAction);
+            _input.onValueChanged.AddListener(InputChanged);
             _slider.onValueChanged.AddListener(SliderChanged);
             _create.onClick.AddListener(CreateAction);
         }
 
-        internal override void Initialize()
-        {
-            
-        }
+        void SliderChanged(float value) => _playerCount.text = ((int)value).ToString();
 
-        internal override void Close()
-        {
-            
-        }
-
-        void SliderChanged(float value)
-        {
-            
-        }
-        
-        static void JoinAction(string text)
-        {
-
-        }
+        void InputChanged(string text) => _create.interactable = text.Length > 0;
 
         void CreateAction()
         {
             GameLogicViewModel.CreateLobby(_input.text, (int)_slider.value);
+            PopupSystem.CloseCurrentPopup();
         }
     }
 }

@@ -39,7 +39,7 @@ namespace UI.Popups.Views
 
         internal override void Initialize()
         {
-            Troll();
+            InitializeAsync();
         }
 
         internal override void Close()
@@ -49,7 +49,7 @@ namespace UI.Popups.Views
             AuthenticationService.Instance.SignOut();
         }
 
-        async void Troll()
+        async void InitializeAsync()
         {
             await UnityServices.InitializeAsync();
 
