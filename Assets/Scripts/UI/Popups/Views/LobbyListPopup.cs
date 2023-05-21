@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Common.Enums;
 using GameLogic.ViewModels;
 using UI.Config;
-using UI.Systems;
 using UI.Views;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
@@ -69,7 +67,7 @@ namespace UI.Popups.Views
 
         void RefreshAction()
         {
-            LobbySystem.GetLobbies(LobbyQueryResultCallback);
+            GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback);
         }
 
         void LobbyQueryResultCallback(List<(string lobbyName, int playerCount, int playerMax)> lobbies)
@@ -88,7 +86,7 @@ namespace UI.Popups.Views
 
         static void CreateAction()
         {
-            // open create lobby popup
+            PopupSystem.ShowPopup(PopupType.CreateLobby);
         }
     }
 }

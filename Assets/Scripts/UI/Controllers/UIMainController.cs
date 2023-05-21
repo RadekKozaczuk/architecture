@@ -1,14 +1,8 @@
-using System.Collections.Generic;
 using Common.Signals;
 using ControlFlow.Interfaces;
 using ControlFlow.SignalProcessing;
 using JetBrains.Annotations;
-using Shared;
 using UI.Systems;
-using Unity.Services.Authentication;
-using Unity.Services.Lobbies;
-using Unity.Services.Lobbies.Models;
-using UnityEngine;
 using UnityEngine.Scripting;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 using Shared.DebugCommands;
@@ -46,8 +40,6 @@ namespace UI.Controllers
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             DebugCommandSystem.CustomUpdate();
 #endif
-
-            LobbySystem.CustomUpdate();
         }
 
         public void CustomFixedUpdate() { }

@@ -8,7 +8,7 @@ using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
-namespace UI.Systems
+namespace GameLogic.Systems
 {
     /// <summary>
     /// This is system is responsible for creating a multiplayer lobby.
@@ -27,6 +27,9 @@ namespace UI.Systems
         static float _heartbeatTimer;
         static float _lobbyUpdateTimer;
 
+        /// <summary>
+        /// Maximum allowed lobby query rate is 1 per seconds. Executing queries faster will result in an error.
+        /// </summary>
         const float LobbyQueryRate = 1.1f;
         static float _lobbyQueryTimer;
         static Action<List<(string lobbyName, int playerCount, int playerMax)>> _pendingLobbyQueryCallback;
@@ -51,19 +54,17 @@ namespace UI.Systems
 
         // lobbies are automatically turn inactive if the lobby does not receive any data
         // for 30 seconds
-        static async void CreateLobby()
+        internal static async void CreateLobby(string lobbyName, int maxPlayers)
         {
             try
             {
-                const string LobbyName = "MyLobby";
-                const int MaxPlayers = 4;
                 var options = new CreateLobbyOptions
                 {
                     IsPrivate = false,
                     Player = GetPlayer()
                 };
 
-                _hostLobby = await LobbyService.Instance.CreateLobbyAsync(LobbyName, MaxPlayers, options);
+                _hostLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
 
                 Debug.Log("Created lobby " + _hostLobby.Name + " " + _hostLobby.MaxPlayers);
             }
@@ -73,7 +74,7 @@ namespace UI.Systems
             }
         }
 
-        internal static void GetLobbies(Action<List<(string lobbyName, int playerCount, int playerMax)>> callback)
+        internal static void RequestGetLobbies(Action<List<(string lobbyName, int playerCount, int playerMax)>> callback)
         {
             Assert.IsNotNull(callback, "callback function cannot be null.");
 

@@ -17,6 +17,7 @@ namespace UI.Popups
     [ReactOnSignals]
     static class PopupSystem
     {
+        // ReSharper disable once MemberCanBePrivate.Global
         internal static AbstractPopupView? CurrentPopup { get; private set; }
 
         static Image? _blockingPanel;
@@ -24,7 +25,7 @@ namespace UI.Popups
         static readonly PopupConfig _config = null!;
         static readonly UIConfig _uiConfig = null!;
 
-        public static void ShowPopup(params PopupType[] popupTypes)
+        public static void ShowPopups(params PopupType[] popupTypes)
         {
             Assert.False(popupTypes.Length == 0, "You cannot show zero popups.");
 
@@ -41,28 +42,30 @@ namespace UI.Popups
         {
             if (CurrentPopup == null)
             {
-                AbstractPopupView prefab = _config.PopupPrefabs[(int)popupType];
-
-                Assert.False(prefab == null, "Prefab cannot be null.");
-
                 _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap).Disable();
                 _uiConfig.InputActionAsset.FindActionMap(UIConstants.PopupActionMap).Enable();
-
-                AbstractPopupView popup;
-                if (blockingPanel)
-                {
-                    _blockingPanel = Object.Instantiate(_config.BlockingPanelPrefab, UISceneReferenceHolder.PopupContainer);
-                    popup = Object.Instantiate(prefab, _blockingPanel.transform)!;
-                }
-                else
-                    popup = Object.Instantiate(prefab, UISceneReferenceHolder.PopupContainer)!;
-
-                popup.Initialize();
-                popup.gameObject.SetActive(true);
-                CurrentPopup = popup;
+                InstantiatePopup(_config.PopupPrefabs[(int)popupType], blockingPanel);
             }
             else
-                _scheduledPopups.Enqueue((popupType, blockingPanel, null));
+            {
+                InstantiatePopup(_config.PopupPrefabs[(int)popupType], false);
+            }
+        }
+
+        static void InstantiatePopup(AbstractPopupView prefab, bool blockingPanel)
+        {
+            AbstractPopupView popup;
+            if (blockingPanel)
+            {
+                _blockingPanel = Object.Instantiate(_config.BlockingPanelPrefab, UISceneReferenceHolder.PopupContainer);
+                popup = Object.Instantiate(prefab, UISceneReferenceHolder.PopupContainer)!;
+            }
+            else
+                popup = Object.Instantiate(prefab, UISceneReferenceHolder.PopupContainer)!;
+
+            popup.Initialize();
+            popup.gameObject.SetActive(true);
+            CurrentPopup = popup;
         }
 
         public static void CloseCurrentPopup()

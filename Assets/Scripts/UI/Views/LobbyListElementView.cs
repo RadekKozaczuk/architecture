@@ -14,7 +14,8 @@ namespace UI.Views
 
         internal void Initialize(string lobbyName, int playerCount, int playerMax)
         {
-            
+            _name.text = lobbyName;
+            _playerCount.text = $"{playerCount}/{playerMax}";
         }
     }
 }
