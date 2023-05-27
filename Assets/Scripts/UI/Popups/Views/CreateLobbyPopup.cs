@@ -37,10 +37,16 @@ namespace UI.Popups.Views
 
         void InputChanged(string text) => _create.interactable = text.Length > 0;
 
-        void CreateAction()
+        async void CreateAction()
         {
-            GameLogicViewModel.CreateLobby(_input.text, (int)_slider.value);
-            PopupSystem.CloseCurrentPopup();
+            bool result = await GameLogicViewModel.CreateLobby(_input.text, (int)_slider.value);
+
+            if (result)
+            {
+                PopupSystem.CloseCurrentPopup();
+                PopupSystem.CloseCurrentPopup();
+                PopupSystem.ShowPopup(PopupType.Lobby);
+            }
         }
     }
 }

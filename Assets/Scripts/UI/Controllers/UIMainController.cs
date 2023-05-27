@@ -2,6 +2,8 @@ using Common.Signals;
 using ControlFlow.Interfaces;
 using ControlFlow.SignalProcessing;
 using JetBrains.Annotations;
+using UI.Popups;
+using UI.Popups.Views;
 using UI.Systems;
 using UnityEngine.Scripting;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -51,5 +53,13 @@ namespace UI.Controllers
         [React]
         [Preserve]
         void OnInventoryChangedSignal(InventoryChangedSignal _) { }
+
+        [React]
+        [Preserve]
+        void OnInventoryChangedSignal(LobbyChangedSignal s)
+        {
+            var q = (LobbyPopup)PopupSystem.CurrentPopup;
+            q.SetValues(s.LobbyName, null);
+        }
     }
 }

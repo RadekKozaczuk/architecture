@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Common;
 using Common.Signals;
 using Common.Systems;
@@ -75,20 +76,17 @@ namespace GameLogic.ViewModels
 
         public static void FailMission() => SignalProcessor.SendSignal(new MissionFailedSignal());
 
-        public static void NetworkSetup()
-        {
-            NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
-        }
+        public static void NetworkSetup() => NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
 
         public static void RequestGetLobbies(Action<List<(string lobbyName, int playerCount, int playerMax)>> callback)
         {
             LobbySystem.RequestGetLobbies(callback);
         }
 
-        public static void CreateLobby(string lobbyName, int maxPlayers)
-        {
-            LobbySystem.CreateLobby(lobbyName, maxPlayers);
-        }
+        /// <summary>
+        /// Returns true if the lobby was successfully created.
+        /// </summary>
+        public static async Task<bool> CreateLobby(string lobbyName, int maxPlayers) => await LobbySystem.CreateLobby(lobbyName, maxPlayers);
 
         // todo: should be moved to MainController probably
         static void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)

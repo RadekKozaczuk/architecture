@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.Signals;
 using Shared;
+using Shared.Systems;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
@@ -54,7 +56,7 @@ namespace GameLogic.Systems
 
         // lobbies are automatically turn inactive if the lobby does not receive any data
         // for 30 seconds
-        internal static async void CreateLobby(string lobbyName, int maxPlayers)
+        internal static async Task<bool> CreateLobby(string lobbyName, int maxPlayers)
         {
             try
             {
@@ -66,11 +68,19 @@ namespace GameLogic.Systems
 
                 _hostLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
 
+                var players = new List<(string playerName, bool isHost)>();
+                foreach (Player player in _hostLobby.Players)
+                    // todo: name is an additional data and has to be transferred differently
+                    players.Add((player.Id, player.Id == _hostLobby.HostId));
+
+                SignalProcessor.SendSignal(new LobbyChangedSignal(_hostLobby.Name, players));
                 Debug.Log("Created lobby " + _hostLobby.Name + " " + _hostLobby.MaxPlayers);
+                return true;
             }
             catch (LobbyServiceException e)
             {
                 Debug.Log(e);
+                return true;
             }
         }
 
