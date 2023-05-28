@@ -1,10 +1,12 @@
 using Common.Enums;
+using GameLogic.ViewModels;
 using Presentation.ViewModels;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 using Shared.DebugCommands;
 #endif
 using UI.Config;
 using UI.Popups;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -33,7 +35,16 @@ namespace UI.Systems
         {
             // MainMenu bindings
             InputActionMap mainMenu = _uiConfig.InputActionAsset.FindActionMap(UIConstants.MainMenuActionMap);
-            mainMenu.FindAction(Quit).performed += _ => Application.Quit();
+            mainMenu.FindAction(Quit).performed += _ =>
+            {
+                GameLogicViewModel.QuitGame();
+
+#if UNITY_EDITOR
+                EditorApplication.Exit(0);
+#else
+                Application.Quit();
+#endif
+            };
 
             // Gameplay bindings
             InputActionMap gameplay = _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap);

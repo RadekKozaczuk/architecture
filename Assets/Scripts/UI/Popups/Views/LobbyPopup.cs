@@ -61,6 +61,7 @@ namespace UI.Popups.Views
         static void LeaveAction()
         {
             GameLogicViewModel.LeaveLobby();
+            PopupSystem.CloseCurrentPopup();
         }
     }
 }

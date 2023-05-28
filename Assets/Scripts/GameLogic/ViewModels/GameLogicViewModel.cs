@@ -74,21 +74,26 @@ namespace GameLogic.ViewModels
         {
         }
 
+        /// <summary>
+        /// If the instance hosted a lobby, the lobby will be deleted.
+        /// </summary>
+        public static void QuitGame()
+        {
+            LobbySystem.SignOut();
+        }
+
         public static void WinMission() => SignalProcessor.SendSignal(new MissionCompleteSignal());
 
         public static void FailMission() => SignalProcessor.SendSignal(new MissionFailedSignal());
 
         public static void NetworkSetup() => NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
 
-        public static void RequestGetLobbies(Action<List<(string lobbyCode, string lobbyName, int playerCount, int playerMax)>> callback)
-        {
-            LobbySystem.RequestGetLobbies(callback);
-        }
+        public static void RequestGetLobbies(Action<List<(string lobbyId, string lobbyName, int playerCount, int playerMax)>> callback) 
+            => LobbySystem.RequestGetLobbies(callback);
 
-        public static void JoinLobby(string lobbyCode)
-        {
-            LobbySystem.JoinLobby(lobbyCode);
-        }
+        public static void JoinLobbyById(string lobbyId) => LobbySystem.JoinLobbyById(lobbyId);
+
+        public static void JoinLobbyByCode(string lobbyCode) => LobbySystem.JoinLobbyByCode(lobbyCode);
 
         /// <summary>
         /// Returns true if the lobby was successfully created.

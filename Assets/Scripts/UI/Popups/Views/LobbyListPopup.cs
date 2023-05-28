@@ -31,10 +31,10 @@ namespace UI.Popups.Views
 
         void Awake()
         {
-            _refresh.onClick.AddListener(RefreshAction);
-            _join.onClick.AddListener(JoinAction);
-            _join.interactable = GameLogicViewModel.SaveFileExist;
-            _create.onClick.AddListener(CreateAction);
+            _refresh.onClick.AddListener(() => GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback));
+            _join.onClick.AddListener(() => GameLogicViewModel.JoinLobbyById(LobbyListElementView.SelectedLobby.LobbyId)); // join the selected
+            _join.interactable = false;
+            _create.onClick.AddListener(() => PopupSystem.ShowPopup(PopupType.CreateLobby));
         }
 
         internal override void Initialize()
@@ -49,8 +49,15 @@ namespace UI.Popups.Views
             AuthenticationService.Instance.SignOut();
         }
 
+        internal void SelectedLobbyChanged(bool selected)
+        {
+            _join.interactable = selected;
+        }
+
         async void InitializeAsync()
         {
+            Debug.Log("UnityServices.InitializeAsync & AuthenticationService.Instance.SignInAnonymouslyAsync call");
+
             await UnityServices.InitializeAsync();
 
             AuthenticationService.Instance.SignedIn += () =>
@@ -65,11 +72,6 @@ namespace UI.Popups.Views
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
         }
 
-        void RefreshAction()
-        {
-            GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback);
-        }
-
         void LobbyQueryResultCallback(List<(string lobbyCode, string lobbyName, int playerCount, int playerMax)> lobbies)
         {
             foreach ((string lobbyCode, string lobbyName, int playerCount, int playerMax) in lobbies)
@@ -77,17 +79,6 @@ namespace UI.Popups.Views
                 LobbyListElementView view = Instantiate(_config.LobbyListElement, _list.transform);
                 view.Initialize(lobbyCode, lobbyName, playerCount, playerMax);
             }
-        }
-
-        static void JoinAction()
-        {
-            // join the selected
-            GameLogicViewModel.JoinLobby(LobbyListElementView.SelectedLobby.LobbyCode);
-        }
-
-        static void CreateAction()
-        {
-            PopupSystem.ShowPopup(PopupType.CreateLobby);
         }
     }
 }
