@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Common.Enums;
+using GameLogic.ViewModels;
 using TMPro;
 using UI.Config;
 using UnityEngine;
@@ -54,12 +55,12 @@ namespace UI.Popups.Views
 
         static void KickAction()
         {
-
+            GameLogicViewModel.KickPlayer("f");
         }
 
         static void LeaveAction()
         {
-            PopupSystem.ShowPopup(PopupType.CreateLobby);
+            GameLogicViewModel.LeaveLobby();
         }
     }
 }

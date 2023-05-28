@@ -17,6 +17,12 @@ namespace GameLogic.Systems
     /// </summary>
     static class LobbySystem
     {
+        const float LobbyUpdateTimerMax = 1.1f;
+        /// <summary>
+        /// Maximum allowed lobby query rate is 1 per seconds. Executing queries faster will result in an error.
+        /// </summary>
+        const float LobbyQueryRate = 1.1f;
+
         /// <summary>
         /// This is only populated on host.
         /// </summary>
@@ -29,12 +35,13 @@ namespace GameLogic.Systems
         static float _heartbeatTimer;
         static float _lobbyUpdateTimer;
 
-        /// <summary>
-        /// Maximum allowed lobby query rate is 1 per seconds. Executing queries faster will result in an error.
-        /// </summary>
-        const float LobbyQueryRate = 1.1f;
         static float _lobbyQueryTimer;
-        static Action<List<(string lobbyName, int playerCount, int playerMax)>> _pendingLobbyQueryCallback;
+        static Action<List<(string lobbyCode, string lobbyName, int playerCount, int playerMax)>> _pendingLobbyQueryCallback;
+
+        /// <summary>
+        /// Indicates that the player changed it's name.
+        /// </summary>
+        static bool _lobbyIsDirty;
 
         internal static void CustomUpdate()
         {
@@ -43,11 +50,17 @@ namespace GameLogic.Systems
             else if (_pendingLobbyQueryCallback != null)
                 ExecuteLobbyQueryCallback();
 
+            if (_lobbyIsDirty)
+            {
+                UpdatePlayerName(GameLogicData.PlayerName);
+            }
+
             if (_joinedLobby == null)
                 return;
 
             HandleLobbyCallForUpdates();
 
+            // host cannot be not null if joined is null that's wny it is below
             if (_hostLobby == null)
                 return;
 
@@ -63,7 +76,13 @@ namespace GameLogic.Systems
                 var options = new CreateLobbyOptions
                 {
                     IsPrivate = false,
-                    Player = GetPlayer()
+                    Player = new Player
+                    {
+                        Data = new Dictionary<string, PlayerDataObject>
+                        {
+                            {"playerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, GameLogicData.PlayerName)}
+                        }
+                    }
                 };
 
                 _hostLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
@@ -71,7 +90,7 @@ namespace GameLogic.Systems
                 var players = new List<(string playerName, bool isHost)>();
                 foreach (Player player in _hostLobby.Players)
                     // todo: name is an additional data and has to be transferred differently
-                    players.Add((player.Id, player.Id == _hostLobby.HostId));
+                    players.Add((GameLogicData.PlayerName, player.Id == _hostLobby.HostId));
 
                 SignalProcessor.SendSignal(new LobbyChangedSignal(_hostLobby.Name, players));
                 Debug.Log("Created lobby " + _hostLobby.Name + " " + _hostLobby.MaxPlayers);
@@ -84,7 +103,7 @@ namespace GameLogic.Systems
             }
         }
 
-        internal static void RequestGetLobbies(Action<List<(string lobbyName, int playerCount, int playerMax)>> callback)
+        internal static void RequestGetLobbies(Action<List<(string lobbyCode, string lobbyName, int playerCount, int playerMax)>> callback)
         {
             Assert.IsNotNull(callback, "callback function cannot be null.");
 
@@ -94,7 +113,7 @@ namespace GameLogic.Systems
         static async void ExecuteLobbyQueryCallback()
         {
             _lobbyQueryTimer = LobbyQueryRate;
-            List<(string lobbyName, int playerCount, int playerMax)> lobbies = await QueryLobbies();
+            List<(string lobbyCode, string lobbyName, int playerCount, int playerMax)> lobbies = await QueryLobbies();
             _pendingLobbyQueryCallback.Invoke(lobbies);
             _pendingLobbyQueryCallback = null;
         }
@@ -103,9 +122,9 @@ namespace GameLogic.Systems
         /// Rate limit for lobby querying is 1 query per second.
         /// Calling this method more often will result in an error.
         /// </summary>
-        static async Task<List<(string lobbyName, int playerCount, int playerMax)>> QueryLobbies()
+        static async Task<List<(string lobbyCode, string lobbyName, int playerCount, int playerMax)>> QueryLobbies()
         {
-            List<(string, int, int)> list = new();
+            List<(string, string, int, int)> list = new();
             try
             {
                 var options = new QueryLobbiesOptions {Count = 25};
@@ -113,7 +132,7 @@ namespace GameLogic.Systems
                 QueryResponse queryResponse = await Lobbies.Instance.QueryLobbiesAsync(options);
                 Debug.Log("Lobbies found: " + queryResponse.Results.Count);
 
-                list.AddRange(queryResponse.Results.Select(lobby => (lobby.Name, lobby.Players.Count, lobby.MaxPlayers)));
+                list.AddRange(queryResponse.Results.Select(lobby => (lobby.LobbyCode, lobby.Name, lobby.Players.Count, lobby.MaxPlayers)));
             }
             catch (LobbyServiceException e)
             {
@@ -129,7 +148,13 @@ namespace GameLogic.Systems
             {
                 var options = new JoinLobbyByCodeOptions
                 {
-                    Player = GetPlayer()
+                    Player = new Player
+                    {
+                        Data = new Dictionary<string, PlayerDataObject>
+                        {
+                            {"playerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, GameLogicData.PlayerName)}
+                        }
+                    }
                 };
 
                 Lobby lobby = await Lobbies.Instance.JoinLobbyByCodeAsync(lobbyCode, options);
@@ -165,15 +190,6 @@ namespace GameLogic.Systems
                 Debug.Log($"Player info, id: {player.Id}, name: {player.Data["playerName"].Value}");
             }
         }
-
-        static Player GetPlayer() =>
-            new()
-            {
-                Data = new Dictionary<string, PlayerDataObject>
-                {
-                    {"playerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, "name1")}
-                }
-            };
 
         /// <summary>
         /// When we update lobby we need to update the local reference.
@@ -217,14 +233,14 @@ namespace GameLogic.Systems
             }
             catch (LobbyServiceException e)
             {
-                Debug.Log(e);
+                MyDebug.Log(e.ToString());
             }
         }
 
         /// <summary>
-        /// 
+        /// a
         /// </summary>
-        static async void LeaveLobby()
+        internal static async void LeaveLobby()
         {
             try
             {
@@ -232,23 +248,25 @@ namespace GameLogic.Systems
             }
             catch (LobbyServiceException e)
             {
-                Debug.Log(e);
+                MyDebug.Log(e.ToString());
             }
         }
 
         /// <summary>
-        /// 
+        /// Only host can kick players. Host cannot kick himself.
         /// </summary>
-        static async void KickPlayer()
+        internal static async void KickPlayer(string playerId)
         {
+            Assert.IsNotNull(playerId, $"Parameter {nameof(playerId)} cannot be null.");
+
             try
             {
                 // todo: it should be taken from a parameter
-                await LobbyService.Instance.RemovePlayerAsync(_joinedLobby.Id, _joinedLobby.Players[1].Id);
+                await LobbyService.Instance.RemovePlayerAsync(_joinedLobby.Id, playerId);
             }
             catch (LobbyServiceException e)
             {
-                Debug.Log(e);
+                MyDebug.Log(e.ToString());
             }
         }
 
@@ -256,7 +274,7 @@ namespace GameLogic.Systems
         /// Gives lobby host role to one of the players.
         /// </summary>
         /// <param name="playerId"></param>
-        static async void MigrateLobbyHost(string playerId)
+        static async void GiveHost(string playerId)
         {
             // todo: it should be taken from a parameter
             try
@@ -265,7 +283,7 @@ namespace GameLogic.Systems
             }
             catch (LobbyServiceException e)
             {
-                Debug.Log(e);
+                MyDebug.Log(e.ToString());
             }
         }
 
@@ -284,6 +302,9 @@ namespace GameLogic.Systems
             }
         }
 
+        /// <summary>
+        /// Every <see cref="LobbyUpdateTimerMax"/> it updates <see cref="_joinedLobby"/> reference with a new instance.
+        /// </summary>
         static async void HandleLobbyCallForUpdates()
         {
             Assert.IsNotNull(_joinedLobby, $"This method should not be called if {nameof(_hostLobby)} variable is null");
@@ -293,16 +314,13 @@ namespace GameLogic.Systems
                 _lobbyUpdateTimer -= Time.deltaTime;
                 if (_lobbyUpdateTimer < 0f)
                 {
-                    const float LobbyUpdateTimerMax = 1.1f;
                     _lobbyUpdateTimer = LobbyUpdateTimerMax;
-
-                    Lobby lobby = await LobbyService.Instance.GetLobbyAsync(_joinedLobby.Id);
-                    _joinedLobby = lobby;
+                    _joinedLobby = await LobbyService.Instance.GetLobbyAsync(_joinedLobby.Id);
                 }
             }
             catch (LobbyServiceException e)
             {
-
+                MyDebug.Log(e.ToString());
             }
         }
     }

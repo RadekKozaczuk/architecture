@@ -59,6 +59,8 @@ namespace GameLogic.ViewModels
         {
             if (CommonData.LoadRequested)
                 SaveLoadSystem.LoadGame();
+
+            GameLogicData.PlayerName = Utils.GenerateRandomString(5, 9);
         }
 
         public static void GameplayOnExit() { }
@@ -78,15 +80,24 @@ namespace GameLogic.ViewModels
 
         public static void NetworkSetup() => NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
 
-        public static void RequestGetLobbies(Action<List<(string lobbyName, int playerCount, int playerMax)>> callback)
+        public static void RequestGetLobbies(Action<List<(string lobbyCode, string lobbyName, int playerCount, int playerMax)>> callback)
         {
             LobbySystem.RequestGetLobbies(callback);
+        }
+
+        public static void JoinLobby(string lobbyCode)
+        {
+            LobbySystem.JoinLobby(lobbyCode);
         }
 
         /// <summary>
         /// Returns true if the lobby was successfully created.
         /// </summary>
         public static async Task<bool> CreateLobby(string lobbyName, int maxPlayers) => await LobbySystem.CreateLobby(lobbyName, maxPlayers);
+
+        public static void KickPlayer(string playerId) => LobbySystem.KickPlayer(playerId);
+
+        public static void LeaveLobby() => LobbySystem.LeaveLobby();
 
         // todo: should be moved to MainController probably
         static void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)

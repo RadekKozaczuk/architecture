@@ -70,18 +70,19 @@ namespace UI.Popups.Views
             GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback);
         }
 
-        void LobbyQueryResultCallback(List<(string lobbyName, int playerCount, int playerMax)> lobbies)
+        void LobbyQueryResultCallback(List<(string lobbyCode, string lobbyName, int playerCount, int playerMax)> lobbies)
         {
-            foreach ((string lobbyName, int playerCount, int playerMax) in lobbies)
+            foreach ((string lobbyCode, string lobbyName, int playerCount, int playerMax) in lobbies)
             {
                 LobbyListElementView view = Instantiate(_config.LobbyListElement, _list.transform);
-                view.Initialize(lobbyName, playerCount, playerMax);
+                view.Initialize(lobbyCode, lobbyName, playerCount, playerMax);
             }
         }
 
         static void JoinAction()
         {
-
+            // join the selected
+            GameLogicViewModel.JoinLobby(LobbyListElementView.SelectedLobby.LobbyCode);
         }
 
         static void CreateAction()
