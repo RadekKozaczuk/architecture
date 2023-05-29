@@ -11,7 +11,6 @@ namespace Presentation
         internal static Transform VfxContainer;
         internal static Transform AudioContainer;
         internal static Transform PlayerContainer;
-        internal static Light DirectionalLight;
         internal static Camera MainMenuCamera;
         internal static Camera GameplayCamera;
         internal static AudioSource MusicAudioSource;
@@ -24,9 +23,6 @@ namespace Presentation
 
         [SerializeField]
         Transform _playerContainer;
-
-        [SerializeField]
-        Light _directionalLight;
 
         [SerializeField]
         Camera _mainCamera;
@@ -42,7 +38,6 @@ namespace Presentation
             VfxContainer = _vfxContainer;
             AudioContainer = _audioContainer;
             PlayerContainer = _playerContainer;
-            DirectionalLight = _directionalLight;
             MainMenuCamera = _mainCamera;
             GameplayCamera = _gameplayCamera;
             MusicAudioSource = _musicAudioSource;

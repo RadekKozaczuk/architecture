@@ -6,7 +6,6 @@ using Common.Signals;
 using Shared;
 using Shared.Systems;
 using Unity.Services.Authentication;
-using Unity.Services.Core;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
@@ -19,9 +18,9 @@ namespace GameLogic.Systems
     static class LobbySystem
     {
         /// <summary>
-        /// In seconds
+        /// In seconds. Heartbeat is limited to 5 requests per 30 seconds.
         /// </summary>
-        const float HeartbeatRate = 5f; // todo: should be 25
+        const float HeartbeatRate = 25f;
         const float LobbyUpdateTimerMax = 1.1f;
         /// <summary>
         /// Maximum allowed lobby query rate is 1 per seconds. Executing queries faster will result in an error.
@@ -37,7 +36,7 @@ namespace GameLogic.Systems
         /// This is populated both on host and on clients.
         /// </summary>
         static Lobby _joinedLobby;
-        static float _heartbeatTimer;
+        static float? _heartbeatTimer; // heartbeat time is null when heartbeat operation is in progress
         static float _lobbyUpdateTimer;
 
         static float _lobbyQueryTimer;
@@ -56,20 +55,14 @@ namespace GameLogic.Systems
                 ExecuteLobbyQueryCallback();
 
             if (_lobbyIsDirty)
-            {
                 UpdatePlayerName(GameLogicData.PlayerName);
-            }
 
-            /*if (_joinedLobby == null)
-                return;
-
-            HandleLobbyCallForUpdates();*/
+            if (_joinedLobby != null)
+                HandleLobbyCallForUpdates();
 
             // host cannot be not null if joined is null that's wny it is below
-            if (_hostLobby == null)
-                return;
-
-            HandleLobbyHeartbeat();
+            if (_hostLobby != null)
+                HandleLobbyHeartbeat();
         }
 
         // lobbies are automatically turn inactive if the lobby does not receive any data
@@ -221,9 +214,11 @@ namespace GameLogic.Systems
         /// </summary>
         internal static void SignOut()
         {
-            // delete lobby if any
+            // delete lobby if any and only one player is present
             if (_hostLobby != null)
                 LobbyService.Instance.DeleteLobbyAsync(_hostLobby.Id);
+
+            AuthenticationService.Instance.SignOut(true);
         }
 
         static void PrintPlayers(Lobby lobby)
@@ -258,7 +253,7 @@ namespace GameLogic.Systems
             try
             {
                 // we should make isDirty pattern and call update when update happened
-                Lobby lobby = await LobbyService.Instance.UpdatePlayerAsync(
+                _joinedLobby = await LobbyService.Instance.UpdatePlayerAsync(
                     _joinedLobby.Id,
                     AuthenticationService.Instance.PlayerId,
                     new UpdatePlayerOptions
@@ -285,7 +280,26 @@ namespace GameLogic.Systems
         {
             try
             {
-                await LobbyService.Instance.RemovePlayerAsync(_joinedLobby.Id, AuthenticationService.Instance.PlayerId);
+                ILobbyService lobby = LobbyService.Instance;
+                string playerId = AuthenticationService.Instance.PlayerId;
+
+                // if host is the last player, delete lobby 
+                if (_hostLobby == null)
+                {
+                    await lobby.RemovePlayerAsync(_joinedLobby.Id, playerId);
+                }
+                else
+                {
+                    if (_hostLobby.Players.Count > 1)
+                    {
+                        await lobby.RemovePlayerAsync(_hostLobby.Id, playerId);
+                        await lobby.DeleteLobbyAsync(_hostLobby.Id);
+                    }
+                    else
+                    {
+                        await lobby.RemovePlayerAsync(_hostLobby.Id, playerId);
+                    }
+                }
             }
             catch (LobbyServiceException e)
             {
@@ -329,21 +343,44 @@ namespace GameLogic.Systems
         }
 
         /// <summary>
-        /// Lobbies becomes inactive after 30s. In order to prevent that we have to ping it every 25s.
+        /// Lobbies becomes inactive after 30s. In order to prevent that we have to ping it every <see cref="HeartbeatRate"/>.
+        /// Heartbeat is disabled when player count reach the maximum.
+        /// It is enabled again when it is goes down below maximum.
         /// </summary>
-        static void HandleLobbyHeartbeat()
+        static async void HandleLobbyHeartbeat()
         {
             Assert.IsNotNull(_hostLobby, $"This method should not be called if {nameof(_hostLobby)} variable is null");
+
+            // null means operation is in progress
+            if (_heartbeatTimer == null)
+                return;
 
             _heartbeatTimer -= Time.deltaTime;
             //Debug.Log(_heartbeatTimer);
             if (_heartbeatTimer < 0f)
             {
-                _heartbeatTimer = HeartbeatRate;
+                _heartbeatTimer = null;
+                await RestoreSessionIfNeeded();
+
+                Debug.Log("is signed in: " + AuthenticationService.Instance.IsSignedIn);
                 Debug.Log("host id: " + _hostLobby.Id);
                 Debug.Log("player id: " + AuthenticationService.Instance.PlayerId);
-                LobbyService.Instance.SendHeartbeatPingAsync(_hostLobby.Id);
+                await LobbyService.Instance.SendHeartbeatPingAsync(_hostLobby.Id);
+                _heartbeatTimer = HeartbeatRate;
             }
+        }
+
+        /// <summary>
+        /// Player's session may occasionally expire.
+        /// This function should be called each time we call the lobby API to avoid 403 Unauthorized exception.
+        /// </summary>
+        static async Task RestoreSessionIfNeeded()
+        {
+            if (AuthenticationService.Instance.IsSignedIn)
+                return;
+
+            Debug.Log("Session expired. Restoration in progress.");
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
         }
 
         /// <summary>

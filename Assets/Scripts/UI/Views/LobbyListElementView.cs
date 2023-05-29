@@ -32,6 +32,9 @@ namespace UI.Views
         [SerializeField]
         Button _button;
 
+        [SerializeField]
+        Image _image;
+
         void Awake() => _button.onClick.AddListener(ButtonAction);
 
         internal void Initialize(string lobbyId, string lobbyName, int playerCount, int playerMax)
@@ -46,8 +49,20 @@ namespace UI.Views
             // first click
             if (SelectedLobby == null)
                 SelectedLobby = this;
+            else if (SelectedLobby == this)
+            {
+                SelectedLobby = null;
+                Color color = _image.color;
+                color.a = 0f;
+                _image.color = color;
+            }
             else
-                SelectedLobby = SelectedLobby == this ? null : this;
+            {
+                SelectedLobby = this;
+                Color color = _image.color;
+                color.a = 100f;
+                _image.color = color;
+            }
         }
     }
 }

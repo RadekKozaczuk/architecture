@@ -65,10 +65,7 @@ namespace GameLogic.ViewModels
 
         public static void GameplayOnExit() { }
 
-        public static void SaveGame()
-        {
-            SaveLoadSystem.SaveGame();
-        }
+        public static void SaveGame() => SaveLoadSystem.SaveGame();
 
         public static void LoadGame()
         {
@@ -77,10 +74,7 @@ namespace GameLogic.ViewModels
         /// <summary>
         /// If the instance hosted a lobby, the lobby will be deleted.
         /// </summary>
-        public static void QuitGame()
-        {
-            LobbySystem.SignOut();
-        }
+        public static void QuitGame() => LobbySystem.SignOut();
 
         public static void WinMission() => SignalProcessor.SendSignal(new MissionCompleteSignal());
 
@@ -88,12 +82,14 @@ namespace GameLogic.ViewModels
 
         public static void NetworkSetup() => NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
 
-        public static void RequestGetLobbies(Action<List<(string lobbyId, string lobbyName, int playerCount, int playerMax)>> callback) 
+        public static void RequestGetLobbies(Action<List<(string lobbyId, string lobbyName, int playerCount, int playerMax)>> callback)
             => LobbySystem.RequestGetLobbies(callback);
 
         public static void JoinLobbyById(string lobbyId) => LobbySystem.JoinLobbyById(lobbyId);
 
         public static void JoinLobbyByCode(string lobbyCode) => LobbySystem.JoinLobbyByCode(lobbyCode);
+
+        public static void QuickJoinLobby() => LobbySystem.QuickJoinLobby();
 
         /// <summary>
         /// Returns true if the lobby was successfully created.

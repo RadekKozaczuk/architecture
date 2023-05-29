@@ -60,12 +60,21 @@ namespace UI.Popups.Views
 
             await UnityServices.InitializeAsync();
 
+            // tokens are stored in PlayerPrefs
+            if (AuthenticationService.Instance.SessionTokenExists)
+                Debug.Log($"Cached token exist. Recovering the existing credentials.");
+            else
+                Debug.Log($"Cached token not found. Creating new anonymous credentials.");
+
             AuthenticationService.Instance.SignedIn += () =>
             {
-                Debug.Log("Sign In " + AuthenticationService.Instance.PlayerId);
+                Debug.Log($"Anonymous authentication completed successfully");
+                Debug.Log($"Player Id: {AuthenticationService.Instance.PlayerId}");
+                Debug.Log($"Access Token: {AuthenticationService.Instance.AccessToken}");
                 _refresh.interactable = true;
-                _join.interactable = true;
                 _create.interactable = true;
+
+                Debug.Log($"IsSignedIn: {AuthenticationService.Instance.IsSignedIn}");
             };
 
             // this will create an account automatically without need to provide password or username

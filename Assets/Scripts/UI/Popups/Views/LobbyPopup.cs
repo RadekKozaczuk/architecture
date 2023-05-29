@@ -51,7 +51,7 @@ namespace UI.Popups.Views
             _lobbyName.text = lobbyName;
         }
 
-        void GiveHostAction() { }
+        static void GiveHostAction() { }
 
         static void KickAction()
         {

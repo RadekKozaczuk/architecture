@@ -57,6 +57,7 @@ MonoBehaviour:
   _name: {fileID: 6506012995562374948}
   _playerCount: {fileID: 6506012995339846846}
   _button: {fileID: 2314431053599591718}
+  _image: {fileID: 7596548087502549507}
 --- !u!114 &2314431053599591718
 MonoBehaviour:
   m_ObjectHideFlags: 0

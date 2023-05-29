@@ -6,7 +6,6 @@ using Shared.DebugCommands;
 #endif
 using UI.Config;
 using UI.Popups;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -37,13 +36,20 @@ namespace UI.Systems
             InputActionMap mainMenu = _uiConfig.InputActionAsset.FindActionMap(UIConstants.MainMenuActionMap);
             mainMenu.FindAction(Quit).performed += _ =>
             {
-                GameLogicViewModel.QuitGame();
+                // if there is a popup - close it
+                // otherwise quit the game
+                if (PopupSystem.CurrentPopup == null)
+                {
+                    GameLogicViewModel.QuitGame();
 
 #if UNITY_EDITOR
-                EditorApplication.Exit(0);
+                    UnityEditor.EditorApplication.ExitPlaymode();
 #else
-                Application.Quit();
+                    Application.Quit();
 #endif
+                }
+                else
+                    PopupSystem.CloseCurrentPopup();
             };
 
             // Gameplay bindings
