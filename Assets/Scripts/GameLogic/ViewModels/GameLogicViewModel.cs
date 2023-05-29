@@ -85,7 +85,8 @@ namespace GameLogic.ViewModels
         public static void RequestGetLobbies(Action<List<(string lobbyId, string lobbyName, int playerCount, int playerMax)>> callback)
             => LobbySystem.RequestGetLobbies(callback);
 
-        public static void JoinLobbyById(string lobbyId) => LobbySystem.JoinLobbyById(lobbyId);
+        public static void JoinLobbyById(string lobbyId, Action<string, List<(string playerName, string playerId, bool isHost)>> callback)
+            => LobbySystem.JoinLobbyById(lobbyId, callback);
 
         public static void JoinLobbyByCode(string lobbyCode) => LobbySystem.JoinLobbyByCode(lobbyCode);
 

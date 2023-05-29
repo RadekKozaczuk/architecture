@@ -3,6 +3,7 @@ using Common.Enums;
 using GameLogic.ViewModels;
 using TMPro;
 using UI.Config;
+using UI.Views;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,9 +19,6 @@ namespace UI.Popups.Views
         Button _giveHost;
 
         [SerializeField]
-        Button _kick;
-
-        [SerializeField]
         Button _leave;
 
         [SerializeField]
@@ -33,7 +31,6 @@ namespace UI.Popups.Views
         void Awake()
         {
             _giveHost.onClick.AddListener(GiveHostAction);
-            _kick.onClick.AddListener(KickAction);
             _leave.onClick.AddListener(LeaveAction);
         }
 
@@ -46,17 +43,21 @@ namespace UI.Popups.Views
             // todo: leave the lobby and give away host to someone else
         }
 
-        internal void SetValues(string lobbyName, List<(string playerName, bool isHost)> players)
+        internal void SetValues(string lobbyName, List<(string playerName, string playerId, bool isHost)> players)
         {
             _lobbyName.text = lobbyName;
+
+            foreach (Transform child in _list.transform)
+                Destroy(child.gameObject);
+
+            foreach ((string playerName, string playerId, bool isHost) in players)
+            {
+                LobbyPlayerElementView view = Instantiate(_config.LobbyPlayerElementView, _list.transform);
+                view.Initialize(playerName, playerId, isHost);
+            }
         }
 
         static void GiveHostAction() { }
-
-        static void KickAction()
-        {
-            GameLogicViewModel.KickPlayer("f");
-        }
 
         static void LeaveAction()
         {

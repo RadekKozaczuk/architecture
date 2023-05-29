@@ -17,6 +17,8 @@ namespace GameLogic.Systems
     /// </summary>
     static class LobbySystem
     {
+        static bool IsHost => AuthenticationService.Instance.PlayerId == _lobby.HostId;
+
         /// <summary>
         /// In seconds. Heartbeat is limited to 5 requests per 30 seconds.
         /// </summary>
@@ -27,20 +29,17 @@ namespace GameLogic.Systems
         /// </summary>
         const float LobbyQueryRate = 1.1f;
 
-        /// <summary>
-        /// This is only populated on host.
-        /// </summary>
-        static Lobby _hostLobby;
-
-        /// <summary>
-        /// This is populated both on host and on clients.
-        /// </summary>
-        static Lobby _joinedLobby;
+        static Lobby _lobby;
         static float? _heartbeatTimer; // heartbeat time is null when heartbeat operation is in progress
-        static float _lobbyUpdateTimer;
+        static float? _lobbyUpdateTimer;
 
         static float _lobbyQueryTimer;
         static Action<List<(string lobbyId, string lobbyName, int playerCount, int playerMax)>> _pendingLobbyQueryCallback;
+
+        /// <summary>
+        /// prevents multiple signal calling.
+        /// </summary>
+        static int _lastUpdateCallHash = int.MinValue;
 
         /// <summary>
         /// Indicates that the player changed it's name.
@@ -57,11 +56,12 @@ namespace GameLogic.Systems
             if (_lobbyIsDirty)
                 UpdatePlayerName(GameLogicData.PlayerName);
 
-            if (_joinedLobby != null)
-                HandleLobbyCallForUpdates();
+            if (_lobby == null)
+                return;
 
-            // host cannot be not null if joined is null that's wny it is below
-            if (_hostLobby != null)
+            HandleLobbyCallForUpdates();
+
+            if (IsHost)
                 HandleLobbyHeartbeat();
         }
 
@@ -86,15 +86,11 @@ namespace GameLogic.Systems
                     }
                 };
 
-                _hostLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
+                _lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
                 _heartbeatTimer = HeartbeatRate;
-                var players = new List<(string playerName, bool isHost)>();
-                foreach (Player player in _hostLobby.Players)
-                    // todo: name is an additional data and has to be transferred differently
-                    players.Add((GameLogicData.PlayerName, player.Id == _hostLobby.HostId));
 
-                SignalProcessor.SendSignal(new LobbyChangedSignal(_hostLobby.Name, players));
-                Debug.Log("Created lobby " + _hostLobby.Name + " " + _hostLobby.MaxPlayers);
+                SignalProcessor.SendSignal(new LobbyChangedSignal(_lobby.Name, GetPlayers()));
+                Debug.Log("Created lobby " + _lobby.Name + " " + _lobby.MaxPlayers);
                 return true;
             }
             catch (LobbyServiceException e)
@@ -143,7 +139,7 @@ namespace GameLogic.Systems
             return list;
         }
 
-        internal static async void JoinLobbyById(string lobbyId)
+        internal static async void JoinLobbyById(string lobbyId, Action<string, List<(string playerName, string playerId, bool isHost)>> callback)
         {
             try
             {
@@ -158,9 +154,10 @@ namespace GameLogic.Systems
                     }
                 };
 
-                Lobby lobby = await Lobbies.Instance.JoinLobbyByIdAsync(lobbyId, options);
+                _lobby = await Lobbies.Instance.JoinLobbyByIdAsync(lobbyId, options);
                 Debug.Log("Joined lobby");
-                PrintPlayers(lobby);
+                PrintPlayers(_lobby);
+                callback(_lobby.Name, GetPlayers());
             }
             catch (LobbyServiceException e)
             {
@@ -183,9 +180,10 @@ namespace GameLogic.Systems
                     }
                 };
 
-                Lobby lobby = await Lobbies.Instance.JoinLobbyByCodeAsync(lobbyCode, options);
+                _lobby = await Lobbies.Instance.JoinLobbyByCodeAsync(lobbyCode, options);
                 Debug.Log("Joined lobby");
-                PrintPlayers(lobby);
+                SignalProcessor.SendSignal(new LobbyChangedSignal(_lobby.Name, GetPlayers()));
+                PrintPlayers(_lobby);
             }
             catch (LobbyServiceException e)
             {
@@ -215,8 +213,8 @@ namespace GameLogic.Systems
         internal static void SignOut()
         {
             // delete lobby if any and only one player is present
-            if (_hostLobby != null)
-                LobbyService.Instance.DeleteLobbyAsync(_hostLobby.Id);
+            if (_lobby != null)
+                LobbyService.Instance.DeleteLobbyAsync(_lobby.Id);
 
             AuthenticationService.Instance.SignOut(true);
         }
@@ -236,8 +234,8 @@ namespace GameLogic.Systems
         {
             try
             {
-                _hostLobby = await Lobbies.Instance.UpdateLobbyAsync(
-                    _hostLobby.Id, new UpdateLobbyOptions {Data = new Dictionary<string, DataObject>
+                _lobby = await Lobbies.Instance.UpdateLobbyAsync(
+                    _lobby.Id, new UpdateLobbyOptions {Data = new Dictionary<string, DataObject>
                     {
                         {"GameMode", new DataObject(DataObject.VisibilityOptions.Public, gameMode)}
                     }});
@@ -253,8 +251,8 @@ namespace GameLogic.Systems
             try
             {
                 // we should make isDirty pattern and call update when update happened
-                _joinedLobby = await LobbyService.Instance.UpdatePlayerAsync(
-                    _joinedLobby.Id,
+                _lobby = await LobbyService.Instance.UpdatePlayerAsync(
+                    _lobby.Id,
                     AuthenticationService.Instance.PlayerId,
                     new UpdatePlayerOptions
                     {
@@ -284,21 +282,16 @@ namespace GameLogic.Systems
                 string playerId = AuthenticationService.Instance.PlayerId;
 
                 // if host is the last player, delete lobby 
-                if (_hostLobby == null)
+                if (IsHost)
                 {
-                    await lobby.RemovePlayerAsync(_joinedLobby.Id, playerId);
+                    await lobby.RemovePlayerAsync(_lobby.Id, playerId);
+
+                    if (_lobby.Players.Count > 1)
+                        await lobby.DeleteLobbyAsync(_lobby.Id);
                 }
                 else
                 {
-                    if (_hostLobby.Players.Count > 1)
-                    {
-                        await lobby.RemovePlayerAsync(_hostLobby.Id, playerId);
-                        await lobby.DeleteLobbyAsync(_hostLobby.Id);
-                    }
-                    else
-                    {
-                        await lobby.RemovePlayerAsync(_hostLobby.Id, playerId);
-                    }
+                    await lobby.RemovePlayerAsync(_lobby.Id, playerId);
                 }
             }
             catch (LobbyServiceException e)
@@ -317,7 +310,7 @@ namespace GameLogic.Systems
             try
             {
                 // todo: it should be taken from a parameter
-                await LobbyService.Instance.RemovePlayerAsync(_joinedLobby.Id, playerId);
+                await LobbyService.Instance.RemovePlayerAsync(_lobby.Id, playerId);
             }
             catch (LobbyServiceException e)
             {
@@ -334,7 +327,7 @@ namespace GameLogic.Systems
             // todo: it should be taken from a parameter
             try
             {
-                _hostLobby = await Lobbies.Instance.UpdateLobbyAsync(_hostLobby.Id, new UpdateLobbyOptions {HostId = _joinedLobby.Players[1].Id});
+                _lobby = await Lobbies.Instance.UpdateLobbyAsync(_lobby.Id, new UpdateLobbyOptions {HostId = _lobby.Players[1].Id});
             }
             catch (LobbyServiceException e)
             {
@@ -349,7 +342,7 @@ namespace GameLogic.Systems
         /// </summary>
         static async void HandleLobbyHeartbeat()
         {
-            Assert.IsNotNull(_hostLobby, $"This method should not be called if {nameof(_hostLobby)} variable is null");
+            Assert.IsNotNull(_lobby, $"This method should not be called if {nameof(_lobby)} variable is null");
 
             // null means operation is in progress
             if (_heartbeatTimer == null)
@@ -363,9 +356,9 @@ namespace GameLogic.Systems
                 await RestoreSessionIfNeeded();
 
                 Debug.Log("is signed in: " + AuthenticationService.Instance.IsSignedIn);
-                Debug.Log("host id: " + _hostLobby.Id);
+                Debug.Log("host id: " + _lobby.Id);
                 Debug.Log("player id: " + AuthenticationService.Instance.PlayerId);
-                await LobbyService.Instance.SendHeartbeatPingAsync(_hostLobby.Id);
+                await LobbyService.Instance.SendHeartbeatPingAsync(_lobby.Id);
                 _heartbeatTimer = HeartbeatRate;
             }
         }
@@ -384,25 +377,53 @@ namespace GameLogic.Systems
         }
 
         /// <summary>
-        /// Every <see cref="LobbyUpdateTimerMax"/> it updates <see cref="_joinedLobby"/> reference with a new instance.
+        /// Every <see cref="LobbyUpdateTimerMax"/> it updates <see cref="_lobby"/> reference with a new instance.
         /// </summary>
         static async void HandleLobbyCallForUpdates()
         {
-            Assert.IsNotNull(_joinedLobby, $"This method should not be called if {nameof(_hostLobby)} variable is null");
+            Assert.IsNotNull(_lobby, $"This method should not be called if {nameof(_lobby)} variable is null");
+
+            // null means operation is in progress
+            if (_lobbyUpdateTimer == null)
+                return;
+
+            _lobbyUpdateTimer -= Time.deltaTime;
+            if (_lobbyUpdateTimer >= 0f)
+                return;
+
+            _lobbyUpdateTimer = null;
 
             try
             {
-                _lobbyUpdateTimer -= Time.deltaTime;
-                if (_lobbyUpdateTimer < 0f)
+                await RestoreSessionIfNeeded();
+                _lobby = await LobbyService.Instance.GetLobbyAsync(_lobby.Id);
+                _lobbyUpdateTimer = LobbyUpdateTimerMax;
+
+                // calculate hash
+                List<(string playerName, string PlayerId, bool isHost)> players = GetPlayers();
+                int hashCode = players.GetHashCode();
+
+                // send signal is if has changed
+                if (hashCode != _lastUpdateCallHash)
                 {
-                    _lobbyUpdateTimer = LobbyUpdateTimerMax;
-                    _joinedLobby = await LobbyService.Instance.GetLobbyAsync(_joinedLobby.Id);
+                    SignalProcessor.SendSignal(new LobbyChangedSignal(_lobby.Name, players));
+                    _lastUpdateCallHash = hashCode;
                 }
             }
             catch (LobbyServiceException e)
             {
                 MyDebug.Log(e.ToString());
             }
+        }
+
+        static List<(string playerName, string playerId, bool isHost)> GetPlayers()
+        {
+            var players = new List<(string playerName, string playerId, bool isHost)>();
+            foreach (Player player in _lobby.Players)
+                // todo: name is an additional data and has to be transferred differently
+                players.Add((GameLogicData.PlayerName, player.Id, player.Id == _lobby.HostId));
+
+            return players;
         }
     }
 }

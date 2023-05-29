@@ -12,9 +12,9 @@ namespace Common.Signals
     public sealed class LobbyChangedSignal : AbstractSignal
     {
         public readonly string LobbyName;
-        public readonly List<(string playerName, bool isHost)> Players;
+        public readonly List<(string playerName, string playerId, bool isHost)> Players;
 
-        public LobbyChangedSignal(string lobbyName, List<(string playerName, bool isHost)> players)
+        public LobbyChangedSignal(string lobbyName, List<(string playerName, string playerId, bool isHost)> players)
         {
             LobbyName = lobbyName;
             Players = players;

@@ -56,10 +56,10 @@ namespace UI.Controllers
 
         [React]
         [Preserve]
-        void OnInventoryChangedSignal(LobbyChangedSignal s)
+        void OnLobbyChangedSignal(LobbyChangedSignal s)
         {
-            var q = (LobbyPopup)PopupSystem.CurrentPopup;
-            q.SetValues(s.LobbyName, null);
+            var player = (LobbyPopup)PopupSystem.CurrentPopup;
+            player!.SetValues(s.LobbyName, s.Players);
         }
     }
 }

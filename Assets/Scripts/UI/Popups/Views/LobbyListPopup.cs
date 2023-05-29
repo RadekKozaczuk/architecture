@@ -32,7 +32,7 @@ namespace UI.Popups.Views
         void Awake()
         {
             _refresh.onClick.AddListener(() => GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback));
-            _join.onClick.AddListener(() => GameLogicViewModel.JoinLobbyById(LobbyListElementView.SelectedLobby.LobbyId)); // join the selected
+            _join.onClick.AddListener(() => GameLogicViewModel.JoinLobbyById(LobbyListElementView.SelectedLobby.LobbyId, JoinLobbyResultCallback)); // join the selected
             _join.interactable = false;
             _create.onClick.AddListener(() => PopupSystem.ShowPopup(PopupType.CreateLobby));
         }
@@ -44,7 +44,7 @@ namespace UI.Popups.Views
 
         internal override void Close()
         {
-            // todo: do we need to deinititialize unity serices?
+            // todo: do we need to deinititialize unity services?
 
             AuthenticationService.Instance.SignOut();
         }
@@ -88,6 +88,13 @@ namespace UI.Popups.Views
                 LobbyListElementView view = Instantiate(_config.LobbyListElement, _list.transform);
                 view.Initialize(lobbyCode, lobbyName, playerCount, playerMax);
             }
+        }
+
+        static void JoinLobbyResultCallback(string lobbyName, List<(string playerName, string playerId, bool isHost)> players)
+        {
+            PopupSystem.CloseCurrentPopup();
+            PopupSystem.ShowPopup(PopupType.Lobby);
+            (PopupSystem.CurrentPopup as LobbyPopup)!.SetValues(lobbyName, players);
         }
     }
 }

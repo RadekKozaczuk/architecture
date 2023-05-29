@@ -48,19 +48,17 @@ namespace UI.Views
         {
             // first click
             if (SelectedLobby == null)
-                SelectedLobby = this;
+                SetAlpha(this, 100);
             else if (SelectedLobby == this)
-            {
-                SelectedLobby = null;
-                Color color = _image.color;
-                color.a = 0f;
-                _image.color = color;
-            }
+                SetAlpha(null, 0);
             else
+                SetAlpha(this, 100);
+
+            void SetAlpha(LobbyListElementView selectedLobby, float alpha)
             {
-                SelectedLobby = this;
+                SelectedLobby = selectedLobby;
                 Color color = _image.color;
-                color.a = 100f;
+                color.a = alpha;
                 _image.color = color;
             }
         }
