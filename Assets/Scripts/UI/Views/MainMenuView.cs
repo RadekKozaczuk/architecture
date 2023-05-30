@@ -48,29 +48,9 @@ namespace UI.Views
             GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
         }
 
-        static async void Coop()
+        static void Coop()
         {
             PopupSystem.ShowPopup(PopupType.LobbyList);
-
-            return;
-
-            await UnityServices.InitializeAsync();
-
-            AuthenticationService.Instance.SignedIn += () =>
-            {
-                Debug.Log("Sign In " + AuthenticationService.Instance.PlayerId);
-            };
-
-            // this will create an account automatically without need to provide password or username
-            await AuthenticationService.Instance.SignInAnonymouslyAsync();
-
-            CommonData.CurrentLevel = Level.HubLocation;
-            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
-            CommonData.IsMultiplayer = true;
-            CommonData.IsServer = true;
-
-            GameLogicViewModel.NetworkSetup();
-            NetworkManager.Singleton.StartHost();
         }
 
         static void LoadGame()

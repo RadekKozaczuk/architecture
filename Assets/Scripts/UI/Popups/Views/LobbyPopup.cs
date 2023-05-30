@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
+using Common;
 using Common.Enums;
+using Common.Systems;
 using GameLogic.ViewModels;
 using TMPro;
 using UI.Config;
 using UI.Views;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,6 +22,9 @@ namespace UI.Popups.Views
         Button _giveHost;
 
         [SerializeField]
+        Button _start;
+
+        [SerializeField]
         Button _leave;
 
         [SerializeField]
@@ -31,6 +37,7 @@ namespace UI.Popups.Views
         void Awake()
         {
             _giveHost.onClick.AddListener(GiveHostAction);
+            _start.onClick.AddListener(StartAction);
             _leave.onClick.AddListener(LeaveAction);
         }
 
@@ -58,6 +65,18 @@ namespace UI.Popups.Views
         }
 
         static void GiveHostAction() { }
+
+        static void StartAction()
+        {
+            CommonData.CurrentLevel = Level.HubLocation;
+            CommonData.IsMultiplayer = true;
+            CommonData.IsServer = true;
+            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
+
+            GameLogicViewModel.NetworkSetup();
+            NetworkManager.Singleton.StartHost();
+            PopupSystem.CloseCurrentPopup();
+        }
 
         static void LeaveAction()
         {
