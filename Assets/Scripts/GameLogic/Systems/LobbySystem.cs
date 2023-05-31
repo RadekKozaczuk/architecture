@@ -5,9 +5,14 @@ using System.Threading.Tasks;
 using Common.Signals;
 using Shared;
 using Shared.Systems;
+using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
+using Unity.Networking.Transport.Relay;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
+using Unity.Services.Relay;
+using Unity.Services.Relay.Models;
 using UnityEngine;
 
 namespace GameLogic.Systems
@@ -97,8 +102,13 @@ namespace GameLogic.Systems
                 };
 
                 Lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
-                _heartbeatTimer = HeartbeatRate;
 
+                Allocation allocation = await RelayService.Instance.CreateAllocationAsync(maxPlayers - 1);
+                string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+                var relayServerData = new RelayServerData(allocation, "dtls");
+                NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
+
+                _heartbeatTimer = HeartbeatRate;
                 SignalProcessor.SendSignal(new LobbyChangedSignal(Lobby.Name, GetPlayers()));
                 Debug.Log("Created lobby " + Lobby.Name + " " + Lobby.MaxPlayers);
                 return true;
@@ -106,7 +116,12 @@ namespace GameLogic.Systems
             catch (LobbyServiceException e)
             {
                 Debug.Log(e);
-                return true;
+                return false;
+            }
+            catch (RelayServiceException e)
+            {
+                Debug.Log(e);
+                return false;
             }
         }
 
