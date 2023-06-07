@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Common.Dtos;
 using Common.Enums;
 using GameLogic.ViewModels;
 using UI.Config;
@@ -81,12 +82,13 @@ namespace UI.Popups.Views
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
         }
 
-        void LobbyQueryResultCallback(List<(string lobbyCode, string lobbyName, int playerCount, int playerMax)> lobbies)
+        void LobbyQueryResultCallback(LobbyDto[] lobbies)
         {
-            foreach ((string lobbyCode, string lobbyName, int playerCount, int playerMax) in lobbies)
+            for (int i = 0; i < lobbies.Length; i++)
             {
+                LobbyDto lobby = lobbies[i];
                 LobbyListElementView view = Instantiate(_config.LobbyListElement, _list.transform);
-                view.Initialize(lobbyCode, lobbyName, playerCount, playerMax);
+                view.Initialize(lobby.LobbyId, lobby.LobbyName, lobby.PlayerCount, lobby.PlayerMax);
             }
         }
 

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Common;
 using Common.Signals;
+using Common.Dtos;
 using Shared;
 using Shared.Systems;
 using Unity.Netcode;
@@ -14,6 +15,7 @@ using Unity.Services.Lobbies.Models;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using UnityEngine;
+using Lobby = Unity.Services.Lobbies.Models.Lobby;
 
 namespace GameLogic.Systems
 {
@@ -49,7 +51,7 @@ namespace GameLogic.Systems
         static float? _lobbyUpdateTimer;
 
         static float _lobbyQueryTimer;
-        static Action<List<(string lobbyId, string lobbyName, int playerCount, int playerMax)>> _pendingLobbyQueryCallback;
+        static Action<LobbyDto[]> _pendingLobbyQueryCallback;
 
         /// <summary>
         /// prevents multiple signal calling.
@@ -69,7 +71,7 @@ namespace GameLogic.Systems
                 ExecuteLobbyQueryCallback();
 
             if (_lobbyIsDirty)
-                UpdatePlayerName(GameLogicData.PlayerName);
+                UpdatePlayerName(CommonData.PlayerName);
 
             if (Lobby == null)
                 return;
@@ -83,10 +85,9 @@ namespace GameLogic.Systems
         // lobbies are automatically turn inactive if the lobby does not receive any data
         // for 30 seconds
         // inactive means other players cannot find it but the players that are inside can still normally operate
-        // todo: disable heartbeat after reached max player
-        // todo: and enable it again when below max
-        internal static async Task<bool> CreateLobby(string lobbyName, int maxPlayers)
+        internal static async Task<(bool, string)> CreateLobby(string lobbyName, int maxPlayers)
         {
+            Debug.Log($"CreateLobby -> CommonData.PlayerName: {CommonData.PlayerName}");
             try
             {
                 var options = new CreateLobbyOptions
@@ -96,7 +97,7 @@ namespace GameLogic.Systems
                     {
                         Data = new Dictionary<string, PlayerDataObject>
                         {
-                            {"playerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, GameLogicData.PlayerName)}
+                            {"playerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, CommonData.PlayerName)}
                         }
                     }
                 };
@@ -109,59 +110,26 @@ namespace GameLogic.Systems
                 NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
 
                 _heartbeatTimer = HeartbeatRate;
-                SignalProcessor.SendSignal(new LobbyChangedSignal(Lobby.Name, GetPlayers()));
                 Debug.Log("Created lobby " + Lobby.Name + " " + Lobby.MaxPlayers);
-                return true;
+                return (true, Lobby.Players[0].Id);
             }
             catch (LobbyServiceException e)
             {
                 Debug.Log(e);
-                return false;
+                return (false, null);
             }
             catch (RelayServiceException e)
             {
                 Debug.Log(e);
-                return false;
+                return (false, null);
             }
         }
 
-        internal static void RequestGetLobbies(Action<List<(string lobbyId, string lobbyName, int playerCount, int playerMax)>> callback)
+        internal static void RequestGetLobbies(Action<LobbyDto[]> callback)
         {
             Assert.IsNotNull(callback, "callback function cannot be null.");
 
             _pendingLobbyQueryCallback = callback;
-        }
-
-        static async void ExecuteLobbyQueryCallback()
-        {
-            _lobbyQueryTimer = LobbyQueryRate;
-            List<(string lobbyId, string lobbyName, int playerCount, int playerMax)> lobbies = await QueryLobbies();
-            _pendingLobbyQueryCallback.Invoke(lobbies);
-            _pendingLobbyQueryCallback = null;
-        }
-
-        /// <summary>
-        /// Rate limit for lobby querying is 1 query per second.
-        /// Calling this method more often will result in an error.
-        /// </summary>
-        static async Task<List<(string lobbyId, string lobbyName, int playerCount, int playerMax)>> QueryLobbies()
-        {
-            List<(string, string, int, int)> list = new();
-            try
-            {
-                var options = new QueryLobbiesOptions {Count = 25};
-
-                QueryResponse queryResponse = await Lobbies.Instance.QueryLobbiesAsync(options);
-                Debug.Log("Lobbies found: " + queryResponse.Results.Count);
-
-                list.AddRange(queryResponse.Results.Select(lobby => (lobby.Id, lobby.Name, lobby.Players.Count, lobby.MaxPlayers)));
-            }
-            catch (LobbyServiceException e)
-            {
-                Debug.Log(e);
-            }
-
-            return list;
         }
 
         internal static async void JoinLobbyById(string lobbyId, Action<string, List<(string playerName, string playerId, bool isHost)>> callback)
@@ -174,7 +142,7 @@ namespace GameLogic.Systems
                     {
                         Data = new Dictionary<string, PlayerDataObject>
                         {
-                            {"playerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, GameLogicData.PlayerName)}
+                            {"playerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, CommonData.PlayerName)}
                         }
                     }
                 };
@@ -200,7 +168,7 @@ namespace GameLogic.Systems
                     {
                         Data = new Dictionary<string, PlayerDataObject>
                         {
-                            {"playerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, GameLogicData.PlayerName)}
+                            {"playerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, CommonData.PlayerName)}
                         }
                     }
                 };
@@ -242,6 +210,44 @@ namespace GameLogic.Systems
                 LobbyService.Instance.DeleteLobbyAsync(Lobby.Id);
 
             AuthenticationService.Instance.SignOut(true);
+        }
+
+        static async void ExecuteLobbyQueryCallback()
+        {
+            _lobbyQueryTimer = LobbyQueryRate;
+            LobbyDto[] lobbies = await QueryLobbies();
+            _pendingLobbyQueryCallback.Invoke(lobbies);
+            _pendingLobbyQueryCallback = null;
+        }
+
+        /// <summary>
+        /// Rate limit for lobby querying is 1 query per second.
+        /// Calling this method more often will result in an error.
+        /// </summary>
+        static async Task<LobbyDto[]> QueryLobbies()
+        {
+            try
+            {
+                var options = new QueryLobbiesOptions {Count = 25};
+
+                QueryResponse queryResponse = await Lobbies.Instance.QueryLobbiesAsync(options);
+                Debug.Log("Lobbies found: " + queryResponse.Results.Count);
+
+                var array = new LobbyDto[queryResponse.Results.Count];
+                for (int i = 0; i < queryResponse.Results.Count; i++)
+                {
+                    Lobby lobby = queryResponse.Results[i];
+                    array[i] = new LobbyDto(lobby.Id, lobby.Name, lobby.Players.Count, lobby.MaxPlayers);
+                }
+                return array;
+
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.Log(e);
+            }
+
+            return null;
         }
 
         static void PrintPlayers(Lobby lobby)
@@ -346,13 +352,11 @@ namespace GameLogic.Systems
         /// <summary>
         /// Gives lobby host role to one of the players.
         /// </summary>
-        /// <param name="playerId"></param>
         static async void GiveHost(string playerId)
         {
-            // todo: it should be taken from a parameter
             try
             {
-                Lobby = await Lobbies.Instance.UpdateLobbyAsync(Lobby.Id, new UpdateLobbyOptions {HostId = Lobby.Players[1].Id});
+                Lobby = await Lobbies.Instance.UpdateLobbyAsync(Lobby.Id, new UpdateLobbyOptions {HostId = playerId});
             }
             catch (LobbyServiceException e)
             {
@@ -374,15 +378,10 @@ namespace GameLogic.Systems
                 return;
 
             _heartbeatTimer -= Time.deltaTime;
-            //Debug.Log(_heartbeatTimer);
             if (_heartbeatTimer < 0f)
             {
                 _heartbeatTimer = null;
                 await RestoreSessionIfNeeded();
-
-                Debug.Log("is signed in: " + AuthenticationService.Instance.IsSignedIn);
-                Debug.Log("host id: " + Lobby.Id);
-                Debug.Log("player id: " + AuthenticationService.Instance.PlayerId);
                 await LobbyService.Instance.SendHeartbeatPingAsync(Lobby.Id);
                 _heartbeatTimer = HeartbeatRate;
             }
@@ -448,8 +447,11 @@ namespace GameLogic.Systems
         {
             var players = new List<(string playerName, string playerId, bool isHost)>();
             foreach (Player player in Lobby.Players)
-                // todo: name is an additional data and has to be transferred differently
-                players.Add((GameLogicData.PlayerName, player.Id, player.Id == Lobby.HostId));
+            {
+                string playerName = player.Data["playerName"].Value;
+                Debug.Log($"GetPlayers player name: {playerName}");
+                players.Add((playerName, player.Id, player.Id == Lobby.HostId));
+            }
 
             return players;
         }

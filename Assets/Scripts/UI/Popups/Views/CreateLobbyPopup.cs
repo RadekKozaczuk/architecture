@@ -1,4 +1,5 @@
-﻿using Common.Enums;
+﻿using Common;
+using Common.Enums;
 using GameLogic.ViewModels;
 using TMPro;
 using UI.Config;
@@ -39,13 +40,14 @@ namespace UI.Popups.Views
 
         async void CreateAction()
         {
-            bool result = await GameLogicViewModel.CreateLobby(_input.text, (int)_slider.value);
+            (bool success, string playerId) = await GameLogicViewModel.CreateLobby(_input.text, (int)_slider.value);
 
-            if (result)
+            if (success)
             {
                 PopupSystem.CloseCurrentPopup();
                 PopupSystem.CloseCurrentPopup();
                 PopupSystem.ShowPopup(PopupType.Lobby);
+                (PopupSystem.CurrentPopup as LobbyPopup)!.SetValues(_input.text, CommonData.PlayerName, playerId);
             }
         }
     }

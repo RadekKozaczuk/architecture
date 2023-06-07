@@ -29,6 +29,7 @@ namespace UI.Views
             Color c = _isHost.color;
             c.a = isHost ? 255 : 0f;
             _isHost.color = c;
+            _kick.gameObject.SetActive(!isHost);
         }
     }
 }

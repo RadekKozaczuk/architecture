@@ -56,10 +56,6 @@ namespace UI.Controllers
 
         [React]
         [Preserve]
-        void OnLobbyChangedSignal(LobbyChangedSignal s)
-        {
-            var player = (LobbyPopup)PopupSystem.CurrentPopup;
-            player!.SetValues(s.LobbyName, s.Players);
-        }
+        void OnLobbyChangedSignal(LobbyChangedSignal s) => (PopupSystem.CurrentPopup as LobbyPopup)?.SetValues(s.LobbyName, s.Players);
     }
 }

@@ -5,6 +5,5 @@ namespace GameLogic
     /// </summary>
     static class GameLogicData
     {
-        internal static string PlayerName;
     }
 }

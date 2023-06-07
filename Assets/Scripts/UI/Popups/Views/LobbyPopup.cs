@@ -64,6 +64,13 @@ namespace UI.Popups.Views
             }
         }
 
+        internal void SetValues(string lobbyName, string playerName, string playerId)
+        {
+            _lobbyName.text = lobbyName;
+            LobbyPlayerElementView view = Instantiate(_config.LobbyPlayerElementView, _list.transform);
+            view.Initialize(playerName, playerId, true);
+        }
+
         static void GiveHostAction() { }
 
         static void StartAction()
