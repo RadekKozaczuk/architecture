@@ -44,6 +44,7 @@ namespace UI.Popups.Views
 
             if (success)
             {
+                UIData.HasCreatedLobby = true;
                 PopupSystem.CloseCurrentPopup();
                 PopupSystem.CloseCurrentPopup();
                 PopupSystem.ShowPopup(PopupType.Lobby);

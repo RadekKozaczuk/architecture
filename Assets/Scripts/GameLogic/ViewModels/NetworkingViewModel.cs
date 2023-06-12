@@ -31,6 +31,8 @@ namespace GameLogic.ViewModels
 
         public static void LeaveLobby() => LobbySystem.LeaveLobby();
 
+        public static void StartGame() => LobbySystem.StartGame_Host();
+
         // todo: should be moved to MainController probably
         static void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
         {

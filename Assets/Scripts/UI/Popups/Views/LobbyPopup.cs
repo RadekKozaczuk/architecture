@@ -38,12 +38,11 @@ namespace UI.Popups.Views
         {
             _giveHost.onClick.AddListener(GiveHostAction);
             _start.onClick.AddListener(StartAction);
+            _start.interactable = UIData.HasCreatedLobby;
             _leave.onClick.AddListener(LeaveAction);
         }
 
-        internal override void Initialize()
-        {
-        }
+        internal override void Initialize() { }
 
         internal override void Close()
         {
@@ -64,6 +63,9 @@ namespace UI.Popups.Views
             }
         }
 
+        /// <summary>
+        /// Set values for the host.
+        /// </summary>
         internal void SetValues(string lobbyName, string playerName, string playerId)
         {
             _lobbyName.text = lobbyName;
@@ -83,6 +85,7 @@ namespace UI.Popups.Views
             GameLogicViewModel.NetworkSetup();
             NetworkManager.Singleton.StartHost();
             PopupSystem.CloseCurrentPopup();
+            GameLogicViewModel.StartGame();
         }
 
         static void LeaveAction()

@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Common;
 using Common.Signals;
 using Common.Dtos;
+using Common.Enums;
+using Common.Systems;
 using Shared;
 using Shared.Systems;
 using Unity.Netcode;
@@ -52,6 +54,7 @@ namespace GameLogic.Systems
 
         static float _lobbyQueryTimer;
         static Action<LobbyDto[]> _pendingLobbyQueryCallback;
+        static string _relayCode;
 
         /// <summary>
         /// prevents multiple signal calling.
@@ -97,15 +100,14 @@ namespace GameLogic.Systems
                     {
                         Data = new Dictionary<string, PlayerDataObject>
                         {
-                            {"playerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, CommonData.PlayerName)}
+                            {Constants.PlayerName, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, CommonData.PlayerName)}
                         }
                     }
                 };
 
                 Lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
-
                 Allocation allocation = await RelayService.Instance.CreateAllocationAsync(maxPlayers - 1);
-                string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+                _relayCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
                 var relayServerData = new RelayServerData(allocation, "dtls");
                 NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
 
@@ -142,7 +144,7 @@ namespace GameLogic.Systems
                     {
                         Data = new Dictionary<string, PlayerDataObject>
                         {
-                            {"playerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, CommonData.PlayerName)}
+                            {Constants.PlayerName, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, CommonData.PlayerName)}
                         }
                     }
                 };
@@ -168,7 +170,7 @@ namespace GameLogic.Systems
                     {
                         Data = new Dictionary<string, PlayerDataObject>
                         {
-                            {"playerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, CommonData.PlayerName)}
+                            {Constants.PlayerName, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, CommonData.PlayerName)}
                         }
                     }
                 };
@@ -253,28 +255,7 @@ namespace GameLogic.Systems
         static void PrintPlayers(Lobby lobby)
         {
             foreach (Player player in lobby.Players)
-                Debug.Log($"Player info, id: {player.Id}, name: {player.Data["playerName"].Value}");
-        }
-
-        /// <summary>
-        /// When we update lobby we need to update the local reference.
-        /// And also we only need to update those values that we want.
-        /// </summary>
-        /// <param name="gameMode"></param>
-        static async void UpdateLobbyGameMode(string gameMode)
-        {
-            try
-            {
-                Lobby = await Lobbies.Instance.UpdateLobbyAsync(
-                    Lobby.Id, new UpdateLobbyOptions {Data = new Dictionary<string, DataObject>
-                    {
-                        {"GameMode", new DataObject(DataObject.VisibilityOptions.Public, gameMode)}
-                    }});
-            }
-            catch (LobbyServiceException e)
-            {
-                Debug.Log(e);
-            }
+                Debug.Log($"Player info, id: {player.Id}, name: {player.Data[Constants.PlayerName].Value}");
         }
 
         static async void UpdatePlayerName(string playerName)
@@ -290,7 +271,7 @@ namespace GameLogic.Systems
                         Data = new Dictionary<string, PlayerDataObject>
                         {
                             {
-                                "PlayerName",
+                                Constants.PlayerName,
                                 new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, playerName)
                             }
                         }
@@ -331,6 +312,16 @@ namespace GameLogic.Systems
             }
         }
 
+        internal static async void StartGame_Host()
+        {
+            Lobby = await Lobbies.Instance.UpdateLobbyAsync(
+                Lobby.Id, new UpdateLobbyOptions {Data = new Dictionary<string, DataObject>
+                {
+                    // member is visible only for people inside the lobby
+                    {Constants.RelayCode, new DataObject(DataObject.VisibilityOptions.Member, _relayCode)}
+                }});
+        }
+
         /// <summary>
         /// Only host can kick players. Host cannot kick himself.
         /// </summary>
@@ -347,6 +338,14 @@ namespace GameLogic.Systems
             {
                 MyDebug.Log(e.ToString());
             }
+        }
+
+        static void StartGame_Client()
+        {
+            CommonData.IsMultiplayer = true;
+            CommonData.IsClient = true;
+            CommonData.CurrentLevel = Level.HubLocation;
+            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
         }
 
         /// <summary>
@@ -422,6 +421,13 @@ namespace GameLogic.Systems
             {
                 await RestoreSessionIfNeeded();
                 Lobby = await LobbyService.Instance.GetLobbyAsync(Lobby.Id);
+
+                if (Lobby.Data != null && Lobby.Data.TryGetValue(Constants.RelayCode, out DataObject relayCode))
+                {
+                    _relayCode = relayCode.Value;
+                    StartGame_Client();
+                }
+
                 _lobbyUpdateTimer = LobbyUpdateTimerMax;
 
                 // calculate hash
@@ -448,7 +454,7 @@ namespace GameLogic.Systems
             var players = new List<(string playerName, string playerId, bool isHost)>();
             foreach (Player player in Lobby.Players)
             {
-                string playerName = player.Data["playerName"].Value;
+                string playerName = player.Data[Constants.PlayerName].Value;
                 Debug.Log($"GetPlayers player name: {playerName}");
                 players.Add((playerName, player.Id, player.Id == Lobby.HostId));
             }

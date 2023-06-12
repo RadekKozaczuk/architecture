@@ -2,10 +2,10 @@
 {
     public struct LobbyDto
     {
-        public string LobbyId;
-        public string LobbyName;
-        public int PlayerCount;
-        public int PlayerMax;
+        public readonly string LobbyId;
+        public readonly string LobbyName;
+        public readonly int PlayerCount;
+        public readonly int PlayerMax;
 
         public LobbyDto(string lobbyId, string lobbyName, int playerCount, int playerMax)
         {
