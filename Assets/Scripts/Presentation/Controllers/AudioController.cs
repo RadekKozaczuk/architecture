@@ -68,6 +68,8 @@ namespace Presentation.Controllers
         /// <summary>
         /// Unloads music asset from memory.
         /// </summary>
+        // CodeAnalyzer disable once RAD214 RedundantHigherAccessibilityModifier
+        // ReSharper disable once MemberCanBePrivate.Global
         internal void UnloadMusic(Music music)
         {
             int id = (int)music;
@@ -93,7 +95,7 @@ namespace Presentation.Controllers
             {
                 HandleMusic();
             }
-            else if(_asyncOperationHandles[id].IsDone)
+            else if (_asyncOperationHandles[id].IsDone)
             {
                 _asyncOperationHandles[id] = _config.Music[id].LoadAssetAsync<AudioClip>();
                 _asyncOperationHandles[id].Completed += asyncOperationHandle =>

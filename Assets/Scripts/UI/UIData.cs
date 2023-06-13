@@ -5,6 +5,6 @@ namespace UI
     /// </summary>
     static class UIData
     {
-
+        internal static bool HasCreatedLobby;
     }
 }

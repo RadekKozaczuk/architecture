@@ -2,8 +2,10 @@
 using Common.Enums;
 using Common.Systems;
 using GameLogic.ViewModels;
+using UI.Popups;
 using UnityEngine;
 using UnityEngine.UI;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -17,6 +19,9 @@ namespace UI.Views
         Button _newGame;
 
         [SerializeField]
+        Button _coop;
+
+        [SerializeField]
         Button _loadGame;
 
         [SerializeField]
@@ -28,6 +33,7 @@ namespace UI.Views
         void Awake()
         {
             _newGame.onClick.AddListener(NewGame);
+            _coop.onClick.AddListener(Coop);
             _loadGame.onClick.AddListener(LoadGame);
             _loadGame.interactable = GameLogicViewModel.SaveFileExist;
             _quit.onClick.AddListener(Quit);
@@ -37,6 +43,11 @@ namespace UI.Views
         {
             CommonData.CurrentLevel = Level.HubLocation;
             GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
+        }
+
+        static void Coop()
+        {
+            PopupSystem.ShowPopup(PopupType.LobbyList);
         }
 
         static void LoadGame()

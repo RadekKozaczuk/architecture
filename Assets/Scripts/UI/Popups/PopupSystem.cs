@@ -17,14 +17,17 @@ namespace UI.Popups
     [ReactOnSignals]
     static class PopupSystem
     {
-        internal static AbstractPopupView? CurrentPopup { get; private set; }
+        // ReSharper disable once MemberCanBePrivate.Global
+        internal static AbstractPopupView? CurrentPopup => Popups.Count > 0 ? Popups[0] : null;
+
+        internal static readonly List<AbstractPopupView> Popups = new ();
 
         static Image? _blockingPanel;
         static readonly Queue<(PopupType type, bool blockingPanel, object? parameter)> _scheduledPopups = new();
         static readonly PopupConfig _config = null!;
         static readonly UIConfig _uiConfig = null!;
 
-        public static void ShowPopup(params PopupType[] popupTypes)
+        public static void ShowPopups(params PopupType[] popupTypes)
         {
             Assert.False(popupTypes.Length == 0, "You cannot show zero popups.");
 
@@ -39,30 +42,13 @@ namespace UI.Popups
 
         public static void ShowPopup(PopupType popupType, bool blockingPanel = true)
         {
-            if (CurrentPopup == null)
+            if (Popups.Count == 0)
             {
-                AbstractPopupView prefab = _config.PopupPrefabs[(int)popupType];
-
-                Assert.False(prefab == null, "Prefab cannot be null.");
-
                 _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap).Disable();
                 _uiConfig.InputActionAsset.FindActionMap(UIConstants.PopupActionMap).Enable();
-
-                AbstractPopupView popup;
-                if (blockingPanel)
-                {
-                    _blockingPanel = Object.Instantiate(_config.BlockingPanelPrefab, UISceneReferenceHolder.PopupContainer);
-                    popup = Object.Instantiate(prefab, _blockingPanel.transform)!;
-                }
-                else
-                    popup = Object.Instantiate(prefab, UISceneReferenceHolder.PopupContainer)!;
-
-                popup.Initialize();
-                popup.gameObject.SetActive(true);
-                CurrentPopup = popup;
             }
-            else
-                _scheduledPopups.Enqueue((popupType, blockingPanel, null));
+
+            InstantiatePopup(_config.PopupPrefabs[(int)popupType], blockingPanel);
         }
 
         public static void CloseCurrentPopup()
@@ -73,46 +59,38 @@ namespace UI.Popups
             GameObject popupGo = CurrentPopup.gameObject;
             popupGo.SetActive(false);
             Object.Destroy(popupGo);
+            Popups.RemoveAt(0);
 
             if (_blockingPanel != null)
-            {
-                GameObject panelGo = _blockingPanel.gameObject;
-                panelGo.SetActive(false);
-                Object.Destroy(panelGo);
-                _blockingPanel = null;
-            }
+                if (Popups.Count > 0)
+                {
+                    _blockingPanel.transform.SetSiblingIndex(Popups.Count - 1);
+                }
+                else
+                {
+                    GameObject panelGo = _blockingPanel.gameObject;
+                    panelGo.SetActive(false);
+                    Object.Destroy(panelGo);
+                    _blockingPanel = null;
+                }
 
-            CurrentPopup = null;
             ShowNextPopupFromQueueIfAny();
         }
 
-        internal static void ClosePopup(AbstractPopupView popup)
+        static void InstantiatePopup(AbstractPopupView prefab, bool blockingPanel)
         {
-            Assert.False(CurrentPopup == null, "You cannot call ClosePopup if there is no active popup.");
+            if (blockingPanel && _blockingPanel == null)
+                _blockingPanel = Object.Instantiate(_config.BlockingPanelPrefab, UISceneReferenceHolder.PopupContainer);
 
-            popup.Close();
-            GameObject popupGo = popup.gameObject;
+            AbstractPopupView popup = Object.Instantiate(prefab, UISceneReferenceHolder.PopupContainer)!;
 
-            popupGo.SetActive(false);
-            Object.Destroy(popupGo);
+            popup.Initialize();
+            popup.gameObject.SetActive(true);
+            Popups.Insert(0, popup);
 
+            // blocking panel should be always second from bottom
             if (_blockingPanel != null)
-            {
-                GameObject go = _blockingPanel.gameObject;
-                go.SetActive(false);
-                Object.Destroy(go);
-            }
-
-            CurrentPopup = null;
-            ShowNextPopupFromQueueIfAny();
-        }
-
-        internal static PopupType? CurrentPopupType()
-        {
-            if (CurrentPopup == null)
-                return null;
-
-            return CurrentPopup.Type;
+                _blockingPanel.transform.SetSiblingIndex(Popups.Count - 1);
         }
 
         static void ShowNextPopupFromQueueIfAny()
