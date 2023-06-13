@@ -39,8 +39,6 @@ namespace GameLogic.Controllers
         {
             if (GameStateSystem.CurrentState == GameState.Booting)
                 return;
-
-            SignalProcessor.ExecuteSentSignals();
         }
 	}
 }
