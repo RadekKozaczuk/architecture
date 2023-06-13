@@ -121,10 +121,11 @@ namespace Presentation.ViewModels
             }
         }
 
-        public static void BootingOnExit() => PresentationReferenceHolder.AudioController.LoadMusic(Music.MainMenu);
+        public static void BootingOnExit() { }
 
         public static void MainMenuOnEntry()
         {
+            PresentationReferenceHolder.AudioController.LoadMusic(Music.MainMenu);
             PresentationReferenceHolder.AudioController.PlayMusicWhenReady(Music.MainMenu);
             PresentationSceneReferenceHolder.GameplayCamera.gameObject.SetActive(false);
             PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(true);
@@ -149,7 +150,7 @@ namespace Presentation.ViewModels
             }
         }
 
-        public static void GameplayOnExit() => PresentationReferenceHolder.AudioController.LoadMusic(Music.MainMenu);
+        public static void GameplayOnExit() { }
 
         public static void Movement(Vector2 movementInput)
         {
