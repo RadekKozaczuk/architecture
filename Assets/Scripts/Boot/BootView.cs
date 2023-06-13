@@ -121,6 +121,8 @@ namespace Boot
                 PresentationViewModel.CustomUpdate();
                 UIViewModel.CustomUpdate();
                 _gameStateSystem.CustomUpdate();
+
+                SignalProcessor.ExecuteSentSignals();
             }
         }
 
