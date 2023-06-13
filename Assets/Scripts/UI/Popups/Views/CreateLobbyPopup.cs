@@ -32,6 +32,9 @@ namespace UI.Popups.Views
             _input.onValueChanged.AddListener(InputChanged);
             _slider.onValueChanged.AddListener(SliderChanged);
             _create.onClick.AddListener(CreateAction);
+
+            _input.text = "MyLobby";
+            _slider.value = 2;
         }
 
         void SliderChanged(float value) => _playerCount.text = ((int)value).ToString();

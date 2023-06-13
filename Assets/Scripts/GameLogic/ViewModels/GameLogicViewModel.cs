@@ -47,7 +47,7 @@ namespace GameLogic.ViewModels
 
         public static void BootingOnExit() { }
 
-        public static void MainMenuOnEntry() => CommonData.PlayerName = Utils.GenerateRandomString(7);
+        public static void MainMenuOnEntry() => CommonData.PlayerName = Utils.GenerateRandomString(UnityEngine.Random.Range(5,9));
 
         public static void MainMenuOnExit() { }
 

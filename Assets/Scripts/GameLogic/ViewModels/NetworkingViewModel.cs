@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Common;
 using Common.Dtos;
+using Common.Enums;
+using Common.Systems;
 using GameLogic.Systems;
 using Unity.Netcode;
 using UnityEngine;
@@ -10,8 +13,6 @@ namespace GameLogic.ViewModels
 {
     public partial class GameLogicViewModel
     {
-        public static void NetworkSetup() => NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
-
         public static void RequestGetLobbies(Action<LobbyDto[]> callback)
             => LobbySystem.RequestGetLobbies(callback);
 
@@ -31,7 +32,14 @@ namespace GameLogic.ViewModels
 
         public static void LeaveLobby() => LobbySystem.LeaveLobby();
 
-        public static void StartGame() => LobbySystem.StartGame_Host();
+        public static async void StartGame()
+        {
+            NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
+            await LobbySystem.StartGame_Host();
+
+            // request state change must happen after NetworkManager.Singleton.StartHost();
+            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
+        }
 
         // todo: should be moved to MainController probably
         static void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)

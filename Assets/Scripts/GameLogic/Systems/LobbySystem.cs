@@ -106,10 +106,6 @@ namespace GameLogic.Systems
                 };
 
                 Lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
-                Allocation allocation = await RelayService.Instance.CreateAllocationAsync(maxPlayers - 1);
-                _relayCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
-                var relayServerData = new RelayServerData(allocation, "dtls");
-                NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
 
                 _heartbeatTimer = HeartbeatRate;
                 Debug.Log("Created lobby " + Lobby.Name + " " + Lobby.MaxPlayers);
@@ -312,8 +308,14 @@ namespace GameLogic.Systems
             }
         }
 
-        internal static async void StartGame_Host()
+        internal static async Task StartGame_Host()
         {
+            Allocation allocation = await RelayService.Instance.CreateAllocationAsync(Lobby.MaxPlayers);
+            _relayCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+            var relayServerData = new RelayServerData(allocation, "dtls");
+            NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
+            NetworkManager.Singleton.StartHost();
+
             Lobby = await Lobbies.Instance.UpdateLobbyAsync(
                 Lobby.Id, new UpdateLobbyOptions {Data = new Dictionary<string, DataObject>
                 {
@@ -431,15 +433,13 @@ namespace GameLogic.Systems
                 _lobbyUpdateTimer = LobbyUpdateTimerMax;
 
                 // calculate hash
-                List<(string playerName, string PlayerId, bool isHost)> players = GetPlayers();
-                Debug.Log("player count: " + Lobby.Players.Count);
-                int hashCode = CalculateHash(Lobby.Name, players);
+                int hashCode = CalculateHash();
                 Debug.Log("hash code: " + hashCode);
 
                 // send signal is if has changed
                 if (hashCode != _lastUpdateCallHash)
                 {
-                    SignalProcessor.SendSignal(new LobbyChangedSignal(Lobby.Name, players));
+                    SignalProcessor.SendSignal(new LobbyChangedSignal(Lobby.Name, GetPlayers()));
                     _lastUpdateCallHash = hashCode;
                 }
             }
@@ -455,25 +455,21 @@ namespace GameLogic.Systems
             foreach (Player player in Lobby.Players)
             {
                 string playerName = player.Data[Constants.PlayerName].Value;
-                Debug.Log($"GetPlayers player name: {playerName}");
                 players.Add((playerName, player.Id, player.Id == Lobby.HostId));
             }
 
             return players;
         }
 
-        static int CalculateHash(string lobbyName, List<(string playerName, string playerId, bool isHost)> players)
+        /// <summary>
+        /// Hash function is only used internally to reduce the amount of signals sent.
+        /// </summary>
+        static int CalculateHash()
         {
-            int hashCode = lobbyName.GetHashCode();
+            int hashCode = _lobby.Name.GetHashCode();
 
-            foreach ((string playerName, string playerId, bool isHost) in players)
-            {
-                // todo: in real life this probably cannot be null
-                if (playerName != null)
-                    hashCode += playerName.GetHashCode();
-
-                hashCode += playerId.GetHashCode() + isHost.GetHashCode();
-            }
+            foreach (Player player in _lobby.Players)
+                hashCode += player.Data[Constants.PlayerName].Value.GetHashCode() + (_lobby.HostId == player.Id).GetHashCode();
 
             return hashCode;
         }

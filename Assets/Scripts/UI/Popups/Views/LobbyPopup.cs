@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
 using Common;
 using Common.Enums;
-using Common.Systems;
 using GameLogic.ViewModels;
 using TMPro;
 using UI.Config;
 using UI.Views;
-using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -80,10 +78,6 @@ namespace UI.Popups.Views
             CommonData.CurrentLevel = Level.HubLocation;
             CommonData.IsMultiplayer = true;
             CommonData.IsServer = true;
-            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
-
-            GameLogicViewModel.NetworkSetup();
-            NetworkManager.Singleton.StartHost();
             PopupSystem.CloseCurrentPopup();
             GameLogicViewModel.StartGame();
         }
