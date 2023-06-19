@@ -52,6 +52,7 @@ namespace UI.Popups.Views
                 PopupSystem.CloseCurrentPopup();
                 PopupSystem.ShowPopup(PopupType.Lobby);
                 (PopupSystem.CurrentPopup as LobbyPopup)!.SetValues(_input.text, CommonData.PlayerName, playerId);
+                CommonData.PlayerId = PlayerId.Player1;
             }
         }
     }

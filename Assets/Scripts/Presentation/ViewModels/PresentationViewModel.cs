@@ -77,6 +77,7 @@ namespace Presentation.ViewModels
         public static void OnCoreSceneLoaded() => PresentationMainController.OnCoreSceneLoaded();
 
         /// <summary>
+        /// This is were network related things happens.
         /// Spawns all players.
         /// </summary>
         public static void OnLevelSceneLoaded()
@@ -84,26 +85,13 @@ namespace Presentation.ViewModels
             // load level data
             _level = GameObject.FindWithTag("LevelSceneReferenceHolder").GetComponent<LevelSceneReferenceHolder>();
 
-            Transform container = PresentationSceneReferenceHolder.PlayerContainer;
-
             if (CommonData.IsMultiplayer)
             {
-                if (CommonData.IsClient)
+                if (CommonData.IsServer)
                 {
-                    bool flag = NetworkManager.Singleton.StartClient();
-                    Debug.Log($"Client started successfully: {flag}, id: {NetworkManager.Singleton.LocalClientId}");
-                }
-                else if (CommonData.IsServer)
-                {
-                    Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player1).transform;
-
-                    // spawn locally
-                    PlayerNetworkView player = Object.Instantiate(
-                        _playerConfig.PlayerServerPrefab, spawnPoint.position, spawnPoint.rotation, container);
-                    PresentationData.NetworkPlayers[(int)PlayerId.Player1] = player;
-
-                    // spawn over the network
-                    player.NetworkObj.Spawn(true);
+                    // todo: hard coded for now
+                    SpawnPlayer_Multiplayer(PlayerId.Player1);
+                    SpawnPlayer_Multiplayer(PlayerId.Player2);
                 }
             }
             else
@@ -156,7 +144,10 @@ namespace Presentation.ViewModels
         {
             if (CommonData.IsMultiplayer)
             {
-                PlayerNetworkView[] players = PresentationData.NetworkPlayers;
+                // ReSharper disable once PossibleInvalidOperationException
+                PresentationData.NetworkPlayers[(int)CommonData.PlayerId].Move(movementInput.normalized);
+
+                /*PlayerNetworkView[] players = PresentationData.NetworkPlayers;
                 for (int i = 0; i < players.Length; i++)
                 {
                     PlayerNetworkView player = players[i];
@@ -165,7 +156,7 @@ namespace Presentation.ViewModels
 
                     if (player.NetworkObj.IsOwner)
                         player.Move(movementInput.normalized);
-                }
+                }*/
             }
             else
             {
@@ -198,6 +189,27 @@ namespace Presentation.ViewModels
                 transform.position = spawnPoint.position;
                 transform.rotation = spawnPoint.rotation;
             }
+        }
+
+        /// <summary>
+        /// Spawning in Netcode means to instantiate and/or spawn the object that is synchronized between all clients by the server.
+        /// Only server can spawn multiplayer objects.
+        /// </summary>
+        static void SpawnPlayer_Multiplayer(PlayerId playerId)
+        {
+            Transform spawnPoint = _level.GetSpawnPoint(playerId).transform;
+
+            // spawn locally
+            PlayerNetworkView player = Object.Instantiate(
+                playerId == PlayerId.Player1 ? _playerConfig.PlayerServerPrefab : _playerConfig.PlayerClientPrefab,
+                spawnPoint.position,
+                spawnPoint.rotation,
+                PresentationSceneReferenceHolder.PlayerContainer);
+
+            PresentationData.NetworkPlayers[(int)playerId] = player;
+
+            // spawn over the network
+            player.NetworkObj.Spawn(true);
         }
     }
 }

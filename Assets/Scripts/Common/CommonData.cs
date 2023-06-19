@@ -32,6 +32,11 @@ namespace Common
 
         public static Level CurrentLevel;
 
+        /// <summary>
+        /// Selected player. Useful only in multiplayer.
+        /// </summary>
+        public static PlayerId? PlayerId;
+
         public static BinaryReader SaveGameReader;
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Common;
 using Common.Dtos;
 using Common.Enums;
 using GameLogic.ViewModels;
@@ -97,6 +98,7 @@ namespace UI.Popups.Views
             PopupSystem.CloseCurrentPopup();
             PopupSystem.ShowPopup(PopupType.Lobby);
             (PopupSystem.CurrentPopup as LobbyPopup)!.SetValues(lobbyName, players);
+            CommonData.PlayerId = PlayerId.Player2;
         }
     }
 }

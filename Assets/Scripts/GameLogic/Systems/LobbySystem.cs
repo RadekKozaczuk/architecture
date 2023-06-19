@@ -210,6 +210,22 @@ namespace GameLogic.Systems
             AuthenticationService.Instance.SignOut(true);
         }
 
+        internal static async Task JoinServer()
+        {
+            try
+            {
+                JoinAllocation allocation = await RelayService.Instance.JoinAllocationAsync(_relayCode);
+                var serverData = new RelayServerData(allocation, "dtls");
+                NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(serverData);
+                bool flag = NetworkManager.Singleton.StartClient();
+                Debug.Log($"Client started successfully: {flag}, id: {NetworkManager.Singleton.LocalClientId}");
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e);
+            }
+        }
+
         static async void ExecuteLobbyQueryCallback()
         {
             _lobbyQueryTimer = LobbyQueryRate;
@@ -424,7 +440,9 @@ namespace GameLogic.Systems
                 await RestoreSessionIfNeeded();
                 Lobby = await LobbyService.Instance.GetLobbyAsync(Lobby.Id);
 
-                if (Lobby.Data != null && Lobby.Data.TryGetValue(Constants.RelayCode, out DataObject relayCode))
+                if (GameStateSystem.CurrentState == GameState.MainMenu
+                    && Lobby.Data != null
+                    && Lobby.Data.TryGetValue(Constants.RelayCode, out DataObject relayCode))
                 {
                     _relayCode = relayCode.Value;
                     StartGame_Client();

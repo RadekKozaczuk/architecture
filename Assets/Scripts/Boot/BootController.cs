@@ -1,4 +1,5 @@
 using Common;
+using GameLogic.ViewModels;
 using JetBrains.Annotations;
 using Presentation.ViewModels;
 using UI.ViewModels;
@@ -13,7 +14,7 @@ namespace Boot
         [Preserve]
         BootController() => SceneManager.sceneLoaded += OnSceneLoaded;
 
-        static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        static async void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             if (scene.buildIndex == Constants.CoreScene)
             {
@@ -27,7 +28,10 @@ namespace Boot
 
             // level was loaded
             if (scene.buildIndex > 3)
+            {
+                await GameLogicViewModel.JoinServer();
                 PresentationViewModel.OnLevelSceneLoaded();
+            }
         }
     }
 }
