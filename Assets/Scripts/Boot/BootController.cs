@@ -29,7 +29,9 @@ namespace Boot
             // level was loaded
             if (scene.buildIndex > 3)
             {
-                await GameLogicViewModel.JoinServer();
+                if (CommonData.IsClient)
+                    await GameLogicViewModel.JoinServer();
+
                 PresentationViewModel.OnLevelSceneLoaded();
             }
         }

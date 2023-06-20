@@ -32,6 +32,9 @@ namespace Presentation.ViewModels
         [Inject]
         readonly PresentationMainController _presentationMainController;
 
+        /// <summary>
+        /// This list is only filled on the server.
+        /// </summary>
         readonly List<ulong> _clientIds = new();
         static LevelSceneReferenceHolder _level;
 
@@ -46,20 +49,22 @@ namespace Presentation.ViewModels
             NetworkManager.Singleton.OnClientConnectedCallback += clientId =>
             {
                 Debug.Log($"ON CLIENT CONNECTED {clientId}");
+                // todo: this runs only on the server for some reason (id = 0)
                 if (CommonData.IsServer)
                 {
                     _clientIds.Add(clientId);
 
                     // we can only give the ownership to the client when the client exists
+                    // todo: this never runs
                     if (clientId == 1)
                     {
-                        Debug.Log($"CHANGE OWNERSHIP {_clientIds[1]}");
+                        Debug.Log($"CHANGE OWNERSHIP {_clientIds[(int)PlayerId.Player2]}");
                         Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player2).transform;
                         PlayerNetworkView player = Object.Instantiate(
                             _playerConfig.PlayerClientPrefab, spawnPoint.position,
                             spawnPoint.rotation, PresentationSceneReferenceHolder.PlayerContainer);
 
-                        PresentationData.NetworkPlayers[1] = player;
+                        PresentationData.NetworkPlayers[(int)PlayerId.Player2] = player;
 
                         // spawn over the network
                         player.NetworkObj.SpawnWithOwnership(_clientIds[1], true);
@@ -91,7 +96,7 @@ namespace Presentation.ViewModels
                 {
                     // todo: hard coded for now
                     SpawnPlayer_Multiplayer(PlayerId.Player1);
-                    SpawnPlayer_Multiplayer(PlayerId.Player2);
+                    //SpawnPlayer_Multiplayer(PlayerId.Player2);
                 }
             }
             else
@@ -143,25 +148,10 @@ namespace Presentation.ViewModels
         public static void Movement(Vector2 movementInput)
         {
             if (CommonData.IsMultiplayer)
-            {
                 // ReSharper disable once PossibleInvalidOperationException
                 PresentationData.NetworkPlayers[(int)CommonData.PlayerId].Move(movementInput.normalized);
-
-                /*PlayerNetworkView[] players = PresentationData.NetworkPlayers;
-                for (int i = 0; i < players.Length; i++)
-                {
-                    PlayerNetworkView player = players[i];
-                    if (player == null)
-                        continue;
-
-                    if (player.NetworkObj.IsOwner)
-                        player.Move(movementInput.normalized);
-                }*/
-            }
             else
-            {
                 PresentationData.Player.Move(movementInput.normalized);
-            }
         }
 
         public static void SaveGame(BinaryWriter writer)

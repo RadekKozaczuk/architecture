@@ -26,46 +26,20 @@ namespace GameLogic.ViewModels
         public static async Task JoinServer() => await LobbySystem.JoinServer();
 
         /// <summary>
-        /// Returns true if the lobby was successfully created.
+        /// If the lobby was successfully created it returns true and the first player's id, false and null otherwise.
         /// </summary>
         public static async Task<(bool, string)> CreateLobby(string lobbyName, int maxPlayers) => await LobbySystem.CreateLobby(lobbyName, maxPlayers);
 
+        /// <summary>
+        /// Only host can kick players. Host cannot kick himself.
+        /// </summary>
         public static void KickPlayer(string playerId) => LobbySystem.KickPlayer(playerId);
 
         public static void LeaveLobby() => LobbySystem.LeaveLobby();
 
         public static async void StartGame()
         {
-            NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
             await LobbySystem.StartGame_Host();
-
-            // request state change must happen after NetworkManager.Singleton.StartHost();
-            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
-        }
-
-        // todo: should be moved to MainController probably
-        static void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
-        {
-            // Your approval logic determines the following values
-            response.Approved = true;
-            response.CreatePlayerObject = true;
-
-            // The Prefab hash value of the NetworkPrefab, if null the default NetworkManager player Prefab is used
-            response.PlayerPrefabHash = null;
-
-            // Position to spawn the player object (if null it uses default of Vector3.zero)
-            response.Position = Vector3.zero;
-
-            // Rotation to spawn the player object (if null it uses the default of Quaternion.identity)
-            response.Rotation = Quaternion.identity;
-
-            // If response.Approved is false, you can provide a message that explains the reason why via ConnectionApprovalResponse.Reason
-            // On the client-side, NetworkManager.DisconnectReason will be populated with this message via DisconnectReasonMessage
-            response.Reason = "Some reason for not approving the client";
-
-            // If additional approval steps are needed, set this to true until the additional steps are complete
-            // once it transitions from true to false the connection approval response will be processed.
-            response.Pending = false;
         }
     }
 }

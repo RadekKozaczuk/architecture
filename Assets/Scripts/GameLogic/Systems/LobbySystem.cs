@@ -88,6 +88,9 @@ namespace GameLogic.Systems
         // lobbies are automatically turn inactive if the lobby does not receive any data
         // for 30 seconds
         // inactive means other players cannot find it but the players that are inside can still normally operate
+        /// <summary>
+        /// If the lobby was successfully created it returns true and the first player's id, false and null otherwise.
+        /// </summary>
         internal static async Task<(bool, string)> CreateLobby(string lobbyName, int maxPlayers)
         {
             Debug.Log($"CreateLobby -> CommonData.PlayerName: {CommonData.PlayerName}");
@@ -113,12 +116,12 @@ namespace GameLogic.Systems
             }
             catch (LobbyServiceException e)
             {
-                Debug.Log(e);
+                MyDebug.Log(e.ToString());
                 return (false, null);
             }
             catch (RelayServiceException e)
             {
-                Debug.Log(e);
+                MyDebug.Log(e.ToString());
                 return (false, null);
             }
         }
@@ -146,13 +149,11 @@ namespace GameLogic.Systems
                 };
 
                 Lobby = await Lobbies.Instance.JoinLobbyByIdAsync(lobbyId, options);
-                Debug.Log("Joined lobby");
-                PrintPlayers(Lobby);
                 callback(Lobby.Name, GetPlayers());
             }
             catch (LobbyServiceException e)
             {
-                Debug.Log(e);
+                MyDebug.Log(e.ToString());
             }
         }
 
@@ -172,13 +173,11 @@ namespace GameLogic.Systems
                 };
 
                 Lobby = await Lobbies.Instance.JoinLobbyByCodeAsync(lobbyCode, options);
-                Debug.Log("Joined lobby");
                 SignalProcessor.SendSignal(new LobbyChangedSignal(Lobby.Name, GetPlayers()));
-                PrintPlayers(Lobby);
             }
             catch (LobbyServiceException e)
             {
-                Debug.Log(e);
+                MyDebug.Log(e.ToString());
             }
         }
 
@@ -190,11 +189,10 @@ namespace GameLogic.Systems
             try
             {
                 await Lobbies.Instance.QuickJoinLobbyAsync();
-                Debug.Log("Joined lobby");
             }
             catch (LobbyServiceException e)
             {
-                Debug.Log(e);
+                MyDebug.Log(e.ToString());
             }
         }
 
@@ -217,87 +215,14 @@ namespace GameLogic.Systems
                 JoinAllocation allocation = await RelayService.Instance.JoinAllocationAsync(_relayCode);
                 var serverData = new RelayServerData(allocation, "dtls");
                 NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(serverData);
-                bool flag = NetworkManager.Singleton.StartClient();
-                Debug.Log($"Client started successfully: {flag}, id: {NetworkManager.Singleton.LocalClientId}");
+                NetworkManager.Singleton.StartClient();
             }
             catch (Exception e)
-            {
-                Debug.Log(e);
-            }
-        }
-
-        static async void ExecuteLobbyQueryCallback()
-        {
-            _lobbyQueryTimer = LobbyQueryRate;
-            LobbyDto[] lobbies = await QueryLobbies();
-            _pendingLobbyQueryCallback.Invoke(lobbies);
-            _pendingLobbyQueryCallback = null;
-        }
-
-        /// <summary>
-        /// Rate limit for lobby querying is 1 query per second.
-        /// Calling this method more often will result in an error.
-        /// </summary>
-        static async Task<LobbyDto[]> QueryLobbies()
-        {
-            try
-            {
-                var options = new QueryLobbiesOptions {Count = 25};
-
-                QueryResponse queryResponse = await Lobbies.Instance.QueryLobbiesAsync(options);
-                Debug.Log("Lobbies found: " + queryResponse.Results.Count);
-
-                var array = new LobbyDto[queryResponse.Results.Count];
-                for (int i = 0; i < queryResponse.Results.Count; i++)
-                {
-                    Lobby lobby = queryResponse.Results[i];
-                    array[i] = new LobbyDto(lobby.Id, lobby.Name, lobby.Players.Count, lobby.MaxPlayers);
-                }
-                return array;
-
-            }
-            catch (LobbyServiceException e)
-            {
-                Debug.Log(e);
-            }
-
-            return null;
-        }
-
-        static void PrintPlayers(Lobby lobby)
-        {
-            foreach (Player player in lobby.Players)
-                Debug.Log($"Player info, id: {player.Id}, name: {player.Data[Constants.PlayerName].Value}");
-        }
-
-        static async void UpdatePlayerName(string playerName)
-        {
-            try
-            {
-                // we should make isDirty pattern and call update when update happened
-                Lobby = await LobbyService.Instance.UpdatePlayerAsync(
-                    Lobby.Id,
-                    AuthenticationService.Instance.PlayerId,
-                    new UpdatePlayerOptions
-                    {
-                        Data = new Dictionary<string, PlayerDataObject>
-                        {
-                            {
-                                Constants.PlayerName,
-                                new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, playerName)
-                            }
-                        }
-                    });
-            }
-            catch (LobbyServiceException e)
             {
                 MyDebug.Log(e.ToString());
             }
         }
 
-        /// <summary>
-        /// a
-        /// </summary>
         internal static async void LeaveLobby()
         {
             try
@@ -326,7 +251,8 @@ namespace GameLogic.Systems
 
         internal static async Task StartGame_Host()
         {
-            Allocation allocation = await RelayService.Instance.CreateAllocationAsync(Lobby.MaxPlayers);
+            // Important: Once the allocation is created, you have ten seconds to BIND
+            Allocation allocation = await RelayService.Instance.CreateAllocationAsync(Lobby.MaxPlayers - 1);
             _relayCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
             var relayServerData = new RelayServerData(allocation, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
@@ -338,6 +264,9 @@ namespace GameLogic.Systems
                     // member is visible only for people inside the lobby
                     {Constants.RelayCode, new DataObject(DataObject.VisibilityOptions.Member, _relayCode)}
                 }});
+
+            // request state change must happen after NetworkManager.Singleton.StartHost();
+            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
         }
 
         /// <summary>
@@ -351,6 +280,68 @@ namespace GameLogic.Systems
             {
                 // todo: it should be taken from a parameter
                 await LobbyService.Instance.RemovePlayerAsync(Lobby.Id, playerId);
+            }
+            catch (LobbyServiceException e)
+            {
+                MyDebug.Log(e.ToString());
+            }
+        }
+
+        static async void ExecuteLobbyQueryCallback()
+        {
+            _lobbyQueryTimer = LobbyQueryRate;
+            LobbyDto[] lobbies = await QueryLobbies();
+            _pendingLobbyQueryCallback.Invoke(lobbies);
+            _pendingLobbyQueryCallback = null;
+        }
+
+        /// <summary>
+        /// Rate limit for lobby querying is 1 query per second.
+        /// Calling this method more often will result in an error.
+        /// </summary>
+        static async Task<LobbyDto[]> QueryLobbies()
+        {
+            try
+            {
+                var options = new QueryLobbiesOptions {Count = 25};
+
+                QueryResponse queryResponse = await Lobbies.Instance.QueryLobbiesAsync(options);
+
+                var array = new LobbyDto[queryResponse.Results.Count];
+                for (int i = 0; i < queryResponse.Results.Count; i++)
+                {
+                    Lobby lobby = queryResponse.Results[i];
+                    array[i] = new LobbyDto(lobby.Id, lobby.Name, lobby.Players.Count, lobby.MaxPlayers);
+                }
+                return array;
+
+            }
+            catch (LobbyServiceException e)
+            {
+                MyDebug.Log(e.ToString());
+            }
+
+            return null;
+        }
+
+        static async void UpdatePlayerName(string playerName)
+        {
+            try
+            {
+                // we should make isDirty pattern and call update when update happened
+                Lobby = await LobbyService.Instance.UpdatePlayerAsync(
+                    Lobby.Id,
+                    AuthenticationService.Instance.PlayerId,
+                    new UpdatePlayerOptions
+                    {
+                        Data = new Dictionary<string, PlayerDataObject>
+                        {
+                            {
+                                Constants.PlayerName,
+                                new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, playerName)
+                            }
+                        }
+                    });
             }
             catch (LobbyServiceException e)
             {
@@ -413,7 +404,6 @@ namespace GameLogic.Systems
             if (AuthenticationService.Instance.IsSignedIn)
                 return;
 
-            Debug.Log("Session expired. Restoration in progress.");
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
         }
 
@@ -446,13 +436,14 @@ namespace GameLogic.Systems
                 {
                     _relayCode = relayCode.Value;
                     StartGame_Client();
+                    Lobby = null; // we don't want to update it anymore
+                    return;
                 }
 
                 _lobbyUpdateTimer = LobbyUpdateTimerMax;
 
                 // calculate hash
                 int hashCode = CalculateHash();
-                Debug.Log("hash code: " + hashCode);
 
                 // send signal is if has changed
                 if (hashCode != _lastUpdateCallHash)
