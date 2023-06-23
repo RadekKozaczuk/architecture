@@ -13,8 +13,7 @@ namespace Presentation.Views
         internal NetworkObject NetworkObj;
 
         // network variables can only be declared inside network objects
-        readonly NetworkVariable<byte> _hp = new ();
-        public NetworkVariable<PlayerId> PlayerId;
+        internal readonly NetworkVariable<PlayerId> PlayerId;
 
         static readonly PlayerConfig _playerConfig;
 
@@ -29,25 +28,12 @@ namespace Presentation.Views
             transform.Translate(movement * Time.deltaTime);
         }
 
-        // todo: pytanie czy to sie odapala i na cliencie i na hoscie
+        // OnNetworkSpawn is called both on client and server
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
 
-            Debug.Log($"object spawned name :{name} and PlayerId: {(int)PlayerId.Value}");
             PresentationData.NetworkPlayers[(int)PlayerId.Value] = this;
-        }
-
-        [ServerRpc(RequireOwnership = false)]
-        public void TestServerRpc()
-        {
-            Debug.Log($"executing server rpc");
-        }
-
-        [ClientRpc]
-        public void TestClientRpc()
-        {
-            Debug.Log($"executing client rpc");
         }
     }
 }
