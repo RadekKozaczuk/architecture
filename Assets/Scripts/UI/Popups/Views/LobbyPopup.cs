@@ -77,7 +77,6 @@ namespace UI.Popups.Views
         {
             CommonData.CurrentLevel = Level.HubLocation;
             CommonData.IsMultiplayer = true;
-            CommonData.IsServer = true;
             PopupSystem.CloseCurrentPopup();
             GameLogicViewModel.StartGame();
         }

@@ -57,7 +57,7 @@ namespace GameLogic.Systems
         static string _relayCode;
 
         /// <summary>
-        /// prevents multiple signal calling.
+        /// Prevents multiple signal calling.
         /// </summary>
         static int _lastUpdateCallHash = int.MinValue;
 
@@ -265,8 +265,7 @@ namespace GameLogic.Systems
                     {Constants.RelayCode, new DataObject(DataObject.VisibilityOptions.Member, _relayCode)}
                 }});
 
-            // request state change must happen after NetworkManager.Singleton.StartHost();
-            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
+            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {((int)CommonData.CurrentLevel, true)});
         }
 
         /// <summary>
@@ -278,7 +277,6 @@ namespace GameLogic.Systems
 
             try
             {
-                // todo: it should be taken from a parameter
                 await LobbyService.Instance.RemovePlayerAsync(Lobby.Id, playerId);
             }
             catch (LobbyServiceException e)
@@ -352,9 +350,8 @@ namespace GameLogic.Systems
         static void StartGame_Client()
         {
             CommonData.IsMultiplayer = true;
-            CommonData.IsClient = true;
             CommonData.CurrentLevel = Level.HubLocation;
-            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
+            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {((int)CommonData.CurrentLevel, false)});
         }
 
         /// <summary>

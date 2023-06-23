@@ -43,12 +43,31 @@ namespace Boot
             Architecture.Initialize();
 
             _gameStateSystem = new GameStateMachine<GameState>(
-                new List<(GameState from, GameState to, Func<(int[]?, int[]?)>? scenesToLoadUnload, Action? betweenLoadAndUnload)>
+                new List<(
+                    GameState from,
+                    GameState to,
+                    Func<((int sceneId, bool multiplayer)[]?, (int sceneId, bool multiplayer)[]?)>? scenesToLoadUnload,
+                    Action? betweenLoadAndUnload)>
                 {
-                    (GameState.Booting, GameState.MainMenu, () => (new[] {Constants.MainMenuScene, Constants.CoreScene, Constants.UIScene}, null), null),
-                    (GameState.MainMenu, GameState.Gameplay, () => (ScenesToLoadFromMainMenuToGameplay(), new[] {Constants.MainMenuScene}), null),
-                    (GameState.Gameplay, GameState.MainMenu, () => (new[] {Constants.MainMenuScene}, ScenesToUnloadFromGameplayToMainMenu()), null),
-                    (GameState.Gameplay, GameState.Gameplay, ScenesToLoadUnloadFromGameplayToGameplay, null)
+                    (GameState.Booting,
+                     GameState.MainMenu,
+                     () => (new[] {(Constants.MainMenuScene, false), (Constants.CoreScene, false), (Constants.UIScene, false)},
+                            null),
+                     null),
+                    (GameState.MainMenu,
+                     GameState.Gameplay,
+                     () => (ScenesToLoadFromMainMenuToGameplay(),
+                            new[] {(Constants.MainMenuScene, false)}),
+                     null),
+                    (GameState.Gameplay,
+                     GameState.MainMenu,
+                     () => (new[] {(Constants.MainMenuScene, false)},
+                            ScenesToUnloadFromGameplayToMainMenu()),
+                     null),
+                    (GameState.Gameplay,
+                     GameState.Gameplay,
+                     ScenesToLoadUnloadFromGameplayToGameplay,
+                     null)
                 },
                 new (GameState, Action?, Action?)[]
                 {
@@ -68,6 +87,7 @@ namespace Boot
             GameStateSystem.OnStateChangeRequest += _gameStateSystem.RequestStateChange;
             GameStateSystem.OnScheduleStateChange += _gameStateSystem.ScheduleStateChange;
             GameStateSystem.OnGetCurrentGameState += _gameStateSystem.GetCurrentState;
+            Debug.Log("REQUEST MAIN MENU");
             GameStateSystem.RequestStateChange(GameState.MainMenu);
 
             DontDestroyOnLoad(_eventSystem);
@@ -181,10 +201,9 @@ namespace Boot
         }
 
         /// <summary>
-        /// Returns ids of all currently open scenes except for <see cref="Constants.CoreScene" />, <see cref="Constants.MainMenuScene" />,
-        /// and <see cref="Constants.UIScene" />
+        ///
         /// </summary>
-        static int[]? ScenesToLoadFromMainMenuToGameplay()
+        static (int sceneId, bool multiplayer)[]? ScenesToLoadFromMainMenuToGameplay()
         {
             if (CommonData.LoadRequested)
             {
@@ -194,7 +213,7 @@ namespace Boot
                 int _ = CommonData.SaveGameReader.ReadByte(); // save game version
                 CommonData.CurrentLevel = (Level)CommonData.SaveGameReader.ReadByte();
 
-                return new[] {(int)CommonData.CurrentLevel};
+                return new[] {((int)CommonData.CurrentLevel, false)};
             }
 
             return null;
@@ -204,10 +223,10 @@ namespace Boot
         /// Returns ids of all currently open scenes except for <see cref="Constants.CoreScene" />, <see cref="Constants.MainMenuScene" />,
         /// and <see cref="Constants.UIScene" />
         /// </summary>
-        static int[] ScenesToUnloadFromGameplayToMainMenu()
+        static (int sceneId, bool multiplayer)[] ScenesToUnloadFromGameplayToMainMenu()
         {
             int countLoaded = SceneManager.sceneCount;
-            var scenesToUnload = new List<int>(countLoaded);
+            var scenesToUnload = new List<(int sceneId, bool multiplayer)>(countLoaded);
 
             for (int i = 0; i < countLoaded; i++)
             {
@@ -215,13 +234,13 @@ namespace Boot
                 if (scene.buildIndex is Constants.CoreScene or Constants.MainMenuScene or Constants.UIScene)
                     continue;
 
-                scenesToUnload.Add(scene.buildIndex);
+                scenesToUnload.Add((scene.buildIndex, false));
             }
 
             return scenesToUnload.ToArray();
         }
 
-        static (int[]? scenesToLoad, int[]? scenesToUnload) ScenesToLoadUnloadFromGameplayToGameplay()
+        static ((int sceneId, bool multiplayer)[]? scenesToLoad, (int sceneId, bool multiplayer)[]? scenesToUnload) ScenesToLoadUnloadFromGameplayToGameplay()
         {
             if (CommonData.LoadRequested)
             {
@@ -232,17 +251,17 @@ namespace Boot
                 int currentLevel = (int)CommonData.CurrentLevel;
                 CommonData.CurrentLevel = (Level)CommonData.SaveGameReader.ReadByte();
 
-                return (new[] {(int)CommonData.CurrentLevel}, new[] {currentLevel});
+                return (new[] {((int)CommonData.CurrentLevel, false)}, new[] {(currentLevel, false)});
             }
 
             if (CommonData.CurrentLevel == Level.HubLocation)
             {
                 CommonData.CurrentLevel += 1;
-                return (new[] {(int)CommonData.CurrentLevel}, new[] {(int)CommonData.CurrentLevel - 1});
+                return (new[] {((int)CommonData.CurrentLevel, false)}, new[] {((int)CommonData.CurrentLevel - 1, false)});
             }
 
             CommonData.CurrentLevel = Level.Level0;
-            return (new[] {(int)Level.Level0}, new [] {(int)Level.HubLocation});
+            return (new[] {((int)Level.Level0, false)}, new [] {((int)Level.HubLocation, false)});
         }
     }
 }

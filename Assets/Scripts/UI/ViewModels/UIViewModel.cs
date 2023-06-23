@@ -1,10 +1,8 @@
-﻿using Common;
-using ControlFlow.DependencyInjector.Attributes;
+﻿using ControlFlow.DependencyInjector.Attributes;
 using ControlFlow.DependencyInjector.Interfaces;
 using JetBrains.Annotations;
 using UI.Config;
 using UI.Controllers;
-using UI.Popups;
 using UI.Systems;
 using UnityEngine.Scripting;
 
@@ -59,8 +57,8 @@ namespace UI.ViewModels
             _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap).Enable();
 
             // this happens only when we start a client game starts
-            if (CommonData.IsClient)
-                PopupSystem.CloseCurrentPopup();
+            //if (CommonData.IsMultiplayer && !NetworkManager.Singleton.IsHost)
+                //PopupSystem.CloseCurrentPopup();
         }
 
         public static void GameplayOnExit() => _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap).Disable();

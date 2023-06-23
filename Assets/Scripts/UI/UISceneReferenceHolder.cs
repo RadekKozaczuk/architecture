@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using UnityEngine;
 
 namespace UI
@@ -17,10 +18,15 @@ namespace UI
         [SerializeField]
         Canvas _canvas;
 
+        public UnityEngine.UI.Text RelayCode;
+
+        public static UnityEngine.UI.Text RelayCodeStatic;
+
         void Awake()
         {
             PopupContainer = _popupContainer;
             Canvas = _canvas;
+            RelayCodeStatic = RelayCode;
         }
     }
 }

@@ -143,6 +143,7 @@ PlayerSettings:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  - {fileID: 11400000, guid: de60c8331f704e04bbab099578a55891, type: 2}
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -721,7 +722,7 @@ PlayerSettings:
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:
-    Standalone: 1
+    Standalone: 0
   il2cppCompilerConfiguration:
     Standalone: 2
   managedStrippingLevel:
@@ -733,7 +734,7 @@ PlayerSettings:
     PS4: 1
     PS5: 1
     Stadia: 1
-    Standalone: 3
+    Standalone: 0
     WebGL: 1
     Windows Store Apps: 1
     XboxOne: 1

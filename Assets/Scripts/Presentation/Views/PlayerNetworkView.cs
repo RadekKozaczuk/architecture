@@ -1,3 +1,4 @@
+using Common.Enums;
 using Presentation.Config;
 using Shared;
 using Unity.Netcode;
@@ -13,6 +14,7 @@ namespace Presentation.Views
 
         // network variables can only be declared inside network objects
         readonly NetworkVariable<byte> _hp = new ();
+        public NetworkVariable<PlayerId> PlayerId;
 
         static readonly PlayerConfig _playerConfig;
 
@@ -25,6 +27,27 @@ namespace Presentation.Views
 
             Vector3 movement = new Vector3(v.x, 0, v.y) * _playerConfig.PlayerSpeed;
             transform.Translate(movement * Time.deltaTime);
+        }
+
+        // todo: pytanie czy to sie odapala i na cliencie i na hoscie
+        public override void OnNetworkSpawn()
+        {
+            base.OnNetworkSpawn();
+
+            Debug.Log($"object spawned name :{name} and PlayerId: {(int)PlayerId.Value}");
+            PresentationData.NetworkPlayers[(int)PlayerId.Value] = this;
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void TestServerRpc()
+        {
+            Debug.Log($"executing server rpc");
+        }
+
+        [ClientRpc]
+        public void TestClientRpc()
+        {
+            Debug.Log($"executing client rpc");
         }
     }
 }
