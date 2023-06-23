@@ -13,7 +13,7 @@ namespace Presentation.Views
         internal NetworkObject NetworkObj;
 
         // network variables can only be declared inside network objects
-        internal readonly NetworkVariable<PlayerId> PlayerId;
+        internal readonly NetworkVariable<PlayerId> PlayerId = new();
 
         static readonly PlayerConfig _playerConfig;
 

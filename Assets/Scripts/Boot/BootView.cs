@@ -87,7 +87,6 @@ namespace Boot
             GameStateSystem.OnStateChangeRequest += _gameStateSystem.RequestStateChange;
             GameStateSystem.OnScheduleStateChange += _gameStateSystem.ScheduleStateChange;
             GameStateSystem.OnGetCurrentGameState += _gameStateSystem.GetCurrentState;
-            Debug.Log("REQUEST MAIN MENU");
             GameStateSystem.RequestStateChange(GameState.MainMenu);
 
             DontDestroyOnLoad(_eventSystem);
