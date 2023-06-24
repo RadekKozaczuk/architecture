@@ -1,8 +1,8 @@
 using Common;
-using GameLogic.ViewModels;
 using JetBrains.Annotations;
 using Presentation.ViewModels;
 using UI.ViewModels;
+using Unity.Netcode;
 using UnityEngine.SceneManagement;
 using UnityEngine.Scripting;
 
@@ -14,11 +14,14 @@ namespace Boot
         [Preserve]
         BootController() => SceneManager.sceneLoaded += OnSceneLoaded;
 
-        static async void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             if (scene.buildIndex == Constants.CoreScene)
             {
-                SceneManager.UnloadSceneAsync(Constants.BootScene);
+                // this should not happen in the multiplayer context
+                // when the machine act as a client
+                if (NetworkManager.Singleton == null || NetworkManager.Singleton.IsHost || !NetworkManager.Singleton.IsClient)
+                    SceneManager.UnloadSceneAsync(Constants.BootScene);
                 BootView.OnCoreSceneLoaded();
                 PresentationViewModel.OnCoreSceneLoaded();
             }
@@ -28,10 +31,7 @@ namespace Boot
 
             // level was loaded
             if (scene.buildIndex > 3)
-            {
-                await GameLogicViewModel.JoinServer();
                 PresentationViewModel.OnLevelSceneLoaded();
-            }
         }
     }
 }

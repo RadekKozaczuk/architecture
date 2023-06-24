@@ -1,4 +1,4 @@
-using Common.Enums;
+using Common;
 using Presentation.Config;
 using Shared;
 using Unity.Netcode;
@@ -12,9 +12,6 @@ namespace Presentation.Views
         [SerializeField]
         internal NetworkObject NetworkObj;
 
-        // network variables can only be declared inside network objects
-        readonly NetworkVariable<byte> _hp = new ();
-
         static readonly PlayerConfig _playerConfig;
 
         internal void Move(Vector2 v)
@@ -24,42 +21,17 @@ namespace Presentation.Views
             if (!IsOwner)
                 return;
 
-            Debug.Log("Player Move");
             Vector3 movement = new Vector3(v.x, 0, v.y) * _playerConfig.PlayerSpeed;
             transform.Translate(movement * Time.deltaTime);
         }
 
+        // OnNetworkSpawn is called both on client and server
         public override void OnNetworkSpawn()
         {
-            if (IsOwner)
-            {
-                Debug.Log("OnNetworkSpawn");
-                PresentationData.NetworkPlayers[(int)PlayerId.Player2] = this;
-            }
-
-            /*_hp.OnValueChanged += (byte prevVal, byte newVal) =>
-            {
-                Debug.Log("fdg");
-            };*/
             base.OnNetworkSpawn();
-        }
 
-        // server rpc are functions that can be called both by client and server
-        // but WILL BE RUN ONLY ON THE SERVER
-        // server rpc functions can only be declared inside network objects
-        [ServerRpc]
-        void TestServerRpc()
-        {
-
-        }
-
-        // client rpc are functions that can only be called by server
-        // but WILL BE RUN on all or selected clients 
-        // client rpc functions can only be declared inside network objects
-        [ClientRpc]
-        void TestClientRpc()
-        {
-
+            if (IsOwner)
+                PresentationData.NetworkPlayers[(int)CommonData.PlayerId!.Value] = this;
         }
     }
 }

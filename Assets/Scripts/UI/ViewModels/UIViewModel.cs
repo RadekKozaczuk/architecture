@@ -1,5 +1,4 @@
-﻿using Common;
-using ControlFlow.DependencyInjector.Attributes;
+﻿using ControlFlow.DependencyInjector.Attributes;
 using ControlFlow.DependencyInjector.Interfaces;
 using JetBrains.Annotations;
 using UI.Config;
@@ -59,7 +58,7 @@ namespace UI.ViewModels
             _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap).Enable();
 
             // this happens only when we start a client game starts
-            if (CommonData.IsClient)
+            if (PopupSystem.CurrentPopup != null)
                 PopupSystem.CloseCurrentPopup();
         }
 

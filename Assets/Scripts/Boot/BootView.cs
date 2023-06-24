@@ -43,12 +43,28 @@ namespace Boot
             Architecture.Initialize();
 
             _gameStateSystem = new GameStateMachine<GameState>(
-                new List<(GameState from, GameState to, Func<(int[]?, int[]?)>? scenesToLoadUnload, Action? betweenLoadAndUnload)>
+                new List<(
+                    GameState from,
+                    GameState to,
+                    Func<(int[]?, int[]?)>? scenesToLoadUnload,
+                    Action? betweenLoadAndUnload)>
                 {
-                    (GameState.Booting, GameState.MainMenu, () => (new[] {Constants.MainMenuScene, Constants.CoreScene, Constants.UIScene}, null), null),
-                    (GameState.MainMenu, GameState.Gameplay, () => (ScenesToLoadFromMainMenuToGameplay(), new[] {Constants.MainMenuScene}), null),
-                    (GameState.Gameplay, GameState.MainMenu, () => (new[] {Constants.MainMenuScene}, ScenesToUnloadFromGameplayToMainMenu()), null),
-                    (GameState.Gameplay, GameState.Gameplay, ScenesToLoadUnloadFromGameplayToGameplay, null)
+                    (GameState.Booting,
+                     GameState.MainMenu,
+                     () => (new[] {Constants.MainMenuScene, Constants.CoreScene, Constants.UIScene}, null),
+                     null),
+                    (GameState.MainMenu,
+                     GameState.Gameplay,
+                     () => (ScenesToLoadFromMainMenuToGameplay(), new[] {Constants.MainMenuScene}),
+                     null),
+                    (GameState.Gameplay,
+                     GameState.MainMenu,
+                     () => (new[] {Constants.MainMenuScene}, ScenesToUnloadFromGameplayToMainMenu()),
+                     null),
+                    (GameState.Gameplay,
+                     GameState.Gameplay,
+                     ScenesToLoadUnloadFromGameplayToGameplay,
+                     null)
                 },
                 new (GameState, Action?, Action?)[]
                 {
@@ -181,10 +197,9 @@ namespace Boot
         }
 
         /// <summary>
-        /// Returns ids of all currently open scenes except for <see cref="Constants.CoreScene" />, <see cref="Constants.MainMenuScene" />,
-        /// and <see cref="Constants.UIScene" />
+        ///
         /// </summary>
-        static int[]? ScenesToLoadFromMainMenuToGameplay()
+        static int []? ScenesToLoadFromMainMenuToGameplay()
         {
             if (CommonData.LoadRequested)
             {

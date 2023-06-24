@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.IO;
 using Common;
 using Common.Enums;
@@ -32,7 +31,6 @@ namespace Presentation.ViewModels
         [Inject]
         readonly PresentationMainController _presentationMainController;
 
-        readonly List<ulong> _clientIds = new();
         static LevelSceneReferenceHolder _level;
 
         [Preserve]
@@ -45,25 +43,21 @@ namespace Presentation.ViewModels
             // this is called for the host too
             NetworkManager.Singleton.OnClientConnectedCallback += clientId =>
             {
-                Debug.Log($"ON CLIENT CONNECTED {clientId}");
-                if (CommonData.IsServer)
+                // ignore self connection
+                if (clientId == 0)
+                    return;
+
+                if (clientId == 1 && NetworkManager.Singleton.IsHost)
                 {
-                    _clientIds.Add(clientId);
+                    Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player2).transform;
+                    PlayerNetworkView player = Object.Instantiate(_playerConfig.PlayerClientPrefab, spawnPoint.position, spawnPoint.rotation,
+                                                                  PresentationSceneReferenceHolder.PlayerContainer);
 
-                    // we can only give the ownership to the client when the client exists
-                    if (clientId == 1)
-                    {
-                        Debug.Log($"CHANGE OWNERSHIP {_clientIds[1]}");
-                        Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player2).transform;
-                        PlayerNetworkView player = Object.Instantiate(
-                            _playerConfig.PlayerClientPrefab, spawnPoint.position,
-                            spawnPoint.rotation, PresentationSceneReferenceHolder.PlayerContainer);
+                    // this will be assigned only on the host
+                    PresentationData.NetworkPlayers[(int)PlayerId.Player2] = player;
 
-                        PresentationData.NetworkPlayers[1] = player;
-
-                        // spawn over the network
-                        player.NetworkObj.SpawnWithOwnership(_clientIds[1], true);
-                    }
+                    // spawn over the network
+                    player.NetworkObj.SpawnWithOwnership(1, true);
                 }
             };
         }
@@ -87,11 +81,29 @@ namespace Presentation.ViewModels
 
             if (CommonData.IsMultiplayer)
             {
-                if (CommonData.IsServer)
-                {
+                if (NetworkManager.Singleton.IsHost)
                     // todo: hard coded for now
-                    SpawnPlayer_Multiplayer(PlayerId.Player1);
-                    SpawnPlayer_Multiplayer(PlayerId.Player2);
+                {
+                    Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player1).transform;
+
+                    // instantiate locally
+                    // in network context objects can only be spawned in root - we cannot spawn under other objects.
+                    PlayerNetworkView player = Object.Instantiate(
+                        _playerConfig.PlayerServerPrefab,
+                        spawnPoint.position,
+                        spawnPoint.rotation,
+                        // todo: this is weird
+                        // todo: in network context everything is spawned in the root no matter what
+                        // todo: but for some reason without this game breaks
+                        PresentationSceneReferenceHolder.PlayerContainer);
+
+                    // this will be assigned only on the host
+                    PresentationData.NetworkPlayers[(int)PlayerId.Player1] = player;
+
+                    // spawn over the network
+                    // Spawning in Netcode means to instantiate and/or spawn the object that is synchronized between all clients by the server.
+                    // Only server can spawn multiplayer objects.
+                    player.NetworkObj.Spawn(true);
                 }
             }
             else
@@ -144,24 +156,13 @@ namespace Presentation.ViewModels
         {
             if (CommonData.IsMultiplayer)
             {
-                // ReSharper disable once PossibleInvalidOperationException
-                PresentationData.NetworkPlayers[(int)CommonData.PlayerId].Move(movementInput.normalized);
-
-                /*PlayerNetworkView[] players = PresentationData.NetworkPlayers;
-                for (int i = 0; i < players.Length; i++)
-                {
-                    PlayerNetworkView player = players[i];
-                    if (player == null)
-                        continue;
-
-                    if (player.NetworkObj.IsOwner)
-                        player.Move(movementInput.normalized);
-                }*/
+                if (NetworkManager.Singleton.IsHost)
+                    PresentationData.NetworkPlayers[(int)PlayerId.Player1].Move(movementInput.normalized);
+                else
+                    PresentationData.NetworkPlayers[(int)PlayerId.Player2].Move(movementInput.normalized);
             }
             else
-            {
                 PresentationData.Player.Move(movementInput.normalized);
-            }
         }
 
         public static void SaveGame(BinaryWriter writer)
@@ -189,27 +190,6 @@ namespace Presentation.ViewModels
                 transform.position = spawnPoint.position;
                 transform.rotation = spawnPoint.rotation;
             }
-        }
-
-        /// <summary>
-        /// Spawning in Netcode means to instantiate and/or spawn the object that is synchronized between all clients by the server.
-        /// Only server can spawn multiplayer objects.
-        /// </summary>
-        static void SpawnPlayer_Multiplayer(PlayerId playerId)
-        {
-            Transform spawnPoint = _level.GetSpawnPoint(playerId).transform;
-
-            // spawn locally
-            PlayerNetworkView player = Object.Instantiate(
-                playerId == PlayerId.Player1 ? _playerConfig.PlayerServerPrefab : _playerConfig.PlayerClientPrefab,
-                spawnPoint.position,
-                spawnPoint.rotation,
-                PresentationSceneReferenceHolder.PlayerContainer);
-
-            PresentationData.NetworkPlayers[(int)playerId] = player;
-
-            // spawn over the network
-            player.NetworkObj.Spawn(true);
         }
     }
 }

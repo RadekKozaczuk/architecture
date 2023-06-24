@@ -51,10 +51,7 @@ namespace UI.Popups.Views
             AuthenticationService.Instance.SignOut();
         }
 
-        internal void SelectedLobbyChanged(bool selected)
-        {
-            _join.interactable = selected;
-        }
+        internal void SelectedLobbyChanged(bool selected) => _join.interactable = selected;
 
         async void InitializeAsync()
         {
