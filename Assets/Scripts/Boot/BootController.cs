@@ -31,12 +31,7 @@ namespace Boot
 
             // level was loaded
             if (scene.buildIndex > 3)
-            {
-                //if (!NetworkManager.Singleton.IsHost)
-                    //await GameLogicViewModel.JoinServer();
-
                 PresentationViewModel.OnLevelSceneLoaded();
-            }
         }
     }
 }

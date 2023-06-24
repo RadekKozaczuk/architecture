@@ -250,7 +250,7 @@ namespace GameLogic.Systems
                     {Constants.RelayCode, new DataObject(DataObject.VisibilityOptions.Member, _relayCode)}
                 }});
 
-            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {((int)CommonData.CurrentLevel, true)});
+            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
         }
 
         /// <summary>
@@ -348,7 +348,7 @@ namespace GameLogic.Systems
                 MyDebug.Log(e.ToString());
             }
 
-            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {((int)CommonData.CurrentLevel, false)});
+            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
         }
 
         /// <summary>

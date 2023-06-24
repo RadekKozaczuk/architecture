@@ -46,20 +46,20 @@ namespace Boot
                 new List<(
                     GameState from,
                     GameState to,
-                    Func<((int sceneId, bool multiplayer)[]?, (int sceneId, bool multiplayer)[]?)>? scenesToLoadUnload,
+                    Func<(int[]?, int[]?)>? scenesToLoadUnload,
                     Action? betweenLoadAndUnload)>
                 {
                     (GameState.Booting,
                      GameState.MainMenu,
-                     () => (new[] {(Constants.MainMenuScene, false), (Constants.CoreScene, false), (Constants.UIScene, false)}, null),
+                     () => (new[] {Constants.MainMenuScene, Constants.CoreScene, Constants.UIScene}, null),
                      null),
                     (GameState.MainMenu,
                      GameState.Gameplay,
-                     () => (ScenesToLoadFromMainMenuToGameplay(), new[] {(Constants.MainMenuScene, false)}),
+                     () => (ScenesToLoadFromMainMenuToGameplay(), new[] {Constants.MainMenuScene}),
                      null),
                     (GameState.Gameplay,
                      GameState.MainMenu,
-                     () => (new[] {(Constants.MainMenuScene, false)}, ScenesToUnloadFromGameplayToMainMenu()),
+                     () => (new[] {Constants.MainMenuScene}, ScenesToUnloadFromGameplayToMainMenu()),
                      null),
                     (GameState.Gameplay,
                      GameState.Gameplay,
@@ -199,7 +199,7 @@ namespace Boot
         /// <summary>
         ///
         /// </summary>
-        static (int sceneId, bool multiplayer)[]? ScenesToLoadFromMainMenuToGameplay()
+        static int []? ScenesToLoadFromMainMenuToGameplay()
         {
             if (CommonData.LoadRequested)
             {
@@ -209,7 +209,7 @@ namespace Boot
                 int _ = CommonData.SaveGameReader.ReadByte(); // save game version
                 CommonData.CurrentLevel = (Level)CommonData.SaveGameReader.ReadByte();
 
-                return new[] {((int)CommonData.CurrentLevel, false)};
+                return new[] {(int)CommonData.CurrentLevel};
             }
 
             return null;
@@ -219,10 +219,10 @@ namespace Boot
         /// Returns ids of all currently open scenes except for <see cref="Constants.CoreScene" />, <see cref="Constants.MainMenuScene" />,
         /// and <see cref="Constants.UIScene" />
         /// </summary>
-        static (int sceneId, bool multiplayer)[] ScenesToUnloadFromGameplayToMainMenu()
+        static int[] ScenesToUnloadFromGameplayToMainMenu()
         {
             int countLoaded = SceneManager.sceneCount;
-            var scenesToUnload = new List<(int sceneId, bool multiplayer)>(countLoaded);
+            var scenesToUnload = new List<int>(countLoaded);
 
             for (int i = 0; i < countLoaded; i++)
             {
@@ -230,13 +230,13 @@ namespace Boot
                 if (scene.buildIndex is Constants.CoreScene or Constants.MainMenuScene or Constants.UIScene)
                     continue;
 
-                scenesToUnload.Add((scene.buildIndex, false));
+                scenesToUnload.Add(scene.buildIndex);
             }
 
             return scenesToUnload.ToArray();
         }
 
-        static ((int sceneId, bool multiplayer)[]? scenesToLoad, (int sceneId, bool multiplayer)[]? scenesToUnload) ScenesToLoadUnloadFromGameplayToGameplay()
+        static (int[]? scenesToLoad, int[]? scenesToUnload) ScenesToLoadUnloadFromGameplayToGameplay()
         {
             if (CommonData.LoadRequested)
             {
@@ -247,17 +247,17 @@ namespace Boot
                 int currentLevel = (int)CommonData.CurrentLevel;
                 CommonData.CurrentLevel = (Level)CommonData.SaveGameReader.ReadByte();
 
-                return (new[] {((int)CommonData.CurrentLevel, false)}, new[] {(currentLevel, false)});
+                return (new[] {(int)CommonData.CurrentLevel}, new[] {currentLevel});
             }
 
             if (CommonData.CurrentLevel == Level.HubLocation)
             {
                 CommonData.CurrentLevel += 1;
-                return (new[] {((int)CommonData.CurrentLevel, false)}, new[] {((int)CommonData.CurrentLevel - 1, false)});
+                return (new[] {(int)CommonData.CurrentLevel}, new[] {(int)CommonData.CurrentLevel - 1});
             }
 
             CommonData.CurrentLevel = Level.Level0;
-            return (new[] {((int)Level.Level0, false)}, new [] {((int)Level.HubLocation, false)});
+            return (new[] {(int)Level.Level0}, new [] {(int)Level.HubLocation});
         }
     }
 }

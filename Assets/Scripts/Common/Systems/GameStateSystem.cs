@@ -3,15 +3,8 @@ using Common.Enums;
 
 namespace Common.Systems
 {
-    public delegate void RequestStateChange(GameState requested,
-        (int sceneId, bool multiplayer)[]? additionalScenesToLoad = null,
-        (int sceneId, bool multiplayer)[]? additionalScenesToUnload = null);
-
-    public delegate void ScheduleStateChange(
-        GameState requested,
-        (int sceneId, bool multiplayer)[]? additionalScenesToLoad = null,
-        (int sceneId, bool multiplayer)[]? additionalScenesToUnload = null);
-
+    public delegate void RequestStateChange(GameState requested, int[]? additionalScenesToLoad = null, int[]? additionalScenesToUnload = null);
+    public delegate void ScheduleStateChange(GameState requested, int[]? additionalScenesToLoad = null, int[]? additionalScenesToUnload = null);
     public delegate GameState GetCurrentGameState();
 
     public static class GameStateSystem
@@ -28,17 +21,10 @@ namespace Common.Systems
         /// Scenes should not overlap with the ones defined in the constructor.
         /// Actual state change may be delayed in time. Consecutive calls are not allowed.
         /// </summary>
-        public static void RequestStateChange(
-            GameState state,
-            (int sceneId, bool multiplayer)[]? additionalScenesToLoad = null,
-            (int sceneId, bool multiplayer)[]? additionalScenesToUnload = null,
-            bool multiplayer = false)
+        public static void RequestStateChange(GameState state, int[]? additionalScenesToLoad = null, int[]? additionalScenesToUnload = null)
             => OnStateChangeRequest.Invoke(state, additionalScenesToLoad, additionalScenesToUnload);
 
-        public static void ScheduleStateChange(
-            GameState state,
-            (int sceneId, bool multiplayer)[]? additionalScenesToLoad = null,
-            (int sceneId, bool multiplayer)[]? additionalScenesToUnload = null)
+        public static void ScheduleStateChange(GameState state, int[]? additionalScenesToLoad = null, int[]? additionalScenesToUnload = null)
             => OnScheduleStateChange.Invoke(state, additionalScenesToLoad, additionalScenesToUnload);
     }
 }

@@ -42,7 +42,7 @@ namespace UI.Views
         static void NewGame()
         {
             CommonData.CurrentLevel = Level.HubLocation;
-            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {((int)CommonData.CurrentLevel, false)});
+            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
         }
 
         static void Coop()
