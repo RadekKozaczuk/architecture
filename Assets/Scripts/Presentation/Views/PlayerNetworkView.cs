@@ -1,4 +1,4 @@
-using Common.Enums;
+using Common;
 using Presentation.Config;
 using Shared;
 using Unity.Netcode;
@@ -11,9 +11,6 @@ namespace Presentation.Views
     {
         [SerializeField]
         internal NetworkObject NetworkObj;
-
-        // network variables can only be declared inside network objects
-        internal readonly NetworkVariable<PlayerId> PlayerId = new();
 
         static readonly PlayerConfig _playerConfig;
 
@@ -33,7 +30,8 @@ namespace Presentation.Views
         {
             base.OnNetworkSpawn();
 
-            PresentationData.NetworkPlayers[(int)PlayerId.Value] = this;
+            if (IsOwner)
+                PresentationData.NetworkPlayers[(int)CommonData.PlayerId!.Value] = this;
         }
     }
 }

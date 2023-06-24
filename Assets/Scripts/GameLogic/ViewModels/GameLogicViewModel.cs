@@ -10,6 +10,8 @@ using JetBrains.Annotations;
 using Presentation.ViewModels;
 using Shared;
 using Shared.Systems;
+using Unity.Netcode;
+using UnityEngine;
 using UnityEngine.Scripting;
 
 namespace GameLogic.ViewModels
@@ -49,7 +51,17 @@ namespace GameLogic.ViewModels
 
         public static void MainMenuOnEntry() => CommonData.PlayerName = Utils.GenerateRandomString(UnityEngine.Random.Range(5,9));
 
-        public static void MainMenuOnExit() { }
+        public static void MainMenuOnExit()
+        {
+            // if client and multiplayer
+            // then start client
+            if (CommonData.IsMultiplayer)
+                if (!NetworkManager.Singleton.IsClient)
+                {
+                    Debug.Log("MainMenuOnExit NetworkManager.Singleton.StartClient();");
+                    NetworkManager.Singleton.StartClient();
+                }
+        }
 
         public static void GameplayOnEntry()
         {

@@ -78,6 +78,7 @@ namespace UI.Popups.Views
             CommonData.CurrentLevel = Level.HubLocation;
             CommonData.IsMultiplayer = true;
             PopupSystem.CloseCurrentPopup();
+            CommonData.PlayerId = PlayerId.Player1;
             GameLogicViewModel.StartGame();
         }
 

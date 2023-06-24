@@ -23,8 +23,6 @@ namespace GameLogic.ViewModels
 
         public static void QuickJoinLobby() => LobbySystem.QuickJoinLobby();
 
-        public static async Task JoinServer() => await LobbySystem.JoinServer();
-
         /// <summary>
         /// If the lobby was successfully created it returns true and the first player's id, false and null otherwise.
         /// </summary>

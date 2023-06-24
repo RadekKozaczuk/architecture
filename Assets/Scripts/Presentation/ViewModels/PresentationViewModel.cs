@@ -57,7 +57,8 @@ namespace Presentation.ViewModels
                         _playerConfig.PlayerClientPrefab, spawnPoint.position,
                         spawnPoint.rotation, PresentationSceneReferenceHolder.PlayerContainer);
 
-                    player.PlayerId.Value = PlayerId.Player2;
+                    // this will be assigned only on the host
+                    PresentationData.NetworkPlayers[(int)PlayerId.Player2] = player;
 
                     // spawn over the network
                     player.NetworkObj.SpawnWithOwnership(1, true);
@@ -96,7 +97,8 @@ namespace Presentation.ViewModels
                         spawnPoint.rotation,
                         PresentationSceneReferenceHolder.PlayerContainer);
 
-                    player.PlayerId.Value = PlayerId.Player1;
+                    // this will be assigned only on the host
+                    PresentationData.NetworkPlayers[(int)PlayerId.Player1] = player;
 
                     // spawn over the network
                     // Spawning in Netcode means to instantiate and/or spawn the object that is synchronized between all clients by the server.
@@ -137,7 +139,7 @@ namespace Presentation.ViewModels
             PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(false);
 
             // spawn 5 VFXs around the player
-            for (int i = 0; i < 5; i++)
+            /*for (int i = 0; i < 5; i++)
             {
                 float x = Random.Range(-5, 5);
                 float z = Random.Range(-5, 5);
@@ -145,7 +147,7 @@ namespace Presentation.ViewModels
 
                 PresentationReferenceHolder.VFXController.SpawnParticleEffect(VFX.HitEffect, new Vector3(x, 0f, z));
                 AudioController.PlaySound((Sound)soundId, new Vector3(x, 0f, z));
-            }
+            }*/
         }
 
         public static void GameplayOnExit() { }

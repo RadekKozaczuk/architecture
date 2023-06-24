@@ -208,21 +208,6 @@ namespace GameLogic.Systems
             AuthenticationService.Instance.SignOut(true);
         }
 
-        internal static async Task JoinServer()
-        {
-            try
-            {
-                JoinAllocation allocation = await RelayService.Instance.JoinAllocationAsync(_relayCode);
-                var serverData = new RelayServerData(allocation, "dtls");
-                NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(serverData);
-                NetworkManager.Singleton.StartClient();
-            }
-            catch (Exception e)
-            {
-                MyDebug.Log(e.ToString());
-            }
-        }
-
         internal static async void LeaveLobby()
         {
             try
@@ -347,10 +332,22 @@ namespace GameLogic.Systems
             }
         }
 
-        static void StartGame_Client()
+        static async void StartGame_Client()
         {
             CommonData.IsMultiplayer = true;
             CommonData.CurrentLevel = Level.HubLocation;
+
+            try
+            {
+                JoinAllocation allocation = await RelayService.Instance.JoinAllocationAsync(_relayCode);
+                var serverData = new RelayServerData(allocation, "dtls");
+                NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(serverData);
+            }
+            catch (Exception e)
+            {
+                MyDebug.Log(e.ToString());
+            }
+
             GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {((int)CommonData.CurrentLevel, false)});
         }
 
