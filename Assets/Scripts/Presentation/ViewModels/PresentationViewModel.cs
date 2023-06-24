@@ -87,10 +87,14 @@ namespace Presentation.ViewModels
                     Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player1).transform;
 
                     // instantiate locally
+                    // in network context objects can only be spawned in root - we cannot spawn under other objects.
                     PlayerNetworkView player = Object.Instantiate(
                         _playerConfig.PlayerServerPrefab,
                         spawnPoint.position,
                         spawnPoint.rotation,
+                        // todo: this is weird
+                        // todo: in network context everything is spawned in the root no matter what
+                        // todo: but for some reason without this game breaks
                         PresentationSceneReferenceHolder.PlayerContainer);
 
                     // this will be assigned only on the host
@@ -135,7 +139,7 @@ namespace Presentation.ViewModels
             PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(false);
 
             // spawn 5 VFXs around the player
-            /*for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 5; i++)
             {
                 float x = Random.Range(-5, 5);
                 float z = Random.Range(-5, 5);
@@ -143,7 +147,7 @@ namespace Presentation.ViewModels
 
                 PresentationReferenceHolder.VFXController.SpawnParticleEffect(VFX.HitEffect, new Vector3(x, 0f, z));
                 AudioController.PlaySound((Sound)soundId, new Vector3(x, 0f, z));
-            }*/
+            }
         }
 
         public static void GameplayOnExit() { }
