@@ -43,15 +43,12 @@ namespace Presentation.ViewModels
             // this is called for the host too
             NetworkManager.Singleton.OnClientConnectedCallback += clientId =>
             {
-                Debug.Log($"ON CLIENT CONNECTED {clientId}");
-
                 // ignore self connection
                 if (clientId == 0)
                     return;
 
                 if (clientId == 1 && NetworkManager.Singleton.IsHost)
                 {
-                    Debug.Log($"CHANGE OWNERSHIP {1}");
                     Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player2).transform;
                     PlayerNetworkView player = Object.Instantiate(_playerConfig.PlayerClientPrefab, spawnPoint.position, spawnPoint.rotation,
                                                                   PresentationSceneReferenceHolder.PlayerContainer);
@@ -65,30 +62,9 @@ namespace Presentation.ViewModels
             };
         }
 
-        static bool gamePrevious, mainPrevious;
-        
-        public static void CustomUpdate()
-        {
-            _instance._presentationMainController.CustomUpdate();
-            if (CommonData.IsMultiplayer && NetworkManager.Singleton.IsClient)
-            {
-                if (gamePrevious != PresentationSceneReferenceHolder.GameplayCamera.gameObject.activeSelf
-                    || mainPrevious != PresentationSceneReferenceHolder.MainMenuCamera.gameObject.activeSelf)
-                {
-                    Debug.Log("RADEK GameplayCamera " 
-                              + PresentationSceneReferenceHolder.GameplayCamera.gameObject.activeSelf);
-                    Debug.Log("RADEK MainMenuCamera " 
-                              + PresentationSceneReferenceHolder.MainMenuCamera.gameObject.activeSelf);
+        public static void CustomUpdate() => _instance._presentationMainController.CustomUpdate();
 
-                    gamePrevious = PresentationSceneReferenceHolder.GameplayCamera.gameObject.activeSelf;
-                    mainPrevious = PresentationSceneReferenceHolder.MainMenuCamera.gameObject.activeSelf;
-                }
-                
-                
-            }
-        }
-
-    public static void CustomFixedUpdate() => _instance._presentationMainController.CustomFixedUpdate();
+        public static void CustomFixedUpdate() => _instance._presentationMainController.CustomFixedUpdate();
 
         public static void CustomLateUpdate() => _instance._presentationMainController.CustomLateUpdate();
 
@@ -147,24 +123,16 @@ namespace Presentation.ViewModels
         {
             PresentationReferenceHolder.AudioController.LoadMusic(Music.MainMenu);
             PresentationReferenceHolder.AudioController.PlayMusicWhenReady(Music.MainMenu);
-            Debug.Log("RADEK MainMenuOnEntry");
             PresentationSceneReferenceHolder.GameplayCamera.gameObject.SetActive(false);
-            Debug.Log("RADEK GameplayCamera " + PresentationSceneReferenceHolder.GameplayCamera.gameObject.activeSelf);
             PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(true);
-            Debug.Log("RADEK GameplayCamera " + PresentationSceneReferenceHolder.MainMenuCamera.gameObject.activeSelf);
         }
 
         public static void MainMenuOnExit() => PresentationReferenceHolder.AudioController.StopMusic();
 
         public static void GameplayOnEntry()
         {
-            // pytanie na szóstke
-            // czy to nie jest czasem tak że on entry powinno być tylko na serrwerze wykonywane
-            Debug.Log("RADEK GameplayOnEntry");
             PresentationSceneReferenceHolder.GameplayCamera.gameObject.SetActive(true);
-            Debug.Log("RADEK GameplayCamera " + PresentationSceneReferenceHolder.GameplayCamera.gameObject.activeSelf);
             PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(false);
-            Debug.Log("RADEK MainMenuCamera " + PresentationSceneReferenceHolder.MainMenuCamera.gameObject.activeSelf);
 
             // spawn 5 VFXs around the player
             /*for (int i = 0; i < 5; i++)

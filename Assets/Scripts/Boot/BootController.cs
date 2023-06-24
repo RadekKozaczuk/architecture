@@ -14,7 +14,7 @@ namespace Boot
         [Preserve]
         BootController() => SceneManager.sceneLoaded += OnSceneLoaded;
 
-        static async void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             if (scene.buildIndex == Constants.CoreScene)
             {
