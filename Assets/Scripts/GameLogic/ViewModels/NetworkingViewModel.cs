@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Common;
 using Common.Dtos;
-using Common.Enums;
-using Common.Systems;
 using GameLogic.Systems;
-using Unity.Netcode;
-using UnityEngine;
 
 namespace GameLogic.ViewModels
 {

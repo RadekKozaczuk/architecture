@@ -11,7 +11,6 @@ using Presentation.ViewModels;
 using Shared;
 using Shared.Systems;
 using Unity.Netcode;
-using UnityEngine;
 using UnityEngine.Scripting;
 
 namespace GameLogic.ViewModels
@@ -53,14 +52,9 @@ namespace GameLogic.ViewModels
 
         public static void MainMenuOnExit()
         {
-            // if client and multiplayer
-            // then start client
-            if (CommonData.IsMultiplayer)
-                if (!NetworkManager.Singleton.IsClient)
-                {
-                    Debug.Log("MainMenuOnExit NetworkManager.Singleton.StartClient();");
-                    NetworkManager.Singleton.StartClient();
-                }
+            // if client and multiplayer and client not started - start client
+            if (CommonData.IsMultiplayer && !NetworkManager.Singleton.IsClient)
+                NetworkManager.Singleton.StartClient();
         }
 
         public static void GameplayOnEntry()

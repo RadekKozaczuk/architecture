@@ -121,6 +121,9 @@ namespace Boot
 
 		void FixedUpdate()
         {
+            if (GameStateSystem.CurrentState == GameState.Booting)
+                return;
+
             if (_isCoreSceneLoaded)
             {
                 GameLogicViewModel.CustomFixedUpdate();
@@ -131,6 +134,9 @@ namespace Boot
 
         void Update()
         {
+            if (GameStateSystem.CurrentState == GameState.Booting)
+                return;
+
             if (_isCoreSceneLoaded)
             {
                 GameLogicViewModel.CustomUpdate();
@@ -144,6 +150,9 @@ namespace Boot
 
         void LateUpdate()
         {
+            if (GameStateSystem.CurrentState == GameState.Booting)
+                return;
+
             if (_isCoreSceneLoaded)
             {
                 GameLogicViewModel.CustomLateUpdate();
