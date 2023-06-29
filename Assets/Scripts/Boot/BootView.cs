@@ -102,20 +102,12 @@ namespace Boot
 #endif
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-			DebugCommandSystem.AddCommand(_ =>
-            {
-				GameLogicViewModel.WinMission();
-			}, "win_mission", false, "Instantly wins the mission.");
-
-			DebugCommandSystem.AddCommand(_ =>
-            {
-				GameLogicViewModel.FailMission();
-			}, "fail_mission", false, "Instantly fails current mission.");
-
-            DebugCommandSystem.AddCommand(value =>
+            DebugCommandSystem.Add("win_mission", "Instantly wins the mission.", GameLogicViewModel.WinMission);
+            DebugCommandSystem.AddParameterized<int>("give_gold", "Give gold", 100, 0, 1000, value =>
             {
                 MyDebug.Log($"Parametrized debug command called with the parameter equal to {value}");
-            }, "give_gold", true, "Give gold");
+            });
+            DebugCommandSystem.Add("fail_mission", "Instantly fails current mission.", GameLogicViewModel.FailMission);
 #endif
 		}
 
@@ -129,8 +121,11 @@ namespace Boot
                 GameLogicViewModel.CustomFixedUpdate();
                 PresentationViewModel.CustomFixedUpdate();
                 UIViewModel.CustomFixedUpdate();
-            }
-        }
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+				DebugCommandSystem.CustomUpdate();
+#endif
+			}
+		}
 
         void Update()
         {
