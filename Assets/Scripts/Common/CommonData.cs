@@ -15,8 +15,23 @@ namespace Common
         /// </summary>
         public static bool LoadRequested;
 
+        /// <summary>
+        /// Has game been run in multiplayer mode.
+        /// </summary>
+        public static bool IsMultiplayer;
+
         public static Level CurrentLevel;
 
+        /// <summary>
+        /// Selected player. Useful only in multiplayer.
+        /// </summary>
+        public static PlayerId? PlayerId;
+
         public static BinaryReader SaveGameReader;
+
+        /// <summary>
+        /// Used only in multiplayer context.
+        /// </summary>
+        public static string PlayerName;
     }
 }

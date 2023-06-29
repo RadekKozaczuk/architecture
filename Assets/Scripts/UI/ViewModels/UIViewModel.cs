@@ -3,6 +3,7 @@ using ControlFlow.DependencyInjector.Interfaces;
 using JetBrains.Annotations;
 using UI.Config;
 using UI.Controllers;
+using UI.Popups;
 using UI.Systems;
 using UnityEngine.Scripting;
 
@@ -45,12 +46,19 @@ namespace UI.ViewModels
 
         public static void BootingOnExit() { }
 
-        public static void MainMenuOnEntry() => _uiConfig.InputActionAsset.FindActionMap("MainMenu").Enable();
+        public static void MainMenuOnEntry() => _uiConfig.InputActionAsset.FindActionMap(UIConstants.MainMenuActionMap).Enable();
 
-        public static void MainMenuOnExit() => _uiConfig.InputActionAsset.FindActionMap("MainMenu").Disable();
+        public static void MainMenuOnExit() => _uiConfig.InputActionAsset.FindActionMap(UIConstants.MainMenuActionMap).Disable();
 
-        public static void GameplayOnEntry() => _uiConfig.InputActionAsset.FindActionMap("Gameplay").Enable();
+        public static void GameplayOnEntry()
+        {
+            _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap).Enable();
 
-        public static void GameplayOnExit() => _uiConfig.InputActionAsset.FindActionMap("Gameplay").Disable();
+            // this happens only when we start a client game starts
+            if (PopupSystem.CurrentPopup != null)
+                PopupSystem.CloseCurrentPopup();
+        }
+
+        public static void GameplayOnExit() => _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap).Disable();
     }
 }

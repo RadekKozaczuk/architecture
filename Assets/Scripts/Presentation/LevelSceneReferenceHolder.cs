@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Common.Enums;
 using Presentation.Views;
 using UnityEngine;
 
@@ -6,8 +7,12 @@ namespace Presentation
 {
     class LevelSceneReferenceHolder : MonoBehaviour
     {
+        // todo: add assertion that checks if spawn points are not duplicated
+
+        internal Transform GetSpawnPoint(PlayerId playerId) => _spawnPoints[(int)playerId].transform;
+
         [SerializeField]
-        internal PlayerView Player;
+        SpawnPointView[] _spawnPoints;
 
         [SerializeField]
         internal List<Collider2D> Colliders;

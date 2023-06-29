@@ -1,11 +1,6 @@
-using Common.Enums;
-using Common.Signals;
-using Common.Systems;
 using ControlFlow.Interfaces;
-using ControlFlow.SignalProcessing;
-using GameLogic.Config;
+using GameLogic.Systems;
 using JetBrains.Annotations;
-using Shared.Systems;
 using UnityEngine.Scripting;
 
 namespace GameLogic.Controllers
@@ -31,16 +26,9 @@ namespace GameLogic.Controllers
 
         public void CustomUpdate()
         {
-            if (GameStateSystem.CurrentState == GameState.Booting)
-                return;
+            LobbySystem.CustomUpdate();
         }
 
-        public void CustomLateUpdate()
-        {
-            if (GameStateSystem.CurrentState == GameState.Booting)
-                return;
-
-            SignalProcessor.ExecuteSentSignals();
-        }
+        public void CustomLateUpdate() { }
 	}
 }

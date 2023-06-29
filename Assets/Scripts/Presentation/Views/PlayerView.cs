@@ -7,7 +7,7 @@ namespace Presentation.Views
     [DisallowMultipleComponent]
     class PlayerView : MonoBehaviour
     {
-        static readonly PresentationPlayerConfig _playerConfig;
+        static readonly PlayerConfig _playerConfig;
 
         internal void Move(Vector2 v)
         {

@@ -10,12 +10,13 @@ using JetBrains.Annotations;
 using Presentation.ViewModels;
 using Shared;
 using Shared.Systems;
+using Unity.Netcode;
 using UnityEngine.Scripting;
 
 namespace GameLogic.ViewModels
 {
     [UsedImplicitly]
-    public class GameLogicViewModel : IInitializable
+    public partial class GameLogicViewModel : IInitializable
     {
         public static bool SaveFileExist => SaveLoadSystem.SaveFileExist;
 
@@ -47,9 +48,14 @@ namespace GameLogic.ViewModels
 
         public static void BootingOnExit() { }
 
-        public static void MainMenuOnEntry() { }
+        public static void MainMenuOnEntry() => CommonData.PlayerName = Utils.GenerateRandomString(UnityEngine.Random.Range(5,9));
 
-        public static void MainMenuOnExit() { }
+        public static void MainMenuOnExit()
+        {
+            // if client and multiplayer and client not started - start client
+            if (CommonData.IsMultiplayer && !NetworkManager.Singleton.IsClient)
+                NetworkManager.Singleton.StartClient();
+        }
 
         public static void GameplayOnEntry()
         {
@@ -59,14 +65,16 @@ namespace GameLogic.ViewModels
 
         public static void GameplayOnExit() { }
 
-        public static void SaveGame()
-        {
-            SaveLoadSystem.SaveGame();
-        }
+        public static void SaveGame() => SaveLoadSystem.SaveGame();
 
         public static void LoadGame()
         {
         }
+
+        /// <summary>
+        /// If the instance hosted a lobby, the lobby will be deleted.
+        /// </summary>
+        public static void QuitGame() => LobbySystem.SignOut();
 
         public static void WinMission() => SignalProcessor.SendSignal(new MissionCompleteSignal());
 

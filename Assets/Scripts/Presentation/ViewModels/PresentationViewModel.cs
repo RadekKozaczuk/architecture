@@ -6,7 +6,9 @@ using ControlFlow.DependencyInjector.Interfaces;
 using JetBrains.Annotations;
 using Presentation.Config;
 using Presentation.Controllers;
+using Presentation.Views;
 using Shared.Systems;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Scripting;
 
@@ -18,6 +20,7 @@ namespace Presentation.ViewModels
         static PresentationViewModel _instance;
 
         static readonly AudioConfig _audioConfig;
+        static readonly PlayerConfig _playerConfig;
 
         [Inject]
         readonly AudioController _audioController;
@@ -28,10 +31,36 @@ namespace Presentation.ViewModels
         [Inject]
         readonly PresentationMainController _presentationMainController;
 
+        static LevelSceneReferenceHolder _level;
+
         [Preserve]
         PresentationViewModel() { }
 
-        public void Initialize() => _instance = this;
+        public void Initialize()
+        {
+            _instance = this;
+
+            // this is called for the host too
+            NetworkManager.Singleton.OnClientConnectedCallback += clientId =>
+            {
+                // ignore self connection
+                if (clientId == 0)
+                    return;
+
+                if (clientId == 1 && NetworkManager.Singleton.IsHost)
+                {
+                    Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player2).transform;
+                    PlayerNetworkView player = Object.Instantiate(_playerConfig.PlayerClientPrefab, spawnPoint.position, spawnPoint.rotation,
+                                                                  PresentationSceneReferenceHolder.PlayerContainer);
+
+                    // this will be assigned only on the host
+                    PresentationData.NetworkPlayers[(int)PlayerId.Player2] = player;
+
+                    // spawn over the network
+                    player.NetworkObj.SpawnWithOwnership(1, true);
+                }
+            };
+        }
 
         public static void CustomUpdate() => _instance._presentationMainController.CustomUpdate();
 
@@ -41,10 +70,62 @@ namespace Presentation.ViewModels
 
         public static void OnCoreSceneLoaded() => PresentationMainController.OnCoreSceneLoaded();
 
-        public static void BootingOnExit() => PresentationReferenceHolder.AudioController.LoadMusic(Music.MainMenu);
+        /// <summary>
+        /// This is were network related things happens.
+        /// Spawns all players.
+        /// </summary>
+        public static void OnLevelSceneLoaded()
+        {
+            // load level data
+            _level = GameObject.FindWithTag("LevelSceneReferenceHolder").GetComponent<LevelSceneReferenceHolder>();
+
+            if (CommonData.IsMultiplayer)
+            {
+                if (NetworkManager.Singleton.IsHost)
+                    // todo: hard coded for now
+                {
+                    Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player1).transform;
+
+                    // instantiate locally
+                    // in network context objects can only be spawned in root - we cannot spawn under other objects.
+                    PlayerNetworkView player = Object.Instantiate(
+                        _playerConfig.PlayerServerPrefab,
+                        spawnPoint.position,
+                        spawnPoint.rotation,
+                        // todo: this is weird
+                        // todo: in network context everything is spawned in the root no matter what
+                        // todo: but for some reason without this game breaks
+                        PresentationSceneReferenceHolder.PlayerContainer);
+
+                    // this will be assigned only on the host
+                    PresentationData.NetworkPlayers[(int)PlayerId.Player1] = player;
+
+                    // spawn over the network
+                    // Spawning in Netcode means to instantiate and/or spawn the object that is synchronized between all clients by the server.
+                    // Only server can spawn multiplayer objects.
+                    player.NetworkObj.Spawn(true);
+                }
+            }
+            else
+            {
+                SpawnSinglePlayer(_level.GetSpawnPoint(PlayerId.Player1));
+            }
+
+            if (CommonData.LoadRequested)
+            {
+                Vector3 position = SaveLoadUtils.ReadVector3(CommonData.SaveGameReader);
+                Quaternion rotation = SaveLoadUtils.ReadQuaternion(CommonData.SaveGameReader);
+                Transform transform = PresentationData.Player.transform;
+                transform.position = position;
+                transform.rotation = rotation;
+            }
+        }
+
+        public static void BootingOnExit() { }
 
         public static void MainMenuOnEntry()
         {
+            PresentationReferenceHolder.AudioController.LoadMusic(Music.MainMenu);
             PresentationReferenceHolder.AudioController.PlayMusicWhenReady(Music.MainMenu);
             PresentationSceneReferenceHolder.GameplayCamera.gameObject.SetActive(false);
             PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(true);
@@ -56,19 +137,6 @@ namespace Presentation.ViewModels
         {
             PresentationSceneReferenceHolder.GameplayCamera.gameObject.SetActive(true);
             PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(false);
-
-            // load level data
-            var levelSceneReferenceHolder = GameObject.FindWithTag("LevelSceneReferenceHolder").GetComponent<LevelSceneReferenceHolder>();
-            PresentationData.Player = levelSceneReferenceHolder.Player;
-
-            if (CommonData.LoadRequested)
-            {
-                Vector3 position = SaveLoadUtils.ReadVector3(CommonData.SaveGameReader);
-                Quaternion rotation = SaveLoadUtils.ReadQuaternion(CommonData.SaveGameReader);
-                Transform transform = PresentationData.Player.transform;
-                transform.position = position;
-                transform.rotation = rotation;
-            }
 
             // spawn 5 VFXs around the player
             for (int i = 0; i < 5; i++)
@@ -82,16 +150,46 @@ namespace Presentation.ViewModels
             }
         }
 
-        public static void GameplayOnExit() => PresentationReferenceHolder.AudioController.LoadMusic(Music.MainMenu);
+        public static void GameplayOnExit() { }
 
-        public static void Movement(Vector2 movementInput) => PresentationData.Player.Move(movementInput.normalized);
+        public static void Movement(Vector2 movementInput)
+        {
+            if (CommonData.IsMultiplayer)
+            {
+                if (NetworkManager.Singleton.IsHost)
+                    PresentationData.NetworkPlayers[(int)PlayerId.Player1].Move(movementInput.normalized);
+                else
+                    PresentationData.NetworkPlayers[(int)PlayerId.Player2].Move(movementInput.normalized);
+            }
+            else
+                PresentationData.Player.Move(movementInput.normalized);
+        }
 
         public static void SaveGame(BinaryWriter writer)
         {
-            Transform playerTransform = PresentationData.Player.transform;
+            Transform player = PresentationData.Player.transform;
 
-            SaveLoadUtils.Write(writer, playerTransform.position);
-            SaveLoadUtils.Write(writer, playerTransform.rotation);
+            SaveLoadUtils.Write(writer, player.position);
+            SaveLoadUtils.Write(writer, player.rotation);
+        }
+
+        /// <summary>
+        /// If player instance already exists it simply moves it to the spawn point.
+        /// </summary>
+        static void SpawnSinglePlayer(Transform spawnPoint)
+        {
+            if (PresentationData.Player == null)
+            {
+                PlayerView player = Object.Instantiate(
+                    _playerConfig.PlayerPrefab, spawnPoint.position, spawnPoint.rotation, PresentationSceneReferenceHolder.PlayerContainer);
+                PresentationData.Player = player;
+            }
+            else
+            {
+                Transform transform = PresentationData.Player.transform;
+                transform.position = spawnPoint.position;
+                transform.rotation = spawnPoint.rotation;
+            }
         }
     }
 }
