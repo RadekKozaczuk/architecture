@@ -38,17 +38,12 @@ namespace UI.Popups.Views
             _giveHost.onClick.AddListener(GiveHostAction);
             _start.onClick.AddListener(StartAction);
             _start.interactable = UIData.HasCreatedLobby;
+			_start.interactable = false;
+			AuthenticationService.Instance.SignedIn += () => {_start.interactable = true;};
             _leave.onClick.AddListener(LeaveAction);
-        }
-
-        internal override void Initialize()
-        {
-            _start.interactable = false;
-			AuthenticationService.Instance.SignedIn += () => {
-                _start.interactable = true;
-			};
 		}
 
+        internal override void Initialize() {}
 
 		internal override void Close()
         {
