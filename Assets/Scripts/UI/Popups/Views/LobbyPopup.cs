@@ -5,6 +5,7 @@ using GameLogic.ViewModels;
 using TMPro;
 using UI.Config;
 using UI.Views;
+using Unity.Services.Authentication;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -40,9 +41,16 @@ namespace UI.Popups.Views
             _leave.onClick.AddListener(LeaveAction);
         }
 
-        internal override void Initialize() { }
+        internal override void Initialize()
+        {
+            _start.interactable = false;
+			AuthenticationService.Instance.SignedIn += () => {
+                _start.interactable = true;
+			};
+		}
 
-        internal override void Close()
+
+		internal override void Close()
         {
             // todo: leave the lobby and give away host to someone else
         }
