@@ -9,10 +9,9 @@ namespace Presentation.Views
     {
         void OnTriggerEnter(Collider col)
         {
-            if (!col.TryGetComponent(out PlayerView _))
-                return;
-
-            GameStateSystem.RequestStateChange(GameState.Gameplay);
+            if (col.TryGetComponent(out PlayerView _)
+                || col.TryGetComponent(out PlayerNetworkView _))
+                GameStateSystem.RequestStateChange(GameState.Gameplay);
         }
     }
 }

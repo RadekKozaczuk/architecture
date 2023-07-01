@@ -18,10 +18,7 @@ namespace Boot
         {
             if (scene.buildIndex == Constants.CoreScene)
             {
-                // this should not happen in the multiplayer context
-                // when the machine act as a client
-                if (NetworkManager.Singleton == null || NetworkManager.Singleton.IsHost || !NetworkManager.Singleton.IsClient)
-                    SceneManager.UnloadSceneAsync(Constants.BootScene);
+                SceneManager.UnloadSceneAsync(Constants.BootScene);
                 BootView.OnCoreSceneLoaded();
                 PresentationViewModel.OnCoreSceneLoaded();
             }

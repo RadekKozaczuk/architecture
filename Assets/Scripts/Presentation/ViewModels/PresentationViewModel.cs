@@ -86,24 +86,33 @@ namespace Presentation.ViewModels
                 {
                     Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player1).transform;
 
-                    // instantiate locally
-                    // in network context objects can only be spawned in root - we cannot spawn under other objects.
-                    PlayerNetworkView player = Object.Instantiate(
-                        _playerConfig.PlayerServerPrefab,
-                        spawnPoint.position,
-                        spawnPoint.rotation,
-                        // todo: this is weird
-                        // todo: in network context everything is spawned in the root no matter what
-                        // todo: but for some reason without this game breaks
-                        PresentationSceneReferenceHolder.PlayerContainer);
+                    if (PresentationData.NetworkPlayers[(int)PlayerId.Player1] == null)
+                    {
+                        // instantiate locally
+                        // in network context objects can only be spawned in root - we cannot spawn under other objects.
+                        PlayerNetworkView player = Object.Instantiate(
+                            _playerConfig.PlayerServerPrefab,
+                            spawnPoint.position,
+                            spawnPoint.rotation,
+                            // todo: this is weird
+                            // todo: in network context everything is spawned in the root no matter what
+                            // todo: but for some reason without this game breaks
+                            PresentationSceneReferenceHolder.PlayerContainer);
 
-                    // this will be assigned only on the host
-                    PresentationData.NetworkPlayers[(int)PlayerId.Player1] = player;
+                        // this will be assigned only on the host
+                        PresentationData.NetworkPlayers[(int)PlayerId.Player1] = player;
 
-                    // spawn over the network
-                    // Spawning in Netcode means to instantiate and/or spawn the object that is synchronized between all clients by the server.
-                    // Only server can spawn multiplayer objects.
-                    player.NetworkObj.Spawn(true);
+                        // spawn over the network
+                        // Spawning in Netcode means to instantiate and/or spawn the object that is synchronized between all clients by the server.
+                        // Only server can spawn multiplayer objects.
+                        player.NetworkObj.Spawn(true);
+                    }
+                    else
+                    {
+                        Transform transform = PresentationData.NetworkPlayers[(int)PlayerId.Player1].transform;
+                        transform.position = spawnPoint.position;
+                        transform.rotation = spawnPoint.rotation;
+                    }
                 }
             }
             else
