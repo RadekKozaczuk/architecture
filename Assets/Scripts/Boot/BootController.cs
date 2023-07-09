@@ -2,7 +2,6 @@ using Common;
 using JetBrains.Annotations;
 using Presentation.ViewModels;
 using UI.ViewModels;
-using Unity.Netcode;
 using UnityEngine.SceneManagement;
 using UnityEngine.Scripting;
 
