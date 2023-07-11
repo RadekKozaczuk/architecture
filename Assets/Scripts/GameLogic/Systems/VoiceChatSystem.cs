@@ -51,7 +51,7 @@ namespace GameLogic.Systems
                 {
                     _session.EndLogin(ar);
                 }
-                catch (Exception e)
+                catch (Exception _)
                 {
                     // Unbind any login session-related events you might be subscribed to.
                     // Handle error
@@ -69,7 +69,6 @@ namespace GameLogic.Systems
         {
             var loginSession = (ILoginSession)sender;
             if (e.PropertyName == "State")
-            {
                 if (loginSession.State == LoginState.LoggedIn)
                 {
                     bool connectAudio = true;
@@ -81,7 +80,6 @@ namespace GameLogic.Systems
                     // To test with multiple users, try joining a non-positional channel.
                     // JoinChannel("MultipleUserTestChannel", ChannelType.NonPositional, connectAudio, connectText);
                 }
-            }
         }
     }
 }
