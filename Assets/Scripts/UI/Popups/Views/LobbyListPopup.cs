@@ -96,6 +96,8 @@ namespace UI.Popups.Views
             PopupSystem.ShowPopup(PopupType.Lobby);
             (PopupSystem.CurrentPopup as LobbyPopup)!.SetValues(lobbyName, players);
             CommonData.PlayerId = PlayerId.Player2;
+
+            GameLogicViewModel.JoinVoiceChat();
         }
     }
 }

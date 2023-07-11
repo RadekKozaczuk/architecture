@@ -8,6 +8,7 @@ using JetBrains.Annotations;
 using Presentation.Config;
 using Shared;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.Scripting;
 
@@ -122,7 +123,7 @@ namespace Presentation.Controllers
         /// </summary>
         internal void StopMusic()
         {
-            Assert.IsNotNull(_currentMusic, "Calling StopMusic when no music is playing is invalid.");
+            Assert.IsTrue(_currentMusic.HasValue, "Calling StopMusic when no music is playing is invalid.");
 
             PresentationSceneReferenceHolder.MusicAudioSource.Stop();
             PresentationSceneReferenceHolder.MusicAudioSource.clip = null;
