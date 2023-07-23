@@ -28,6 +28,11 @@ namespace GameLogic.ViewModels
         /// </summary>
         public static void KickPlayer(string playerId) => LobbySystem.KickPlayer(playerId);
 
+		/// <summary>
+		/// Only host can gives lobby host role to one of the players.
+		/// </summary>
+		public static void GiveHost(string playerId) => LobbySystem.GiveHost(playerId);
+
         public static void LeaveLobby() => LobbySystem.LeaveLobby();
 
         public static async void StartGame()

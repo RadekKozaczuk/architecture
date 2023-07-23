@@ -18,9 +18,6 @@ namespace UI.Popups.Views
         TextMeshProUGUI _lobbyName;
 
         [SerializeField]
-        Button _giveHost;
-
-        [SerializeField]
         Button _start;
 
         [SerializeField]
@@ -31,11 +28,12 @@ namespace UI.Popups.Views
 
         static readonly UIConfig _config;
 
+        string _hostId;
+
         LobbyPopup() : base(PopupType.Lobby) { }
 
         void Awake()
         {
-            _giveHost.onClick.AddListener(GiveHostAction);
             _start.onClick.AddListener(StartAction);
             _start.interactable = UIData.HasCreatedLobby;
 			_start.interactable = false;
@@ -60,7 +58,10 @@ namespace UI.Popups.Views
             foreach ((string playerName, string playerId, bool isHost) in players)
             {
                 LobbyPlayerElementView view = Instantiate(_config.LobbyPlayerElementView, _list.transform);
-                view.Initialize(playerName, playerId, isHost);
+                if (CommonData.PlayerId == PlayerId.Player1)
+                    view.Initialize(playerName, playerId, isHost, true);
+                else
+                    view.Initialize(playerName, playerId, isHost, false);
             }
         }
 
@@ -69,12 +70,11 @@ namespace UI.Popups.Views
         /// </summary>
         internal void SetValues(string lobbyName, string playerName, string playerId)
         {
+            _hostId = playerId;
             _lobbyName.text = lobbyName;
             LobbyPlayerElementView view = Instantiate(_config.LobbyPlayerElementView, _list.transform);
-            view.Initialize(playerName, playerId, true);
+            view.Initialize(playerName, playerId, true, false);
         }
-
-        static void GiveHostAction() { }
 
         static void StartAction()
         {

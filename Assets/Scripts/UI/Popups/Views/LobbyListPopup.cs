@@ -82,7 +82,10 @@ namespace UI.Popups.Views
 
         void LobbyQueryResultCallback(LobbyDto[] lobbies)
         {
-            for (int i = 0; i < lobbies.Length; i++)
+			foreach (Transform child in _list.transform)
+				Destroy(child.gameObject);
+
+			for (int i = 0; i < lobbies.Length; i++)
             {
                 LobbyDto lobby = lobbies[i];
                 LobbyListElementView view = Instantiate(_config.LobbyListElement, _list.transform);

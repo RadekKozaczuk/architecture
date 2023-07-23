@@ -2,6 +2,10 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.Services.Authentication;
+using Lobby = Unity.Services.Lobbies.Models.Lobby;
+using GameLogic.Systems;
+using Unity.Services.Lobbies;
 
 namespace UI.Views
 {
@@ -17,19 +21,29 @@ namespace UI.Views
         [SerializeField]
         Button _kick;
 
-        string _playerId;
+		[SerializeField]
+		Button _giveHost;
 
-        void Awake() => _kick.onClick.AddListener(() => GameLogicViewModel.KickPlayer(_playerId));
+		string _playerId;
+
+        void Awake() {
+            _kick.onClick.AddListener(() => GameLogicViewModel.KickPlayer(_playerId));
+            _giveHost.onClick.AddListener(() => GameLogicViewModel.GiveHost(_playerId));
+        }
 
         // todo: this should also take into account lobby ownership
-        internal void Initialize(string playerName, string playerId, bool isHost)
+        internal void Initialize(string playerName, string playerId, bool isHost, bool forHost)
         {
             _playerName.text = playerName;
             _playerId = playerId;
             Color c = _isHost.color;
             c.a = isHost ? 255 : 0f;
             _isHost.color = c;
-            _kick.gameObject.SetActive(!isHost);
+            bool showHostMenu = forHost && !isHost;
+            _kick.gameObject.SetActive(showHostMenu);
+            _giveHost.gameObject.SetActive(showHostMenu);
+            Debug.Log(playerName);
+
         }
     }
 }

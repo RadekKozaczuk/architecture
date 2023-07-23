@@ -263,7 +263,8 @@ namespace GameLogic.Systems
             try
             {
                 await LobbyService.Instance.RemovePlayerAsync(Lobby.Id, playerId);
-            }
+				SignalProcessor.SendSignal(new LobbyChangedSignal(Lobby.Name, GetPlayers()));
+			}
             catch (LobbyServiceException e)
             {
                 MyDebug.Log(e.ToString());
@@ -354,12 +355,13 @@ namespace GameLogic.Systems
         /// <summary>
         /// Gives lobby host role to one of the players.
         /// </summary>
-        static async void GiveHost(string playerId)
+        internal static async void GiveHost(string playerId)
         {
             try
             {
                 Lobby = await Lobbies.Instance.UpdateLobbyAsync(Lobby.Id, new UpdateLobbyOptions {HostId = playerId});
-            }
+				SignalProcessor.SendSignal(new LobbyChangedSignal(Lobby.Name, GetPlayers()));
+			}
             catch (LobbyServiceException e)
             {
                 MyDebug.Log(e.ToString());
