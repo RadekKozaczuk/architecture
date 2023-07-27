@@ -55,13 +55,16 @@ namespace UI.Popups.Views
             foreach (Transform child in _list.transform)
                 Destroy(child.gameObject);
 
+            foreach ((string playerName, string playerId, bool isHost) in players){
+                if (isHost)
+                    _hostId = playerId;
+            }
+
+
             foreach ((string playerName, string playerId, bool isHost) in players)
             {
                 LobbyPlayerElementView view = Instantiate(_config.LobbyPlayerElementView, _list.transform);
-                if (CommonData.PlayerId == PlayerId.Player1)
-                    view.Initialize(playerName, playerId, isHost, true);
-                else
-                    view.Initialize(playerName, playerId, isHost, false);
+                view.Initialize(playerName, playerId, isHost, AuthenticationService.Instance.PlayerId == _hostId);
             }
         }
 
@@ -73,7 +76,7 @@ namespace UI.Popups.Views
             _hostId = playerId;
             _lobbyName.text = lobbyName;
             LobbyPlayerElementView view = Instantiate(_config.LobbyPlayerElementView, _list.transform);
-            view.Initialize(playerName, playerId, true, false);
+            view.Initialize(playerName, playerId, true, true);
         }
 
         static void StartAction()

@@ -42,8 +42,6 @@ namespace UI.Views
             bool showHostMenu = forHost && !isHost;
             _kick.gameObject.SetActive(showHostMenu);
             _giveHost.gameObject.SetActive(showHostMenu);
-            Debug.Log(playerName);
-
         }
     }
 }

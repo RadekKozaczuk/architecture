@@ -58,7 +58,7 @@ namespace UI.Popups.Views
             Debug.Log("UnityServices.InitializeAsync & AuthenticationService.Instance.SignInAnonymouslyAsync call");
 
             await UnityServices.InitializeAsync();
-
+            AuthenticationService.Instance.ClearSessionToken();
             // tokens are stored in PlayerPrefs
             if (AuthenticationService.Instance.SessionTokenExists)
                 Debug.Log($"Cached token exist. Recovering the existing credentials.");
