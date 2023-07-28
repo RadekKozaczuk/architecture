@@ -157,7 +157,7 @@ namespace GameLogic.Systems
 			}
 		}
 
-		internal static async void JoinLobbyByCode(string lobbyCode)
+		internal static async void JoinLobbyByCode(string lobbyCode, Action<string, string, List<(string playerName, string playerId, bool isHost)>> callback)
 		{
 			try
 			{
@@ -173,7 +173,7 @@ namespace GameLogic.Systems
 				};
 
 				Lobby = await Lobbies.Instance.JoinLobbyByCodeAsync(lobbyCode, options);
-				SignalProcessor.SendSignal(new LobbyChangedSignal(Lobby.Name, Lobby.LobbyCode, GetPlayers()));
+				callback(Lobby.Name, Lobby.LobbyCode, GetPlayers());
 			}
 			catch (LobbyServiceException e)
 			{

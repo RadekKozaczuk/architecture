@@ -5,6 +5,7 @@ using Common.Enums;
 using GameLogic.ViewModels;
 using UI.Config;
 using UI.Views;
+using TMPro;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
@@ -20,6 +21,12 @@ namespace UI.Popups.Views
 
 		[SerializeField]
 		Button _join;
+		
+		[SerializeField]
+		TMP_InputField _lobbyCodeInput;
+		
+		[SerializeField]
+		Button _joinByCode;
 
 		[SerializeField]
 		Button _create;
@@ -37,6 +44,8 @@ namespace UI.Popups.Views
 			_join.onClick.AddListener(() => GameLogicViewModel.JoinLobbyById(LobbyListElementView.SelectedLobby.LobbyId, JoinLobbyResultCallback)); // join the selected
 			_join.interactable = false;
 			_create.onClick.AddListener(() => PopupSystem.ShowPopup(PopupType.CreateLobby));
+			_joinByCode.onClick.AddListener(() => GameLogicViewModel.JoinLobbyByCode(_lobbyCodeInput.text, JoinLobbyResultCallback));
+			_joinByCode.interactable = true;
 		}
 
 		internal override void Initialize()
