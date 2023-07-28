@@ -438,7 +438,7 @@ namespace GameLogic.Systems
 
                 // calculate hash
                 int hashCode = CalculateHash();
-                Debug.Log(hashCode);
+                
                 // send signal is if has changed
                 if (hashCode != _lastUpdateCallHash)
                 {
