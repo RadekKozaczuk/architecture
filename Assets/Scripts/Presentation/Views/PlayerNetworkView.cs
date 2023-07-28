@@ -3,6 +3,7 @@ using Presentation.Config;
 using Shared;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Presentation.Views
 {
@@ -16,7 +17,7 @@ namespace Presentation.Views
 
         internal void Move(Vector2 v)
         {
-            Assert.True(v.sqrMagnitude < Vector3.one.sqrMagnitude, "Vector v must be normalized.");
+            Assert.IsTrue(v.sqrMagnitude < Vector3.one.sqrMagnitude, "Vector v must be normalized.");
 
             if (!IsOwner)
                 return;
