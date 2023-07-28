@@ -45,16 +45,15 @@ namespace UI.Popups.Views
 		{
 			(bool success, string playerId, string lobbyCode) = await GameLogicViewModel.CreateLobby(_input.text, (int)_slider.value);
 
-            if (success)
-            {
-                UIData.HasCreatedLobby = true;
-                PopupSystem.CloseCurrentPopup();
-                PopupSystem.CloseCurrentPopup();
-                PopupSystem.ShowPopup(PopupType.Lobby);
-                (PopupSystem.CurrentPopup as LobbyPopup)!.SetValues(_input.text, CommonData.PlayerName, playerId);
-                CommonData.PlayerId = PlayerId.Player1;
-                GameLogicViewModel.JoinVoiceChat();
-            }
-        }
+			if (success)
+			{
+				UIData.HasCreatedLobby = true;
+				PopupSystem.CloseCurrentPopup();
+				PopupSystem.CloseCurrentPopup();
+				PopupSystem.ShowPopup(PopupType.Lobby);
+				(PopupSystem.CurrentPopup as LobbyPopup)!.SetValues(_input.text, lobbyCode, CommonData.PlayerName, playerId);
+				CommonData.PlayerId = PlayerId.Player1;
+			}
+		}
     }
 }
