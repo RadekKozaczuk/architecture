@@ -16,6 +16,9 @@ namespace UI.Popups.Views
 	{
 		[SerializeField]
 		TextMeshProUGUI _lobbyName;
+		
+		[SerializeField]
+		TextMeshProUGUI _lobbyCode;
 
 		[SerializeField]
 		Button _start;
@@ -48,7 +51,7 @@ namespace UI.Popups.Views
 			// todo: leave the lobby and give away host to someone else
 		}
 		
-		internal void UpdateLobby(string lobbyName, List<(string playerName, string playerId, bool isHost)> players)
+		internal void UpdateLobby(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players)
 		{
 			string playerId = AuthenticationService.Instance.PlayerId;
 			bool playerIsInLobby = false;
@@ -59,14 +62,15 @@ namespace UI.Popups.Views
 			}
 
 			if (playerIsInLobby)
-				SetValues(lobbyName, players);
+				SetValues(lobbyName, lobbyCode, players);
 			else
 				ExitLobby();
 		}
 		
-		internal void SetValues(string lobbyName, List<(string playerName, string playerId, bool isHost)> players)
+		internal void SetValues(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players)
 		{
 			_lobbyName.text = lobbyName;
+			_lobbyCode.text = lobbyCode;
 
 			foreach (Transform child in _list.transform)
 				Destroy(child.gameObject);
@@ -87,10 +91,11 @@ namespace UI.Popups.Views
 		/// <summary>
 		/// Set values for the host.
 		/// </summary>
-		internal void SetValues(string lobbyName, string playerName, string playerId)
+		internal void SetValues(string lobbyName, string lobbyCode, string playerName, string playerId)
 		{
 			_hostId = playerId;
 			_lobbyName.text = lobbyName;
+			_lobbyCode.text = lobbyCode;
 			LobbyPlayerElementView view = Instantiate(_config.LobbyPlayerElementView, _list.transform);
 			view.Initialize(playerName, playerId, true, true);
 		}
