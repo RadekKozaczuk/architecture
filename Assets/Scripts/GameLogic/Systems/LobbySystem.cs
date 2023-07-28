@@ -263,7 +263,6 @@ namespace GameLogic.Systems
             try
             {
                 await LobbyService.Instance.RemovePlayerAsync(Lobby.Id, playerId);
-				SignalProcessor.SendSignal(new LobbyChangedSignal(Lobby.Name, GetPlayers()));
 			}
             catch (LobbyServiceException e)
             {
@@ -360,7 +359,6 @@ namespace GameLogic.Systems
             try
             {
                 Lobby = await Lobbies.Instance.UpdateLobbyAsync(Lobby.Id, new UpdateLobbyOptions {HostId = playerId});
-				SignalProcessor.SendSignal(new LobbyChangedSignal(Lobby.Name, GetPlayers()));
 			}
             catch (LobbyServiceException e)
             {
@@ -440,7 +438,7 @@ namespace GameLogic.Systems
 
                 // calculate hash
                 int hashCode = CalculateHash();
-
+                Debug.Log(hashCode);
                 // send signal is if has changed
                 if (hashCode != _lastUpdateCallHash)
                 {
@@ -473,8 +471,12 @@ namespace GameLogic.Systems
         {
             int hashCode = _lobby.Name.GetHashCode();
 
-            foreach (Player player in _lobby.Players)
-                hashCode += player.Data[Constants.PlayerName].Value.GetHashCode() + (_lobby.HostId == player.Id).GetHashCode();
+            foreach (Player player in _lobby.Players){
+                if (IsHost)
+                    hashCode += 2 * player.Data[Constants.PlayerName].Value.GetHashCode();
+                else
+                    hashCode += player.Data[Constants.PlayerName].Value.GetHashCode();
+            }
 
             return hashCode;
         }
