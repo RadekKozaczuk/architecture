@@ -195,6 +195,30 @@ namespace GameLogic.Systems
 				MyDebug.Log(e.ToString());
 			}
 		}
+		
+		internal static async void RejoinToLobby(string lobbyId, Action<string, string, List<(string playerName, string playerId, bool isHost)>> callback)
+		{
+			try
+			{
+				var options = new JoinLobbyByIdOptions
+				{
+					Player = new Player
+					{
+						Data = new Dictionary<string, PlayerDataObject>
+						{
+							{Constants.PlayerName, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, CommonData.PlayerName)}
+						}
+					}
+				};
+
+				Lobby = await Lobbies.Instance.ReconnectToLobbyAsync(lobbyId);
+				callback(Lobby.Name, Lobby.LobbyCode, GetPlayers());
+			}
+			catch (LobbyServiceException e)
+			{
+				MyDebug.Log(e.ToString());
+			}
+		}
 
 		/// <summary>
 		/// If the instance hosted a lobby, the lobby will be deleted.

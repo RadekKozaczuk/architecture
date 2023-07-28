@@ -7,6 +7,7 @@ using UI.Config;
 using UI.Views;
 using TMPro;
 using Unity.Services.Authentication;
+using Unity.Services.Lobbies;
 using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,6 +24,9 @@ namespace UI.Popups.Views
 		Button _join;
 		
 		[SerializeField]
+		Button _rejoin;
+		
+		[SerializeField]
 		TMP_InputField _lobbyCodeInput;
 		
 		[SerializeField]
@@ -35,6 +39,8 @@ namespace UI.Popups.Views
 		RectTransform _list;
 
 		static readonly UIConfig _config;
+		
+		List <string> _joinedLobbiesId = new();
 
 		LobbyListPopup() : base(PopupType.LobbyList) { }
 
@@ -45,7 +51,19 @@ namespace UI.Popups.Views
 			_join.interactable = false;
 			_create.onClick.AddListener(() => PopupSystem.ShowPopup(PopupType.CreateLobby));
 			_joinByCode.onClick.AddListener(() => GameLogicViewModel.JoinLobbyByCode(_lobbyCodeInput.text, JoinLobbyResultCallback));
-			_joinByCode.interactable = true;
+			_joinByCode.interactable = false;
+			_lobbyCodeInput.onValueChanged.AddListener((string s) => _joinByCode.interactable = true);
+			_rejoin.interactable = false;
+		}
+		
+		async void GetJoindedLobbies()
+		{
+			_joinedLobbiesId = await LobbyService.Instance.GetJoinedLobbiesAsync();
+			if (_joinedLobbiesId.Count > 0)
+			{
+				_rejoin.interactable = true;
+				_rejoin.onClick.AddListener(() => GameLogicViewModel.RejoinToLobby(_joinedLobbiesId[_joinedLobbiesId.Count - 1], JoinLobbyResultCallback));
+			}
 		}
 
 		internal override void Initialize()
@@ -65,7 +83,13 @@ namespace UI.Popups.Views
 		async void InitializeAsync()
 		{
 			if (UnityServices.State == ServicesInitializationState.Initialized)
+			{
+				//GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback);
+				GetJoindedLobbies();
+				_refresh.interactable = true;
+				_create.interactable = true;
 				return;
+			}
 				
 			Debug.Log("UnityServices.InitializeAsync & AuthenticationService.Instance.SignInAnonymouslyAsync call");
 
@@ -86,10 +110,13 @@ namespace UI.Popups.Views
 				_create.interactable = true;
 
 				Debug.Log($"IsSignedIn: {AuthenticationService.Instance.IsSignedIn}");
+				
 			};
 
 			// this will create an account automatically without need to provide password or username
 			await AuthenticationService.Instance.SignInAnonymouslyAsync();
+			GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback);
+			GetJoindedLobbies();
 		}
 
 		void LobbyQueryResultCallback(LobbyDto[] lobbies)
