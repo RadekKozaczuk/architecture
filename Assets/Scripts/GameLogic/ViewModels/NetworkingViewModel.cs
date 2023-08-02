@@ -6,29 +6,38 @@ using GameLogic.Systems;
 
 namespace GameLogic.ViewModels
 {
-    public partial class GameLogicViewModel
-    {
-        public static void RequestGetLobbies(Action<LobbyDto[]> callback)
-            => LobbySystem.RequestGetLobbies(callback);
+	public partial class GameLogicViewModel
+	{
+		public static void RequestGetLobbies(Action<LobbyDto[]> callback)
+			=> LobbySystem.RequestGetLobbies(callback);
 
-        public static void JoinLobbyById(string lobbyId, Action<string, List<(string playerName, string playerId, bool isHost)>> callback)
-            => LobbySystem.JoinLobbyById(lobbyId, callback);
+		public static void JoinLobbyById(string lobbyId, Action<string, string, List<(string playerName, string playerId, bool isHost)>> callback)
+			=> LobbySystem.JoinLobbyById(lobbyId, callback);
 
-        public static void JoinLobbyByCode(string lobbyCode) => LobbySystem.JoinLobbyByCode(lobbyCode);
+		public static void JoinLobbyByCode(string lobbyCode, Action<string, string, List<(string playerName, string playerId, bool isHost)>> callback)
+			=> LobbySystem.JoinLobbyByCode(lobbyCode, callback);
 
-        public static void QuickJoinLobby() => LobbySystem.QuickJoinLobby();
+		public static void RejoinToLobby(string lobbyId, Action<string, string, List<(string playerName, string playerId, bool isHost)>> callback)
+			=> LobbySystem.RejoinToLobby(lobbyId, callback);
 
-        /// <summary>
-        /// If the lobby was successfully created it returns true and the first player's id, false and null otherwise.
-        /// </summary>
-        public static async Task<(bool, string)> CreateLobby(string lobbyName, int maxPlayers) => await LobbySystem.CreateLobby(lobbyName, maxPlayers);
+		public static void QuickJoinLobby() => LobbySystem.QuickJoinLobby();
 
-        /// <summary>
-        /// Only host can kick players. Host cannot kick himself.
-        /// </summary>
-        public static void KickPlayer(string playerId) => LobbySystem.KickPlayer(playerId);
+		/// <summary>
+		/// If the lobby was successfully created it returns true and the first player's id, false and null otherwise.
+		/// </summary>
+		public static async Task<(bool, string, string)> CreateLobby(string lobbyName, int maxPlayers) => await LobbySystem.CreateLobby(lobbyName, maxPlayers);
 
-        public static void LeaveLobby() => LobbySystem.LeaveLobby();
+		/// <summary>
+		/// Only host can kick players. Host cannot kick himself.
+		/// </summary>
+		public static void KickPlayer(string playerId) => LobbySystem.KickPlayer(playerId);
+
+		/// <summary>
+		/// Only host can gives lobby host role to one of the players.
+		/// </summary>
+		public static void GiveHost(string playerId) => LobbySystem.GiveHost(playerId);
+
+		public static void LeaveLobby() => LobbySystem.LeaveLobby();
 
         public static async void StartGame()
         {
