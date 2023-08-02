@@ -196,7 +196,7 @@ namespace GameLogic.Systems
 				MyDebug.Log(e.ToString());
 			}
 		}
-		
+
 		internal static async void RejoinToLobby(string lobbyId, Action<string, string, List<(string playerName, string playerId, bool isHost)>> callback)
 		{
 			try
@@ -463,7 +463,7 @@ namespace GameLogic.Systems
 
 				// calculate hash
 				int hashCode = CalculateHash();
-				
+
 				// send signal is if has changed
 				if (hashCode != _lastUpdateCallHash)
 				{
@@ -496,12 +496,11 @@ namespace GameLogic.Systems
 		{
 			int hashCode = _lobby.Name.GetHashCode();
 
-			foreach (Player player in _lobby.Players){
+			foreach (Player player in _lobby.Players)
 				if (IsHost)
 					hashCode += 2 * player.Data[Constants.PlayerName].Value.GetHashCode();
 				else
 					hashCode += player.Data[Constants.PlayerName].Value.GetHashCode();
-			}
 
 			return hashCode;
 		}

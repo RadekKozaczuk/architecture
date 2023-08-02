@@ -16,7 +16,7 @@ namespace GameLogic.ViewModels
 
 		public static void JoinLobbyByCode(string lobbyCode, Action<string, string, List<(string playerName, string playerId, bool isHost)>> callback)
 			=> LobbySystem.JoinLobbyByCode(lobbyCode, callback);
-			
+
 		public static void RejoinToLobby(string lobbyId, Action<string, string, List<(string playerName, string playerId, bool isHost)>> callback)
 			=> LobbySystem.RejoinToLobby(lobbyId, callback);
 
