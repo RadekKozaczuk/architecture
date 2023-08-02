@@ -22,13 +22,13 @@ namespace UI.Popups.Views
 
 		[SerializeField]
 		Button _join;
-		
+
 		[SerializeField]
 		Button _rejoin;
-		
+
 		[SerializeField]
 		TMP_InputField _lobbyCodeInput;
-		
+
 		[SerializeField]
 		Button _joinByCode;
 
@@ -39,7 +39,7 @@ namespace UI.Popups.Views
 		RectTransform _list;
 
 		static readonly UIConfig _config;
-		
+
 		List <string> _joinedLobbiesId = new();
 
 		LobbyListPopup() : base(PopupType.LobbyList) { }
@@ -52,17 +52,17 @@ namespace UI.Popups.Views
 			_create.onClick.AddListener(() => PopupSystem.ShowPopup(PopupType.CreateLobby));
 			_joinByCode.onClick.AddListener(() => GameLogicViewModel.JoinLobbyByCode(_lobbyCodeInput.text, JoinLobbyResultCallback));
 			_joinByCode.interactable = false;
-			_lobbyCodeInput.onValueChanged.AddListener((string s) => _joinByCode.interactable = true);
+			_lobbyCodeInput.onValueChanged.AddListener(_ => LobbyCodeInputOnValueChanged());
 			_rejoin.interactable = false;
 		}
-		
-		async void GetJoindedLobbies()
+
+		async void GetJoinedLobbies()
 		{
 			_joinedLobbiesId = await LobbyService.Instance.GetJoinedLobbiesAsync();
 			if (_joinedLobbiesId.Count > 0)
 			{
 				_rejoin.interactable = true;
-				_rejoin.onClick.AddListener(() => GameLogicViewModel.RejoinToLobby(_joinedLobbiesId[_joinedLobbiesId.Count - 1], JoinLobbyResultCallback));
+				_rejoin.onClick.AddListener(() => GameLogicViewModel.RejoinToLobby(_joinedLobbiesId[^1], JoinLobbyResultCallback));
 			}
 		}
 
@@ -84,13 +84,12 @@ namespace UI.Popups.Views
 		{
 			if (UnityServices.State == ServicesInitializationState.Initialized)
 			{
-				//GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback);
-				GetJoindedLobbies();
+				GetJoinedLobbies();
 				_refresh.interactable = true;
 				_create.interactable = true;
 				return;
 			}
-				
+
 			Debug.Log("UnityServices.InitializeAsync & AuthenticationService.Instance.SignInAnonymouslyAsync call");
 
 			await UnityServices.InitializeAsync();
@@ -110,13 +109,12 @@ namespace UI.Popups.Views
 				_create.interactable = true;
 
 				Debug.Log($"IsSignedIn: {AuthenticationService.Instance.IsSignedIn}");
-				
 			};
 
 			// this will create an account automatically without need to provide password or username
 			await AuthenticationService.Instance.SignInAnonymouslyAsync();
 			GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback);
-			GetJoindedLobbies();
+			GetJoinedLobbies();
 		}
 
 		void LobbyQueryResultCallback(LobbyDto[] lobbies)
@@ -140,6 +138,12 @@ namespace UI.Popups.Views
             CommonData.PlayerId = PlayerId.Player2;
 
             GameLogicViewModel.JoinVoiceChat();
+        }
+
+        void LobbyCodeInputOnValueChanged()
+        {
+	        _lobbyCodeInput.text = _lobbyCodeInput.text.ToUpper();
+	        _joinByCode.interactable = _lobbyCodeInput.text.Length == 6;
         }
     }
 }
