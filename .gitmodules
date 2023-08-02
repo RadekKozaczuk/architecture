@@ -1,3 +1,6 @@
 [submodule "Assets/Scripts/Shared"]
 	path = Assets/Scripts/Shared
 	url = https://github.com/RadekKozaczuk/shared-modules
+[submodule ".github"]
+	path = .github
+	url = https://github.com/RadekKozaczuk/.github
