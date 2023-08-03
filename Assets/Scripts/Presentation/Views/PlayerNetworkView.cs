@@ -1,6 +1,5 @@
 using Common;
 using Presentation.Config;
-using Shared;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
