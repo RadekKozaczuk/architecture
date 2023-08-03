@@ -5,99 +5,145 @@ using Common.Enums;
 using GameLogic.ViewModels;
 using UI.Config;
 using UI.Views;
+using TMPro;
 using Unity.Services.Authentication;
+using Unity.Services.Lobbies;
 using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI.Popups.Views
 {
-    [DisallowMultipleComponent]
-    class LobbyListPopup : AbstractPopupView
-    {
-        [SerializeField]
-        Button _refresh;
+	[DisallowMultipleComponent]
+	class LobbyListPopup : AbstractPopupView
+	{
+		[SerializeField]
+		Button _refresh;
 
-        [SerializeField]
-        Button _join;
+		[SerializeField]
+		Button _join;
 
-        [SerializeField]
-        Button _create;
+		[SerializeField]
+		Button _rejoin;
 
-        [SerializeField]
-        RectTransform _list;
+		[SerializeField]
+		TMP_InputField _lobbyCodeInput;
 
-        static readonly UIConfig _config;
+		[SerializeField]
+		Button _joinByCode;
 
-        LobbyListPopup() : base(PopupType.LobbyList) { }
+		[SerializeField]
+		Button _create;
 
-        void Awake()
-        {
-            _refresh.onClick.AddListener(() => GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback));
-            _join.onClick.AddListener(() => GameLogicViewModel.JoinLobbyById(LobbyListElementView.SelectedLobby.LobbyId, JoinLobbyResultCallback)); // join the selected
-            _join.interactable = false;
-            _create.onClick.AddListener(() => PopupSystem.ShowPopup(PopupType.CreateLobby));
-        }
+		[SerializeField]
+		RectTransform _list;
 
-        internal override void Initialize()
-        {
-            InitializeAsync();
-        }
+		static readonly UIConfig _config;
 
-        internal override void Close()
-        {
-            // todo: do we need to deinititialize unity services?
+		List <string> _joinedLobbiesId = new();
 
-            AuthenticationService.Instance.SignOut();
-        }
+		LobbyListPopup() : base(PopupType.LobbyList) { }
 
-        internal void SelectedLobbyChanged(bool selected) => _join.interactable = selected;
+		void Awake()
+		{
+			_refresh.onClick.AddListener(() => GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback));
+			_join.onClick.AddListener(() => GameLogicViewModel.JoinLobbyById(LobbyListElementView.SelectedLobby.LobbyId, JoinLobbyResultCallback)); // join the selected
+			_join.interactable = false;
+			_create.onClick.AddListener(() => PopupSystem.ShowPopup(PopupType.CreateLobby));
+			_joinByCode.onClick.AddListener(() => GameLogicViewModel.JoinLobbyByCode(_lobbyCodeInput.text, JoinLobbyResultCallback));
+			_joinByCode.interactable = false;
+			_lobbyCodeInput.onValueChanged.AddListener(_ => LobbyCodeInputOnValueChanged());
+			_rejoin.interactable = false;
+		}
 
-        async void InitializeAsync()
-        {
-            Debug.Log("UnityServices.InitializeAsync & AuthenticationService.Instance.SignInAnonymouslyAsync call");
+		async void GetJoinedLobbies()
+		{
+			_joinedLobbiesId = await LobbyService.Instance.GetJoinedLobbiesAsync();
+			if (_joinedLobbiesId.Count > 0)
+			{
+				_rejoin.interactable = true;
+				_rejoin.onClick.AddListener(() => GameLogicViewModel.RejoinToLobby(_joinedLobbiesId[^1], JoinLobbyResultCallback));
+			}
+		}
 
-            await UnityServices.InitializeAsync();
+		internal override void Initialize()
+		{
+			InitializeAsync();
+		}
 
-            // tokens are stored in PlayerPrefs
-            if (AuthenticationService.Instance.SessionTokenExists)
-                Debug.Log($"Cached token exist. Recovering the existing credentials.");
-            else
-                Debug.Log($"Cached token not found. Creating new anonymous credentials.");
+		internal override void Close()
+		{
+			// todo: do we need to deinititialize unity services?
 
-            AuthenticationService.Instance.SignedIn += () =>
-            {
-                Debug.Log($"Anonymous authentication completed successfully");
-                Debug.Log($"Player Id: {AuthenticationService.Instance.PlayerId}");
-                Debug.Log($"Access Token: {AuthenticationService.Instance.AccessToken}");
-                _refresh.interactable = true;
-                _create.interactable = true;
+			AuthenticationService.Instance.SignOut();
+		}
 
-                Debug.Log($"IsSignedIn: {AuthenticationService.Instance.IsSignedIn}");
-            };
+		internal void SelectedLobbyChanged(bool selected) => _join.interactable = selected;
 
-            // this will create an account automatically without need to provide password or username
-            await AuthenticationService.Instance.SignInAnonymouslyAsync();
-        }
+		async void InitializeAsync()
+		{
+			if (UnityServices.State == ServicesInitializationState.Initialized)
+			{
+				GetJoinedLobbies();
+				_refresh.interactable = true;
+				_create.interactable = true;
+				return;
+			}
 
-        void LobbyQueryResultCallback(LobbyDto[] lobbies)
-        {
-            for (int i = 0; i < lobbies.Length; i++)
-            {
-                LobbyDto lobby = lobbies[i];
-                LobbyListElementView view = Instantiate(_config.LobbyListElement, _list.transform);
-                view.Initialize(lobby.LobbyId, lobby.LobbyName, lobby.PlayerCount, lobby.PlayerMax);
-            }
-        }
+			Debug.Log("UnityServices.InitializeAsync & AuthenticationService.Instance.SignInAnonymouslyAsync call");
 
-        static void JoinLobbyResultCallback(string lobbyName, List<(string playerName, string playerId, bool isHost)> players)
+			await UnityServices.InitializeAsync();
+			AuthenticationService.Instance.ClearSessionToken();
+			// tokens are stored in PlayerPrefs
+			if (AuthenticationService.Instance.SessionTokenExists)
+				Debug.Log($"Cached token exist. Recovering the existing credentials.");
+			else
+				Debug.Log($"Cached token not found. Creating new anonymous credentials.");
+
+			AuthenticationService.Instance.SignedIn += () =>
+			{
+				Debug.Log($"Anonymous authentication completed successfully");
+				Debug.Log($"Player Id: {AuthenticationService.Instance.PlayerId}");
+				Debug.Log($"Access Token: {AuthenticationService.Instance.AccessToken}");
+				_refresh.interactable = true;
+				_create.interactable = true;
+
+				Debug.Log($"IsSignedIn: {AuthenticationService.Instance.IsSignedIn}");
+			};
+
+			// this will create an account automatically without need to provide password or username
+			await AuthenticationService.Instance.SignInAnonymouslyAsync();
+			GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback);
+			GetJoinedLobbies();
+		}
+
+		void LobbyQueryResultCallback(LobbyDto[] lobbies)
+		{
+			foreach (Transform child in _list.transform)
+				Destroy(child.gameObject);
+
+			for (int i = 0; i < lobbies.Length; i++)
+			{
+				LobbyDto lobby = lobbies[i];
+				LobbyListElementView view = Instantiate(_config.LobbyListElement, _list.transform);
+				view.Initialize(lobby.LobbyId, lobby.LobbyName, lobby.PlayerCount, lobby.PlayerMax);
+			}
+		}
+
+        static void JoinLobbyResultCallback(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players)
         {
             PopupSystem.CloseCurrentPopup();
             PopupSystem.ShowPopup(PopupType.Lobby);
-            (PopupSystem.CurrentPopup as LobbyPopup)!.SetValues(lobbyName, players);
+            (PopupSystem.CurrentPopup as LobbyPopup)!.SetValues(lobbyName, lobbyCode, players);
             CommonData.PlayerId = PlayerId.Player2;
 
             GameLogicViewModel.JoinVoiceChat();
+        }
+
+        void LobbyCodeInputOnValueChanged()
+        {
+	        _lobbyCodeInput.text = _lobbyCodeInput.text.ToUpper();
+	        _joinByCode.interactable = _lobbyCodeInput.text.Length == 6;
         }
     }
 }
