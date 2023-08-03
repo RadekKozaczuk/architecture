@@ -24,9 +24,6 @@ namespace UI.Popups.Views
 		Button _join;
 
 		[SerializeField]
-		Button _rejoin;
-
-		[SerializeField]
 		TMP_InputField _lobbyCodeInput;
 
 		[SerializeField]
@@ -53,7 +50,6 @@ namespace UI.Popups.Views
 			_joinByCode.onClick.AddListener(() => GameLogicViewModel.JoinLobbyByCode(_lobbyCodeInput.text, JoinLobbyResultCallback));
 			_joinByCode.interactable = false;
 			_lobbyCodeInput.onValueChanged.AddListener(_ => LobbyCodeInputOnValueChanged());
-			_rejoin.interactable = false;
 		}
 
 		internal override void Initialize()
