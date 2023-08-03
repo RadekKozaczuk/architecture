@@ -113,6 +113,7 @@ namespace UI.Popups.Views
 
 			// this will create an account automatically without need to provide password or username
 			await AuthenticationService.Instance.SignInAnonymouslyAsync();
+			//GameLogicViewModel.JoinVoiceChat();
 			GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback);
 			GetJoinedLobbies();
 		}
@@ -130,20 +131,18 @@ namespace UI.Popups.Views
 			}
 		}
 
-        static void JoinLobbyResultCallback(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players)
-        {
-            PopupSystem.CloseCurrentPopup();
-            PopupSystem.ShowPopup(PopupType.Lobby);
-            (PopupSystem.CurrentPopup as LobbyPopup)!.SetValues(lobbyName, lobbyCode, players);
-            CommonData.PlayerId = PlayerId.Player2;
+		static void JoinLobbyResultCallback(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players)
+		{
+			PopupSystem.CloseCurrentPopup();
+			PopupSystem.ShowPopup(PopupType.Lobby);
+			(PopupSystem.CurrentPopup as LobbyPopup)!.SetValues(lobbyName, lobbyCode, players);
+			CommonData.PlayerId = PlayerId.Player2;
+		}
 
-            GameLogicViewModel.JoinVoiceChat();
-        }
-
-        void LobbyCodeInputOnValueChanged()
-        {
-	        _lobbyCodeInput.text = _lobbyCodeInput.text.ToUpper();
-	        _joinByCode.interactable = _lobbyCodeInput.text.Length == 6;
-        }
-    }
+		void LobbyCodeInputOnValueChanged()
+		{
+			_lobbyCodeInput.text = _lobbyCodeInput.text.ToUpper();
+			_joinByCode.interactable = _lobbyCodeInput.text.Length == 6;
+		}
+	}
 }
