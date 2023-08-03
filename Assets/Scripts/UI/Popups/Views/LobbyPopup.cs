@@ -16,7 +16,7 @@ namespace UI.Popups.Views
 	{
 		[SerializeField]
 		TextMeshProUGUI _lobbyName;
-		
+
 		[SerializeField]
 		TextMeshProUGUI _lobbyCode;
 
@@ -50,23 +50,22 @@ namespace UI.Popups.Views
 		{
 			// todo: leave the lobby and give away host to someone else
 		}
-		
+
 		internal void UpdateLobby(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players)
 		{
 			string playerId = AuthenticationService.Instance.PlayerId;
 			bool playerIsInLobby = false;
 
-			foreach (var player in players){   
+			foreach ((string playerName, string playerId, bool isHost) player in players)
 				if (player.playerId == playerId)
 					playerIsInLobby = true;
-			}
 
 			if (playerIsInLobby)
 				SetValues(lobbyName, lobbyCode, players);
 			else
 				ExitLobby();
 		}
-		
+
 		internal void SetValues(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players)
 		{
 			_lobbyName.text = lobbyName;
@@ -75,11 +74,9 @@ namespace UI.Popups.Views
 			foreach (Transform child in _list.transform)
 				Destroy(child.gameObject);
 
-			foreach ((string playerName, string playerId, bool isHost) in players){
+			foreach ((string _, string playerId, bool isHost) in players)
 				if (isHost)
 					_hostId = playerId;
-			}
-
 
 			foreach ((string playerName, string playerId, bool isHost) in players)
 			{
@@ -99,8 +96,8 @@ namespace UI.Popups.Views
 			LobbyPlayerElementView view = Instantiate(_config.LobbyPlayerElementView, _list.transform);
 			view.Initialize(playerName, playerId, true, true);
 		}
-		
-		void ExitLobby()
+
+		static void ExitLobby()
 		{
 			PopupSystem.CloseCurrentPopup();
 			PopupSystem.ShowPopup(PopupType.LobbyList);

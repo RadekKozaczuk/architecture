@@ -1,5 +1,4 @@
 ﻿using Presentation.Config;
-using Shared;
 using UnityEngine;
 using UnityEngine.Assertions;
 

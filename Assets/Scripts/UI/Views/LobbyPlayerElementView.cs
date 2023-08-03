@@ -2,10 +2,6 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Unity.Services.Authentication;
-using Lobby = Unity.Services.Lobbies.Models.Lobby;
-using GameLogic.Systems;
-using Unity.Services.Lobbies;
 
 namespace UI.Views
 {

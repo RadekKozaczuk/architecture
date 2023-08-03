@@ -6,7 +6,6 @@ using ControlFlow.Pooling;
 using ControlFlow.SignalProcessing;
 using JetBrains.Annotations;
 using Presentation.Config;
-using Shared;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.ResourceManagement.AsyncOperations;

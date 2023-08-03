@@ -6,9 +6,6 @@ using UI.Popups;
 using UI.Popups.Views;
 using UI.Systems;
 using UnityEngine.Scripting;
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-using Shared.DebugCommands;
-#endif
 
 namespace UI.Controllers
 {
