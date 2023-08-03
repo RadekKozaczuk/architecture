@@ -39,10 +39,7 @@ namespace GameLogic.ViewModels
 
 		public static void LeaveLobby() => LobbySystem.LeaveLobby();
 
-        public static async void StartGame()
-        {
-            await LobbySystem.StartGame_Host();
-        }
+        public static async void StartGame() => await LobbySystem.StartGame_Host();
 
         public static void JoinVoiceChat() => VoiceChatSystem.Login();
     }

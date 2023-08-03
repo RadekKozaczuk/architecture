@@ -5,11 +5,11 @@ using VivoxUnity;
 
 namespace GameLogic.Systems
 {
-	public static class VoiceChatSystem
+	static class VoiceChatSystem
 	{
 		static ILoginSession _session;
 
-		public static void JoinChannel(string channelName, ChannelType channelType, bool connectAudio, bool connectText,
+		static void JoinChannel(string channelName, ChannelType channelType, bool connectAudio, bool connectText,
 			bool transmissionSwitch = true, Channel3DProperties properties = null)
 		{
 			if (_session.State == LoginState.LoggedIn)
