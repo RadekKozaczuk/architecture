@@ -71,7 +71,7 @@ namespace Boot
                     (GameState.Booting, null, BootingOnExit),
                     (GameState.MainMenu, MainMenuOnEntry, MainMenuOnExit),
                     (GameState.Gameplay, GameplayOnEntry, GameplayOnExit)
-                }, GameState.Booting
+                }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
                 // ReSharper disable once MergeConditionalExpression
