@@ -38,9 +38,8 @@ namespace UI.Popups.Views
 		void Awake()
 		{
 			_start.onClick.AddListener(StartAction);
-			_start.interactable = UIData.HasCreatedLobby;
 			_start.interactable = false;
-			AuthenticationService.Instance.SignedIn += () => _start.interactable = true;
+			AuthenticationService.Instance.SignedIn += () => _start.interactable = AuthenticationService.Instance.PlayerId == _hostId;
 			_leave.onClick.AddListener(LeaveAction);
 		}
 
