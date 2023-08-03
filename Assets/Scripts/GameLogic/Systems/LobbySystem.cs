@@ -243,10 +243,14 @@ namespace GameLogic.Systems
 				// if host is the last player, delete lobby 
 				if (IsHost)
 				{
-					await lobby.RemovePlayerAsync(Lobby.Id, playerId);
-
-					if (Lobby.Players.Count > 1)
+					if (Lobby.Players.Count == 0)
 						await lobby.DeleteLobbyAsync(Lobby.Id);
+					else 
+					{
+						GiveHost(GetRandomPlayerIdWithoutLocalPlayer());
+					}
+					
+					await lobby.RemovePlayerAsync(Lobby.Id, playerId);
 				}
 				else
 				{
@@ -488,6 +492,17 @@ namespace GameLogic.Systems
 			}
 
 			return players;
+		}
+		
+		static string GetRandomPlayerIdWithoutLocalPlayer()
+		{
+			List<(string playerName, string playerId, bool isHost)> players = GetPlayers();
+			foreach (var player in players)
+			{
+				if (player.playerId != AuthenticationService.Instance.PlayerId)
+					return player.playerId;
+			}
+			return null;
 		}
 
 		/// <summary>

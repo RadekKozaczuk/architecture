@@ -74,12 +74,18 @@ namespace UI.Popups.Views
 
 			foreach ((string _, string playerId, bool isHost) in players)
 				if (isHost)
+				{
 					_hostId = playerId;
+				}
+			
+			bool isLocalPlayerHost = AuthenticationService.Instance.PlayerId == _hostId;
+			
+			_start.interactable = isLocalPlayerHost;
 
 			foreach ((string playerName, string playerId, bool isHost) in players)
 			{
 				LobbyPlayerElementView view = Instantiate(_config.LobbyPlayerElementView, _list.transform);
-				view.Initialize(playerName, playerId, isHost, AuthenticationService.Instance.PlayerId == _hostId);
+				view.Initialize(playerName, playerId, isHost, isLocalPlayerHost);
 			}
 		}
 
