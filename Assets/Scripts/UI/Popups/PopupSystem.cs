@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using Common.Enums;
 using ControlFlow.SignalProcessing;
-using Shared;
 using UI.Config;
 using UI.Popups.Views;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.UI;
 
 namespace UI.Popups
@@ -29,7 +29,7 @@ namespace UI.Popups
 
         public static void ShowPopups(params PopupType[] popupTypes)
         {
-            Assert.False(popupTypes.Length == 0, "You cannot show zero popups.");
+            Assert.IsFalse(popupTypes.Length == 0, "You cannot show zero popups.");
 
             int i = 0;
             if (CurrentPopup == null)
@@ -53,7 +53,7 @@ namespace UI.Popups
 
         public static void CloseCurrentPopup()
         {
-            Assert.False(CurrentPopup == null, "You cannot call CloseCurrentPopup if there is no active popup.");
+            Assert.IsFalse(CurrentPopup == null, "You cannot call CloseCurrentPopup if there is no active popup.");
 
             CurrentPopup!.Close();
             GameObject popupGo = CurrentPopup.gameObject;

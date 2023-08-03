@@ -34,5 +34,7 @@ namespace GameLogic.ViewModels
         {
             await LobbySystem.StartGame_Host();
         }
+
+        public static void JoinVoiceChat() => VoiceChatSystem.Login();
     }
 }

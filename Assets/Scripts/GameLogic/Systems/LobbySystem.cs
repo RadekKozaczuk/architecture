@@ -17,6 +17,7 @@ using Unity.Services.Lobbies.Models;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using UnityEngine;
+using UnityEngine.Assertions;
 using Lobby = Unity.Services.Lobbies.Models.Lobby;
 
 namespace GameLogic.Systems
