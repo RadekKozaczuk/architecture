@@ -276,6 +276,7 @@ namespace GameLogic.Systems
 				}});
 
 			GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
+			
 		}
 
 		/// <summary>

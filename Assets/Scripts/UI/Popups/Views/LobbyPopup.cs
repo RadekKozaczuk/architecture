@@ -39,7 +39,6 @@ namespace UI.Popups.Views
 		{
 			_start.onClick.AddListener(StartAction);
 			_start.interactable = false;
-			AuthenticationService.Instance.SignedIn += () => _start.interactable = AuthenticationService.Instance.PlayerId == _hostId;
 			_leave.onClick.AddListener(LeaveAction);
 		}
 
@@ -89,6 +88,7 @@ namespace UI.Popups.Views
 		/// </summary>
 		internal void SetValues(string lobbyName, string lobbyCode, string playerName, string playerId)
 		{
+			_start.interactable = true;
 			_hostId = playerId;
 			_lobbyName.text = lobbyName;
 			_lobbyCode.text = lobbyCode;
@@ -96,22 +96,22 @@ namespace UI.Popups.Views
 			view.Initialize(playerName, playerId, true, true);
 		}
 
-		static void ExitLobby()
+		void ExitLobby()
 		{
 			PopupSystem.CloseCurrentPopup();
 			PopupSystem.ShowPopup(PopupType.LobbyList);
 		}
 
-		static void StartAction()
+		void StartAction()
 		{
+			_start.interactable = false;
 			CommonData.CurrentLevel = Level.HubLocation;
 			CommonData.IsMultiplayer = true;
-			PopupSystem.CloseCurrentPopup();
 			CommonData.PlayerId = PlayerId.Player1;
 			GameLogicViewModel.StartGame();
 		}
 
-		static void LeaveAction()
+		void LeaveAction()
 		{
 			GameLogicViewModel.LeaveLobby();
 			PopupSystem.CloseCurrentPopup();

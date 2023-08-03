@@ -56,66 +56,20 @@ namespace UI.Popups.Views
 			_rejoin.interactable = false;
 		}
 
-		async void GetJoinedLobbies()
-		{
-			_joinedLobbiesId = await LobbyService.Instance.GetJoinedLobbiesAsync();
-			if (_joinedLobbiesId.Count > 0)
-			{
-				_rejoin.interactable = true;
-				_rejoin.onClick.AddListener(() => GameLogicViewModel.RejoinToLobby(_joinedLobbiesId[^1], JoinLobbyResultCallback));
-			}
-		}
-
 		internal override void Initialize()
 		{
-			InitializeAsync();
-		}
-
-		internal override void Close()
-		{
-			// todo: do we need to deinititialize unity services?
-
-			AuthenticationService.Instance.SignOut();
-		}
-
-		internal void SelectedLobbyChanged(bool selected) => _join.interactable = selected;
-
-		async void InitializeAsync()
-		{
+			GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback);
 			if (UnityServices.State == ServicesInitializationState.Initialized)
 			{
-				GetJoinedLobbies();
 				_refresh.interactable = true;
 				_create.interactable = true;
 				return;
 			}
-
-			Debug.Log("UnityServices.InitializeAsync & AuthenticationService.Instance.SignInAnonymouslyAsync call");
-
-			await UnityServices.InitializeAsync();
-			AuthenticationService.Instance.ClearSessionToken();
-			// tokens are stored in PlayerPrefs
-			if (AuthenticationService.Instance.SessionTokenExists)
-				Debug.Log($"Cached token exist. Recovering the existing credentials.");
-			else
-				Debug.Log($"Cached token not found. Creating new anonymous credentials.");
-
-			AuthenticationService.Instance.SignedIn += () =>
-			{
-				Debug.Log($"Anonymous authentication completed successfully");
-				Debug.Log($"Player Id: {AuthenticationService.Instance.PlayerId}");
-				Debug.Log($"Access Token: {AuthenticationService.Instance.AccessToken}");
-				_refresh.interactable = true;
-				_create.interactable = true;
-
-				Debug.Log($"IsSignedIn: {AuthenticationService.Instance.IsSignedIn}");
-			};
-
-			// this will create an account automatically without need to provide password or username
-			await AuthenticationService.Instance.SignInAnonymouslyAsync();
-			GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback);
-			GetJoinedLobbies();
 		}
+
+		internal override void Close()	{	}
+
+		internal void SelectedLobbyChanged(bool selected) => _join.interactable = selected;
 
 		void LobbyQueryResultCallback(LobbyDto[] lobbies)
 		{

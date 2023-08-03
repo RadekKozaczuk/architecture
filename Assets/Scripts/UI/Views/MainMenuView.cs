@@ -47,7 +47,7 @@ namespace UI.Views
 
         static void Coop()
         {
-            PopupSystem.ShowPopup(PopupType.LobbyList);
+            PopupSystem.ShowPopup(PopupType.SigningIn);
         }
 
         static void LoadGame()
