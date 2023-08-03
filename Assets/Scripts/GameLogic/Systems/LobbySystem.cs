@@ -245,12 +245,11 @@ namespace GameLogic.Systems
 				{
 					if (Lobby.Players.Count == 0)
 						await lobby.DeleteLobbyAsync(Lobby.Id);
-					else 
+					else
 					{
 						GiveHost(GetRandomPlayerIdWithoutLocalPlayer());
+						await lobby.RemovePlayerAsync(Lobby.Id, playerId);
 					}
-					
-					await lobby.RemovePlayerAsync(Lobby.Id, playerId);
 				}
 				else
 				{
