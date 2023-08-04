@@ -14,32 +14,35 @@ namespace UI.Popups.Views
 	{
 		[SerializeField]
 		TextMeshProUGUI _lobbyToReconnect;
-		
+
 		[SerializeField]
 		Button _join;
-		
+
 		[SerializeField]
-		Button _lobbyList;		
-		
+		Button _lobbyList;
+
+		string lobbyToReconnectId;
+
 		ReconnectToLobbyPopup() : base(PopupType.ReconnectToLobby) {}
-		
+
 		void Awake()
 		{
 			_lobbyList.interactable = true;
-			_lobbyList.onClick.AddListener(() => PopupSystem.ShowPopup(PopupType.LobbyList));
+			_lobbyList.onClick.AddListener(BackToLobbyListAction);
 		}
 
 		internal override void Initialize() { }
-		
+
 		internal override void Close() {}
-		
+
 		internal void SetLobbyToReconnect(string lobbyId, string lobbyName)
 		{
 			_lobbyToReconnect.text = lobbyName;
+			lobbyToReconnectId = lobbyId;
 			_join.onClick.AddListener(() => GameLogicViewModel.RejoinToLobby(lobbyId, JoinLobbyResultCallback));
 			_join.interactable = true;
 		}
-		
+
 		static void JoinLobbyResultCallback(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players)
 		{
 			PopupSystem.CloseCurrentPopup();
@@ -48,5 +51,10 @@ namespace UI.Popups.Views
 			CommonData.PlayerId = PlayerId.Player2;
 		}
 
+		void BackToLobbyListAction()
+		{
+			GameLogicViewModel.RemovePlayerFromLobby(lobbyToReconnectId);
+			PopupSystem.ShowPopup(PopupType.LobbyList);
+		}
 	}
 }

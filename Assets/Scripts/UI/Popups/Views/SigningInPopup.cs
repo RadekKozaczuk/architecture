@@ -12,25 +12,24 @@ namespace UI.Popups.Views
 	[DisallowMultipleComponent]
 	class SigningInPopup : AbstractPopupView //In the future we can use this popup for signing in (login and password)
 	{
-		
+
 		List <string> _joinedLobbiesId = new();
 
-		
 		SigningInPopup() : base(PopupType.SigningIn) { }
 
-		internal override void Initialize() 
-		{			
+		internal override void Initialize()
+		{
 			if (UnityServices.State == ServicesInitializationState.Initialized)
 			{
 				ChechIsUserHasJoinedLobbies();
 				return;
 			}
 
-			InitializeAsync();	
+			InitializeAsync();
 		}
 
 		internal override void Close() {    }
-		
+
 		async void InitializeAsync()
 		{
 			Debug.Log("UnityServices.InitializeAsync & AuthenticationService.Instance.SignInAnonymouslyAsync call");
@@ -58,7 +57,7 @@ namespace UI.Popups.Views
 			await AuthenticationService.Instance.SignInAnonymouslyAsync();
 			ChechIsUserHasJoinedLobbies();
 		}
-		
+
 		async void ChechIsUserHasJoinedLobbies()
 		{
 			try
@@ -69,9 +68,9 @@ namespace UI.Popups.Views
 			{
 				Debug.Log(e);
 			}
-			
+
 			PopupSystem.CloseCurrentPopup();
-			
+
 			if (IsUserHasJoinedLobbies())
 			{
 				string lobbyId = _joinedLobbiesId[^1];
@@ -79,18 +78,17 @@ namespace UI.Popups.Views
 				PopupSystem.ShowPopup(PopupType.ReconnectToLobby);
 				(PopupSystem.CurrentPopup as ReconnectToLobbyPopup)!.SetLobbyToReconnect(lobby.Id, lobby.Name);
 			}
-			else 
+			else
 			{
 				PopupSystem.ShowPopup(PopupType.LobbyList);
 			}
 		}
-		
+
 		bool IsUserHasJoinedLobbies()
 		{
 			if (_joinedLobbiesId.Count > 0)
 				return true;
 			return false;
 		}
-	
 	}
 }

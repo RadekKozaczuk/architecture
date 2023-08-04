@@ -262,6 +262,20 @@ namespace GameLogic.Systems
 			}
 		}
 
+		internal static async void RemovePlayerFromLobby(string lobbyId)
+		{
+			Assert.IsNotNull(lobbyId, $"Parameter {nameof(lobbyId)} cannot be null.");
+			try
+			{
+				string playerId = AuthenticationService.Instance.PlayerId;
+				await LobbyService.Instance.RemovePlayerAsync(lobbyId, playerId);
+			}
+			catch (LobbyServiceException e)
+			{
+				MyDebug.Log(e.ToString());
+			}
+		}
+
 		internal static async Task StartGame_Host()
 		{
 			// Important: Once the allocation is created, you have ten seconds to BIND
@@ -279,7 +293,6 @@ namespace GameLogic.Systems
 				}});
 
 			GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
-			
 		}
 
 		/// <summary>
@@ -492,15 +505,13 @@ namespace GameLogic.Systems
 
 			return players;
 		}
-		
+
 		static string GetRandomPlayerIdWithoutLocalPlayer()
 		{
 			List<(string playerName, string playerId, bool isHost)> players = GetPlayers();
-			foreach (var player in players)
-			{
-				if (player.playerId != AuthenticationService.Instance.PlayerId)
-					return player.playerId;
-			}
+			foreach ((string playerName, string playerId, bool isHost) in players)
+				if (playerId != AuthenticationService.Instance.PlayerId)
+					return playerId;
 			return null;
 		}
 
