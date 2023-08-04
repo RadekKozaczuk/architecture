@@ -258,6 +258,7 @@ namespace GameLogic.Systems
 				{
 					await lobby.RemovePlayerAsync(Lobby.Id, playerId);
 				}
+				MyDebug.Log("Leave lobby");
 			}
 			catch (LobbyServiceException e)
 			{
@@ -467,7 +468,6 @@ namespace GameLogic.Systems
 			try
 			{
 				await RestoreSessionIfNeeded();
-				Lobby = await LobbyService.Instance.GetLobbyAsync(Lobby.Id);
 
 				if (GameStateSystem.CurrentState == GameState.MainMenu
 					&& Lobby.Data != null
