@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
-using Common;
+﻿using Common;
 using Common.Dtos;
 using Common.Enums;
 using GameLogic.ViewModels;
 using UI.Config;
 using UI.Views;
 using TMPro;
-using Unity.Services.Authentication;
-using Unity.Services.Lobbies;
+using System.Collections;
+using System.Collections.Generic;
 using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.UI;
@@ -36,14 +35,11 @@ namespace UI.Popups.Views
 		RectTransform _list;
 
 		static readonly UIConfig _config;
-
-		List <string> _joinedLobbiesId = new();
-
 		LobbyListPopup() : base(PopupType.LobbyList) { }
 
 		void Awake()
 		{
-			_refresh.onClick.AddListener(() => GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback));
+			_refresh.onClick.AddListener(RefreshAction);
 			_join.onClick.AddListener(() => GameLogicViewModel.JoinLobbyById(LobbyListElementView.SelectedLobby.LobbyId, JoinLobbyResultCallback)); // join the selected
 			_join.interactable = false;
 			_create.onClick.AddListener(() => PopupSystem.ShowPopup(PopupType.CreateLobby));
@@ -54,10 +50,9 @@ namespace UI.Popups.Views
 
 		internal override void Initialize()
 		{
-			GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback);
 			if (UnityServices.State == ServicesInitializationState.Initialized)
 			{
-				_refresh.interactable = true;
+				RefreshAction();
 				_create.interactable = true;
 				return;
 			}
@@ -66,6 +61,14 @@ namespace UI.Popups.Views
 		internal override void Close()	{	}
 
 		internal void SelectedLobbyChanged(bool selected) => _join.interactable = selected;
+
+		void RefreshAction()
+		{
+			_refresh.interactable = false;
+			float delay = 2f;
+			StartCoroutine(EnableButtonAfterDelay(delay));
+			GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback);
+		}
 
 		void LobbyQueryResultCallback(LobbyDto[] lobbies)
 		{
@@ -79,6 +82,13 @@ namespace UI.Popups.Views
 				view.Initialize(lobby.LobbyId, lobby.LobbyName, lobby.PlayerCount, lobby.PlayerMax);
 			}
 		}
+
+		private IEnumerator EnableButtonAfterDelay(float delay)
+		{
+			yield return new WaitForSeconds(delay);
+			_refresh.interactable = true;
+		}
+
 
 		static void JoinLobbyResultCallback(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players)
 		{
