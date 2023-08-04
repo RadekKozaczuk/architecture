@@ -66,6 +66,7 @@ namespace UI.Popups.Views
 			}
 			catch (LobbyServiceException e)
 			{
+				_joinedLobbiesId.Clear();
 				Debug.Log(e);
 			}
 
