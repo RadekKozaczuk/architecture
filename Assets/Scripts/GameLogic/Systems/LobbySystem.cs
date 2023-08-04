@@ -468,6 +468,15 @@ namespace GameLogic.Systems
 			try
 			{
 				await RestoreSessionIfNeeded();
+				try
+				{
+					Lobby = await LobbyService.Instance.GetLobbyAsync(Lobby.Id);
+				}
+				catch (LobbyServiceException e)
+				{
+					MyDebug.Log(e.ToString());
+					return;
+				}
 
 				if (GameStateSystem.CurrentState == GameState.MainMenu
 					&& Lobby.Data != null
@@ -494,6 +503,7 @@ namespace GameLogic.Systems
 			catch (LobbyServiceException e)
 			{
 				MyDebug.Log(e.ToString());
+				return;
 			}
 		}
 
