@@ -1,95 +1,85 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using Unity.Services.Authentication;
-using Unity.Services.Lobbies;
-using Unity.Services.Core;
 using Common.Enums;
-using Lobby = Unity.Services.Lobbies.Models.Lobby;
+using Unity.Services.Authentication;
+using Unity.Services.Core;
+using Unity.Services.Lobbies;
+using Unity.Services.Lobbies.Models;
+using UnityEngine;
 
 namespace UI.Popups.Views
 {
-	[DisallowMultipleComponent]
-	class SigningInPopup : AbstractPopupView //In the future we can use this popup for signing in (login and password)
-	{
+    [DisallowMultipleComponent]
+    class SigningInPopup : AbstractPopupView //In the future we can use this popup for signing in (login and password)
+    {
+        List<string> _joinedLobbiesId = new();
 
-		List <string> _joinedLobbiesId = new();
+        SigningInPopup()
+            : base(PopupType.SigningIn) { }
 
-		SigningInPopup() : base(PopupType.SigningIn) { }
+        internal override void Initialize()
+        {
+            if (UnityServices.State == ServicesInitializationState.Initialized)
+            {
+                CheckIsUserHasJoinedLobbies();
+                return;
+            }
 
-		internal override void Initialize()
-		{
-			if (UnityServices.State == ServicesInitializationState.Initialized)
-			{
-				ChechIsUserHasJoinedLobbies();
-				return;
-			}
+            InitializeAsync();
+        }
 
-			InitializeAsync();
-		}
+        internal override void Close() { }
 
-		internal override void Close() {    }
+        async void InitializeAsync()
+        {
+            Debug.Log("UnityServices.InitializeAsync & AuthenticationService.Instance.SignInAnonymouslyAsync call");
 
-		async void InitializeAsync()
-		{
-			Debug.Log("UnityServices.InitializeAsync & AuthenticationService.Instance.SignInAnonymouslyAsync call");
-
-			await UnityServices.InitializeAsync();
+            await UnityServices.InitializeAsync();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-			AuthenticationService.Instance.ClearSessionToken();
+            AuthenticationService.Instance.ClearSessionToken();
 #endif
-			// tokens are stored in PlayerPrefs
-			if (AuthenticationService.Instance.SessionTokenExists)
-				Debug.Log($"Cached token exist. Recovering the existing credentials.");
-			else
-				Debug.Log($"Cached token not found. Creating new anonymous credentials.");
+            // tokens are stored in PlayerPrefs
+            if (AuthenticationService.Instance.SessionTokenExists)
+                Debug.Log("Cached token exist. Recovering the existing credentials.");
+            else
+                Debug.Log("Cached token not found. Creating new anonymous credentials.");
 
-			AuthenticationService.Instance.SignedIn += () =>
-			{
-				Debug.Log($"Anonymous authentication completed successfully");
-				Debug.Log($"Player Id: {AuthenticationService.Instance.PlayerId}");
-				Debug.Log($"Access Token: {AuthenticationService.Instance.AccessToken}");
+            AuthenticationService.Instance.SignedIn += () =>
+            {
+                Debug.Log("Anonymous authentication completed successfully");
+                Debug.Log($"Player Id: {AuthenticationService.Instance.PlayerId}");
+                Debug.Log($"Access Token: {AuthenticationService.Instance.AccessToken}");
+                Debug.Log($"IsSignedIn: {AuthenticationService.Instance.IsSignedIn}");
+            };
 
-				Debug.Log($"IsSignedIn: {AuthenticationService.Instance.IsSignedIn}");
-			};
+            // this will create an account automatically without need to provide password or username
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            CheckIsUserHasJoinedLobbies();
+        }
 
-			// this will create an account automatically without need to provide password or username
-			await AuthenticationService.Instance.SignInAnonymouslyAsync();
-			ChechIsUserHasJoinedLobbies();
-		}
+        async void CheckIsUserHasJoinedLobbies()
+        {
+            try
+            {
+                _joinedLobbiesId = await LobbyService.Instance.GetJoinedLobbiesAsync();
+            }
+            catch (LobbyServiceException e)
+            {
+                _joinedLobbiesId.Clear();
+                Debug.Log(e);
+            }
 
-		async void ChechIsUserHasJoinedLobbies()
-		{
-			try
-			{
-				_joinedLobbiesId = await LobbyService.Instance.GetJoinedLobbiesAsync();
-			}
-			catch (LobbyServiceException e)
-			{
-				_joinedLobbiesId.Clear();
-				Debug.Log(e);
-			}
+            PopupSystem.CloseCurrentPopup();
 
-			PopupSystem.CloseCurrentPopup();
-
-			if (IsUserHasJoinedLobbies())
-			{
-				string lobbyId = _joinedLobbiesId[^1];
-				Lobby lobby = await Lobbies.Instance.GetLobbyAsync(lobbyId);
-				PopupSystem.ShowPopup(PopupType.ReconnectToLobby);
-				(PopupSystem.CurrentPopup as ReconnectToLobbyPopup)!.SetLobbyToReconnect(lobby.Id, lobby.Name);
-			}
-			else
-			{
-				PopupSystem.ShowPopup(PopupType.LobbyList);
-			}
-		}
-
-		bool IsUserHasJoinedLobbies()
-		{
-			if (_joinedLobbiesId.Count > 0)
-				return true;
-			return false;
-		}
-	}
+            // has user joined any lobbies
+            if (_joinedLobbiesId.Count > 0)
+            {
+                string lobbyId = _joinedLobbiesId[^1];
+                Lobby lobby = await Lobbies.Instance.GetLobbyAsync(lobbyId);
+                PopupSystem.ShowPopup(PopupType.ReconnectToLobby);
+                (PopupSystem.CurrentPopup as ReconnectToLobbyPopup)!.SetLobbyToReconnect(lobby.Id, lobby.Name);
+            }
+            else
+                PopupSystem.ShowPopup(PopupType.LobbyList);
+        }
+    }
 }

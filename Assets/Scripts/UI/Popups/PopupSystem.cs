@@ -20,7 +20,7 @@ namespace UI.Popups
         // ReSharper disable once MemberCanBePrivate.Global
         internal static AbstractPopupView? CurrentPopup => Popups.Count > 0 ? Popups[0] : null;
 
-        internal static readonly List<AbstractPopupView> Popups = new ();
+        internal static readonly List<AbstractPopupView> Popups = new();
 
         static Image? _blockingPanel;
         static readonly Queue<(PopupType type, bool blockingPanel, object? parameter)> _scheduledPopups = new();

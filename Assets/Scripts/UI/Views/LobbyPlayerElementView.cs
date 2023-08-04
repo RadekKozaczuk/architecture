@@ -17,12 +17,13 @@ namespace UI.Views
         [SerializeField]
         Button _kick;
 
-		[SerializeField]
-		Button _giveHost;
+        [SerializeField]
+        Button _giveHost;
 
-		string _playerId;
+        string _playerId;
 
-        void Awake() {
+        void Awake()
+        {
             _kick.onClick.AddListener(() => GameLogicViewModel.KickPlayer(_playerId));
             _giveHost.onClick.AddListener(() => GameLogicViewModel.GiveHost(_playerId));
         }

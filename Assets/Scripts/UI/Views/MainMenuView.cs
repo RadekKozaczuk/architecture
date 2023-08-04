@@ -5,7 +5,6 @@ using GameLogic.ViewModels;
 using UI.Popups;
 using UnityEngine;
 using UnityEngine.UI;
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -45,10 +44,7 @@ namespace UI.Views
             GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
         }
 
-        static void Coop()
-        {
-            PopupSystem.ShowPopup(PopupType.SigningIn);
-        }
+        static void Coop() => PopupSystem.ShowPopup(PopupType.SigningIn);
 
         static void LoadGame()
         {
