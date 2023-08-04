@@ -12,6 +12,7 @@ using Shared;
 using Shared.Systems;
 using Unity.Netcode;
 using UnityEngine.Scripting;
+using Random = UnityEngine.Random;
 
 namespace GameLogic.ViewModels
 {
@@ -48,7 +49,7 @@ namespace GameLogic.ViewModels
 
         public static void BootingOnExit() { }
 
-        public static void MainMenuOnEntry() => CommonData.PlayerName = Utils.GenerateRandomString(UnityEngine.Random.Range(5,9));
+        public static void MainMenuOnEntry() => CommonData.PlayerName = Utils.GenerateRandomString(Random.Range(5, 9));
 
         public static void MainMenuOnExit()
         {
@@ -67,9 +68,7 @@ namespace GameLogic.ViewModels
 
         public static void SaveGame() => SaveLoadSystem.SaveGame();
 
-        public static void LoadGame()
-        {
-        }
+        public static void LoadGame() { }
 
         /// <summary>
         /// If the instance hosted a lobby, the lobby will be deleted.

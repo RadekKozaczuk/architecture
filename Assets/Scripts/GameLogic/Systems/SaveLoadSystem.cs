@@ -27,8 +27,6 @@ namespace GameLogic.Systems
             writer.Close();
         }
 
-        internal static void LoadGame()
-        {
-        }
+        internal static void LoadGame() { }
     }
 }
