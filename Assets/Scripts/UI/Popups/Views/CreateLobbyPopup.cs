@@ -23,6 +23,9 @@ namespace UI.Popups.Views
 		[SerializeField]
 		Button _create;
 
+		[SerializeField]
+		Button _back;
+
 		static readonly UIConfig _config;
 
 		CreateLobbyPopup() : base(PopupType.CreateLobby) { }
@@ -32,6 +35,7 @@ namespace UI.Popups.Views
 			_input.onValueChanged.AddListener(InputChanged);
 			_slider.onValueChanged.AddListener(SliderChanged);
 			_create.onClick.AddListener(CreateAction);
+			_back.onClick.AddListener(() => PopupSystem.CloseCurrentPopup());
 
 			_input.text = "MyLobby";
 			_slider.value = 2;
@@ -55,5 +59,5 @@ namespace UI.Popups.Views
 				CommonData.PlayerId = PlayerId.Player1;
 			}
 		}
-    }
+	}
 }
