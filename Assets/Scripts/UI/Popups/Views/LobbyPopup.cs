@@ -101,7 +101,7 @@ namespace UI.Popups.Views
             view.Initialize(playerName, playerId, true, true);
         }
 
-        void ExitLobby()
+        static void ExitLobby()
         {
             PopupSystem.CloseCurrentPopup();
             PopupSystem.ShowPopup(PopupType.LobbyList);
@@ -116,7 +116,7 @@ namespace UI.Popups.Views
             GameLogicViewModel.StartGame();
         }
 
-        void LeaveAction()
+        static void LeaveAction()
         {
             GameLogicViewModel.LeaveLobby();
             PopupSystem.CloseCurrentPopup();
