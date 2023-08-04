@@ -243,8 +243,11 @@ namespace GameLogic.Systems
 				// if host is the last player, delete lobby 
 				if (IsHost)
 				{
-					if (Lobby.Players.Count == 0)
+					if (Lobby.Players.Count == 1)
+					{
 						await lobby.DeleteLobbyAsync(Lobby.Id);
+						Lobby = null;
+					}
 					else
 					{
 						GiveHost(GetRandomPlayerIdWithoutLocalPlayer());
