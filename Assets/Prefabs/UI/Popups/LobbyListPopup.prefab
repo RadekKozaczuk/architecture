@@ -1232,8 +1232,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _refresh: {fileID: 4552945094859763679}
   _join: {fileID: 1179355472748069788}
-  _rejoin: {fileID: 0}
   _lobbyCodeInput: {fileID: 1132382097591089758}
+  _lobbyCodeInputPlaceholder: {fileID: 6934333033975533977}
   _joinByCode: {fileID: 4777387408484773220}
   _create: {fileID: 1825692028193145036}
   _list: {fileID: 7589675293828989254}
