@@ -174,14 +174,15 @@ namespace GameLogic.Systems
                     }
                 };
 
-                Lobby = await Lobbies.Instance.JoinLobbyByCodeAsync(lobbyCode, options);
-                callback(Lobby.Name, Lobby.LobbyCode, GetPlayers());
-            }
-            catch (LobbyServiceException e)
-            {
-                MyDebug.Log(e.ToString());
-            }
-        }
+				Lobby = await Lobbies.Instance.JoinLobbyByCodeAsync(lobbyCode, options);
+				callback(Lobby.Name, Lobby.LobbyCode, GetPlayers());
+			}
+			catch (LobbyServiceException e)
+			{
+				MyDebug.Log(e.ToString());
+				callback(null, null, null);
+			}
+		}
 
         /// <summary>
         /// Queries available lobbies and join randomly selected one.
