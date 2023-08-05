@@ -103,7 +103,7 @@ namespace Boot
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             DebugCommandSystem.Add("win_mission", "Instantly wins the mission.", GameLogicViewModel.WinMission);
-            DebugCommandSystem.AddParameterized<int>("give_gold", "Give gold", 100, 0, 1000, value =>
+            DebugCommandSystem.AddParameterized("give_gold", "Give gold", 100, 0, 1000, value =>
             {
                 MyDebug.Log($"Parametrized debug command called with the parameter equal to {value}");
             });
@@ -242,16 +242,25 @@ namespace Boot
 
         static (int[]? scenesToLoad, int[]? scenesToUnload) ScenesToLoadUnloadFromGameplayToGameplay()
         {
+            int currentLevel = 0;
             if (CommonData.LoadRequested)
             {
                 byte[] data = File.ReadAllBytes(Path.Combine(Application.persistentDataPath, "savegame.sav"));
                 CommonData.SaveGameReader = new BinaryReader(new MemoryStream(data));
 
                 int _ = CommonData.SaveGameReader.ReadByte(); // save game version
-                int currentLevel = (int)CommonData.CurrentLevel;
+                currentLevel = (int)CommonData.CurrentLevel;
                 CommonData.CurrentLevel = (Level)CommonData.SaveGameReader.ReadByte();
 
                 return (new[] {(int)CommonData.CurrentLevel}, new[] {currentLevel});
+            }
+
+            if (CommonData.HubLocationRequested)
+            {
+                currentLevel = (int)CommonData.CurrentLevel;
+                CommonData.CurrentLevel = Level.HubLocation;
+                CommonData.HubLocationRequested = false;
+                return (new[] {(int)Level.HubLocation}, new[] {currentLevel});
             }
 
             if (CommonData.CurrentLevel == Level.HubLocation)

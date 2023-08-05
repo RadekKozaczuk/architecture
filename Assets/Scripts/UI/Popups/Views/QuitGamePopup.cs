@@ -49,7 +49,12 @@ namespace UI.Popups.Views
             GameStateSystem.RequestStateChange(GameState.Gameplay);
         }
 
-        static void HubAction() => PopupSystem.CloseCurrentPopup();
+        static void HubAction()
+        {
+            CommonData.HubLocationRequested = true;
+            PopupSystem.CloseCurrentPopup();
+            GameStateSystem.RequestStateChange(GameState.Gameplay);
+        }
 
         static void MainMenuAction()
         {

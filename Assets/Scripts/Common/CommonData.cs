@@ -16,6 +16,12 @@ namespace Common
         public static bool LoadRequested;
 
         /// <summary>
+        /// Used to tell <see cref="Systems.GameStateSystem" /> that during next transition from <see cref="Common.Enums.GameState.Gameplay" />
+        /// to <see cref="Common.Enums.GameState.Gameplay" /> player will go to <see cref="Level.HubLocation"/>.
+        /// </summary>
+        public static bool HubLocationRequested;
+
+        /// <summary>
         /// Has game been run in multiplayer mode.
         /// </summary>
         public static bool IsMultiplayer;
