@@ -10,16 +10,16 @@ namespace Common.Signals
 	/// The list always represents the current state, and not only the change.
 	/// </summary>
 	public sealed class LobbyChangedSignal : AbstractSignal
-	{
-		public readonly string LobbyName;
-		public readonly string LobbyCode;
-		public readonly List<(string playerName, string playerId, bool isHost)> Players;
+    {
+        public readonly string LobbyName;
+        public readonly string LobbyCode;
+        public readonly List<(string playerName, string playerId, bool isHost)> Players;
 
-		public LobbyChangedSignal(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players)
-		{
-			LobbyName = lobbyName;
-			LobbyCode = lobbyCode;
-			Players = players;
-		}
-	}
+        public LobbyChangedSignal(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players)
+        {
+            LobbyName = lobbyName;
+            LobbyCode = lobbyCode;
+            Players = players;
+        }
+    }
 }

@@ -8,52 +8,57 @@ using UnityEngine.UI;
 
 namespace UI.Popups.Views
 {
-	[DisallowMultipleComponent]
-	class CreateLobbyPopup : AbstractPopupView
-	{
-		[SerializeField]
-		TMP_InputField _input;
+    [DisallowMultipleComponent]
+    class CreateLobbyPopup : AbstractPopupView
+    {
+        [SerializeField]
+        TMP_InputField _input;
 
-		[SerializeField]
-		Slider _slider;
+        [SerializeField]
+        Slider _slider;
 
-		[SerializeField]
-		TextMeshProUGUI _playerCount;
+        [SerializeField]
+        TextMeshProUGUI _playerCount;
 
-		[SerializeField]
-		Button _create;
+        [SerializeField]
+        Button _create;
 
-		static readonly UIConfig _config;
+        [SerializeField]
+        Button _back;
 
-		CreateLobbyPopup() : base(PopupType.CreateLobby) { }
+        static readonly UIConfig _config;
 
-		void Awake()
-		{
-			_input.onValueChanged.AddListener(InputChanged);
-			_slider.onValueChanged.AddListener(SliderChanged);
-			_create.onClick.AddListener(CreateAction);
+        CreateLobbyPopup()
+            : base(PopupType.CreateLobby) { }
 
-			_input.text = "MyLobby";
-			_slider.value = 2;
-		}
+        void Awake()
+        {
+            _input.onValueChanged.AddListener(InputChanged);
+            _slider.onValueChanged.AddListener(SliderChanged);
+            _create.onClick.AddListener(CreateAction);
+            _back.onClick.AddListener(PopupSystem.CloseCurrentPopup);
 
-		void SliderChanged(float value) => _playerCount.text = ((int)value).ToString();
+            _input.text = "MyLobby";
+            _slider.value = 2;
+        }
 
-		void InputChanged(string text) => _create.interactable = text.Length > 0;
+        void SliderChanged(float value) => _playerCount.text = ((int)value).ToString();
 
-		async void CreateAction()
-		{
-			(bool success, string playerId, string lobbyCode) = await GameLogicViewModel.CreateLobby(_input.text, (int)_slider.value);
+        void InputChanged(string text) => _create.interactable = text.Length > 0;
 
-			if (success)
-			{
-				UIData.HasCreatedLobby = true;
-				PopupSystem.CloseCurrentPopup();
-				PopupSystem.CloseCurrentPopup();
-				PopupSystem.ShowPopup(PopupType.Lobby);
-				(PopupSystem.CurrentPopup as LobbyPopup)!.SetValues(_input.text, lobbyCode, CommonData.PlayerName, playerId);
-				CommonData.PlayerId = PlayerId.Player1;
-			}
-		}
+        async void CreateAction()
+        {
+            (bool success, string playerId, string lobbyCode) = await GameLogicViewModel.CreateLobby(_input.text, (int)_slider.value);
+
+            if (success)
+            {
+                UIData.HasCreatedLobby = true;
+                PopupSystem.CloseCurrentPopup();
+                PopupSystem.CloseCurrentPopup();
+                PopupSystem.ShowPopup(PopupType.Lobby);
+                (PopupSystem.CurrentPopup as LobbyPopup)!.SetValues(_input.text, lobbyCode, CommonData.PlayerName, playerId);
+                CommonData.PlayerId = PlayerId.Player1;
+            }
+        }
     }
 }

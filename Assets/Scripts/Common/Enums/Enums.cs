@@ -34,10 +34,12 @@ namespace Common.Enums
     public enum PopupType
     {
         QuitGame,
+        SigningIn,
         /// <summary>
         /// List of lobbies.
         /// </summary>
         LobbyList,
+        ReconnectToLobby,
         CreateLobby,
         /// <summary>
         /// The lobby you joined/created.

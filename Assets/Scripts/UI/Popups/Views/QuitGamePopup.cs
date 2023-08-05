@@ -22,7 +22,8 @@ namespace UI.Popups.Views
         [SerializeField]
         Button _mainMenu;
 
-        QuitGamePopup() : base(PopupType.QuitGame) { }
+        QuitGamePopup()
+            : base(PopupType.QuitGame) { }
 
         void Awake()
         {
@@ -50,7 +51,9 @@ namespace UI.Popups.Views
 
         static void HubAction()
         {
+            CommonData.HubLocationRequested = true;
             PopupSystem.CloseCurrentPopup();
+            GameStateSystem.RequestStateChange(GameState.Gameplay);
         }
 
         static void MainMenuAction()

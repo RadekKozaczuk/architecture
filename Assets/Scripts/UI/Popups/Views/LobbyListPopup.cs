@@ -1,147 +1,121 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Common;
 using Common.Dtos;
 using Common.Enums;
 using GameLogic.ViewModels;
+using TMPro;
 using UI.Config;
 using UI.Views;
-using TMPro;
-using Unity.Services.Authentication;
-using Unity.Services.Lobbies;
 using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI.Popups.Views
 {
-	[DisallowMultipleComponent]
-	class LobbyListPopup : AbstractPopupView
-	{
-		[SerializeField]
-		Button _refresh;
+    [DisallowMultipleComponent]
+    class LobbyListPopup : AbstractPopupView
+    {
+        [SerializeField]
+        Button _refresh;
 
-		[SerializeField]
-		Button _join;
+        [SerializeField]
+        Button _join;
 
-		[SerializeField]
-		Button _rejoin;
+        [SerializeField]
+        TMP_InputField _lobbyCodeInput;
 
-		[SerializeField]
-		TMP_InputField _lobbyCodeInput;
+        [SerializeField]
+        TextMeshProUGUI _lobbyCodeInputPlaceholder;
 
-		[SerializeField]
-		Button _joinByCode;
+        [SerializeField]
+        Button _joinByCode;
 
-		[SerializeField]
-		Button _create;
+        [SerializeField]
+        Button _create;
 
-		[SerializeField]
-		RectTransform _list;
+        [SerializeField]
+        RectTransform _list;
 
-		static readonly UIConfig _config;
+        static readonly UIConfig _config;
 
-		List <string> _joinedLobbiesId = new();
+        LobbyListPopup()
+            : base(PopupType.LobbyList) { }
 
-		LobbyListPopup() : base(PopupType.LobbyList) { }
+        void Awake()
+        {
+            _refresh.onClick.AddListener(RefreshAction);
+            _join.onClick.AddListener(
+                () => GameLogicViewModel.JoinLobbyById(LobbyListElementView.SelectedLobby.LobbyId, JoinLobbyResultCallback)); // join the selected
+            _join.interactable = false;
+            _create.onClick.AddListener(() => PopupSystem.ShowPopup(PopupType.CreateLobby));
+            _joinByCode.onClick.AddListener(() => GameLogicViewModel.JoinLobbyByCode(_lobbyCodeInput.text, JoinLobbyResultCallback));
+            _joinByCode.interactable = false;
+            _lobbyCodeInput.onValueChanged.AddListener(_ => LobbyCodeInputOnValueChanged());
+        }
 
-		void Awake()
-		{
-			_refresh.onClick.AddListener(() => GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback));
-			_join.onClick.AddListener(() => GameLogicViewModel.JoinLobbyById(LobbyListElementView.SelectedLobby.LobbyId, JoinLobbyResultCallback)); // join the selected
-			_join.interactable = false;
-			_create.onClick.AddListener(() => PopupSystem.ShowPopup(PopupType.CreateLobby));
-			_joinByCode.onClick.AddListener(() => GameLogicViewModel.JoinLobbyByCode(_lobbyCodeInput.text, JoinLobbyResultCallback));
-			_joinByCode.interactable = false;
-			_lobbyCodeInput.onValueChanged.AddListener(_ => LobbyCodeInputOnValueChanged());
-			_rejoin.interactable = false;
-		}
+        internal override void Initialize()
+        {
+            if (UnityServices.State == ServicesInitializationState.Initialized)
+            {
+                RefreshAction();
+                _create.interactable = true;
+            }
+        }
 
-		async void GetJoinedLobbies()
-		{
-			_joinedLobbiesId = await LobbyService.Instance.GetJoinedLobbiesAsync();
-			if (_joinedLobbiesId.Count > 0)
-			{
-				_rejoin.interactable = true;
-				_rejoin.onClick.AddListener(() => GameLogicViewModel.RejoinToLobby(_joinedLobbiesId[^1], JoinLobbyResultCallback));
-			}
-		}
+        internal override void Close() { }
 
-		internal override void Initialize()
-		{
-			InitializeAsync();
-		}
+        internal void SelectedLobbyChanged(bool selected) => _join.interactable = selected;
 
-		internal override void Close()
-		{
-			// todo: do we need to deinititialize unity services?
+        void RefreshAction()
+        {
+            _refresh.interactable = false;
+            float delay = 2f;
+            StartCoroutine(EnableButtonAfterDelay(delay));
+            GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback);
+        }
 
-			AuthenticationService.Instance.SignOut();
-		}
+        void LobbyQueryResultCallback(LobbyDto[] lobbies)
+        {
+            foreach (Transform child in _list.transform)
+                Destroy(child.gameObject);
 
-		internal void SelectedLobbyChanged(bool selected) => _join.interactable = selected;
+            for (int i = 0; i < lobbies.Length; i++)
+            {
+                LobbyDto lobby = lobbies[i];
+                LobbyListElementView view = Instantiate(_config.LobbyListElement, _list.transform);
+                view.Initialize(lobby.LobbyId, lobby.LobbyName, lobby.PlayerCount, lobby.PlayerMax);
+            }
+        }
 
-		async void InitializeAsync()
-		{
-			if (UnityServices.State == ServicesInitializationState.Initialized)
-			{
-				GetJoinedLobbies();
-				_refresh.interactable = true;
-				_create.interactable = true;
-				return;
-			}
+        IEnumerator EnableButtonAfterDelay(float delay)
+        {
+            yield return new WaitForSeconds(delay);
 
-			Debug.Log("UnityServices.InitializeAsync & AuthenticationService.Instance.SignInAnonymouslyAsync call");
+            _refresh.interactable = true;
+        }
 
-			await UnityServices.InitializeAsync();
-			AuthenticationService.Instance.ClearSessionToken();
-			// tokens are stored in PlayerPrefs
-			if (AuthenticationService.Instance.SessionTokenExists)
-				Debug.Log($"Cached token exist. Recovering the existing credentials.");
-			else
-				Debug.Log($"Cached token not found. Creating new anonymous credentials.");
+        void JoinLobbyResultCallback(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players)
+        {
+            if (lobbyName == null || lobbyCode == null)
+            {
+                _lobbyCodeInput.text = "";
+                _lobbyCodeInputPlaceholder.text = "Wrong code";
+                _lobbyCodeInputPlaceholder.color = Color.red;
+            }
+            else
+            {
+                PopupSystem.CloseCurrentPopup();
+                PopupSystem.ShowPopup(PopupType.Lobby);
+                (PopupSystem.CurrentPopup as LobbyPopup)!.SetValues(lobbyName, lobbyCode, players);
+                CommonData.PlayerId = PlayerId.Player2;
+            }
+        }
 
-			AuthenticationService.Instance.SignedIn += () =>
-			{
-				Debug.Log($"Anonymous authentication completed successfully");
-				Debug.Log($"Player Id: {AuthenticationService.Instance.PlayerId}");
-				Debug.Log($"Access Token: {AuthenticationService.Instance.AccessToken}");
-				_refresh.interactable = true;
-				_create.interactable = true;
-
-				Debug.Log($"IsSignedIn: {AuthenticationService.Instance.IsSignedIn}");
-			};
-
-			// this will create an account automatically without need to provide password or username
-			await AuthenticationService.Instance.SignInAnonymouslyAsync();
-			GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback);
-			GetJoinedLobbies();
-		}
-
-		void LobbyQueryResultCallback(LobbyDto[] lobbies)
-		{
-			foreach (Transform child in _list.transform)
-				Destroy(child.gameObject);
-
-			for (int i = 0; i < lobbies.Length; i++)
-			{
-				LobbyDto lobby = lobbies[i];
-				LobbyListElementView view = Instantiate(_config.LobbyListElement, _list.transform);
-				view.Initialize(lobby.LobbyId, lobby.LobbyName, lobby.PlayerCount, lobby.PlayerMax);
-			}
-		}
-
-		static void JoinLobbyResultCallback(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players)
-		{
-			PopupSystem.CloseCurrentPopup();
-			PopupSystem.ShowPopup(PopupType.Lobby);
-			(PopupSystem.CurrentPopup as LobbyPopup)!.SetValues(lobbyName, lobbyCode, players);
-			CommonData.PlayerId = PlayerId.Player2;
-		}
-
-		void LobbyCodeInputOnValueChanged()
-		{
-			_lobbyCodeInput.text = _lobbyCodeInput.text.ToUpper();
-			_joinByCode.interactable = _lobbyCodeInput.text.Length == 6;
-		}
-	}
+        void LobbyCodeInputOnValueChanged()
+        {
+            _lobbyCodeInput.text = _lobbyCodeInput.text.ToUpper();
+            _joinByCode.interactable = _lobbyCodeInput.text.Length == 6;
+        }
+    }
 }

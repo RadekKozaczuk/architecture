@@ -24,11 +24,8 @@ namespace GameLogic.Controllers
 
         public void CustomFixedUpdate() { }
 
-        public void CustomUpdate()
-        {
-            LobbySystem.CustomUpdate();
-        }
+        public void CustomUpdate() => LobbySystem.CustomUpdate();
 
         public void CustomLateUpdate() { }
-	}
+    }
 }
