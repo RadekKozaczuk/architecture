@@ -1,17 +1,23 @@
 #nullable enable
 using Common.Enums;
+using System.Collections;
+using System;
 
 namespace Common.Systems
 {
     public delegate void RequestStateChange(GameState requested, int[]? additionalScenesToLoad = null, int[]? additionalScenesToUnload = null);
     public delegate void ScheduleStateChange(GameState requested, int[]? additionalScenesToLoad = null, int[]? additionalScenesToUnload = null);
-    public delegate GameState GetCurrentGameState();
+	public delegate void ActivateRoots_OverTime(IEnumerator coroutine);
+	public delegate void ActivateRoots_StateChange(Action action);
+	public delegate GameState GetCurrentGameState();
 
     public static class GameStateSystem
     {
         public static event RequestStateChange OnStateChangeRequest = null!;
         public static event ScheduleStateChange OnScheduleStateChange = null!;
-        public static event GetCurrentGameState OnGetCurrentGameState = null!;
+		public static event ActivateRoots_OverTime OnActivateRoots_OverTime = null!;
+		public static event ActivateRoots_StateChange OnActivateRoots_StateChange = null!;
+		public static event GetCurrentGameState OnGetCurrentGameState = null!;
 
         public static GameState CurrentState => OnGetCurrentGameState.Invoke();
 
@@ -26,5 +32,9 @@ namespace Common.Systems
 
         public static void ScheduleStateChange(GameState state, int[]? additionalScenesToLoad = null, int[]? additionalScenesToUnload = null) =>
             OnScheduleStateChange.Invoke(state, additionalScenesToLoad, additionalScenesToUnload);
-    }
+
+		public static void ActivateRoots_OverTime(IEnumerator coroutine) => OnActivateRoots_OverTime.Invoke(coroutine);
+
+		public static void ActivateRoots_StateChange(Action action) => OnActivateRoots_StateChange.Invoke(action);
+	}
 }

@@ -39,28 +39,28 @@ namespace Presentation.ViewModels
         public void Initialize()
         {
             _instance = this;
-
-            // this is called for the host too
-            NetworkManager.Singleton.OnClientConnectedCallback += clientId =>
-            {
-                // ignore self connection
-                if (clientId == 0)
-                    return;
-
-                if (clientId == 1 && NetworkManager.Singleton.IsHost)
-                {
-                    Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player2).transform;
-                    PlayerNetworkView player = Object.Instantiate(_playerConfig.PlayerClientPrefab, spawnPoint.position, spawnPoint.rotation,
-                                                                  PresentationSceneReferenceHolder.PlayerContainer);
-
-                    // this will be assigned only on the host
-                    PresentationData.NetworkPlayers[(int)PlayerId.Player2] = player;
-
-                    // spawn over the network
-                    player.NetworkObj.SpawnWithOwnership(1, true);
-                }
-            };
         }
+
+        public static void CustomStart() {
+			// this is called for the host too
+			NetworkManager.Singleton.OnClientConnectedCallback += clientId => {
+				// ignore self connection
+				if (clientId == 0)
+					return;
+
+				if (clientId == 1 && NetworkManager.Singleton.IsHost) {
+					Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player2).transform;
+					PlayerNetworkView player = Object.Instantiate(_playerConfig.PlayerClientPrefab, spawnPoint.position, spawnPoint.rotation,
+																  PresentationSceneReferenceHolder.PlayerContainer);
+
+					// this will be assigned only on the host
+					PresentationData.NetworkPlayers[(int)PlayerId.Player2] = player;
+
+					// spawn over the network
+					player.NetworkObj.SpawnWithOwnership(1, true);
+				}
+			};
+		}
 
         public static void CustomUpdate() => _instance._presentationMainController.CustomUpdate();
 

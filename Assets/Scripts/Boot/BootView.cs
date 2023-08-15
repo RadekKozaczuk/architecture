@@ -38,11 +38,25 @@ namespace Boot
         static readonly DebugConfig _config = null!;
 #endif
 
-        void Start()
-        {
-            Architecture.Initialize();
+		static readonly SceneConfig _sceneConfig = null!;
 
-            _gameStateSystem = new GameStateMachine<GameState>(
+        void Awake()
+        {
+			Architecture.Initialize();
+		}
+
+		void Start()
+        {
+            PresentationViewModel.CustomStart();
+
+			List<int> scenesActivatedOverTime = new();
+			for (int i = 0; i < _sceneConfig.CustomActivation.Length; i++) {
+				SceneConfig.ExtActivation? activation = _sceneConfig.CustomActivation[i];
+				if (activation.When == SceneConfig.ActivationMode.OverTime)
+					scenesActivatedOverTime.Add((int)activation.Level);
+			}
+
+			_gameStateSystem = new GameStateMachine<GameState>(
                 new List<(
                     GameState from,
                     GameState to,
@@ -71,12 +85,13 @@ namespace Boot
                     (GameState.Booting, null, BootingOnExit),
                     (GameState.MainMenu, MainMenuOnEntry, MainMenuOnExit),
                     (GameState.Gameplay, GameplayOnEntry, GameplayOnExit)
-                }
+                },
+				scenesActivatedOverTime
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-                // ReSharper disable once MergeConditionalExpression
-                // ReSharper disable once SimplifyConditionalTernaryExpression
-                , _config is null ? false : _config.LogRequestedStateChange);
+				// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+				// ReSharper disable once MergeConditionalExpression
+				// ReSharper disable once SimplifyConditionalTernaryExpression
+				, _config is null ? false : _config.LogRequestedStateChange);
 #else
             );
 #endif
@@ -113,9 +128,6 @@ namespace Boot
 
 		void FixedUpdate()
         {
-            if (GameStateSystem.CurrentState == GameState.Booting)
-                return;
-
             if (_isCoreSceneLoaded)
             {
                 GameLogicViewModel.CustomFixedUpdate();
@@ -129,9 +141,6 @@ namespace Boot
 
         void Update()
         {
-            if (GameStateSystem.CurrentState == GameState.Booting)
-                return;
-
             if (_isCoreSceneLoaded)
             {
                 GameLogicViewModel.CustomUpdate();
@@ -145,9 +154,6 @@ namespace Boot
 
         void LateUpdate()
         {
-            if (GameStateSystem.CurrentState == GameState.Booting)
-                return;
-
             if (_isCoreSceneLoaded)
             {
                 GameLogicViewModel.CustomLateUpdate();
