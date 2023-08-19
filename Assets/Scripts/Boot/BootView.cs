@@ -38,8 +38,26 @@ namespace Boot
         static readonly DebugConfig _config = null!;
 #endif
 
+        static readonly SceneConfig _sceneConfig = null!;
+
+        void Awake()
+        {
+            // increase priority so that main menu can appear faster
+            Application.backgroundLoadingPriority = ThreadPriority.High;
+            // injection must be done in awake because fields cannot be injected into in the same method they are used in
+            Architecture.Initialize();
+        }
+
         void Start()
         {
+            List<int> scenesActivatedOverTime = new ();
+            for (int i = 0; i < _sceneConfig.CustomActivation.Length; i++)
+            {
+                SceneConfig.ExtActivation? activation = _sceneConfig.CustomActivation[i];
+                if (activation.When == SceneConfig.ActivationMode.OverTime)
+                    scenesActivatedOverTime.Add((int)activation.Level);
+            }
+
             Architecture.Initialize();
 
             _gameStateSystem = new GameStateMachine<GameState>(
@@ -71,7 +89,8 @@ namespace Boot
                     (GameState.Booting, null, BootingOnExit),
                     (GameState.MainMenu, MainMenuOnEntry, MainMenuOnExit),
                     (GameState.Gameplay, GameplayOnEntry, GameplayOnExit)
-                }
+                },
+                scenesActivatedOverTime
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
                 // ReSharper disable once MergeConditionalExpression
@@ -98,7 +117,7 @@ namespace Boot
 #if UNITY_ANDROID || UNITY_IOS
             Application.targetFrameRate = 30;
 #else
-            Application.targetFrameRate = 120;
+            Application.targetFrameRate = 60;
 #endif
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -160,6 +179,7 @@ namespace Boot
 
         static void BootingOnExit()
         {
+            Application.backgroundLoadingPriority = ThreadPriority.Normal;
             GameLogicViewModel.BootingOnExit();
             PresentationViewModel.BootingOnExit();
             UIViewModel.BootingOnExit();
