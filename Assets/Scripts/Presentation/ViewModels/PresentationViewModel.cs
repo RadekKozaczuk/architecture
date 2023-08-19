@@ -41,7 +41,8 @@ namespace Presentation.ViewModels
             _instance = this;
         }
 
-        public static void CustomStart() {
+        public static void CustomStart() 
+        {
 			// this is called for the host too
 			NetworkManager.Singleton.OnClientConnectedCallback += clientId => {
 				// ignore self connection
