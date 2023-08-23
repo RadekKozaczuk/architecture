@@ -1,0 +1,6 @@
+<linker>
+  <assembly fullname="Unity.Netcode.Runtime"/>
+  <assembly fullname="Unity.Multiplayer.Tools"/>
+  <assembly fullname="Unity.Multiplayer.Tools.MetricTypes"/>
+  <assembly fullname="Unity.Multiplayer.Tools.NetStatsReporting"/>
+</linker>

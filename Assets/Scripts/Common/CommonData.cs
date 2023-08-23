@@ -35,6 +35,8 @@ namespace Common
 
         public static BinaryReader SaveGameReader;
 
+        public static int NumberOfPlayers;
+
         /// <summary>
         /// Used only in multiplayer context.
         /// </summary>
