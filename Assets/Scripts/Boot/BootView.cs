@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Common;
+using Common.Config;
 using Common.Enums;
 using Common.Systems;
 using GameLogic.ViewModels;
@@ -14,7 +15,6 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using Shared;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-using Common.Config;
 using Shared.DebugCommands;
 #endif
 
@@ -58,7 +58,7 @@ namespace Boot
                     scenesActivatedOverTime.Add((int)activation.Level);
             }
 
-            Architecture.Initialize();
+            Architecture.ControllerInjectionAndInitialization();
 
             _gameStateSystem = new GameStateMachine<GameState>(
                 new List<(

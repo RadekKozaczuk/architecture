@@ -93,7 +93,6 @@ namespace GameLogic.Systems
         /// </summary>
         internal static async Task<(bool, string, string)> CreateLobby(string lobbyName, int maxPlayers)
         {
-            Debug.Log($"CreateLobby -> CommonData.PlayerName: {CommonData.PlayerName}");
             try
             {
                 var options = new CreateLobbyOptions
@@ -111,7 +110,6 @@ namespace GameLogic.Systems
                 Lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
 
                 _heartbeatTimer = HeartbeatRate;
-                Debug.Log("Created lobby " + Lobby.Name + " " + Lobby.MaxPlayers);
                 return (true, Lobby.Players[0].Id, Lobby.LobbyCode);
             }
             catch (LobbyServiceException e)
@@ -204,17 +202,6 @@ namespace GameLogic.Systems
         {
             try
             {
-                var options = new JoinLobbyByIdOptions
-                {
-                    Player = new Player
-                    {
-                        Data = new Dictionary<string, PlayerDataObject>
-                        {
-                            {Constants.PlayerName, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, CommonData.PlayerName)}
-                        }
-                    }
-                };
-
                 Lobby = await Lobbies.Instance.ReconnectToLobbyAsync(lobbyId);
                 callback(Lobby.Name, Lobby.LobbyCode, GetPlayers());
             }
@@ -524,7 +511,7 @@ namespace GameLogic.Systems
         static string GetRandomPlayerIdWithoutLocalPlayer()
         {
             List<(string playerName, string playerId, bool isHost)> players = GetPlayers();
-            foreach ((string playerName, string playerId, bool isHost) in players)
+            foreach ((string _, string playerId, bool _) in players)
                 if (playerId != AuthenticationService.Instance.PlayerId)
                     return playerId;
 
