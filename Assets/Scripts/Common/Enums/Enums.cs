@@ -44,7 +44,8 @@ namespace Common.Enums
         /// <summary>
         /// The lobby you joined/created.
         /// </summary>
-        Lobby
+        Lobby,
+        WaitingForAllPlayers
     }
 
     public enum PlayerId

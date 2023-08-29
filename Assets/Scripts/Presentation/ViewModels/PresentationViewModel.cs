@@ -1,4 +1,5 @@
 using System.IO;
+using System.Collections.Generic;
 using Common;
 using Common.Enums;
 using ControlFlow.DependencyInjector.Attributes;
@@ -33,6 +34,10 @@ namespace Presentation.ViewModels
 
         static LevelSceneReferenceHolder _level;
 
+        static List<PlayerNetworkView> _players = new();
+
+        static int _joinedPlayers = 0;
+
         [Preserve]
         PresentationViewModel() { }
 
@@ -43,19 +48,57 @@ namespace Presentation.ViewModels
             // this is called for the host too
             NetworkManager.Singleton.OnClientConnectedCallback += clientId =>
             {
-                if (NetworkManager.Singleton.IsHost)
-                    if (CommonData.NumberOfPlayers == NetworkManager.Singleton.ConnectedClients.Count)
-                        SpawnPlayers();
+                _joinedPlayers++;
+                // ignore self connection
+                if (clientId == 0)
+                    return;
+
+                if (clientId == 1 && NetworkManager.Singleton.IsHost)
+                {
+                    Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player2).transform;
+                    PlayerNetworkView player = Object.Instantiate(_playerConfig.PlayerClientPrefab, spawnPoint.position, spawnPoint.rotation,
+                                                                  PresentationSceneReferenceHolder.PlayerContainer);
+
+                    // this will be assigned only on the host
+                    PresentationData.NetworkPlayers[(int)PlayerId.Player2] = player;
+
+                    // spawn over the network
+                    player.NetworkObj.SpawnWithOwnership(1, true);
+                    _players.Add(player);
+                    player.ToggleActive(false);
+                }
+                if (_joinedPlayers == CommonData.NumberOfPlayers)
+                    foreach (PlayerNetworkView player in _players)
+                        player.ToggleActive(true);
             };
         }
 
-        void SpawnPlayers() {
-            for (int i = 0; i < CommonData.NumberOfPlayers; i++) {
-                if (i == 0) {
-                    Debug.Log("Host joined OnLevelSceneLoaded");
+        public static void CustomUpdate() => _instance._presentationMainController.CustomUpdate();
+
+        public static void CustomFixedUpdate() => _instance._presentationMainController.CustomFixedUpdate();
+
+        public static void CustomLateUpdate() => _instance._presentationMainController.CustomLateUpdate();
+
+        public static void OnCoreSceneLoaded() => PresentationMainController.OnCoreSceneLoaded();
+
+        /// <summary>
+        /// This is were network related things happens.
+        /// Spawns all players.
+        /// </summary>
+        public static void OnLevelSceneLoaded()
+        {
+            // load level data
+            _level = GameObject.FindWithTag("LevelSceneReferenceHolder").GetComponent<LevelSceneReferenceHolder>();
+
+            if (CommonData.IsMultiplayer)
+            {
+                if (NetworkManager.Singleton.IsHost)
+                    // todo: hard coded for now
+                {
                     Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player1).transform;
 
-                    if (PresentationData.NetworkPlayers[(int)PlayerId.Player1] == null) {
+                    if (PresentationData.NetworkPlayers[(int)PlayerId.Player1] == null)
+                    {
                         // instantiate locally
                         // in network context objects can only be spawned in root - we cannot spawn under other objects.
                         PlayerNetworkView player = Object.Instantiate(
@@ -74,45 +117,21 @@ namespace Presentation.ViewModels
                         // Spawning in Netcode means to instantiate and/or spawn the object that is synchronized between all clients by the server.
                         // Only server can spawn multiplayer objects.
                         player.NetworkObj.Spawn(true);
+                        _players.Add(player);
+                        player.ToggleActive(false);
+                    }
+                    else
+                    {
+                        Transform transform = PresentationData.NetworkPlayers[(int)PlayerId.Player1].transform;
+                        transform.position = spawnPoint.position;
+                        transform.rotation = spawnPoint.rotation;
                     }
                 }
-
-                if (i == 1 && NetworkManager.Singleton.IsHost) {
-                    Debug.Log("Client joined Initialize");
-
-                    Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player2).transform;
-                    PlayerNetworkView player = Object.Instantiate(_playerConfig.PlayerClientPrefab, spawnPoint.position, spawnPoint.rotation,
-                                                                  PresentationSceneReferenceHolder.PlayerContainer);
-
-                    // this will be assigned only on the host
-                    PresentationData.NetworkPlayers[(int)PlayerId.Player2] = player;
-
-                    // spawn over the network
-                    player.NetworkObj.SpawnWithOwnership(1, true);
-                }
             }
-        }
-
-        public static void CustomUpdate() => _instance._presentationMainController.CustomUpdate();
-
-        public static void CustomFixedUpdate() => _instance._presentationMainController.CustomFixedUpdate();
-
-        public static void CustomLateUpdate() => _instance._presentationMainController.CustomLateUpdate();
-
-        public static void OnCoreSceneLoaded() => PresentationMainController.OnCoreSceneLoaded();
-
-        /// <summary>
-        /// This is were network related things happens.
-        /// Spawns all players.
-        /// </summary>
-        public static void OnLevelSceneLoaded()
-        {
-            Debug.Log(CommonData.NumberOfPlayers);
-            // load level data
-            _level = GameObject.FindWithTag("LevelSceneReferenceHolder").GetComponent<LevelSceneReferenceHolder>();
-
-            if (!CommonData.IsMultiplayer)
+            else
+            {
                 SpawnSinglePlayer(_level.GetSpawnPoint(PlayerId.Player1));
+            }
 
             if (CommonData.LoadRequested)
             {
