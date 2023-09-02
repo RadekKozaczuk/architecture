@@ -34,8 +34,6 @@ namespace Presentation.ViewModels
 
         static LevelSceneReferenceHolder _level;
 
-        static List<PlayerNetworkView> _players = new();
-
         static int _joinedPlayers = 0;
 
         [Preserve]
@@ -64,12 +62,12 @@ namespace Presentation.ViewModels
 
                     // spawn over the network
                     player.NetworkObj.SpawnWithOwnership(1, true);
-                    _players.Add(player);
                     player.gameObject.SetActive(false);
                 }
                 if (_joinedPlayers == CommonData.NumberOfPlayers)
-                    foreach (PlayerNetworkView player in _players)
-                        player.gameObject.SetActive(true);
+                    foreach (PlayerNetworkView player in PresentationData.NetworkPlayers)
+                        if (player != null)
+                            player.gameObject.SetActive(true);
             };
         }
 
@@ -118,7 +116,6 @@ namespace Presentation.ViewModels
                         // Spawning in Netcode means to instantiate and/or spawn the object that is synchronized between all clients by the server.
                         // Only server can spawn multiplayer objects.
                         player.NetworkObj.Spawn(true);
-                        _players.Add(player);
                         player.gameObject.SetActive(CommonData.NumberOfPlayers == 1);
                     }
                     else
