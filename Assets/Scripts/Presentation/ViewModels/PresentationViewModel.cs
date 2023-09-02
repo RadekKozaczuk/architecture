@@ -118,7 +118,7 @@ namespace Presentation.ViewModels
                         // Only server can spawn multiplayer objects.
                         player.NetworkObj.Spawn(true);
                         _players.Add(player);
-                        player.ToggleActive(false);
+                        player.ToggleActive(CommonData.NumberOfPlayers == 1);
                     }
                     else
                     {

@@ -53,6 +53,7 @@ namespace UI.Popups.Views
 
         void BackToLobbyListAction()
         {
+            PopupSystem.CloseCurrentPopup();
             GameLogicViewModel.RemovePlayerFromLobby(_lobbyToReconnectId);
             PopupSystem.ShowPopup(PopupType.LobbyList);
         }
