@@ -56,8 +56,7 @@ namespace Presentation.ViewModels
                 if (clientId == 1 && NetworkManager.Singleton.IsHost)
                 {
                     Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player2).transform;
-                    PlayerNetworkView player = Object.Instantiate(_playerConfig.PlayerClientPrefab, spawnPoint.position, spawnPoint.rotation,
-                                                                  PresentationSceneReferenceHolder.PlayerContainer);
+                    PlayerNetworkView player = Object.Instantiate(_playerConfig.PlayerClientPrefab, spawnPoint.position, spawnPoint.rotation);
 
                     // this will be assigned only on the host
                     PresentationData.NetworkPlayers[(int)PlayerId.Player2] = player;
@@ -104,11 +103,7 @@ namespace Presentation.ViewModels
                         PlayerNetworkView player = Object.Instantiate(
                             _playerConfig.PlayerServerPrefab,
                             spawnPoint.position,
-                            spawnPoint.rotation,
-                            // todo: this is weird
-                            // todo: in network context everything is spawned in the root no matter what
-                            // todo: but for some reason without this game breaks
-                            PresentationSceneReferenceHolder.PlayerContainer);
+                            spawnPoint.rotation);
 
                         // this will be assigned only on the host
                         PresentationData.NetworkPlayers[(int)PlayerId.Player1] = player;
