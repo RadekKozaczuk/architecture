@@ -68,7 +68,7 @@ namespace Presentation.ViewModels
                     player.gameObject.SetActive(false);
                 }
 
-                if (_joinedPlayers != CommonData.NumberOfPlayers)
+                if (_joinedPlayers != CommonData.PlayerCount)
                     return;
 
                 foreach (PlayerNetworkView player in PresentationData.NetworkPlayers)
@@ -122,7 +122,7 @@ namespace Presentation.ViewModels
                         // Spawning in Netcode means to instantiate and/or spawn the object that is synchronized between all clients by the server.
                         // Only server can spawn multiplayer objects.
                         player.NetworkObj.Spawn(true);
-                        player.gameObject.SetActive(CommonData.NumberOfPlayers == 1);
+                        player.gameObject.SetActive(CommonData.PlayerCount == 1);
                     }
                     else
                     {

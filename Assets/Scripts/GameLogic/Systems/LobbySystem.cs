@@ -290,7 +290,7 @@ namespace GameLogic.Systems
                 }
             });
 
-            CommonData.NumberOfPlayers = Lobby.Players.Count;
+            CommonData.PlayerCount = Lobby.Players.Count;
             GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
         }
 
