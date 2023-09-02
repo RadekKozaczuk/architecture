@@ -62,7 +62,7 @@ namespace Presentation.ViewModels
                     // this will be assigned only on the host
                     PresentationData.NetworkPlayers[(int)PlayerId.Player2] = player;
 
-                    // spawn ovPresentationSceneReferenceHolder.PlayerContainer);er the network
+                    // spawn over the network
                     player.NetworkObj.SpawnWithOwnership(1, true);
                     _players.Add(player);
                     player.ToggleActive(false);
