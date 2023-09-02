@@ -66,6 +66,8 @@ namespace GameLogic.Systems
         /// </summary>
         static bool _lobbyIsDirty;
 
+        static bool _gameStarted;
+
         internal static void CustomUpdate()
         {
             if (_lobbyQueryTimer > 0)
@@ -272,6 +274,7 @@ namespace GameLogic.Systems
         internal static async Task StartGame_Host()
         {
             // Important: Once the allocation is created, you have ten seconds to BIND
+            _gameStarted = true;
             Allocation allocation = await RelayService.Instance.CreateAllocationAsync(Lobby.MaxPlayers - 1);
             _relayCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
             var relayServerData = new RelayServerData(allocation, "dtls");
@@ -485,7 +488,7 @@ namespace GameLogic.Systems
                 int hashCode = CalculateHash();
 
                 // send signal is if has changed
-                if (hashCode != _lastUpdateCallHash)
+                if (hashCode != _lastUpdateCallHash && !_gameStarted)
                 {
                     SignalProcessor.SendSignal(new LobbyChangedSignal(Lobby.Name, Lobby.LobbyCode, GetPlayers()));
                     _lastUpdateCallHash = hashCode;

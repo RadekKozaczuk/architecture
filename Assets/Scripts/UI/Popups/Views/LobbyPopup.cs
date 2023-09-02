@@ -33,8 +33,6 @@ namespace UI.Popups.Views
 
         string _hostId;
 
-        bool _gameStarted;
-
         LobbyPopup()
             : base(PopupType.Lobby) { }
 
@@ -43,7 +41,6 @@ namespace UI.Popups.Views
             _start.onClick.AddListener(StartAction);
             _start.interactable = false;
             _leave.onClick.AddListener(LeaveAction);
-            _gameStarted = false;
         }
 
         internal override void Initialize() { }
@@ -70,9 +67,6 @@ namespace UI.Popups.Views
 
         internal void SetValues(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players)
         {
-            if (_gameStarted)
-                return;
-            
             _lobbyName.text = lobbyName;
             _lobbyCode.text = lobbyCode;
 
@@ -116,7 +110,6 @@ namespace UI.Popups.Views
         void StartAction()
         {
             _start.interactable = false;
-            _gameStarted = true;
             CommonData.CurrentLevel = Level.HubLocation;
             CommonData.IsMultiplayer = true;
             CommonData.PlayerId = PlayerId.Player1;
