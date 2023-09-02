@@ -65,11 +65,11 @@ namespace Presentation.ViewModels
                     // spawn over the network
                     player.NetworkObj.SpawnWithOwnership(1, true);
                     _players.Add(player);
-                    player.ToggleActive(false);
+                    player.gameObject.SetActive(false);
                 }
                 if (_joinedPlayers == CommonData.NumberOfPlayers)
                     foreach (PlayerNetworkView player in _players)
-                        player.ToggleActive(true);
+                        player.gameObject.SetActive(true);
             };
         }
 
@@ -120,7 +120,7 @@ namespace Presentation.ViewModels
                         // Only server can spawn multiplayer objects.
                         player.NetworkObj.Spawn(true);
                         _players.Add(player);
-                        player.ToggleActive(CommonData.NumberOfPlayers == 1);
+                        player.gameObject.SetActive(CommonData.NumberOfPlayers == 1);
                     }
                     else
                     {

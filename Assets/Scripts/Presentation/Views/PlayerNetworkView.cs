@@ -33,10 +33,5 @@ namespace Presentation.Views
             if (IsOwner)
                 PresentationData.NetworkPlayers[(int)CommonData.PlayerId!.Value] = this;
         }
-
-        public void ToggleActive(bool active)
-        {
-            this.gameObject.SetActive(active);
-        }
     }
 }
