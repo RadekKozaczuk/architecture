@@ -51,11 +51,14 @@ namespace Presentation.ViewModels
                 if (clientId == 0)
                     return;
 
-                if (clientId == 1 && NetworkManager.Singleton.IsHost)
+                if (!NetworkManager.Singleton.IsHost)
+                    return;
+
+                if (clientId == 1)
                 {
                     Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player2).transform;
                     PlayerNetworkView player = Object.Instantiate(_playerConfig.PlayerClientPrefab, spawnPoint.position, spawnPoint.rotation,
-                                                PresentationSceneReferenceHolder.PlayerContainer);
+                                                                  PresentationSceneReferenceHolder.PlayerContainer);
 
                     // this will be assigned only on the host
                     PresentationData.NetworkPlayers[(int)PlayerId.Player2] = player;
@@ -64,10 +67,13 @@ namespace Presentation.ViewModels
                     player.NetworkObj.SpawnWithOwnership(1, true);
                     player.gameObject.SetActive(false);
                 }
-                if (_joinedPlayers == CommonData.NumberOfPlayers)
-                    foreach (PlayerNetworkView player in PresentationData.NetworkPlayers)
-                        if (player != null)
-                            player.gameObject.SetActive(true);
+
+                if (_joinedPlayers != CommonData.NumberOfPlayers)
+                    return;
+
+                foreach (PlayerNetworkView player in PresentationData.NetworkPlayers)
+                    if (player != null)
+                        player.gameObject.SetActive(true);
             };
         }
 
