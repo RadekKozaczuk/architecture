@@ -72,7 +72,7 @@ namespace UI.Popups.Views
         {
             if (_gameStarted)
                 return;
-            
+
             _lobbyName.text = lobbyName;
             _lobbyCode.text = lobbyCode;
 
@@ -84,7 +84,7 @@ namespace UI.Popups.Views
                     _hostId = playerId;
 
             bool isLocalPlayerHost = AuthenticationService.Instance.PlayerId == _hostId;
-            
+
             _start.interactable = isLocalPlayerHost;
 
             foreach ((string playerName, string playerId, bool isHost) in players)
