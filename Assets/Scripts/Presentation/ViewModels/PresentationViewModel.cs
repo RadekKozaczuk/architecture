@@ -105,10 +105,9 @@ namespace Presentation.ViewModels
                             _playerConfig.PlayerServerPrefab,
                             spawnPoint.position,
                             spawnPoint.rotation,
-                            // We have to explicitly tell Unity where to spawn the object 
-                            // EVEN THO in the end it is going to be spawned in the root folder
-                            // The reason being that there is a bug in Unity
-                            // when we have more than one scene opened, Unity does not in which to spawn object
+                            // We have to explicitly tell Unity where to spawn the object EVEN THO in the end it is going to be spawned
+                            // in the root folder. The reason being that there is a bug in Unity
+                            // and when we have more than one scene opened, Unity does not know in which to spawn object
                             // and in the end does not spawn it at all
                             PresentationSceneReferenceHolder.PlayerContainer);
 

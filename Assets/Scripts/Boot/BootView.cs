@@ -8,12 +8,12 @@ using Common.Enums;
 using Common.Systems;
 using GameLogic.ViewModels;
 using Presentation.ViewModels;
+using Shared;
 using Shared.Systems;
 using UI.ViewModels;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
-using Shared;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 using Shared.DebugCommands;
 #endif
@@ -50,7 +50,7 @@ namespace Boot
 
         void Start()
         {
-            List<int> scenesActivatedOverTime = new ();
+            List<int> scenesActivatedOverTime = new();
             for (int i = 0; i < _sceneConfig.CustomActivation.Length; i++)
             {
                 SceneConfig.ExtActivation? activation = _sceneConfig.CustomActivation[i];
@@ -141,10 +141,10 @@ namespace Boot
                 PresentationViewModel.CustomFixedUpdate();
                 UIViewModel.CustomFixedUpdate();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-				DebugCommandSystem.CustomUpdate();
+                DebugCommandSystem.CustomUpdate();
 #endif
-			}
-		}
+            }
+        }
 
         void Update()
         {
@@ -221,9 +221,8 @@ namespace Boot
         }
 
         /// <summary>
-        ///
         /// </summary>
-        static int []? ScenesToLoadFromMainMenuToGameplay()
+        static int[]? ScenesToLoadFromMainMenuToGameplay()
         {
             if (CommonData.LoadRequested)
             {
@@ -290,7 +289,7 @@ namespace Boot
             }
 
             CommonData.CurrentLevel = Level.Level0;
-            return (new[] {(int)Level.Level0}, new [] {(int)Level.HubLocation});
+            return (new[] {(int)Level.Level0}, new[] {(int)Level.HubLocation});
         }
     }
 }
