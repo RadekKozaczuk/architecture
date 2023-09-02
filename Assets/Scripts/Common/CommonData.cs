@@ -36,6 +36,12 @@ namespace Common
         public static BinaryReader SaveGameReader;
 
         /// <summary>
+        /// This is only used in multiplayer (always null in single player).
+        /// When someone starts the game this value is set to the player count.
+        /// </summary>
+        public static int? PlayerCount;
+
+        /// <summary>
         /// Used only in multiplayer context.
         /// </summary>
         public static string PlayerName;

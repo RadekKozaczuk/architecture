@@ -7,10 +7,6 @@ namespace Presentation
 {
     class LevelSceneReferenceHolder : MonoBehaviour
     {
-        // todo: add assertion that checks if spawn points are not duplicated
-
-        internal Transform GetSpawnPoint(PlayerId playerId) => _spawnPoints[(int)playerId].transform;
-
         [SerializeField]
         SpawnPointView[] _spawnPoints;
 
@@ -25,6 +21,9 @@ namespace Presentation
 
         [SerializeField]
         internal Transform EnemyContainer;
+        // todo: add assertion that checks if spawn points are not duplicated
+
+        internal Transform GetSpawnPoint(PlayerId playerId) => _spawnPoints[(int)playerId].transform;
 
         internal void CopyLightReferences(List<Light> list)
         {

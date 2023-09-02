@@ -1,4 +1,5 @@
 using System.IO;
+using System.Collections.Generic;
 using Common;
 using Common.Enums;
 using ControlFlow.DependencyInjector.Attributes;
@@ -33,6 +34,8 @@ namespace Presentation.ViewModels
 
         static LevelSceneReferenceHolder _level;
 
+        static int _joinedPlayers = 0;
+
         [Preserve]
         PresentationViewModel() { }
 
@@ -43,11 +46,15 @@ namespace Presentation.ViewModels
             // this is called for the host too
             NetworkManager.Singleton.OnClientConnectedCallback += clientId =>
             {
+                _joinedPlayers++;
                 // ignore self connection
                 if (clientId == 0)
                     return;
 
-                if (clientId == 1 && NetworkManager.Singleton.IsHost)
+                if (!NetworkManager.Singleton.IsHost)
+                    return;
+
+                if (clientId == 1)
                 {
                     Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player2).transform;
                     PlayerNetworkView player = Object.Instantiate(_playerConfig.PlayerClientPrefab, spawnPoint.position, spawnPoint.rotation,
@@ -58,7 +65,15 @@ namespace Presentation.ViewModels
 
                     // spawn over the network
                     player.NetworkObj.SpawnWithOwnership(1, true);
+                    player.gameObject.SetActive(false);
                 }
+
+                if (_joinedPlayers != CommonData.PlayerCount)
+                    return;
+
+                foreach (PlayerNetworkView player in PresentationData.NetworkPlayers)
+                    if (player != null)
+                        player.gameObject.SetActive(true);
             };
         }
 
@@ -94,9 +109,10 @@ namespace Presentation.ViewModels
                             _playerConfig.PlayerServerPrefab,
                             spawnPoint.position,
                             spawnPoint.rotation,
-                            // todo: this is weird
-                            // todo: in network context everything is spawned in the root no matter what
-                            // todo: but for some reason without this game breaks
+                            // We have to explicitly tell Unity where to spawn the object EVEN THO in the end it is going to be spawned
+                            // in the root folder. The reason being that there is a bug in Unity
+                            // and when we have more than one scene opened, Unity does not know in which to spawn object
+                            // and in the end does not spawn it at all
                             PresentationSceneReferenceHolder.PlayerContainer);
 
                         // this will be assigned only on the host
@@ -106,6 +122,7 @@ namespace Presentation.ViewModels
                         // Spawning in Netcode means to instantiate and/or spawn the object that is synchronized between all clients by the server.
                         // Only server can spawn multiplayer objects.
                         player.NetworkObj.Spawn(true);
+                        player.gameObject.SetActive(CommonData.PlayerCount == 1);
                     }
                     else
                     {
