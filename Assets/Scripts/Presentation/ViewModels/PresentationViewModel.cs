@@ -56,12 +56,13 @@ namespace Presentation.ViewModels
                 if (clientId == 1 && NetworkManager.Singleton.IsHost)
                 {
                     Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player2).transform;
-                    PlayerNetworkView player = Object.Instantiate(_playerConfig.PlayerClientPrefab, spawnPoint.position, spawnPoint.rotation);
+                    PlayerNetworkView player = Object.Instantiate(_playerConfig.PlayerClientPrefab, spawnPoint.position, spawnPoint.rotation,
+                                                PresentationSceneReferenceHolder.PlayerContainer);
 
                     // this will be assigned only on the host
                     PresentationData.NetworkPlayers[(int)PlayerId.Player2] = player;
 
-                    // spawn over the network
+                    // spawn ovPresentationSceneReferenceHolder.PlayerContainer);er the network
                     player.NetworkObj.SpawnWithOwnership(1, true);
                     _players.Add(player);
                     player.ToggleActive(false);
@@ -103,7 +104,9 @@ namespace Presentation.ViewModels
                         PlayerNetworkView player = Object.Instantiate(
                             _playerConfig.PlayerServerPrefab,
                             spawnPoint.position,
-                            spawnPoint.rotation);
+                            spawnPoint.rotation,
+                            // when we delete this, player not spawning correctly
+                            PresentationSceneReferenceHolder.PlayerContainer);
 
                         // this will be assigned only on the host
                         PresentationData.NetworkPlayers[(int)PlayerId.Player1] = player;
