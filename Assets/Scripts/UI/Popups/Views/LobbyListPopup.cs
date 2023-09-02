@@ -65,7 +65,7 @@ namespace UI.Popups.Views
 
         internal override void Close() { }
 
-        internal void SelectedLobbyChanged(bool selected) => _join.interactable = selected;
+        internal void SelectedLobbyChanged(bool canJoin) => _join.interactable = canJoin;
 
         void RefreshAction()
         {
