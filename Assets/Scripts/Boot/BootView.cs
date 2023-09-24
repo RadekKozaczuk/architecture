@@ -50,15 +50,18 @@ namespace Boot
 
         void Start()
         {
-            List<int> scenesActivatedOverTime = new();
+            List<int> overTimeSceneIds = new ();
+            List<int> stateChangeSceneIds = new ();
             for (int i = 0; i < _sceneConfig.CustomActivation.Length; i++)
             {
                 SceneConfig.ExtActivation? activation = _sceneConfig.CustomActivation[i];
                 if (activation.When == SceneConfig.ActivationMode.OverTime)
-                    scenesActivatedOverTime.Add((int)activation.Level);
+                    overTimeSceneIds.Add((int)activation.Level);
+                else if (activation.When == SceneConfig.ActivationMode.StateChange)
+                    stateChangeSceneIds.Add((int)activation.Level);
             }
 
-            Architecture.ControllerInjectionAndInitialization();
+            Architecture.ControllerInjectionAndInitialization(overTimeSceneIds, stateChangeSceneIds);
 
             _gameStateSystem = new GameStateMachine<GameState>(
                 new List<(
@@ -89,8 +92,7 @@ namespace Boot
                     (GameState.Booting, null, BootingOnExit),
                     (GameState.MainMenu, MainMenuOnEntry, MainMenuOnExit),
                     (GameState.Gameplay, GameplayOnEntry, GameplayOnExit)
-                },
-                scenesActivatedOverTime
+                }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
                 // ReSharper disable once MergeConditionalExpression
@@ -101,7 +103,9 @@ namespace Boot
 #endif
 
             GameStateSystem.OnStateChangeRequest += _gameStateSystem.RequestStateChange;
-            GameStateSystem.OnScheduleStateChange += _gameStateSystem.ScheduleStateChange;
+            GameStateSystem.OnRequestPreLoad += _gameStateSystem.RequestPreLoad;
+            GameStateSystem.OnActivateRoots_StateChange += _gameStateSystem.ActivateRoots_StateChange;
+            GameStateSystem.OnActivateRoots_OverTime += _gameStateSystem.ActivateRoots_OverTime;
             GameStateSystem.OnGetCurrentGameState += _gameStateSystem.GetCurrentState;
             GameStateSystem.RequestStateChange(GameState.MainMenu);
 
@@ -156,7 +160,6 @@ namespace Boot
                 GameLogicViewModel.CustomUpdate();
                 PresentationViewModel.CustomUpdate();
                 UIViewModel.CustomUpdate();
-                _gameStateSystem.CustomUpdate();
 
                 SignalProcessor.ExecuteSentSignals();
             }
