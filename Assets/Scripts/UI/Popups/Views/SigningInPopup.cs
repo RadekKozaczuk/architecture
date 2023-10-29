@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Common.Enums;
+using GameLogic.ViewModels;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Lobbies;
@@ -53,6 +54,7 @@ namespace UI.Popups.Views
 
             // this will create an account automatically without need to provide password or username
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            GameLogicViewModel.LoginVoiceChat();
             CheckIsUserHasJoinedLobbies();
         }
 

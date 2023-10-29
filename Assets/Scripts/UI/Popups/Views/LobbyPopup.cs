@@ -103,6 +103,7 @@ namespace UI.Popups.Views
 
         static void ExitLobby()
         {
+            GameLogicViewModel.LeaveLobby();
             PopupSystem.CloseCurrentPopup();
             PopupSystem.ShowPopup(PopupType.LobbyList);
         }

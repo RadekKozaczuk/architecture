@@ -43,6 +43,6 @@ namespace GameLogic.ViewModels
 
         public static async void StartGame() => await LobbySystem.StartGame_Host();
 
-        public static void JoinVoiceChat() => VoiceChatSystem.Login();
+        public static void LoginVoiceChat() => VoiceChatSystem.Login();
     }
 }

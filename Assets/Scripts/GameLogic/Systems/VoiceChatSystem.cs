@@ -9,6 +9,7 @@ namespace GameLogic.Systems
     static class VoiceChatSystem
     {
         static ILoginSession _session;
+        static IChannelSession _channel;
 
         internal static void Login(string displayName = null)
         {
@@ -36,7 +37,7 @@ namespace GameLogic.Systems
             });
         }
 
-        static void JoinChannel(string channelName, ChannelType channelType, bool connectAudio, bool connectText, bool transmissionSwitch = true,
+        internal static void JoinChannel(string channelName, ChannelType channelType, bool connectAudio, bool connectText, bool transmissionSwitch = true,
             Channel3DProperties properties = null)
         {
             if (_session.State == LoginState.LoggedIn)
@@ -44,6 +45,8 @@ namespace GameLogic.Systems
                 var channel = new Channel(channelName, channelType, properties);
 
                 IChannelSession channelSession = _session.GetChannelSession(channel);
+
+                _channel = channelSession;
 
                 channelSession.BeginConnect(connectAudio, connectText, transmissionSwitch, channelSession.GetConnectToken(), ar =>
                 {
@@ -59,6 +62,12 @@ namespace GameLogic.Systems
             }
             else
                 Debug.LogError("Can't join a channel when not logged in.");
+        }
+
+        internal static void LeaveCurrentChannel() {
+            if (_channel != null)
+                // Disconnect from channel
+                _channel.Disconnect();
         }
 
         // For this example, we immediately join a channel after LoginState changes to LoginState.LoggedIn.
