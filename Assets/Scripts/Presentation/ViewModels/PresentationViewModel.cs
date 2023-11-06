@@ -1,5 +1,4 @@
 using System.IO;
-using System.Collections.Generic;
 using Common;
 using Common.Enums;
 using ControlFlow.DependencyInjector.Attributes;
@@ -97,7 +96,6 @@ namespace Presentation.ViewModels
             if (CommonData.IsMultiplayer)
             {
                 if (NetworkManager.Singleton.IsHost)
-                    // todo: hard coded for now
                 {
                     Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player1).transform;
 
@@ -105,15 +103,7 @@ namespace Presentation.ViewModels
                     {
                         // instantiate locally
                         // in network context objects can only be spawned in root - we cannot spawn under other objects.
-                        PlayerNetworkView player = Object.Instantiate(
-                            _playerConfig.PlayerServerPrefab,
-                            spawnPoint.position,
-                            spawnPoint.rotation,
-                            // We have to explicitly tell Unity where to spawn the object EVEN THO in the end it is going to be spawned
-                            // in the root folder. The reason being that there is a bug in Unity
-                            // and when we have more than one scene opened, Unity does not know in which to spawn object
-                            // and in the end does not spawn it at all
-                            PresentationSceneReferenceHolder.PlayerContainer);
+                        PlayerNetworkView player = Object.Instantiate(_playerConfig.PlayerServerPrefab, spawnPoint.position, spawnPoint.rotation);
 
                         // this will be assigned only on the host
                         PresentationData.NetworkPlayers[(int)PlayerId.Player1] = player;
