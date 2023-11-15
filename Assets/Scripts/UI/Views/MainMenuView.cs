@@ -46,11 +46,9 @@ namespace UI.Views
 
         static void Coop() => PopupSystem.ShowPopup(PopupType.SigningIn);
 
-        static void LoadGame()
-        {
-            CommonData.LoadRequested = true;
-            GameStateSystem.RequestStateChange(GameState.Gameplay);
-        }
+        static void LoadGame() =>
+            GameStateSystem.RequestStateChange(GameState.Gameplay,
+                                               parameters: new []{(StateTransitionParameter.LoadGameRequested, (object)true)});
 
         static void Quit()
         {

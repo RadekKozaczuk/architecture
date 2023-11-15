@@ -7,6 +7,15 @@ namespace Common.Enums
         Gameplay
     }
 
+    public enum StateTransitionParameter
+    {
+        /// <summary>
+        /// This transition goes to HubLocation whether from MainMenu or a Level.
+        /// </summary>
+        HubSceneRequested,
+        LoadGameRequested
+    }
+
     public enum Sound
     {
         ArtilleryShotHeavy,

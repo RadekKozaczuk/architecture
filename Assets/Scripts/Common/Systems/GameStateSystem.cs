@@ -5,11 +5,14 @@ using Common.Enums;
 
 namespace Common.Systems
 {
-    public delegate void RequestStateChange(GameState requested, int[]? additionalScenesToLoad = null, int[]? additionalScenesToUnload = null);
+    public delegate void RequestStateChange(GameState requested, int[]? additionalScenesToLoad = null,
+        int[]? additionalScenesToUnload = null, (StateTransitionParameter key, object value)[]? parameters = null);
     public delegate void RequestPreLoad(GameState requested, int[]? additionalScenesToLoad = null);
     public delegate void ActivateRoots_OverTime(IEnumerator coroutine);
     public delegate void ActivateRoots_StateChange(Action action);
     public delegate GameState GetCurrentGameState();
+    public delegate void EndFrameSignal();
+    public delegate object? GetTransitionParameter(StateTransitionParameter key);
 
     public static class GameStateSystem
     {
@@ -18,6 +21,8 @@ namespace Common.Systems
         public static event ActivateRoots_OverTime OnActivateRoots_OverTime = null!;
         public static event ActivateRoots_StateChange OnActivateRoots_StateChange = null!;
         public static event GetCurrentGameState OnGetCurrentGameState = null!;
+        public static event EndFrameSignal OnEndFrameSignal = null!;
+        public static event GetTransitionParameter OnGetTransitionParameter = null!;
 
         public static GameState CurrentState => OnGetCurrentGameState.Invoke();
 
@@ -27,8 +32,9 @@ namespace Common.Systems
         /// Scenes should not overlap with the ones defined in the game state machine constructor.
         /// Actual state change may be delayed in time. Consecutive calls are not allowed.
         /// </summary>
-        public static void RequestStateChange(GameState state, int[]? additionalScenesToLoad = null, int[]? additionalScenesToUnload = null) =>
-            OnStateChangeRequest.Invoke(state, additionalScenesToLoad, additionalScenesToUnload);
+        public static void RequestStateChange(GameState state, int[]? additionalScenesToLoad = null,
+            int[]? additionalScenesToUnload = null, (StateTransitionParameter key, object value)[]? parameters = null) =>
+            OnStateChangeRequest.Invoke(state, additionalScenesToLoad, additionalScenesToUnload, parameters);
 
         /// <summary>
         /// Performs only the scene loading part of the <see cref="RequestStateChange"/> method.
@@ -43,5 +49,14 @@ namespace Common.Systems
         public static void ActivateRoots_OverTime(IEnumerator coroutine) => OnActivateRoots_OverTime.Invoke(coroutine);
 
         public static void ActivateRoots_StateChange(Action action) => OnActivateRoots_StateChange.Invoke(action);
+
+        public static void SendEndFrameSignal() => OnEndFrameSignal.Invoke();
+
+        /// <summary>
+        /// Returns the value of the given parameters if present, otherwise default.
+        /// Meaning this method will return null for reference types, and default for value types.
+        /// The parameter must be present otherwise method will throw an exception.
+        /// </summary>
+        public static object? GetTransitionParameter(StateTransitionParameter key) => OnGetTransitionParameter.Invoke(key);
     }
 }

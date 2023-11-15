@@ -1,6 +1,7 @@
 using System.IO;
 using Common;
 using Common.Enums;
+using Common.Systems;
 using ControlFlow.DependencyInjector.Attributes;
 using ControlFlow.DependencyInjector.Interfaces;
 using JetBrains.Annotations;
@@ -127,7 +128,8 @@ namespace Presentation.ViewModels
                 SpawnSinglePlayer(_level.GetSpawnPoint(PlayerId.Player1));
             }
 
-            if (CommonData.LoadRequested)
+            bool loadGameRequested = (bool)GameStateSystem.GetTransitionParameter(StateTransitionParameter.LoadGameRequested)!;
+            if (loadGameRequested)
             {
                 Vector3 position = SaveLoadUtils.ReadVector3(CommonData.SaveGameReader);
                 Quaternion rotation = SaveLoadUtils.ReadQuaternion(CommonData.SaveGameReader);

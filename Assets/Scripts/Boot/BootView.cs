@@ -30,7 +30,7 @@ namespace Boot
         EventSystem _eventSystem = null!;
 
         static bool _isCoreSceneLoaded;
-        static GameStateMachine<GameState> _gameStateSystem = null!;
+        static GameStateMachine<GameState, StateTransitionParameter> _gameStateMachine = null!;
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         // readonly fields are initialized only at the start and the null-forgiving operator is only a hint for the compiler.
@@ -63,7 +63,7 @@ namespace Boot
 
             Architecture.ControllerInjectionAndInitialization(overTimeSceneIds, stateChangeSceneIds);
 
-            _gameStateSystem = new GameStateMachine<GameState>(
+            _gameStateMachine = new GameStateMachine<GameState, StateTransitionParameter>(
                 new List<(
                     GameState from,
                     GameState to,
@@ -102,11 +102,17 @@ namespace Boot
             );
 #endif
 
-            GameStateSystem.OnStateChangeRequest += _gameStateSystem.RequestStateChange;
-            GameStateSystem.OnRequestPreLoad += _gameStateSystem.RequestPreLoad;
-            GameStateSystem.OnActivateRoots_StateChange += _gameStateSystem.ActivateRoots_StateChange;
-            GameStateSystem.OnActivateRoots_OverTime += _gameStateSystem.ActivateRoots_OverTime;
-            GameStateSystem.OnGetCurrentGameState += _gameStateSystem.GetCurrentState;
+            // set transition parameters
+            _gameStateMachine.AddTransitionParameter(StateTransitionParameter.HubSceneRequested, typeof(bool));
+            _gameStateMachine.AddTransitionParameter(StateTransitionParameter.LoadGameRequested, typeof(bool));
+
+            GameStateSystem.OnStateChangeRequest += _gameStateMachine.RequestStateChange;
+            GameStateSystem.OnRequestPreLoad += _gameStateMachine.RequestPreLoad;
+            GameStateSystem.OnActivateRoots_StateChange += _gameStateMachine.ActivateRoots_StateChange;
+            GameStateSystem.OnActivateRoots_OverTime += _gameStateMachine.ActivateRoots_OverTime;
+            GameStateSystem.OnGetCurrentGameState += _gameStateMachine.GetCurrentState;
+            GameStateSystem.OnEndFrameSignal += _gameStateMachine.EndFrameSignal;
+            GameStateSystem.OnGetTransitionParameter += _gameStateMachine.GetTransitionParameter;
             GameStateSystem.RequestStateChange(GameState.MainMenu);
 
             DontDestroyOnLoad(_eventSystem);
@@ -176,6 +182,8 @@ namespace Boot
                 PresentationViewModel.CustomLateUpdate();
                 UIViewModel.CustomLateUpdate();
             }
+
+            GameStateSystem.SendEndFrameSignal();
         }
 
         internal static void OnCoreSceneLoaded() => _isCoreSceneLoaded = true;
@@ -208,9 +216,9 @@ namespace Boot
             PresentationViewModel.GameplayOnEntry();
             UIViewModel.GameplayOnEntry();
 
-            if (CommonData.LoadRequested)
+            bool loadGameRequested = (bool)GameStateSystem.GetTransitionParameter(StateTransitionParameter.LoadGameRequested)!;
+            if (loadGameRequested)
             {
-                CommonData.LoadRequested = false;
                 CommonData.SaveGameReader.Close();
                 CommonData.SaveGameReader = null;
             }
@@ -227,7 +235,8 @@ namespace Boot
         /// </summary>
         static int[]? ScenesToLoadFromMainMenuToGameplay()
         {
-            if (CommonData.LoadRequested)
+            bool loadGameRequested = (bool)GameStateSystem.GetTransitionParameter(StateTransitionParameter.LoadGameRequested)!;
+            if (loadGameRequested)
             {
                 byte[] data = File.ReadAllBytes(Path.Combine(Application.persistentDataPath, "savegame.sav"));
                 CommonData.SaveGameReader = new BinaryReader(new MemoryStream(data));
@@ -265,7 +274,10 @@ namespace Boot
         static (int[]? scenesToLoad, int[]? scenesToUnload) ScenesToLoadUnloadFromGameplayToGameplay()
         {
             int currentLevel = 0;
-            if (CommonData.LoadRequested)
+            bool loadGameRequested = (bool)GameStateSystem.GetTransitionParameter(StateTransitionParameter.LoadGameRequested)!;
+
+            // player is in gameplay and wants to load a save game
+            if (loadGameRequested)
             {
                 byte[] data = File.ReadAllBytes(Path.Combine(Application.persistentDataPath, "savegame.sav"));
                 CommonData.SaveGameReader = new BinaryReader(new MemoryStream(data));
@@ -277,11 +289,13 @@ namespace Boot
                 return (new[] {(int)CommonData.CurrentLevel}, new[] {currentLevel});
             }
 
-            if (CommonData.HubLocationRequested)
+            bool hubRequested = (bool)GameStateSystem.GetTransitionParameter(StateTransitionParameter.HubSceneRequested)!;
+
+            // requested going back to hub
+            if (hubRequested)
             {
                 currentLevel = (int)CommonData.CurrentLevel;
                 CommonData.CurrentLevel = Level.HubLocation;
-                CommonData.HubLocationRequested = false;
                 return (new[] {(int)Level.HubLocation}, new[] {currentLevel});
             }
 
