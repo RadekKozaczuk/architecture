@@ -2,12 +2,16 @@
 using System;
 using System.Collections;
 using Common.Enums;
+// ReSharper disable InvalidXmlDocComment
 
 namespace Common.Systems
 {
     public delegate void RequestStateChange(GameState requested, int[]? additionalScenesToLoad = null,
         int[]? additionalScenesToUnload = null, (StateTransitionParameter key, object value)[]? parameters = null);
-    public delegate void RequestPreLoad(GameState requested, int[]? additionalScenesToLoad = null);
+
+    public delegate void RequestPreLoad(GameState requested, int[]? additionalScenesToLoad = null,
+        (StateTransitionParameter key, object value)[]? parameters = null);
+
     public delegate void ActivateRoots_OverTime(IEnumerator coroutine);
     public delegate void ActivateRoots_StateChange(Action action);
     public delegate GameState GetCurrentGameState();
@@ -27,14 +31,20 @@ namespace Common.Systems
         public static GameState CurrentState => OnGetCurrentGameState.Invoke();
 
         /// <summary>
-        /// Keep in mind that scenes to load and unload are defined in <see cref="Shared.Systems.GameStateMachine" />'s constructor.
+        /// Scenes to load and unload are defined in <see cref="Shared.Systems.GameStateMachine" />'s constructor.
         /// Additional scenes defined here are special cases that does not occur all the time and therefore could not be defined in the constructor.
-        /// Scenes should not overlap with the ones defined in the game state machine constructor.
+        /// These scenes should not overlap with the ones defined in the GameStateMachine's constructor.
         /// Actual state change may be delayed in time. Consecutive calls are not allowed.
         /// </summary>
         public static void RequestStateChange(GameState state, int[]? additionalScenesToLoad = null,
             int[]? additionalScenesToUnload = null, (StateTransitionParameter key, object value)[]? parameters = null) =>
             OnStateChangeRequest.Invoke(state, additionalScenesToLoad, additionalScenesToUnload, parameters);
+
+        /// <summary>
+        /// Simplified version of <see cref="RequestStateChange"/>.
+        /// </summary>
+        public static void RequestStateChange(GameState state, (StateTransitionParameter key, bool value) parameter) =>
+            OnStateChangeRequest.Invoke(state, null, null, new []{(parameter.key, (object)parameter.value)});
 
         /// <summary>
         /// Performs only the scene loading part of the <see cref="RequestStateChange"/> method.
@@ -43,8 +53,15 @@ namespace Common.Systems
         /// the execution of the call will simply wait until all scenes are loaded.
         /// Consecutive calls are not allowed.
         /// </summary>
-        public static void RequestPreLoad(GameState state, int[]? additionalScenesToLoad = null) =>
-            OnRequestPreLoad.Invoke(state, additionalScenesToLoad);
+        public static void RequestPreLoad(GameState state, int[]? additionalScenesToLoad = null,
+            (StateTransitionParameter key, object value)[]? parameters = null) =>
+            OnRequestPreLoad.Invoke(state, additionalScenesToLoad, parameters);
+
+        /// <summary>
+        /// Simplified version of <see cref="RequestPreLoad"/>.
+        /// </summary>
+        public static void RequestPreLoad(GameState state, (StateTransitionParameter key, int value) parameter) =>
+            OnRequestPreLoad.Invoke(state, null, new []{(parameter.key, (object)parameter.value)});
 
         public static void ActivateRoots_OverTime(IEnumerator coroutine) => OnActivateRoots_OverTime.Invoke(coroutine);
 
