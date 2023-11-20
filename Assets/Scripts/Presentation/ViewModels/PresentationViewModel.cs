@@ -143,13 +143,16 @@ namespace Presentation.ViewModels
 
         public static void MainMenuOnEntry()
         {
-            PresentationReferenceHolder.AudioController.LoadMusic(Music.MainMenu);
-            PresentationReferenceHolder.AudioController.PlayMusicWhenReady(Music.MainMenu);
+            //PresentationReferenceHolder.AudioController.LoadMusic(Music.MainMenu);
+            //PresentationReferenceHolder.AudioController.PlayMusicWhenReady(Music.MainMenu);
             PresentationSceneReferenceHolder.GameplayCamera.gameObject.SetActive(false);
             PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(true);
         }
 
-        public static void MainMenuOnExit() => PresentationReferenceHolder.AudioController.StopMusic();
+        public static void MainMenuOnExit()
+        {
+            //PresentationReferenceHolder.AudioController.StopMusic();
+        }
 
         public static void GameplayOnEntry()
         {
