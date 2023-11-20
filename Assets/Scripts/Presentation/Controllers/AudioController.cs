@@ -26,7 +26,12 @@ namespace Presentation.Controllers
         readonly AsyncOperationHandle<AudioClip>[] _asyncOperationHandles;
         static readonly List<AudioSource> _soundAudioSources = new();
         readonly ObjectPool<AudioSource> _pool;
+        bool _cancellationRequest;
 
+        /// <summary>
+        /// This is music index. Value means music is either already loaded or being loaded.
+        /// Null otherwise.
+        /// </summary>
         Music? _currentMusic;
         Vector3 _position;
 
@@ -74,8 +79,7 @@ namespace Presentation.Controllers
         {
             int id = (int)music;
 
-            Assert.IsNotNull(_loadedMusic[id],
-                             "It is invalid to request to unload a music when the music is already unloaded from memory.");
+            Assert.IsNotNull(_loadedMusic[id], "It is invalid to request to unload a music when the music is already unloaded from memory.");
 
             _loadedMusic[id] = null;
             _config.Music[id].ReleaseAsset();
@@ -84,11 +88,12 @@ namespace Presentation.Controllers
         /// <summary>
         /// Tells controller to play the music as soon it is loaded into memory.
         /// If the music is already loaded into memory controller will start to play it immediately.
-        /// If the <see cref="LoadMusic"/> method was called but it has not finished yet, controller will wait for it to finish, and then play the music.
-        /// If the <see cref="LoadMusic"/> method was not called, controller will call it first, and then wait for it to finish, and then play the music.
+        /// If the <see cref="LoadMusic" /> method was called but it has not finished yet, controller will wait for it to finish, and then play the music.
+        /// If the <see cref="LoadMusic" /> method was not called, controller will call it first, and then wait for it to finish, and then play the music.
         /// </summary>
         internal void PlayMusicWhenReady(Music music)
         {
+            _currentMusic = music;
             int id = (int)music;
 
             if (_loadedMusic[id] != null)
@@ -108,33 +113,43 @@ namespace Presentation.Controllers
             {
                 _asyncOperationHandles[id].Completed += _ => HandleMusic();
             }
-
-            void HandleMusic()
-            {
-                PresentationSceneReferenceHolder.MusicAudioSource.clip = _loadedMusic[(int)music];
-                PresentationSceneReferenceHolder.MusicAudioSource.Play();
-                _currentMusic = music;
-            }
         }
 
         /// <summary>
         /// Stops the current music and unloads it from the memory.
+        /// If no music was playing but one was schedule to be played the requested music will be canceled and memory freed.
+        /// If no music was requested the method will throw an error.
         /// </summary>
         internal void StopMusic()
         {
-            Assert.IsTrue(_currentMusic.HasValue, "Calling StopMusic when no music is playing is invalid.");
+            // music is already loaded and playing or being loaded
+            if (_currentMusic.HasValue)
+            {
+                if (_asyncOperationHandles[(int)_currentMusic].IsDone)
+                {
+                    PresentationSceneReferenceHolder.MusicAudioSource.Stop();
+                    PresentationSceneReferenceHolder.MusicAudioSource.clip = null;
 
-            PresentationSceneReferenceHolder.MusicAudioSource.Stop();
-            PresentationSceneReferenceHolder.MusicAudioSource.clip = null;
+                    // ReSharper disable once PossibleInvalidOperationException
+                    UnloadMusic(_currentMusic.Value);
+                    _currentMusic = null;
+                }
+                else
+                {
+                    _cancellationRequest = true;
+                }
 
-            // ReSharper disable once PossibleInvalidOperationException
-            UnloadMusic(_currentMusic.Value);
-            _currentMusic = null;
+                return;
+            }
+
+            Assert.IsTrue(_currentMusic.HasValue, "Calling StopMusic when no music is playing or requested to play is invalid.");
         }
 
         internal static void PlaySound(Sound sound, Vector3 position)
         {
-            AudioSource source = Object.Instantiate(_config.AudioSourcePrefab, position, Quaternion.identity, PresentationSceneReferenceHolder.AudioContainer);
+            AudioSource source = Object.Instantiate(_config.AudioSourcePrefab, position, Quaternion.identity,
+                                                    PresentationSceneReferenceHolder.AudioContainer);
+
             source.clip = _config.Sounds[(int)sound];
             source.Play();
             _soundAudioSources.Add(source);
@@ -144,8 +159,28 @@ namespace Presentation.Controllers
         [Preserve]
         void OnPlaySound(PlaySoundSignal signal) => PlaySound(signal.SoundType, signal.Position);
 
-        AudioSource CustomAlloc() => Object.Instantiate(_config.AudioSourcePrefab, _position, Quaternion.identity, PresentationSceneReferenceHolder.AudioContainer);
+        AudioSource CustomAlloc() =>
+            Object.Instantiate(_config.AudioSourcePrefab, _position, Quaternion.identity, PresentationSceneReferenceHolder.AudioContainer);
 
         static void CustomReturn(AudioSource source) => source.gameObject.SetActive(false);
+
+        void HandleMusic()
+        {
+            // ReSharper disable once PossibleInvalidOperationException
+            int id = (int)_currentMusic.Value; // must have value at this point
+            if (_cancellationRequest)
+            {
+                PresentationSceneReferenceHolder.MusicAudioSource.Stop();
+                PresentationSceneReferenceHolder.MusicAudioSource.clip = null;
+
+                // ReSharper disable once PossibleInvalidOperationException
+                UnloadMusic(_currentMusic.Value);
+            }
+            else
+            {
+                PresentationSceneReferenceHolder.MusicAudioSource.clip = _loadedMusic[id];
+                PresentationSceneReferenceHolder.MusicAudioSource.Play();
+            }
+        }
     }
 }

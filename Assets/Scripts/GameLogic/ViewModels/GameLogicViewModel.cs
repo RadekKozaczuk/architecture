@@ -1,5 +1,6 @@
 using System;
 using Common;
+using Common.Enums;
 using Common.Signals;
 using Common.Systems;
 using ControlFlow.DependencyInjector.Attributes;
@@ -60,7 +61,8 @@ namespace GameLogic.ViewModels
 
         public static void GameplayOnEntry()
         {
-            if (CommonData.LoadRequested)
+            bool loadGameRequested = (bool)GameStateSystem.GetTransitionParameter(StateTransitionParameter.LoadGameRequested)!;
+            if (loadGameRequested)
                 SaveLoadSystem.LoadGame();
         }
 

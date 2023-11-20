@@ -20,6 +20,7 @@ namespace Common.Config
         /// <summary>
         /// Logs all state change requests.
         /// </summary>
+        [InfoBox("Logs GameState change request and what scenes are requested to be loaded and unloaded.", InfoMessageType.None)]
         public bool LogRequestedStateChange;
 
         /// <summary>

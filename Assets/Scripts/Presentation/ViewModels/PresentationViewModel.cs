@@ -1,7 +1,7 @@
 using System.IO;
-using System.Collections.Generic;
 using Common;
 using Common.Enums;
+using Common.Systems;
 using ControlFlow.DependencyInjector.Attributes;
 using ControlFlow.DependencyInjector.Interfaces;
 using JetBrains.Annotations;
@@ -97,7 +97,6 @@ namespace Presentation.ViewModels
             if (CommonData.IsMultiplayer)
             {
                 if (NetworkManager.Singleton.IsHost)
-                    // todo: hard coded for now
                 {
                     Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player1).transform;
 
@@ -105,15 +104,7 @@ namespace Presentation.ViewModels
                     {
                         // instantiate locally
                         // in network context objects can only be spawned in root - we cannot spawn under other objects.
-                        PlayerNetworkView player = Object.Instantiate(
-                            _playerConfig.PlayerServerPrefab,
-                            spawnPoint.position,
-                            spawnPoint.rotation,
-                            // We have to explicitly tell Unity where to spawn the object EVEN THO in the end it is going to be spawned
-                            // in the root folder. The reason being that there is a bug in Unity
-                            // and when we have more than one scene opened, Unity does not know in which to spawn object
-                            // and in the end does not spawn it at all
-                            PresentationSceneReferenceHolder.PlayerContainer);
+                        PlayerNetworkView player = Object.Instantiate(_playerConfig.PlayerServerPrefab, spawnPoint.position, spawnPoint.rotation);
 
                         // this will be assigned only on the host
                         PresentationData.NetworkPlayers[(int)PlayerId.Player1] = player;
@@ -137,7 +128,8 @@ namespace Presentation.ViewModels
                 SpawnSinglePlayer(_level.GetSpawnPoint(PlayerId.Player1));
             }
 
-            if (CommonData.LoadRequested)
+            bool loadGameRequested = (bool)GameStateSystem.GetTransitionParameter(StateTransitionParameter.LoadGameRequested)!;
+            if (loadGameRequested)
             {
                 Vector3 position = SaveLoadUtils.ReadVector3(CommonData.SaveGameReader);
                 Quaternion rotation = SaveLoadUtils.ReadQuaternion(CommonData.SaveGameReader);
@@ -151,13 +143,16 @@ namespace Presentation.ViewModels
 
         public static void MainMenuOnEntry()
         {
-            PresentationReferenceHolder.AudioController.LoadMusic(Music.MainMenu);
-            PresentationReferenceHolder.AudioController.PlayMusicWhenReady(Music.MainMenu);
+            //PresentationReferenceHolder.AudioController.LoadMusic(Music.MainMenu);
+            //PresentationReferenceHolder.AudioController.PlayMusicWhenReady(Music.MainMenu);
             PresentationSceneReferenceHolder.GameplayCamera.gameObject.SetActive(false);
             PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(true);
         }
 
-        public static void MainMenuOnExit() => PresentationReferenceHolder.AudioController.StopMusic();
+        public static void MainMenuOnExit()
+        {
+            //PresentationReferenceHolder.AudioController.StopMusic();
+        }
 
         public static void GameplayOnEntry()
         {

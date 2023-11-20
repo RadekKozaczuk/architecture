@@ -45,15 +45,15 @@ namespace UI.Popups.Views
         static void LoadGameAction()
         {
             PopupSystem.CloseCurrentPopup();
-            CommonData.LoadRequested = true;
-            GameStateSystem.RequestStateChange(GameState.Gameplay);
+            GameStateSystem.RequestStateChange(GameState.Gameplay,
+                                               parameters: new []{(StateTransitionParameter.LoadGameRequested, (object)true)});
         }
 
         static void HubAction()
         {
-            CommonData.HubLocationRequested = true;
             PopupSystem.CloseCurrentPopup();
-            GameStateSystem.RequestStateChange(GameState.Gameplay);
+            GameStateSystem.RequestStateChange(GameState.Gameplay,
+                                               parameters: new []{(StateTransitionParameter.HubSceneRequested, (object)true)});
         }
 
         static void MainMenuAction()

@@ -10,18 +10,6 @@ namespace Common
     public static class CommonData
     {
         /// <summary>
-        /// Used to tell <see cref="Systems.GameStateSystem" /> that next transition from <see cref="Common.Enums.GameState.MainMenu" />
-        /// to <see cref="Common.Enums.GameState.Gameplay" /> will include save game loading.
-        /// </summary>
-        public static bool LoadRequested;
-
-        /// <summary>
-        /// Used to tell <see cref="Systems.GameStateSystem" /> that during next transition from <see cref="Common.Enums.GameState.Gameplay" />
-        /// to <see cref="Common.Enums.GameState.Gameplay" /> player will go to <see cref="Level.HubLocation"/>.
-        /// </summary>
-        public static bool HubLocationRequested;
-
-        /// <summary>
         /// Has game been run in multiplayer mode.
         /// </summary>
         public static bool IsMultiplayer;
