@@ -11,9 +11,10 @@ namespace GameLogic.Systems
         static ILoginSession _session;
         static IChannelSession _channel;
 
-        internal static void Login(string displayName = null)
-        {
-            VivoxService.Instance.Initialize();
+        static Action callbackToRunWhenLogin;
+
+        internal static void Login(Action callback,string displayName = null) {
+            callbackToRunWhenLogin = callback;
             var account = new Account(displayName);
 
             _session = VivoxService.Instance.Client.GetLoginSession(account);
@@ -78,6 +79,8 @@ namespace GameLogic.Systems
             if (e.PropertyName == "State")
                 if (loginSession.State == LoginState.LoggedIn)
                 {
+                    callbackToRunWhenLogin?.Invoke();
+                    callbackToRunWhenLogin = null;
                     bool connectAudio = true;
                     bool connectText = true;
 
@@ -87,6 +90,14 @@ namespace GameLogic.Systems
                     // To test with multiple users, try joining a non-positional channel.
                     // JoinChannel("MultipleUserTestChannel", ChannelType.NonPositional, connectAudio, connectText);
                 }
+        }
+
+        internal static void ToggleMuteInput(bool mute) {
+            _session.SetTransmissionMode(mute ? TransmissionMode.None : TransmissionMode.All);
+        }
+
+        internal static void Dupa() {
+            Debug.Log(_session.State);
         }
     }
 }

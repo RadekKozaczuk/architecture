@@ -43,6 +43,10 @@ namespace GameLogic.ViewModels
 
         public static async void StartGame() => await LobbySystem.StartGame_Host();
 
-        public static void LoginVoiceChat() => VoiceChatSystem.Login();
+        public static void LoginVoiceChat(Action callback) => VoiceChatSystem.Login(callback);
+
+        public static void ToggleMuteInput(bool mute) => VoiceChatSystem.ToggleMuteInput(mute);
+
+        public static void Dupa() => VoiceChatSystem.Dupa();
     }
 }

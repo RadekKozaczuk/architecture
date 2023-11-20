@@ -21,6 +21,9 @@ namespace UI.Popups.Views
         TextMeshProUGUI _lobbyCode;
 
         [SerializeField]
+        Button _mute;
+
+        [SerializeField]
         Button _start;
 
         [SerializeField]
@@ -33,6 +36,8 @@ namespace UI.Popups.Views
 
         string _hostId;
 
+        bool _isMuted;
+
         LobbyPopup()
             : base(PopupType.Lobby) { }
 
@@ -41,6 +46,7 @@ namespace UI.Popups.Views
             _start.onClick.AddListener(StartAction);
             _start.interactable = false;
             _leave.onClick.AddListener(LeaveAction);
+            _mute.onClick.AddListener(MuteAction);
         }
 
         internal override void Initialize() { }
@@ -121,6 +127,12 @@ namespace UI.Popups.Views
         {
             GameLogicViewModel.LeaveLobby();
             PopupSystem.CloseCurrentPopup();
+        }
+
+        void MuteAction() {
+            _isMuted = !_isMuted;
+            _mute.image.color = _isMuted ? Color.red : Color.white;
+            GameLogicViewModel.ToggleMuteInput(_isMuted);
         }
     }
 }
