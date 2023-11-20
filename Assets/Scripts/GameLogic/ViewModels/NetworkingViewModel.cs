@@ -46,7 +46,5 @@ namespace GameLogic.ViewModels
         public static void LoginVoiceChat(Action callback) => VoiceChatSystem.Login(callback);
 
         public static void ToggleMuteInput(bool mute) => VoiceChatSystem.ToggleMuteInput(mute);
-
-        public static void Dupa() => VoiceChatSystem.Dupa();
     }
 }

@@ -116,6 +116,7 @@ namespace UI.Popups.Views
 
         void StartAction()
         {
+            PopupSystem.CloseCurrentPopup();
             _start.interactable = false;
             CommonData.CurrentLevel = Level.HubLocation;
             CommonData.IsMultiplayer = true;

@@ -10,6 +10,7 @@ namespace GameLogic.Systems
     {
         static ILoginSession _session;
         static IChannelSession _channel;
+        static readonly VivoxUnity.Client _client = new Client();
 
         static Action callbackToRunWhenLogin;
 
@@ -93,11 +94,11 @@ namespace GameLogic.Systems
         }
 
         internal static void ToggleMuteInput(bool mute) {
+            _client.AudioInputDevices.Muted = mute;
+            /*
             _session.SetTransmissionMode(mute ? TransmissionMode.None : TransmissionMode.All);
-        }
-
-        internal static void Dupa() {
-            Debug.Log(_session.State);
+            Debug.LogError(_session.TransmissionType);
+            */
         }
     }
 }

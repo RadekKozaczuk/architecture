@@ -55,9 +55,9 @@ namespace UI.Popups.Views
 
             // this will create an account automatically without need to provide password or username
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
-            //VivoxService.Instance.Initialize();
-            //GameLogicViewModel.LoginVoiceChat(CheckIsUserHasJoinedLobbies);
-            CheckIsUserHasJoinedLobbies();
+            VivoxService.Instance.Initialize();
+            GameLogicViewModel.LoginVoiceChat(CheckIsUserHasJoinedLobbies);
+            //CheckIsUserHasJoinedLobbies();
         }
 
         async void CheckIsUserHasJoinedLobbies()
