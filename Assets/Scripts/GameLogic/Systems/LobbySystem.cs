@@ -201,11 +201,13 @@ namespace GameLogic.Systems
             }
         }
 
-        static void JoinChannelVoiceChat() {
+        static void JoinChannelVoiceChat()
+        {
             VoiceChatSystem.JoinChannel(_lobby.Name, VivoxUnity.ChannelType.Echo, true, false);
         }
 
-        static void LeaveChannelVoiceChat() {
+        static void LeaveChannelVoiceChat()
+        {
             VoiceChatSystem.LeaveCurrentChannel();
         }
 

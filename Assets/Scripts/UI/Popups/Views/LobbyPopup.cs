@@ -130,7 +130,8 @@ namespace UI.Popups.Views
             PopupSystem.CloseCurrentPopup();
         }
 
-        void MuteAction() {
+        void MuteAction()
+        {
             _isMuted = !_isMuted;
             _mute.image.color = _isMuted ? Color.red : Color.white;
             GameLogicViewModel.ToggleMuteInput(_isMuted);

@@ -14,7 +14,7 @@ namespace GameLogic.Systems
 
         static Action callbackToRunWhenLogin;
 
-        internal static void Login(Action callback,string displayName = null) 
+        internal static void Login(Action callback,string displayName = null)
         {
             callbackToRunWhenLogin = callback;
             var account = new Account(displayName);
