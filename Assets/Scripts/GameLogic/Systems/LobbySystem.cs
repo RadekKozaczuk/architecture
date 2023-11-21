@@ -151,6 +151,7 @@ namespace GameLogic.Systems
 
                 Lobby = await Lobbies.Instance.JoinLobbyByIdAsync(lobbyId, options);
                 callback(Lobby.Name, Lobby.LobbyCode, GetPlayers());
+                JoinChannelVoiceChat();
             }
             catch (LobbyServiceException e)
             {
@@ -176,6 +177,7 @@ namespace GameLogic.Systems
 
 				Lobby = await Lobbies.Instance.JoinLobbyByCodeAsync(lobbyCode, options);
 				callback(Lobby.Name, Lobby.LobbyCode, GetPlayers());
+                JoinChannelVoiceChat();
 			}
 			catch (LobbyServiceException e)
 			{
@@ -199,13 +201,24 @@ namespace GameLogic.Systems
             }
         }
 
-        internal static async void RejoinToLobby(string lobbyId,
+        static void JoinChannelVoiceChat()
+        {
+            VoiceChatSystem.JoinChannel(_lobby.Name, VivoxUnity.ChannelType.Echo, true, false);
+        }
+
+        static void LeaveChannelVoiceChat()
+        {
+            VoiceChatSystem.LeaveCurrentChannel();
+        }
+
+        internal async static void RejoinToLobby(string lobbyId,
             Action<string, string, List<(string playerName, string playerId, bool isHost)>> callback)
         {
             try
             {
                 Lobby = await Lobbies.Instance.ReconnectToLobbyAsync(lobbyId);
                 callback(Lobby.Name, Lobby.LobbyCode, GetPlayers());
+                JoinChannelVoiceChat();
             }
             catch (LobbyServiceException e)
             {
@@ -225,7 +238,7 @@ namespace GameLogic.Systems
             AuthenticationService.Instance.SignOut(true);
         }
 
-        internal static async void LeaveLobby()
+        internal async static void LeaveLobby()
         {
             try
             {
@@ -248,6 +261,8 @@ namespace GameLogic.Systems
                 }
                 else
                     await lobby.RemovePlayerAsync(Lobby.Id, playerId);
+
+                LeaveChannelVoiceChat();
 
                 MyDebug.Log("Leave lobby");
             }

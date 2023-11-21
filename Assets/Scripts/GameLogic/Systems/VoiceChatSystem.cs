@@ -9,10 +9,14 @@ namespace GameLogic.Systems
     static class VoiceChatSystem
     {
         static ILoginSession _session;
+        static IChannelSession _channel;
+        static readonly Client _client = new Client();
 
-        internal static void Login(string displayName = null)
+        static Action callbackToRunWhenLogin;
+
+        internal static void Login(Action callback,string displayName = null)
         {
-            VivoxService.Instance.Initialize();
+            callbackToRunWhenLogin = callback;
             var account = new Account(displayName);
 
             _session = VivoxService.Instance.Client.GetLoginSession(account);
@@ -36,7 +40,7 @@ namespace GameLogic.Systems
             });
         }
 
-        static void JoinChannel(string channelName, ChannelType channelType, bool connectAudio, bool connectText, bool transmissionSwitch = true,
+        internal static void JoinChannel(string channelName, ChannelType channelType, bool connectAudio, bool connectText, bool transmissionSwitch = true,
             Channel3DProperties properties = null)
         {
             if (_session.State == LoginState.LoggedIn)
@@ -44,6 +48,8 @@ namespace GameLogic.Systems
                 var channel = new Channel(channelName, channelType, properties);
 
                 IChannelSession channelSession = _session.GetChannelSession(channel);
+
+                _channel = channelSession;
 
                 channelSession.BeginConnect(connectAudio, connectText, transmissionSwitch, channelSession.GetConnectToken(), ar =>
                 {
@@ -61,6 +67,12 @@ namespace GameLogic.Systems
                 Debug.LogError("Can't join a channel when not logged in.");
         }
 
+        internal static void LeaveCurrentChannel()
+        {
+            if (_channel != null)
+                _channel.Disconnect();
+        }
+
         // For this example, we immediately join a channel after LoginState changes to LoginState.LoggedIn.
         // In an actual game, when to join a channel will vary by implementation.
         static void LoginSession_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -69,15 +81,17 @@ namespace GameLogic.Systems
             if (e.PropertyName == "State")
                 if (loginSession.State == LoginState.LoggedIn)
                 {
+                    callbackToRunWhenLogin?.Invoke();
+                    callbackToRunWhenLogin = null;
                     bool connectAudio = true;
                     bool connectText = true;
 
                     // This puts you into an echo channel where you can hear yourself speaking.
                     // If you can hear yourself, then everything is working and you are ready to integrate Vivox into your project.
-                    JoinChannel("TestChannel", ChannelType.Echo, connectAudio, connectText);
-                    // To test with multiple users, try joining a non-positional channel.
-                    // JoinChannel("MultipleUserTestChannel", ChannelType.NonPositional, connectAudio, connectText);
+                    JoinChannel("TestChannel", ChannelType.NonPositional, connectAudio, connectText);
                 }
         }
+
+        internal static void ToggleMuteInput(bool mute) => _client.AudioInputDevices.Muted = mute;
     }
 }

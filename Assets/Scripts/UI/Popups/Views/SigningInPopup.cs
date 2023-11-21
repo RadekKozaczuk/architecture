@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using Common.Enums;
+using GameLogic.ViewModels;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
+using Unity.Services.Vivox;
 using UnityEngine;
 
 namespace UI.Popups.Views
@@ -53,7 +55,8 @@ namespace UI.Popups.Views
 
             // this will create an account automatically without need to provide password or username
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
-            CheckIsUserHasJoinedLobbies();
+            VivoxService.Instance.Initialize();
+            GameLogicViewModel.LoginVoiceChat(CheckIsUserHasJoinedLobbies);
         }
 
         async void CheckIsUserHasJoinedLobbies()
