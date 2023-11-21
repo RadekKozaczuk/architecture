@@ -201,15 +201,15 @@ namespace GameLogic.Systems
             }
         }
 
-        private static void JoinChannelVoiceChat() {
+        static void JoinChannelVoiceChat() {
             VoiceChatSystem.JoinChannel(_lobby.Name, VivoxUnity.ChannelType.Echo, true, false);
         }
 
-        private static void LeaveChannelVoiceChat() {
+        static void LeaveChannelVoiceChat() {
             VoiceChatSystem.LeaveCurrentChannel();
         }
 
-        internal static async void RejoinToLobby(string lobbyId,
+        internal async static void RejoinToLobby(string lobbyId,
             Action<string, string, List<(string playerName, string playerId, bool isHost)>> callback)
         {
             try
@@ -236,7 +236,7 @@ namespace GameLogic.Systems
             AuthenticationService.Instance.SignOut(true);
         }
 
-        internal static async void LeaveLobby()
+        internal async static void LeaveLobby()
         {
             try
             {

@@ -10,11 +10,12 @@ namespace GameLogic.Systems
     {
         static ILoginSession _session;
         static IChannelSession _channel;
-        static readonly VivoxUnity.Client _client = new Client();
+        static readonly Client _client = new Client();
 
         static Action callbackToRunWhenLogin;
 
-        internal static void Login(Action callback,string displayName = null) {
+        internal static void Login(Action callback,string displayName = null) 
+        {
             callbackToRunWhenLogin = callback;
             var account = new Account(displayName);
 
@@ -66,9 +67,9 @@ namespace GameLogic.Systems
                 Debug.LogError("Can't join a channel when not logged in.");
         }
 
-        internal static void LeaveCurrentChannel() {
+        internal static void LeaveCurrentChannel()
+        {
             if (_channel != null)
-                // Disconnect from channel
                 _channel.Disconnect();
         }
 
@@ -87,18 +88,10 @@ namespace GameLogic.Systems
 
                     // This puts you into an echo channel where you can hear yourself speaking.
                     // If you can hear yourself, then everything is working and you are ready to integrate Vivox into your project.
-                    JoinChannel("TestChannel", ChannelType.Echo, connectAudio, connectText);
-                    // To test with multiple users, try joining a non-positional channel.
-                    // JoinChannel("MultipleUserTestChannel", ChannelType.NonPositional, connectAudio, connectText);
+                    JoinChannel("TestChannel", ChannelType.NonPositional, connectAudio, connectText);
                 }
         }
 
-        internal static void ToggleMuteInput(bool mute) {
-            _client.AudioInputDevices.Muted = mute;
-            /*
-            _session.SetTransmissionMode(mute ? TransmissionMode.None : TransmissionMode.All);
-            Debug.LogError(_session.TransmissionType);
-            */
-        }
+        internal static void ToggleMuteInput(bool mute) => _client.AudioInputDevices.Muted = mute;
     }
 }

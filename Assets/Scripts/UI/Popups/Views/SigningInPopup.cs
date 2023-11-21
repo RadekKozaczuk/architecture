@@ -57,7 +57,6 @@ namespace UI.Popups.Views
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
             VivoxService.Instance.Initialize();
             GameLogicViewModel.LoginVoiceChat(CheckIsUserHasJoinedLobbies);
-            //CheckIsUserHasJoinedLobbies();
         }
 
         async void CheckIsUserHasJoinedLobbies()
