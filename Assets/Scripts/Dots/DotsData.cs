@@ -1,5 +1,7 @@
 ﻿using Unity.Mathematics;
+using UnityEngine.Scripting;
 
+[assembly: Preserve]
 namespace Dots
 {
     /// <summary>
