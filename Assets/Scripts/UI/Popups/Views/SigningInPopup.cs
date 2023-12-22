@@ -1,3 +1,5 @@
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#nullable enable
 using System.Collections.Generic;
 using Common.Enums;
 using GameLogic.ViewModels;
@@ -33,25 +35,10 @@ namespace UI.Popups.Views
 
         async void InitializeAsync()
         {
-            Debug.Log("UnityServices.InitializeAsync & AuthenticationService.Instance.SignInAnonymouslyAsync call");
-
             await UnityServices.InitializeAsync();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             AuthenticationService.Instance.ClearSessionToken();
 #endif
-            // tokens are stored in PlayerPrefs
-            if (AuthenticationService.Instance.SessionTokenExists)
-                Debug.Log("Cached token exist. Recovering the existing credentials.");
-            else
-                Debug.Log("Cached token not found. Creating new anonymous credentials.");
-
-            AuthenticationService.Instance.SignedIn += () =>
-            {
-                Debug.Log("Anonymous authentication completed successfully");
-                Debug.Log($"Player Id: {AuthenticationService.Instance.PlayerId}");
-                Debug.Log($"Access Token: {AuthenticationService.Instance.AccessToken}");
-                Debug.Log($"IsSignedIn: {AuthenticationService.Instance.IsSignedIn}");
-            };
 
             // this will create an account automatically without need to provide password or username
             await AuthenticationService.Instance.SignInAnonymouslyAsync();

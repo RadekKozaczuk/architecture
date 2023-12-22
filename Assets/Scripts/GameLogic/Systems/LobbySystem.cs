@@ -1,4 +1,7 @@
-﻿using System;
+﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common;
@@ -38,7 +41,7 @@ namespace GameLogic.Systems
         /// </summary>
         const float LobbyQueryRate = 1.1f;
 
-        static Lobby Lobby
+        static Lobby? Lobby
         {
             get => _lobby;
             set
@@ -47,13 +50,13 @@ namespace GameLogic.Systems
                 _lobbyUpdateTimer = LobbyUpdateTimerMax;
             }
         }
-        static Lobby _lobby;
+        static Lobby? _lobby;
 
         static float? _heartbeatTimer; // heartbeat time is null when heartbeat operation is in progress
         static float? _lobbyUpdateTimer;
 
         static float _lobbyQueryTimer;
-        static Action<LobbyDto[]> _pendingLobbyQueryCallback;
+        static Action<LobbyDto[]>? _pendingLobbyQueryCallback;
         static string _relayCode;
 
         /// <summary>
@@ -87,13 +90,12 @@ namespace GameLogic.Systems
                 HandleLobbyHeartbeat();
         }
 
-        // lobbies are automatically turn inactive if the lobby does not receive any data
-        // for 30 seconds
+        // lobbies are automatically turn inactive if the lobby does not receive any data for 30 seconds
         // inactive means other players cannot find it but the players that are inside can still normally operate
         /// <summary>
         /// If the lobby was successfully created it returns true, the first player's id and lobby code, false, null and null otherwise.
         /// </summary>
-        internal static async Task<(bool, string, string)> CreateLobby(string lobbyName, int maxPlayers)
+        internal static async Task<(bool success, string playerId, string lobbyCode)> CreateLobby(string lobbyName, int maxPlayers)
         {
             try
             {
@@ -117,12 +119,12 @@ namespace GameLogic.Systems
             catch (LobbyServiceException e)
             {
                 MyDebug.Log(e.ToString());
-                return (false, null, null);
+                return (false, null!, null!);
             }
             catch (RelayServiceException e)
             {
                 MyDebug.Log(e.ToString());
-                return (false, null, null);
+                return (false, null!, null!);
             }
         }
 
@@ -182,7 +184,7 @@ namespace GameLogic.Systems
 			catch (LobbyServiceException e)
 			{
 				MyDebug.Log(e.ToString());
-				callback(null, null, null);
+				callback(null!, null!, null!);
 			}
 		}
 
@@ -201,17 +203,7 @@ namespace GameLogic.Systems
             }
         }
 
-        static void JoinChannelVoiceChat()
-        {
-            VoiceChatSystem.JoinChannel(_lobby.Name, VivoxUnity.ChannelType.Echo, true, false);
-        }
-
-        static void LeaveChannelVoiceChat()
-        {
-            VoiceChatSystem.LeaveCurrentChannel();
-        }
-
-        internal async static void RejoinToLobby(string lobbyId,
+        internal static async void RejoinToLobby(string lobbyId,
             Action<string, string, List<(string playerName, string playerId, bool isHost)>> callback)
         {
             try
@@ -238,7 +230,7 @@ namespace GameLogic.Systems
             AuthenticationService.Instance.SignOut(true);
         }
 
-        internal async static void LeaveLobby()
+        internal static async void LeaveLobby()
         {
             try
             {
@@ -341,11 +333,21 @@ namespace GameLogic.Systems
             }
         }
 
+        static void JoinChannelVoiceChat()
+        {
+            VoiceChatSystem.JoinChannel(_lobby.Name, VivoxUnity.ChannelType.Echo, true, false);
+        }
+
+        static void LeaveChannelVoiceChat()
+        {
+            VoiceChatSystem.LeaveCurrentChannel();
+        }
+
         static async void ExecuteLobbyQueryCallback()
         {
             _lobbyQueryTimer = LobbyQueryRate;
             LobbyDto[] lobbies = await QueryLobbies();
-            _pendingLobbyQueryCallback.Invoke(lobbies);
+            _pendingLobbyQueryCallback!.Invoke(lobbies);
             _pendingLobbyQueryCallback = null;
         }
 
@@ -375,7 +377,7 @@ namespace GameLogic.Systems
                 MyDebug.Log(e.ToString());
             }
 
-            return null;
+            return null!;
         }
 
         static async void UpdatePlayerName(string playerName)
@@ -534,7 +536,7 @@ namespace GameLogic.Systems
                 if (playerId != AuthenticationService.Instance.PlayerId)
                     return playerId;
 
-            return null;
+            return null!;
         }
 
         /// <summary>

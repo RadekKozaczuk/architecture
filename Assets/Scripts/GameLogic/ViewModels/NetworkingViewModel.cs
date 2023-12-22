@@ -1,4 +1,6 @@
-﻿using System;
+﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.Dtos;
@@ -24,7 +26,7 @@ namespace GameLogic.ViewModels
         /// <summary>
         /// If the lobby was successfully created it returns true and the first player's id, false and null otherwise.
         /// </summary>
-        public static async Task<(bool, string, string)> CreateLobby(string lobbyName, int maxPlayers) =>
+        public static async Task<(bool success, string playerId, string lobbyCode)> CreateLobby(string lobbyName, int maxPlayers) =>
             await LobbySystem.CreateLobby(lobbyName, maxPlayers);
 
         /// <summary>
