@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+using System.Collections;
 using System.Collections.Generic;
 using Common;
 using Common.Dtos;
@@ -95,7 +96,7 @@ namespace UI.Popups.Views
             _refresh.interactable = true;
         }
 
-        void JoinLobbyResultCallback(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players)
+        void JoinLobbyResultCallback(string? lobbyName, string? lobbyCode, List<(string playerName, string playerId, bool isHost)> players)
         {
             if (lobbyName == null || lobbyCode == null)
             {

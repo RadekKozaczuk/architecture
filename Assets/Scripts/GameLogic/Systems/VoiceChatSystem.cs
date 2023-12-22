@@ -1,4 +1,5 @@
-﻿using System;
+﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+using System;
 using System.ComponentModel;
 using Unity.Services.Vivox;
 using UnityEngine;
@@ -10,13 +11,13 @@ namespace GameLogic.Systems
     {
         static ILoginSession _session;
         static IChannelSession _channel;
-        static readonly Client _client = new Client();
+        static readonly Client _client = new ();
 
-        static Action callbackToRunWhenLogin;
+        static Action? _callbackToRunWhenLogin;
 
-        internal static void Login(Action callback,string displayName = null)
+        internal static void Login(Action callback, string? displayName = null)
         {
-            callbackToRunWhenLogin = callback;
+            _callbackToRunWhenLogin = callback;
             var account = new Account(displayName);
 
             _session = VivoxService.Instance.Client.GetLoginSession(account);
@@ -41,7 +42,7 @@ namespace GameLogic.Systems
         }
 
         internal static void JoinChannel(string channelName, ChannelType channelType, bool connectAudio, bool connectText, bool transmissionSwitch = true,
-            Channel3DProperties properties = null)
+            Channel3DProperties? properties = null)
         {
             if (_session.State == LoginState.LoggedIn)
             {
@@ -81,14 +82,14 @@ namespace GameLogic.Systems
             if (e.PropertyName == "State")
                 if (loginSession.State == LoginState.LoggedIn)
                 {
-                    callbackToRunWhenLogin?.Invoke();
-                    callbackToRunWhenLogin = null;
-                    bool connectAudio = true;
-                    bool connectText = true;
+                    _callbackToRunWhenLogin?.Invoke();
+                    _callbackToRunWhenLogin = null;
+                    const bool ConnectAudio = true;
+                    const bool ConnectText = true;
 
                     // This puts you into an echo channel where you can hear yourself speaking.
                     // If you can hear yourself, then everything is working and you are ready to integrate Vivox into your project.
-                    JoinChannel("TestChannel", ChannelType.NonPositional, connectAudio, connectText);
+                    JoinChannel("TestChannel", ChannelType.NonPositional, ConnectAudio, ConnectText);
                 }
         }
 

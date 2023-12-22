@@ -1,3 +1,4 @@
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using System.IO;
 using Common;
 using Common.Enums;
@@ -34,7 +35,7 @@ namespace Presentation.ViewModels
 
         static LevelSceneReferenceHolder _level;
 
-        static int _joinedPlayers = 0;
+        static int _joinedPlayers;
 
         [Preserve]
         PresentationViewModel() { }
@@ -131,8 +132,8 @@ namespace Presentation.ViewModels
             bool loadGameRequested = (bool)GameStateSystem.GetTransitionParameter(StateTransitionParameter.LoadGameRequested)!;
             if (loadGameRequested)
             {
-                Vector3 position = SaveLoadUtils.ReadVector3(CommonData.SaveGameReader);
-                Quaternion rotation = SaveLoadUtils.ReadQuaternion(CommonData.SaveGameReader);
+                Vector3 position = SaveLoadUtils.ReadVector3(CommonData.SaveGameReader!);
+                Quaternion rotation = SaveLoadUtils.ReadQuaternion(CommonData.SaveGameReader!);
                 Transform transform = PresentationData.Player.transform;
                 transform.position = position;
                 transform.rotation = rotation;

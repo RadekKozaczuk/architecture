@@ -1,3 +1,4 @@
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using System.Collections.Generic;
 using Common.Enums;
 using Common.Signals;
@@ -22,7 +23,7 @@ namespace Presentation.Controllers
     {
         static readonly AudioConfig _config;
 
-        readonly AudioClip[] _loadedMusic;
+        readonly AudioClip?[] _loadedMusic;
         readonly AsyncOperationHandle<AudioClip>[] _asyncOperationHandles;
         static readonly List<AudioSource> _soundAudioSources = new();
         readonly ObjectPool<AudioSource> _pool;
@@ -38,7 +39,7 @@ namespace Presentation.Controllers
         [Preserve]
         AudioController()
         {
-            _loadedMusic = new AudioClip[_config.Music.Length];
+            _loadedMusic = new AudioClip?[_config.Music.Length];
             _asyncOperationHandles = new AsyncOperationHandle<AudioClip>[_config.Music.Length];
             _pool = new ObjectPool<AudioSource>(CustomAlloc, null, CustomReturn);
         }
@@ -167,7 +168,7 @@ namespace Presentation.Controllers
         void HandleMusic()
         {
             // ReSharper disable once PossibleInvalidOperationException
-            int id = (int)_currentMusic.Value; // must have value at this point
+            int id = (int)_currentMusic!.Value; // must have value at this point
             if (_cancellationRequest)
             {
                 PresentationSceneReferenceHolder.MusicAudioSource.Stop();
