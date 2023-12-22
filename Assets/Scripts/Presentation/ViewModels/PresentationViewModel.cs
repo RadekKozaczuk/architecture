@@ -34,7 +34,7 @@ namespace Presentation.ViewModels
 
         static LevelSceneReferenceHolder _level;
 
-        static int _joinedPlayers = 0;
+        static int _joinedPlayers;
 
         [Preserve]
         PresentationViewModel() { }
