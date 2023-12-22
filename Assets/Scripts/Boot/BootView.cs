@@ -16,6 +16,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 using Shared.DebugCommands;
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 #endif
 
 namespace Boot
@@ -27,18 +28,18 @@ namespace Boot
     class BootView : MonoBehaviour
     {
         [SerializeField]
-        EventSystem _eventSystem = null!;
+        EventSystem _eventSystem;
 
         static bool _isCoreSceneLoaded;
-        static GameStateMachine<GameState, StateTransitionParameter> _gameStateMachine = null!;
+        static GameStateMachine<GameState, StateTransitionParameter> _gameStateMachine;
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         // readonly fields are initialized only at the start and the null-forgiving operator is only a hint for the compiler.
         // Ultimately it will be null when readonly unless set differently.
-        static readonly DebugConfig _config = null!;
+        static readonly DebugConfig _config;
 #endif
 
-        static readonly SceneConfig _sceneConfig = null!;
+        static readonly SceneConfig _sceneConfig;
 
         void Awake()
         {
@@ -273,7 +274,7 @@ namespace Boot
 
         static (int[]? scenesToLoad, int[]? scenesToUnload) ScenesToLoadUnloadFromGameplayToGameplay()
         {
-            int currentLevel = 0;
+            int currentLevel;
             bool loadGameRequested = (bool)GameStateSystem.GetTransitionParameter(StateTransitionParameter.LoadGameRequested)!;
 
             // player is in gameplay and wants to load a save game

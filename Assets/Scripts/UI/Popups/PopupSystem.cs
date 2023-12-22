@@ -7,6 +7,7 @@ using UI.Popups.Views;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
 namespace UI.Popups
 {
@@ -24,8 +25,8 @@ namespace UI.Popups
 
         static Image? _blockingPanel;
         static readonly Queue<(PopupType type, bool blockingPanel, object? parameter)> _scheduledPopups = new();
-        static readonly PopupConfig _config = null!;
-        static readonly UIConfig _uiConfig = null!;
+        static readonly PopupConfig _config;
+        static readonly UIConfig _uiConfig;
 
         public static void ShowPopups(params PopupType[] popupTypes)
         {
