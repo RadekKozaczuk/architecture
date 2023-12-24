@@ -17,7 +17,6 @@ using UnityEngine.SceneManagement;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 using Shared.DebugCommands;
 #endif
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
 namespace Boot
 {
@@ -61,6 +60,10 @@ namespace Boot
                 else if (activation.When == SceneConfig.ActivationMode.StateChange)
                     stateChangeSceneIds.Add((int)activation.Level);
             }
+
+            //StaticSignals.Signals.InventoryChanged();
+            Signals2.Signals.HpChanged(123);
+            //SignalProcessor.SendSignal(new InventoryChangedSignal());
 
             Architecture.ControllerInjectionAndInitialization(overTimeSceneIds, stateChangeSceneIds);
 
