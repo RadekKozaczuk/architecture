@@ -1,7 +1,6 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using System.Collections.Generic;
 using Common.Enums;
-using Common.Signals;
 using ControlFlow.Interfaces;
 using ControlFlow.Pooling;
 using ControlFlow.SignalProcessing;
@@ -158,7 +157,7 @@ namespace Presentation.Controllers
 
         [React]
         [Preserve]
-        void OnPlaySound(PlaySoundSignal signal) => PlaySound(signal.SoundType, signal.Position);
+        void OnPlaySound(Vector3 position, Sound sound) => PlaySound(sound, position);
 
         AudioSource CustomAlloc() =>
             Object.Instantiate(_config.AudioSourcePrefab, _position, Quaternion.identity, PresentationSceneReferenceHolder.AudioContainer);

@@ -61,10 +61,8 @@ namespace Boot
                     stateChangeSceneIds.Add((int)activation.Level);
             }
 
-            //Signals2.Signals.InventoryChanged();
-            Signals2.InventoryChanged();
-            Signals2.HpChanged(123);
-            //SignalProcessor.SendSignal(new InventoryChangedSignal());
+            Signals.InventoryChanged();
+            Signals.HpChanged(123);
 
             Architecture.ControllerInjectionAndInitialization(overTimeSceneIds, stateChangeSceneIds);
 
@@ -236,8 +234,6 @@ namespace Boot
             UIViewModel.GameplayOnExit();
         }
 
-        /// <summary>
-        /// </summary>
         static int[]? ScenesToLoadFromMainMenuToGameplay()
         {
             bool loadGameRequested = (bool)GameStateSystem.GetTransitionParameter(StateTransitionParameter.LoadGameRequested)!;

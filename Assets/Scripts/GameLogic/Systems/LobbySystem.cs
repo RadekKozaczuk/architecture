@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Common;
 using Common.Dtos;
 using Common.Enums;
-using Common.Signals;
 using Common.Systems;
 using Shared;
 using Shared.Systems;
@@ -505,7 +504,7 @@ namespace GameLogic.Systems
                 // send signal is if has changed
                 if (hashCode != _lastUpdateCallHash && !_gameStarted)
                 {
-                    SignalProcessor.SendSignal(new LobbyChangedSignal(Lobby.Name, Lobby.LobbyCode, GetPlayers()));
+                    Signals.LobbyChanged(Lobby.Name, Lobby.LobbyCode, GetPlayers());
                     _lastUpdateCallHash = hashCode;
                 }
             }
