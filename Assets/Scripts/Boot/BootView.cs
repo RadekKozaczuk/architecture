@@ -61,8 +61,9 @@ namespace Boot
                     stateChangeSceneIds.Add((int)activation.Level);
             }
 
-            //StaticSignals.Signals.InventoryChanged();
-            Signals2.Signals.HpChanged(123);
+            //Signals2.Signals.InventoryChanged();
+            Signals2.InventoryChanged();
+            Signals2.HpChanged(123);
             //SignalProcessor.SendSignal(new InventoryChangedSignal());
 
             Architecture.ControllerInjectionAndInitialization(overTimeSceneIds, stateChangeSceneIds);

@@ -6,10 +6,13 @@ namespace Common
 {
     public static class Signals2
     {
-        public static readonly ISignals Signals = Architecture.Interception<ISignals>(new SignalsImplementation());
+        public static void InventoryChanged() => _signals.InventoryChanged();
+        public static void HpChanged(int a) => _signals.HpChanged(a);
+
+        static readonly ISignals _signals = Architecture.Interception<ISignals>(new SignalsImplementation());
     }
 
-    public class SignalsImplementation : ISignals
+    class SignalsImplementation : ISignals
     {
         public void InventoryChanged() { }
 
