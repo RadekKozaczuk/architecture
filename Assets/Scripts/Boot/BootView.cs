@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using Common;
 using Common.Config;
 using Common.Enums;
@@ -46,6 +47,9 @@ namespace Boot
             Application.backgroundLoadingPriority = ThreadPriority.High;
             // injection must be done in awake because fields cannot be injected into in the same method they are used in
             Architecture.Initialize();
+
+            // we have to manually call the constructor to ensure it happens before the BootView.Start method. 
+            RuntimeHelpers.RunClassConstructor(typeof(SignalProcessor).TypeHandle);
         }
 
         void Start()
