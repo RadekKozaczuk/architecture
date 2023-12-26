@@ -2,7 +2,9 @@
 using ControlFlow.DependencyInjector.Attributes;
 using ControlFlow.DependencyInjector.Interfaces;
 using ControlFlow.Interfaces;
+using ControlFlow.SignalProcessing;
 using JetBrains.Annotations;
+using UnityEngine;
 using UnityEngine.Scripting;
 
 namespace Presentation.Controllers
@@ -49,5 +51,12 @@ namespace Presentation.Controllers
         }
 
         internal static void OnCoreSceneLoaded() => _coreSceneLoaded = true;
+
+        [React]
+        [Preserve]
+        void OnInventoryChangedSignal()
+        {
+            Debug.Log("OnInventoryChangedSignal");
+        }
     }
 }
