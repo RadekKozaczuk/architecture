@@ -16,6 +16,7 @@ namespace UI.Systems
     {
         const string Quit = "Quit";
         const string Movement = "Movement";
+        const string JoystickMovement = "JoystickMovement";
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         const string ToggleConsole = "ToggleConsole";
@@ -56,7 +57,12 @@ namespace UI.Systems
             // Gameplay bindings
             InputActionMap gameplay = _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap);
             gameplay.FindAction(Quit).performed += _ => PopupSystem.ShowPopup(PopupType.QuitGame);
+
+#if PLATFORM_ANDROID || PLATFORM_IOS
+            _movementAction = gameplay.FindAction(JoystickMovement);
+#else
             _movementAction = gameplay.FindAction(Movement);
+#endif
             _movementAction.performed += _ => _movementDown = true;
             _movementAction.canceled += _ => _movementDown = false;
 
