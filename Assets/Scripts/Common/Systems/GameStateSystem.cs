@@ -67,6 +67,9 @@ namespace Common.Systems
 
         public static void ActivateRoots_StateChange(Action action) => OnActivateRoots_StateChange.Invoke(action);
 
+        /// <summary>
+        /// Defaults transition parameters.
+        /// </summary>
         public static void SendEndFrameSignal() => OnEndFrameSignal.Invoke();
 
         /// <summary>

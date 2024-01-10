@@ -6,6 +6,7 @@ using JetBrains.Annotations;
 using UI.Popups;
 using UI.Popups.Views;
 using UI.Systems;
+using UnityEngine;
 using UnityEngine.Scripting;
 
 namespace UI.Controllers
@@ -46,7 +47,10 @@ namespace UI.Controllers
 
         [React]
         [Preserve]
-        void OnInventoryChangedSignal() { }
+        void OnInventoryChangedSignal()
+        {
+            Debug.Log("OnInventoryChangedSignal");
+        }
 
         [React]
         [Preserve]

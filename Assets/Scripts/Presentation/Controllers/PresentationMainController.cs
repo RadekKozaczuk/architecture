@@ -52,11 +52,11 @@ namespace Presentation.Controllers
 
         internal static void OnCoreSceneLoaded() => _coreSceneLoaded = true;
 
-        [React]
+        /*[React]
         [Preserve]
         void OnInventoryChangedSignal()
         {
             Debug.Log("OnInventoryChangedSignal");
-        }
+        }*/
     }
 }
