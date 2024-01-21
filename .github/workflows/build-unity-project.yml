@@ -1,97 +1,97 @@
-name: Unity Build and Test
-run-name: Checking if Unity project builds correctly in ${{ github.ref }} branch
+name: Unity Build
+run-name: Checking if Unity project builds correctly in ${{ github.ref }} branch.
 on: 
    pull_request:
     types: [ opened, edited, synchronize ]
 
 jobs:
   BuildUnityProject:
-    runs-on: windows-2019
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        targetPlatform:
-          - StandaloneWindows64 
           
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
-         token: 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
-         submodules: recursive
-         fetch-depth: 0
-         lfs: true
+         token: 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
+         submodules: true
+         
+      - name: Create Body File
+        run: echo $'Unity build status:\nWorking ⚙' > BodyFile.txt
 
-      - name: Find Comment
+      - name: Find comment
         if: always()
         uses: peter-evans/find-comment@v2
-        id: fc
+        id: findComment
         with:
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-author: 'github-actions[bot]'
-          body-includes: Unity build status
-          
+           issue-number: ${{ github.event.pull_request.number }}
+           comment-author: 'github-actions[bot]'
+           body-includes: Unity build status    
+           
       - name: Create or update comment
         if: always()
         uses: peter-evans/create-or-update-comment@v2
         with:
-          comment-id: ${{ steps.fc.outputs.comment-id }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            Unity build status: 
-            Working ⚙
-          edit-mode: replace
+           comment-id: ${{ steps.findComment.outputs.comment-id }}
+           issue-number: ${{ github.event.pull_request.number }}
+           body-file: 'BodyFile.txt'
+           edit-mode: replace  
           
 #########################################################################################
         
-      - name: Restore LFS cache
-        uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
-          path: Library
-          key: Library-${{ matrix.targetPlatform }}
-          restore-keys: |
-            Library-${{ matrix.targetPlatform }}
-            Library-
+         path: Library
+         key: Library-StandaloneWindows64
+         restore-keys: Library-
+         
+      ###########################
+      #  Set Scripting Backend  #
+      ###########################
+      
+      - name: Set Scripting Backend To il2cpp
+        run: |
+          sudo mv "./ProjectSettings/ProjectSettings-MONO.asset" "./ProjectSettings/ProjectSettings.asset"
                               
-      - uses: game-ci/unity-builder@v2
+      - uses: game-ci/unity-builder@v4
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          targetPlatform: ${{ matrix.targetPlatform }}
-
+            targetPlatform: StandaloneWindows64
+            allowDirtyBuild: true
+            
       - uses: actions/upload-artifact@v2
         with:
-          name: Build
-          path: build
+         name: Build
+         path: build
      
 #########################################################################################
           
       - name: Set success output
         if: success()
-        run: echo "actionStatus=Unity project builded successfully good job!" >> $GITHUB_ENV
+        run: echo $'Unity build status:\nSuccess!\nThere were no problems with building unity project' > BodyFile.txt
         
       - name: Set failure output
         if: failure()
-        run: echo "actionStatus=Unity project failed to build, read action workflow for more detailed info." >> $GITHUB_ENV
+        run: echo $'Unity build status:\nFailed\n Read action details for more informations' > BodyFile.txt
       
-      - name: Find Comment
+      - name: Find comment
         if: always()
         uses: peter-evans/find-comment@v2
-        id: findComment
+        id: fc
         with:
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-author: 'github-actions[bot]'
-          body-includes: Unity build status
-
-      - name: Update comment
+           issue-number: ${{ github.event.pull_request.number }}
+           comment-author: 'github-actions[bot]'
+           body-includes: Unity build status     
+        
+      - name: Create or update comment
         if: always()
         uses: peter-evans/create-or-update-comment@v2
         with:
-          comment-id: ${{ steps.findComment.outputs.comment-id }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            Unity build status: 
-            ${{env.actionStatus}}
-          edit-mode: replace
+           comment-id: ${{ steps.fc.outputs.comment-id }}
+           issue-number: ${{ github.event.pull_request.number }}
+           body-file: 'BodyFile.txt'
+           edit-mode: replace
