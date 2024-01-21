@@ -69,7 +69,7 @@ namespace Boot
             Architecture.ControllerInjectionAndInitialization(overTimeSceneIds, stateChangeSceneIds);
 
             Signals.InventoryChanged();
-            //Signals.HpChanged(123);
+            //Signals.HpChanged(123, 1.5f);
 
             _gameStateMachine = new GameStateMachine<GameState, StateTransitionParameter>(
                 new List<(
