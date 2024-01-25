@@ -403,7 +403,7 @@ MonoBehaviour:
   m_MovementRange: 90
   m_DynamicOriginRange: 100
   m_ControlPath: <Gamepad>/leftStick
-  m_Behaviour: 0
+  m_Behaviour: 1
   m_UseIsolatedInputActions: 0
   m_PointerDownAction:
     m_Name: 
@@ -423,25 +423,6 @@ MonoBehaviour:
     m_Interactions: 
     m_SingletonActionBindings: []
     m_Flags: 0
---- !u!114 &1939092164
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8135886327971418359}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45977bbae16431c46a013576a1aea384, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  handleRange: 1
-  deadZone: 0
-  axisOptions: 0
-  snapX: 0
-  snapY: 0
-  background: {fileID: 8135886326660165797}
-  handle: {fileID: 8135886326485152719}
 --- !u!1 &1978067932
 GameObject:
   m_ObjectHideFlags: 0
@@ -637,7 +618,7 @@ GameObject:
   - component: {fileID: 8135886327971418363}
   - component: {fileID: 8135886327971418362}
   - component: {fileID: 1939092161}
-  - component: {fileID: 1939092164}
+  - component: {fileID: 8135886327971418364}
   m_Layer: 5
   m_Name: Dynamic Joystick
   m_TagString: Untagged
@@ -703,6 +684,25 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8135886327971418359}
   m_CullTransparentMesh: 0
+--- !u!114 &8135886327971418364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8135886327971418359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a47f546fc70ec8428172694e78e4288, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handleRange: 1
+  deadZone: 0
+  axisOptions: 0
+  snapX: 0
+  snapY: 0
+  background: {fileID: 8135886326660165797}
+  handle: {fileID: 8135886326485152719}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
