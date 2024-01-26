@@ -37,14 +37,14 @@ namespace GameLogic.Systems
         [Preserve]
         static void OnInventoryChangedSignal()
         {
-            Debug.Log("OnInventoryChangedSignal");
+            Debug.Log("SaveLoadSystem OnInventoryChangedSignal");
         }
 
         [React]
         [Preserve]
         static void OnHpChangedSignal(int a, float b)
         {
-            Debug.Log($"OnHpChangedSignal a={a} b={b}");
+            Debug.Log($"SaveLoadSystem OnHpChangedSignal a={a} b={b}");
         }
     }
 }

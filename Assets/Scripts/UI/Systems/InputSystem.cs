@@ -1,5 +1,6 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using Common.Enums;
+using ControlFlow.SignalProcessing;
 using GameLogic.ViewModels;
 using Presentation.ViewModels;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -9,6 +10,7 @@ using UI.Config;
 using UI.Popups;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Scripting;
 
 namespace UI.Systems
 {
@@ -90,6 +92,13 @@ namespace UI.Systems
         {
             if (_movementDown)
                 PresentationViewModel.Movement(_movementAction.ReadValue<Vector2>());
+        }
+
+        [React]
+        [Preserve]
+        static void OnInventoryChangedSignal()
+        {
+            Debug.Log("InputSystem OnInventoryChangedSignal");
         }
     }
 }
