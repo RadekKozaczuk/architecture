@@ -1,9 +1,10 @@
-﻿using System.Collections;
+﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class FloatingJoystick : Joystick
+public class FloatingJoystickView : Joystick
 {
     protected override void Start()
     {
