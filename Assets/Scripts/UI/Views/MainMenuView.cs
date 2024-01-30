@@ -57,13 +57,13 @@ namespace UI.Views
 
         void Options()
         {
-            //Show all children objects in Options.gameObject
-            foreach (Transform child in _optionsView.transform)
-                child.gameObject.SetActive(true);
-
             //Hide all children objects in MainMenu.gameObject
             foreach (Transform child in this.transform)
                 child.gameObject.SetActive(false);
+
+            //Show all children objects in Options.gameObject
+            foreach (Transform child in _optionsView.transform)
+                child.gameObject.SetActive(true);
         }
 
         static void Quit()
