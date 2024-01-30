@@ -30,12 +30,16 @@ namespace UI.Views
         [SerializeField]
         Button _quit;
 
+        [SerializeField]
+        OptionsView _optionsView;
+
         void Awake()
         {
             _newGame.onClick.AddListener(NewGame);
             _coop.onClick.AddListener(Coop);
             _loadGame.onClick.AddListener(LoadGame);
             _loadGame.interactable = GameLogicViewModel.SaveFileExist;
+            _options.onClick.AddListener(Options);
             _quit.onClick.AddListener(Quit);
         }
 
@@ -50,6 +54,12 @@ namespace UI.Views
         static void LoadGame() =>
             GameStateSystem.RequestStateChange(GameState.Gameplay,
                                                parameters: new []{(StateTransitionParameter.LoadGameRequested, (object)true)});
+
+        void Options()
+        {
+            _optionsView.gameObject.SetActive(true);
+            this.gameObject.SetActive(false);
+        }
 
         static void Quit()
         {

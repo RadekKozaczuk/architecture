@@ -9,6 +9,7 @@ using JetBrains.Annotations;
 using Presentation.Config;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Audio;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.Scripting;
 
@@ -151,6 +152,7 @@ namespace Presentation.Controllers
             AudioSource source = Object.Instantiate(_config.AudioSourcePrefab, position, Quaternion.identity,
                                                     PresentationSceneReferenceHolder.AudioContainer);
 
+            source.outputAudioMixerGroup = _config.AudioMixerSounds;
             source.clip = _config.Sounds[(int)sound];
             source.Play();
             _soundAudioSources.Add(source);
