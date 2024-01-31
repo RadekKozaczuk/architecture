@@ -30,9 +30,6 @@ namespace UI.Views
         [SerializeField]
         Button _quit;
 
-        [SerializeField]
-        OptionsView _optionsView;
-
         void Awake()
         {
             _newGame.onClick.AddListener(NewGame);
@@ -54,17 +51,7 @@ namespace UI.Views
         static void LoadGame() =>
             GameStateSystem.RequestStateChange(GameState.Gameplay,
                                                parameters: new []{(StateTransitionParameter.LoadGameRequested, (object)true)});
-
-        void Options()
-        {
-            //Hide all children objects in MainMenu.gameObject
-            foreach (Transform child in this.transform)
-                child.gameObject.SetActive(false);
-
-            //Show all children objects in Options.gameObject
-            foreach (Transform child in _optionsView.transform)
-                child.gameObject.SetActive(true);
-        }
+        static void Options() => PopupSystem.ShowPopup(PopupType.Options);
 
         static void Quit()
         {

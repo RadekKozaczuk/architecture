@@ -41,6 +41,8 @@ namespace Boot
 
         static readonly SceneConfig _sceneConfig;
 
+        static readonly AudioMixerConfig _audioMixerConfig;
+
         void Awake()
         {
             // increase priority so that main menu can appear faster
@@ -51,6 +53,8 @@ namespace Boot
 
         void Start()
         {
+            SetupAudioMixer();
+
             List<int> overTimeSceneIds = new ();
             List<int> stateChangeSceneIds = new ();
             for (int i = 0; i < _sceneConfig.CustomActivation.Length; i++)
@@ -185,6 +189,16 @@ namespace Boot
             }
 
             GameStateSystem.SendEndFrameSignal();
+        }
+
+        void SetupAudioMixer()
+        {
+            //Convert our value to audio mixer dB. Section: (from -80dB, to +20dB)
+            int musicValueToSet = -80 + (PlayerPrefs.GetInt("musicVolume") * 10);
+            int sfxValueToSet = -80 + (PlayerPrefs.GetInt("sfxVolume") * 10);
+
+            _audioMixerConfig.AudioMixer.SetFloat("musicVolume", musicValueToSet);
+            _audioMixerConfig.AudioMixer.SetFloat("sfxVolume", sfxValueToSet);
         }
 
         internal static void OnCoreSceneLoaded() => _isCoreSceneLoaded = true;

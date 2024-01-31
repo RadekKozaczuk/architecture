@@ -2,7 +2,6 @@
 using Sirenix.OdinInspector;
 using UI.Views;
 using UnityEngine;
-using UnityEngine.Audio;
 using UnityEngine.InputSystem;
 
 namespace UI.Config
@@ -24,8 +23,5 @@ namespace UI.Config
 
         [SerializeField]
         internal LobbyPlayerElementView LobbyPlayerElementView;
-
-        [SerializeField]
-        internal AudioMixer AudioMixer;
     }
 }
