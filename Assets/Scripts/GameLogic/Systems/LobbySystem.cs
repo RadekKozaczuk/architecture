@@ -27,7 +27,7 @@ namespace GameLogic.Systems
 	/// </summary>
 	static class LobbySystem
     {
-        static bool IsHost => AuthenticationService.Instance.PlayerId == Lobby.HostId;
+        static bool IsHost => AuthenticationService.Instance.PlayerId == Lobby!.HostId;
 
         /// <summary>
         /// In seconds. Heartbeat is limited to 5 requests per 30 seconds.
@@ -238,7 +238,7 @@ namespace GameLogic.Systems
                 // if host is the last player, delete lobby 
                 if (IsHost)
                 {
-                    if (Lobby.Players.Count == 1)
+                    if (Lobby!.Players.Count == 1)
                     {
                         await lobby.DeleteLobbyAsync(Lobby.Id);
                         Lobby = null;
@@ -250,7 +250,7 @@ namespace GameLogic.Systems
                     }
                 }
                 else
-                    await lobby.RemovePlayerAsync(Lobby.Id, playerId);
+                    await lobby.RemovePlayerAsync(Lobby!.Id, playerId);
 
                 LeaveChannelVoiceChat();
 
@@ -280,7 +280,7 @@ namespace GameLogic.Systems
         {
             // Important: Once the allocation is created, you have ten seconds to BIND
             _gameStarted = true;
-            Allocation allocation = await RelayService.Instance.CreateAllocationAsync(Lobby.MaxPlayers - 1);
+            Allocation allocation = await RelayService.Instance.CreateAllocationAsync(Lobby!.MaxPlayers - 1);
             _relayCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
             var relayServerData = new RelayServerData(allocation, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
@@ -308,7 +308,7 @@ namespace GameLogic.Systems
 
             try
             {
-                await LobbyService.Instance.RemovePlayerAsync(Lobby.Id, playerId);
+                await LobbyService.Instance.RemovePlayerAsync(Lobby!.Id, playerId);
             }
             catch (LobbyServiceException e)
             {
@@ -323,7 +323,7 @@ namespace GameLogic.Systems
         {
             try
             {
-                Lobby = await Lobbies.Instance.UpdateLobbyAsync(Lobby.Id, new UpdateLobbyOptions {HostId = playerId});
+                Lobby = await Lobbies.Instance.UpdateLobbyAsync(Lobby!.Id, new UpdateLobbyOptions {HostId = playerId});
             }
             catch (LobbyServiceException e)
             {
@@ -333,7 +333,7 @@ namespace GameLogic.Systems
 
         static void JoinChannelVoiceChat()
         {
-            VoiceChatSystem.JoinChannel(_lobby.Name, VivoxUnity.ChannelType.Echo, true, false);
+            VoiceChatSystem.JoinChannel(_lobby!.Name, VivoxUnity.ChannelType.Echo, true, false);
         }
 
         static void LeaveChannelVoiceChat()
@@ -383,7 +383,7 @@ namespace GameLogic.Systems
             try
             {
                 // we should make isDirty pattern and call update when update happened
-                Lobby = await LobbyService.Instance.UpdatePlayerAsync(Lobby.Id, AuthenticationService.Instance.PlayerId,
+                Lobby = await LobbyService.Instance.UpdatePlayerAsync(Lobby!.Id, AuthenticationService.Instance.PlayerId,
                                                                       new UpdatePlayerOptions
                                                                       {
                                                                           Data = new Dictionary<string, PlayerDataObject>
@@ -439,7 +439,7 @@ namespace GameLogic.Systems
             {
                 _heartbeatTimer = null;
                 await RestoreSessionIfNeeded();
-                await LobbyService.Instance.SendHeartbeatPingAsync(Lobby.Id);
+                await LobbyService.Instance.SendHeartbeatPingAsync(Lobby!.Id);
                 _heartbeatTimer = HeartbeatRate;
             }
         }
@@ -479,7 +479,7 @@ namespace GameLogic.Systems
                 await RestoreSessionIfNeeded();
                 try
                 {
-                    Lobby = await LobbyService.Instance.GetLobbyAsync(Lobby.Id);
+                    Lobby = await LobbyService.Instance.GetLobbyAsync(Lobby!.Id);
                 }
                 catch (LobbyServiceException e)
                 {
@@ -518,7 +518,7 @@ namespace GameLogic.Systems
         static List<(string playerName, string playerId, bool isHost)> GetPlayers()
         {
             var players = new List<(string playerName, string playerId, bool isHost)>();
-            foreach (Player player in Lobby.Players)
+            foreach (Player player in Lobby!.Players)
             {
                 string playerName = player.Data[Constants.PlayerName].Value;
                 players.Add((playerName, player.Id, player.Id == Lobby.HostId));
@@ -542,7 +542,7 @@ namespace GameLogic.Systems
         /// </summary>
         static int CalculateHash()
         {
-            int hashCode = _lobby.Name.GetHashCode();
+            int hashCode = _lobby!.Name.GetHashCode();
 
             foreach (Player player in _lobby.Players)
                 if (IsHost)
