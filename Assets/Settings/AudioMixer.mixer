@@ -9,8 +9,7 @@ AudioMixerGroupController:
   m_Name: SFX
   m_AudioMixer: {fileID: 24100000}
   m_GroupID: fb00a954ec33a104d9c2c30780388bc3
-  m_Children:
-  - {fileID: 7836908883429246764}
+  m_Children: []
   m_Volume: 09c08364431bb4942a0f4e23ec4b4dd0
   m_Pitch: a33540120bce41542a14dbf1926fbac2
   m_Send: 00000000000000000000000000000000
@@ -58,6 +57,7 @@ AudioMixerGroupController:
   m_AudioMixer: {fileID: 24100000}
   m_GroupID: 3288268ff05e7e3468374b7e31c8a7a7
   m_Children:
+  - {fileID: 7836908883429246764}
   - {fileID: -5521278846932173843}
   m_Volume: a451c8e83843eda41aecac246d52b235
   m_Pitch: 169d30102e6815a4f95ac23521696ce0
