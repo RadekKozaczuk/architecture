@@ -1,18 +1,28 @@
+using Common.Enums;
+using Common.Systems;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace Presentation
+namespace UI.Views
 {
-    public class JoystickView : MonoBehaviour
+    class JoystickView : MonoBehaviour
     {
-       void Awake()
-       {
+        [SerializeField]
+        GameObject _joystick;
+
+        void OnEnable()
+        {
 #if PLATFORM_ANDROID || PLATFORM_IOS
-            this.gameObject.SetActive(true);
-#else
-            this.gameObject.SetActive(false);
+            StartCoroutine("SpawnJoystick");
 #endif
+        }
+
+        IEnumerator SpawnJoystick()
+        {
+            while(GameStateSystem.CurrentState != GameState.Gameplay)
+                yield return null;
+
+            Instantiate(_joystick, transform);
         }
     }
 }

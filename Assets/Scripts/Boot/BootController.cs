@@ -29,20 +29,7 @@ namespace Boot
 
             // level was loaded
             if (scene.buildIndex > 3)
-            {
                 PresentationViewModel.OnLevelSceneLoaded();
-                CheckObjectsName();
-            }
-        }
-
-        static void CheckObjectsName()
-        {
-            GameObject[] allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>();
-            foreach (GameObject go in allObjects)
-            {
-                string Name = go.name;
-                if (!char.IsUpper(Name, 0) && Name[0] is not '_') Debug.LogWarning("Object name " + go.name + " doesnt start with capital letter");
-            }
         }
     }
 }
