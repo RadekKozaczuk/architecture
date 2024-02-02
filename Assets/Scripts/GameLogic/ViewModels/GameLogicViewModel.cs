@@ -82,12 +82,8 @@ namespace GameLogic.ViewModels
         {
             int dBToSet = -80;
 
-            if (value == 0) return dBToSet;
-
-            if (value <= 3)
-                dBToSet = -60 + (value * 10);
-            else
-                dBToSet = -60 + ((value - 1) * 15);
+            if (value != 0)
+                dBToSet = (int)(-33.3f + (value * 3.3f));
 
             return dBToSet;
         }

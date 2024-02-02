@@ -195,7 +195,7 @@ namespace Boot
         {
             //if the game is launched for the first time, save the default volume values
             if (GameLogicViewModel.FirstTimeRunCheck())
-                GameLogicViewModel.SaveVolumeSettings(4, 4);
+                GameLogicViewModel.SaveVolumeSettings(7, 7);
 
             (int music, int sound) = GameLogicViewModel.LoadVolumeSettings();
 
