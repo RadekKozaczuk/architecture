@@ -13,8 +13,8 @@ using Presentation.ViewModels;
 using Shared;
 using Shared.Systems;
 using Unity.Netcode;
+using UnityEngine;
 using UnityEngine.Scripting;
-using static GameLogic.Systems.PersistentStorageSystem;
 using Random = UnityEngine.Random;
 
 namespace GameLogic.ViewModels
@@ -77,6 +77,31 @@ namespace GameLogic.ViewModels
         public static void SaveVolumeSettings(int music, int sound) => PersistentStorageSystem.SaveVolumeSettings(music, sound);
 
         public static (int music, int sound) LoadVolumeSettings() => PersistentStorageSystem.LoadVolumeSettings();
+
+        public static int ConvertVolumeValueToDecibels(int value) //Convert our value to audio mixer dB.
+        {
+            int dBToSet = -80;
+
+            if (value == 0) return dBToSet;
+
+            if (value <= 3)
+                dBToSet = -60 + (value * 10);
+            else
+                dBToSet = -60 + ((value - 1) * 15);
+
+            return dBToSet;
+        }
+
+        public static bool FirstTimeRunCheck()
+        {
+            if (!PlayerPrefs.HasKey("firstTimeRun"))
+            {
+                PlayerPrefs.SetInt("firstTimeRun", 1);
+                return true;
+            }
+            else
+                return false;
+        }
 
         /// <summary>
         /// If the instance hosted a lobby, the lobby will be deleted.

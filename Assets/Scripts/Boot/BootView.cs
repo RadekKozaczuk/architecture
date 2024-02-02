@@ -53,7 +53,7 @@ namespace Boot
 
         void Start()
         {
-            SetupAudioMixer();
+            LoadVolumeSettings();
 
             List<int> overTimeSceneIds = new ();
             List<int> stateChangeSceneIds = new ();
@@ -191,14 +191,16 @@ namespace Boot
             GameStateSystem.SendEndFrameSignal();
         }
 
-        void SetupAudioMixer()
+        void LoadVolumeSettings()
         {
-            //Convert our value to audio mixer dB. Section: (from -80dB, to +20dB)
-            int musicValueToSet = -80 + (PlayerPrefs.GetInt("musicVolume") * 10);
-            int sfxValueToSet = -80 + (PlayerPrefs.GetInt("sfxVolume") * 10);
+            //if the game is launched for the first time, save the default volume values
+            if (GameLogicViewModel.FirstTimeRunCheck())
+                GameLogicViewModel.SaveVolumeSettings(4, 4);
 
-            _audioMixerConfig.AudioMixer.SetFloat("musicVolume", musicValueToSet);
-            _audioMixerConfig.AudioMixer.SetFloat("sfxVolume", sfxValueToSet);
+            (int music, int sound) = GameLogicViewModel.LoadVolumeSettings();
+
+            _audioMixerConfig.AudioMixer.SetFloat("musicVolume", GameLogicViewModel.ConvertVolumeValueToDecibels(music));
+            _audioMixerConfig.AudioMixer.SetFloat("soundVolume", GameLogicViewModel.ConvertVolumeValueToDecibels(sound));
         }
 
         internal static void OnCoreSceneLoaded() => _isCoreSceneLoaded = true;

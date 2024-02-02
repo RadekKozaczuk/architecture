@@ -34,7 +34,7 @@ namespace UI.Popups.Views
         void Awake()
         {
             _musicSlider.onValueChanged.AddListener(delegate { ChangeVolume("musicVolume", _musicSlider, _musicVolumeText); });
-            _soundSlider.onValueChanged.AddListener(delegate { ChangeVolume("sfxVolume", _soundSlider, _soundVolumeText); });
+            _soundSlider.onValueChanged.AddListener(delegate { ChangeVolume("soundVolume", _soundSlider, _soundVolumeText); });
 
             _back.onClick.AddListener(Back);
         }
@@ -48,10 +48,7 @@ namespace UI.Popups.Views
 
         static void ChangeVolume(string currentName, Slider currentSlider, TextMeshProUGUI currentText)
         {
-            // Convert our slider value to audio mixer dB. Section: (from -80dB, to +20dB)
-            int valueToSet = -80 + (int)(currentSlider.value * 10);
-
-            _config.AudioMixer.SetFloat(currentName, valueToSet);
+            _config.AudioMixer.SetFloat(currentName, GameLogicViewModel.ConvertVolumeValueToDecibels((int)(currentSlider.value)));
             currentText.text = ((int)currentSlider.value).ToString();
         }
 
