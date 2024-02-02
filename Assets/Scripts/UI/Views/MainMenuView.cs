@@ -51,7 +51,7 @@ namespace UI.Views
         static void LoadGame() =>
             GameStateSystem.RequestStateChange(GameState.Gameplay,
                                                parameters: new []{(StateTransitionParameter.LoadGameRequested, (object)true)});
-        static void Options() => PopupSystem.ShowPopup(PopupType.Options);
+        static void Options() => PopupSystem.ShowPopup(PopupType.Settings);
 
         static void Quit()
         {

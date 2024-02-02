@@ -1,6 +1,7 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using Common.Enums;
 using Common.Config;
+using GameLogic.ViewModels;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,7 +9,7 @@ using UnityEngine.UI;
 namespace UI.Popups.Views
 {
     [DisallowMultipleComponent]
-    class OptionsPopup : AbstractPopupView
+    class SettingsPopup : AbstractPopupView
     {
         static readonly AudioMixerConfig _config;
 
@@ -16,48 +17,47 @@ namespace UI.Popups.Views
         TextMeshProUGUI _musicVolumeText;
 
         [SerializeField]
-        TextMeshProUGUI _sfxVolumeText;
+        TextMeshProUGUI _soundVolumeText;
 
         [SerializeField]
         Slider _musicSlider;
 
         [SerializeField]
-        Slider _sfxSlider;
+        Slider _soundSlider;
 
         [SerializeField]
         Button _back;
 
-        OptionsPopup()
-            : base(PopupType.Options) { }
+        SettingsPopup()
+            : base(PopupType.Settings) { }
 
         void Awake()
         {
             _musicSlider.onValueChanged.AddListener(delegate { ChangeVolume("musicVolume", _musicSlider, _musicVolumeText); });
-            _sfxSlider.onValueChanged.AddListener(delegate { ChangeVolume("sfxVolume", _sfxSlider, _sfxVolumeText); });
-            LoadVolumes();
+            _soundSlider.onValueChanged.AddListener(delegate { ChangeVolume("sfxVolume", _soundSlider, _soundVolumeText); });
 
             _back.onClick.AddListener(Back);
         }
 
-        void ChangeVolume(string currentName, Slider currentSlider, TextMeshProUGUI currentText)
+        internal override void Initialize()
         {
-            //Convert our slider value to audio mixer dB. Section: (from -80dB, to +20dB)
+            (int music, int sound) = GameLogicViewModel.LoadVolumeSettings();
+            _musicSlider.value = music;
+            _soundSlider.value = sound;
+        }
+
+        static void ChangeVolume(string currentName, Slider currentSlider, TextMeshProUGUI currentText)
+        {
+            // Convert our slider value to audio mixer dB. Section: (from -80dB, to +20dB)
             int valueToSet = -80 + (int)(currentSlider.value * 10);
 
             _config.AudioMixer.SetFloat(currentName, valueToSet);
             currentText.text = ((int)currentSlider.value).ToString();
         }
 
-        void LoadVolumes()
-        {
-            _musicSlider.value = PlayerPrefs.GetInt("musicVolume");
-            _sfxSlider.value = PlayerPrefs.GetInt("sfxVolume");
-        }
-
         void Back()
         {
-            PlayerPrefs.SetInt("musicVolume", (int)_musicSlider.value);
-            PlayerPrefs.SetInt("sfxVolume", (int)_sfxSlider.value);
+            GameLogicViewModel.SaveVolumeSettings((int)_musicSlider.value, (int)_soundSlider.value);
             PopupSystem.CloseCurrentPopup();
         }
     }

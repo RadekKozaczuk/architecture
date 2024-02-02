@@ -56,7 +56,10 @@ namespace Common.Enums
         /// The lobby you joined/created.
         /// </summary>
         Lobby,
-        Options
+        /// <summary>
+        /// Settings accessible from the main menu.
+        /// </summary>
+        Settings
     }
 
     public enum PlayerId
