@@ -1,5 +1,6 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using System.Collections.Generic;
+using Common.Config;
 using Common.Enums;
 using ControlFlow.Interfaces;
 using ControlFlow.Pooling;
@@ -21,6 +22,7 @@ namespace Presentation.Controllers
     class AudioController : ICustomLateUpdate
     {
         static readonly AudioConfig _config;
+        static readonly AudioMixerConfig _audioMixerConfig;
 
         readonly AudioClip?[] _loadedMusic;
         readonly AsyncOperationHandle<AudioClip>[] _asyncOperationHandles;
@@ -150,6 +152,7 @@ namespace Presentation.Controllers
             AudioSource source = Object.Instantiate(_config.AudioSourcePrefab, position, Quaternion.identity,
                                                     PresentationSceneReferenceHolder.AudioContainer);
 
+            source.outputAudioMixerGroup = _audioMixerConfig.AudioMixerSFX;
             source.clip = _config.Sounds[(int)sound];
             source.Play();
             _soundAudioSources.Add(source);

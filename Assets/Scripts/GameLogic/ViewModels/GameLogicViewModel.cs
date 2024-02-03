@@ -11,6 +11,7 @@ using JetBrains.Annotations;
 using Presentation.ViewModels;
 using Shared;
 using Unity.Netcode;
+using UnityEngine;
 using UnityEngine.Scripting;
 using Random = UnityEngine.Random;
 
@@ -47,7 +48,7 @@ namespace GameLogic.ViewModels
         public static void ValidatePlayer(string accessCode, Action<bool> callback) =>
             StaticCoroutine.StartStaticCoroutine(JsonSystem.ValidateProfileAsync(accessCode, callback));
 
-        public static void BootingOnExit() { }
+        public static void BootingOnExit() => PersistentStorageSystem.LoadVolumeSettings();
 
         public static void MainMenuOnEntry() => CommonData.PlayerName = Utils.GenerateRandomString(Random.Range(5, 9));
 
@@ -70,6 +71,31 @@ namespace GameLogic.ViewModels
         public static void SaveGame() => SaveLoadSystem.SaveGame();
 
         public static void LoadGame() { }
+
+        public static void SaveVolumeSettings(int music, int sound) => PersistentStorageSystem.SaveVolumeSettings(music, sound);
+
+        public static (int music, int sound) LoadVolumeSettings() => PersistentStorageSystem.LoadVolumeSettings();
+
+        public static int ConvertVolumeValueToDecibels(int value) //Convert our value to audio mixer dB.
+        {
+            int dBToSet = -80;
+
+            if (value != 0)
+                dBToSet = (int)(-33.3f + (value * 3.3f));
+
+            return dBToSet;
+        }
+
+        public static bool FirstTimeRunCheck()
+        {
+            if (!PlayerPrefs.HasKey("firstTimeRun"))
+            {
+                PlayerPrefs.SetInt("firstTimeRun", 1);
+                return true;
+            }
+            else
+                return false;
+        }
 
         /// <summary>
         /// If the instance hosted a lobby, the lobby will be deleted.
