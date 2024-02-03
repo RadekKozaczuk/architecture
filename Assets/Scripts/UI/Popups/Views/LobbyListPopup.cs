@@ -47,7 +47,7 @@ namespace UI.Popups.Views
         {
             _refresh.onClick.AddListener(RefreshAction);
             _join.onClick.AddListener(
-                () => GameLogicViewModel.JoinLobbyById(LobbyListElementView.SelectedLobby.LobbyId, JoinLobbyResultCallback)); // join the selected
+                () => GameLogicViewModel.JoinLobbyById(LobbyListElementView.SelectedLobby!.LobbyId, JoinLobbyResultCallback)); // join the selected
             _join.interactable = false;
             _create.onClick.AddListener(() => PopupSystem.ShowPopup(PopupType.CreateLobby));
             _joinByCode.onClick.AddListener(() => GameLogicViewModel.JoinLobbyByCode(_lobbyCodeInput.text, JoinLobbyResultCallback));

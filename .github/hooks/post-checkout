@@ -1,0 +1,35 @@
+#!/bin/sh
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+# in the future
+# REGEX="^(main|develop|((feature|fix|hotfix)\/([a-z]|[0-9]).(-.([a-z]|[0-9])*)*))$"
+REGEX="^([a-z]|[0-9])+(-([a-z]|[0-9])+)*$"
+
+# Regex mini-tutorial
+# start with '^' and ending with '$' means we look for exact match of the regex
+# '*' - the sign before it can occure 'zero or more' times
+# '+' - the sign before it can occure 'one or more' times
+# '()' - groups characters together allowing to apply a rule to all of them at once
+# '|' - OR operator
+# '\' - escape character so the character after it is interpreted literally
+# '[a-z]' - any small letter
+# '[0-9]' - any digit
+
+if ! [[ $BRANCH =~ $REGEX ]]; then
+  I=0
+  branchname="my-branch-$I"
+
+  while [[ -n "$(git branch --list $branchname)" ]]
+  do
+    I=$(( $I+1 ))
+    branchname="my-branch-$I"
+  done
+
+  git branch -m $BRANCH $branchname
+  
+  echo "Your branch named $BRANCH has been changed due to bad name"
+  echo "Only small letters and digits separated with a dash are allowed f.e. 'my-branch-123'."
+  echo "REGEX value: $REGEX"
+  echo "Your branch $BRANCH name has been changed to $branchname"
+  exit 1 # success
+fi

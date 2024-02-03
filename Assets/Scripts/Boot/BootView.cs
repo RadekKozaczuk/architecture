@@ -17,7 +17,6 @@ using UnityEngine.SceneManagement;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 using Shared.DebugCommands;
 #endif
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
 namespace Boot
 {
@@ -41,6 +40,8 @@ namespace Boot
 
         static readonly SceneConfig _sceneConfig;
 
+        static readonly AudioMixerConfig _audioMixerConfig;
+
         void Awake()
         {
             // increase priority so that main menu can appear faster
@@ -51,6 +52,8 @@ namespace Boot
 
         void Start()
         {
+            LoadVolumeSettings();
+
             List<int> overTimeSceneIds = new ();
             List<int> stateChangeSceneIds = new ();
             for (int i = 0; i < _sceneConfig.CustomActivation.Length; i++)
@@ -185,6 +188,18 @@ namespace Boot
             }
 
             GameStateSystem.SendEndFrameSignal();
+        }
+
+        void LoadVolumeSettings()
+        {
+            //if the game is launched for the first time, save the default volume values
+            if (GameLogicViewModel.FirstTimeRunCheck())
+                GameLogicViewModel.SaveVolumeSettings(7, 7);
+
+            (int music, int sound) = GameLogicViewModel.LoadVolumeSettings();
+
+            _audioMixerConfig.AudioMixer.SetFloat("musicVolume", GameLogicViewModel.ConvertVolumeValueToDecibels(music));
+            _audioMixerConfig.AudioMixer.SetFloat("soundVolume", GameLogicViewModel.ConvertVolumeValueToDecibels(sound));
         }
 
         internal static void OnCoreSceneLoaded() => _isCoreSceneLoaded = true;
