@@ -33,13 +33,13 @@ namespace UI.Popups.Views
         {
             _musicSlider.onValueChanged.AddListener(delegate
             {
-                PresentationViewModel.SetMusicVolume(GameLogicViewModel.ConvertVolumeValueToDecibels((int)_musicSlider.value));
+                PresentationViewModel.SetMusicVolume((int)_musicSlider.value);
                 _musicVolumeText.text = ((int)_musicSlider.value).ToString();
             });
 
             _soundSlider.onValueChanged.AddListener(delegate
             {
-                PresentationViewModel.SetSoundVolume(GameLogicViewModel.ConvertVolumeValueToDecibels((int)_soundSlider.value));
+                PresentationViewModel.SetSoundVolume((int)_soundSlider.value);
                 _soundVolumeText.text = ((int)_soundSlider.value).ToString();
             });
 

@@ -2,7 +2,7 @@
 {
     static class Constants
     {
-        internal const string Sound = "PlayerName";
-        internal const string Music = "RelayCode";
+        internal const string Sound = "soundVolume";
+        internal const string Music = "musicVolume";
     }
 }
