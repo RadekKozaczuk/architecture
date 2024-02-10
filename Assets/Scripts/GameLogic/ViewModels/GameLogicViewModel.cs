@@ -13,7 +13,6 @@ using Presentation.ViewModels;
 using Shared;
 using Shared.Systems;
 using Unity.Netcode;
-using UnityEngine;
 using UnityEngine.Scripting;
 using Random = UnityEngine.Random;
 
@@ -50,7 +49,7 @@ namespace GameLogic.ViewModels
         public static void ValidatePlayer(string accessCode, Action<bool> callback) =>
             StaticCoroutine.StartStaticCoroutine(JsonSystem.ValidateProfileAsync(accessCode, callback));
 
-        public static void BootingOnExit() => PersistentStorageSystem.LoadVolumeSettings();
+        public static void BootingOnExit() => PersistentStorageSystem.Initialize();
 
         public static void MainMenuOnEntry() => CommonData.PlayerName = Utils.GenerateRandomString(Random.Range(5, 9));
 
@@ -78,25 +77,15 @@ namespace GameLogic.ViewModels
 
         public static (int music, int sound) LoadVolumeSettings() => PersistentStorageSystem.LoadVolumeSettings();
 
-        public static int ConvertVolumeValueToDecibels(int value) //Convert our value to audio mixer dB.
+        /// <summary>
+        /// Converts our value to audio mixer dB.
+        /// </summary>
+        public static int ConvertVolumeValueToDecibels(int value)
         {
-            int dBToSet = -80;
+            if (value == 0)
+                return -80;
 
-            if (value != 0)
-                dBToSet = (int)(-33.3f + (value * 3.3f));
-
-            return dBToSet;
-        }
-
-        public static bool FirstTimeRunCheck()
-        {
-            if (!PlayerPrefs.HasKey("firstTimeRun"))
-            {
-                PlayerPrefs.SetInt("firstTimeRun", 1);
-                return true;
-            }
-            else
-                return false;
+            return (int)(-33.3f + value * 3.3f);
         }
 
         /// <summary>

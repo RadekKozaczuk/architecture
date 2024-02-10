@@ -1,6 +1,8 @@
 ﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+using Common.Config;
 using ControlFlow.DependencyInjector.Attributes;
 using ControlFlow.DependencyInjector.Interfaces;
+using GameLogic.ViewModels;
 using JetBrains.Annotations;
 using UI.Config;
 using UI.Controllers;
@@ -14,6 +16,7 @@ namespace UI.ViewModels
     public class UIViewModel : IInitializable
     {
         static readonly UIConfig _uiConfig;
+        static readonly AudioMixerConfig _audioConfig;
         static UIViewModel _instance;
 
         [Inject]
@@ -45,7 +48,12 @@ namespace UI.ViewModels
 #endif
         }
 
-        public static void BootingOnExit() { }
+        public static void BootingOnExit()
+        {
+            (int music, int sound) = GameLogicViewModel.LoadVolumeSettings();
+            _audioConfig.AudioMixer.SetFloat("musicVolume", GameLogicViewModel.ConvertVolumeValueToDecibels(music));
+            _audioConfig.AudioMixer.SetFloat("soundVolume", GameLogicViewModel.ConvertVolumeValueToDecibels(sound));
+        }
 
         public static void MainMenuOnEntry() => _uiConfig.InputActionAsset.FindActionMap(UIConstants.MainMenuActionMap).Enable();
 

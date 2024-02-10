@@ -48,7 +48,7 @@ namespace UI.Popups.Views
 
         static void ChangeVolume(string currentName, Slider currentSlider, TextMeshProUGUI currentText)
         {
-            _config.AudioMixer.SetFloat(currentName, GameLogicViewModel.ConvertVolumeValueToDecibels((int)(currentSlider.value)));
+            _config.AudioMixer.SetFloat(currentName, GameLogicViewModel.ConvertVolumeValueToDecibels((int)currentSlider.value));
             currentText.text = ((int)currentSlider.value).ToString();
         }
 
