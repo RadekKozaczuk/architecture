@@ -190,7 +190,7 @@ namespace Boot
             GameStateSystem.SendEndFrameSignal();
         }
 
-        void LoadVolumeSettings()
+        static void LoadVolumeSettings()
         {
             //if the game is launched for the first time, save the default volume values
             if (GameLogicViewModel.FirstTimeRunCheck())

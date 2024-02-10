@@ -3,6 +3,7 @@ using Common.Signals;
 using ControlFlow.Interfaces;
 using ControlFlow.SignalProcessing;
 using JetBrains.Annotations;
+using Shared;
 using UI.Popups;
 using UI.Popups.Views;
 using UI.Systems;
@@ -45,11 +46,9 @@ namespace UI.Controllers
         internal static void OnUISceneLoaded() => _uiSceneLoaded = true;
 
         [React]
-        [Preserve]
         void OnInventoryChangedSignal(InventoryChangedSignal _) { }
 
         [React]
-        [Preserve]
         void OnLobbyChangedSignal(LobbyChangedSignal s) => (PopupSystem.CurrentPopup as LobbyPopup)?.UpdateLobby(s.LobbyName, s.LobbyCode, s.Players);
     }
 }

@@ -8,6 +8,7 @@ using ControlFlow.Pooling;
 using ControlFlow.SignalProcessing;
 using JetBrains.Annotations;
 using Presentation.Config;
+using Shared;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -160,7 +161,6 @@ namespace Presentation.Controllers
         }
 
         [React]
-        [Preserve]
         void OnPlaySound(PlaySoundSignal signal) => PlaySound(signal.SoundType, signal.Position);
 
         AudioSource CustomAlloc() =>
