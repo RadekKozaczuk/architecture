@@ -4,8 +4,8 @@ using UnityEngine.Audio;
 
 namespace Common.Config
 {
-    [CreateAssetMenu(fileName = "AudioMixerConfig", menuName = "Config/Common/AudioMixerConfig")]
-    public class AudioMixerConfig : ScriptableObject
+    [CreateAssetMenu(fileName = "AudioConfig", menuName = "Config/Common/AudioConfig")]
+    public class AudioConfig : ScriptableObject
     {
         public AudioMixer AudioMixer;
         public AudioMixerGroup AudioMixerSFX;

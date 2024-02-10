@@ -40,7 +40,7 @@ namespace Boot
 
         static readonly SceneConfig _sceneConfig;
 
-        static readonly AudioMixerConfig _audioMixerConfig;
+        static readonly AudioConfig _audioConfig;
 
         void Awake()
         {

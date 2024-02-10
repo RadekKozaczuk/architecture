@@ -13,6 +13,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.Scripting;
+using AudioConfig = Common.Config.AudioConfig;
 
 namespace Presentation.Controllers
 {
@@ -23,8 +24,8 @@ namespace Presentation.Controllers
     [ReactOnSignals]
     class AudioController : ICustomLateUpdate
     {
-        static readonly AudioConfig _config;
-        static readonly AudioMixerConfig _audioMixerConfig;
+        static readonly Config.AudioConfig _config;
+        static readonly AudioConfig _audioConfig;
 
         readonly AudioClip?[] _loadedMusic;
         readonly AsyncOperationHandle<AudioClip>[] _asyncOperationHandles;
@@ -154,7 +155,7 @@ namespace Presentation.Controllers
             AudioSource source = Object.Instantiate(_config.AudioSourcePrefab, position, Quaternion.identity,
                                                     PresentationSceneReferenceHolder.AudioContainer);
 
-            source.outputAudioMixerGroup = _audioMixerConfig.AudioMixerSFX;
+            source.outputAudioMixerGroup = _audioConfig.AudioMixerSFX;
             source.clip = _config.Sounds[(int)sound];
             source.Play();
             _soundAudioSources.Add(source);

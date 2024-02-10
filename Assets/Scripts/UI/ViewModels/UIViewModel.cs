@@ -16,7 +16,7 @@ namespace UI.ViewModels
     public class UIViewModel : IInitializable
     {
         static readonly UIConfig _uiConfig;
-        static readonly AudioMixerConfig _audioConfig;
+        static readonly AudioConfig _audioConfig;
         static UIViewModel _instance;
 
         [Inject]

@@ -11,7 +11,7 @@ namespace UI.Popups.Views
     [DisallowMultipleComponent]
     class SettingsPopup : AbstractPopupView
     {
-        static readonly AudioMixerConfig _config;
+        static readonly AudioConfig _config;
 
         [SerializeField]
         TextMeshProUGUI _musicVolumeText;
