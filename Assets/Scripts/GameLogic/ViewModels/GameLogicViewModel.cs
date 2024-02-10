@@ -80,7 +80,7 @@ namespace GameLogic.ViewModels
         /// <summary>
         /// Converts volume value represented by a human-readable integer to a Decibel (dB) value.
         /// In Unity all volumes can be set to a value ranging from -80 to +20 dB.
-        /// This function maps 0 to -80, and values from 1 to 10 to -30 and 20 dB respectively.
+        /// This function maps 0 to -80, and values from 1 to 10 to -30 and 0 dB respectively.
         /// </summary>
         public static int ConvertVolumeValueToDecibels(int value)
         {
