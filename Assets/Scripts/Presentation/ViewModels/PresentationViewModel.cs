@@ -187,13 +187,13 @@ namespace Presentation.ViewModels
 
         public static void SetMusicVolume(int music)
         {
-            Assert.IsTrue(music is >= 0 and <= 10);
+            Assert.IsTrue(music is >= 0 and <= 10, "Volume must be represented by a value randing from 0 to 10.");
             AudioController.SetMusicVolume(music);
         }
 
         public static void SetSoundVolume(int sound)
         {
-            Assert.IsTrue(sound is >= 0 and <= 10);
+            Assert.IsTrue(sound is >= 0 and <= 10, "Volume must be represented by a value randing from 0 to 10.");
             AudioController.SetSoundVolume(sound);
         }
 

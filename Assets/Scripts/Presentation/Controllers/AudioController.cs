@@ -158,9 +158,11 @@ namespace Presentation.Controllers
             _soundAudioSources.Add(source);
         }
 
-        internal static void SetMusicVolume(int music) => _config.AudioMixer.SetFloat(Constants.Music, music);
+        internal static void SetMusicVolume(int music) =>
+            _config.AudioMixer.SetFloat(Constants.Music, Utils.ConvertVolumeToDecibels(music * 10));
 
-        internal static void SetSoundVolume(int sound) => _config.AudioMixer.SetFloat(Constants.Sound, sound);
+        internal static void SetSoundVolume(int sound) =>
+            _config.AudioMixer.SetFloat(Constants.Sound, Utils.ConvertVolumeToDecibels(sound * 10));
 
         [React]
         void OnPlaySound(PlaySoundSignal signal) => PlaySound(signal.SoundType, signal.Position);

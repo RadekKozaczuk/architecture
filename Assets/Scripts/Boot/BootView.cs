@@ -191,6 +191,11 @@ namespace Boot
         static void BootingOnExit()
         {
             Application.backgroundLoadingPriority = ThreadPriority.Normal;
+
+            (int music, int sound) = GameLogicViewModel.LoadVolumeSettings();
+            PresentationViewModel.SetMusicVolume(music);
+            PresentationViewModel.SetSoundVolume(sound);
+
             GameLogicViewModel.BootingOnExit();
             PresentationViewModel.BootingOnExit();
             UIViewModel.BootingOnExit();

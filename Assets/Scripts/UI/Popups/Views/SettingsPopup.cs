@@ -29,8 +29,14 @@ namespace UI.Popups.Views
         SettingsPopup()
             : base(PopupType.Settings) { }
 
-        void Awake()
+        internal override void Initialize()
         {
+            (int music, int sound) = GameLogicViewModel.LoadVolumeSettings();
+            _musicSlider.value = music;
+            _soundSlider.value = sound;
+            _musicVolumeText.text = music.ToString();
+            _soundVolumeText.text = sound.ToString();
+
             _musicSlider.onValueChanged.AddListener(delegate
             {
                 PresentationViewModel.SetMusicVolume((int)_musicSlider.value);
@@ -44,13 +50,6 @@ namespace UI.Popups.Views
             });
 
             _back.onClick.AddListener(Back);
-        }
-
-        internal override void Initialize()
-        {
-            (int music, int sound) = GameLogicViewModel.LoadVolumeSettings();
-            _musicSlider.value = music;
-            _soundSlider.value = sound;
         }
 
         void Back()

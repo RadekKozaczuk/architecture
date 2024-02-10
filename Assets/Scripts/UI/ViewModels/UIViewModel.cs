@@ -1,9 +1,7 @@
 ﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using ControlFlow.DependencyInjector.Attributes;
 using ControlFlow.DependencyInjector.Interfaces;
-using GameLogic.ViewModels;
 using JetBrains.Annotations;
-using Presentation.ViewModels;
 using UI.Config;
 using UI.Controllers;
 using UI.Popups;
@@ -47,12 +45,7 @@ namespace UI.ViewModels
 #endif
         }
 
-        public static void BootingOnExit()
-        {
-            (int music, int sound) = GameLogicViewModel.LoadVolumeSettings();
-            PresentationViewModel.SetMusicVolume(music);
-            PresentationViewModel.SetSoundVolume(sound);
-        }
+        public static void BootingOnExit() { }
 
         public static void MainMenuOnEntry() => _uiConfig.InputActionAsset.FindActionMap(UIConstants.MainMenuActionMap).Enable();
 

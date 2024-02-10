@@ -78,19 +78,6 @@ namespace GameLogic.ViewModels
         public static (int music, int sound) LoadVolumeSettings() => PersistentStorageSystem.LoadVolumeSettings();
 
         /// <summary>
-        /// Converts volume value represented by a human-readable integer to a Decibel (dB) value.
-        /// In Unity all volumes can be set to a value ranging from -80 to +20 dB.
-        /// This function maps 0 to -80, and values from 1 to 10 to -30 and 0 dB respectively.
-        /// </summary>
-        public static int ConvertVolumeValueToDecibels(int value)
-        {
-            if (value == 0)
-                return -80;
-
-            return (int)(-33.3f + value * 3.3f);
-        }
-
-        /// <summary>
         /// If the instance hosted a lobby, the lobby will be deleted.
         /// </summary>
         public static void QuitGame() => LobbySystem.SignOut();
