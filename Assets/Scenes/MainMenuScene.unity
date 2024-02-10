@@ -1137,7 +1137,7 @@ MonoBehaviour:
   _newGame: {fileID: 779899597}
   _coop: {fileID: 1856245661}
   _loadGame: {fileID: 817451513}
-  _options: {fileID: 1707347077}
+  _settings: {fileID: 1707347077}
   _quit: {fileID: 807863823}
 --- !u!1 &1707347074
 GameObject:

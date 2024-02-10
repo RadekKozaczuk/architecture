@@ -2,6 +2,7 @@
 using Common;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace Presentation.Config
 {
@@ -18,5 +19,11 @@ namespace Presentation.Config
         [InfoBox("Element order must match the Music enum.", InfoMessageType.None)]
         [SerializeField]
         internal AssetReferenceAudioClip[] Music;
+
+        [SerializeField]
+        internal AudioMixer AudioMixer;
+
+        [SerializeField]
+        internal AudioMixerGroup AudioMixerSound;
     }
 }
