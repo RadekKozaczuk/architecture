@@ -12,6 +12,7 @@ using Presentation.Views;
 using Shared.Systems;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Scripting;
 
 namespace Presentation.ViewModels
@@ -23,9 +24,6 @@ namespace Presentation.ViewModels
 
         static readonly AudioConfig _audioConfig;
         static readonly PlayerConfig _playerConfig;
-
-        [Inject]
-        readonly AudioController _audioController;
 
         [Inject]
         readonly VFXController _vfxController;
@@ -185,6 +183,18 @@ namespace Presentation.ViewModels
             }
             else
                 PresentationData.Player.Move(movementInput.normalized);
+        }
+
+        public static void SetMusicVolume(int music)
+        {
+            Assert.IsTrue(music is >= 0 and <= 10);
+            AudioController.SetMusicVolume(music);
+        }
+
+        public static void SetSoundVolume(int sound)
+        {
+            Assert.IsTrue(sound is >= 0 and <= 10);
+            AudioController.SetSoundVolume(sound);
         }
 
         public static void SaveGame(BinaryWriter writer)

@@ -1,6 +1,5 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using System.Collections.Generic;
-using Common.Config;
 using Common.Enums;
 using Common.Signals;
 using ControlFlow.Interfaces;
@@ -13,7 +12,6 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.Scripting;
-using AudioConfig = Common.Config.AudioConfig;
 
 namespace Presentation.Controllers
 {
@@ -24,8 +22,7 @@ namespace Presentation.Controllers
     [ReactOnSignals]
     class AudioController : ICustomLateUpdate
     {
-        static readonly Config.AudioConfig _config;
-        static readonly AudioConfig _audioConfig;
+        static readonly AudioConfig _config;
 
         readonly AudioClip?[] _loadedMusic;
         readonly AsyncOperationHandle<AudioClip>[] _asyncOperationHandles;
@@ -155,11 +152,15 @@ namespace Presentation.Controllers
             AudioSource source = Object.Instantiate(_config.AudioSourcePrefab, position, Quaternion.identity,
                                                     PresentationSceneReferenceHolder.AudioContainer);
 
-            source.outputAudioMixerGroup = _audioConfig.AudioMixerSFX;
+            source.outputAudioMixerGroup = _config.AudioMixerSound;
             source.clip = _config.Sounds[(int)sound];
             source.Play();
             _soundAudioSources.Add(source);
         }
+
+        internal static void SetMusicVolume(int music) => _config.AudioMixer.SetFloat(Constants.Music, music);
+
+        internal static void SetSoundVolume(int sound) => _config.AudioMixer.SetFloat(Constants.Sound, sound);
 
         [React]
         void OnPlaySound(PlaySoundSignal signal) => PlaySound(signal.SoundType, signal.Position);

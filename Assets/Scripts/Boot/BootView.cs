@@ -40,8 +40,6 @@ namespace Boot
 
         static readonly SceneConfig _sceneConfig;
 
-        static readonly AudioConfig _audioConfig;
-
         void Awake()
         {
             // increase priority so that main menu can appear faster

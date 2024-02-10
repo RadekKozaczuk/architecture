@@ -1,13 +1,10 @@
 ﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-using Common.Config;
 using UnityEngine;
 
 namespace GameLogic.Systems
 {
     static class PersistentStorageSystem
     {
-        static readonly AudioConfig _config;
-
         internal static void Initialize()
         {
             string musicKey = PersistentStorageKey.Music.ToString();

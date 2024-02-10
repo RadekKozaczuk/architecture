@@ -20,7 +20,10 @@ namespace Presentation.Config
         [SerializeField]
         internal AssetReferenceAudioClip[] Music;
 
+        [SerializeField]
         internal AudioMixer AudioMixer;
-        internal AudioMixerGroup AudioMixerSFX;
+
+        [SerializeField]
+        internal AudioMixerGroup AudioMixerSound;
     }
 }
