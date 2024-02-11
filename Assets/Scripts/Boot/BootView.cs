@@ -54,7 +54,7 @@ namespace Boot
             List<int> stateChangeSceneIds = new ();
             for (int i = 0; i < _sceneConfig.CustomActivation.Length; i++)
             {
-                SceneConfig.ExtActivation? activation = _sceneConfig.CustomActivation[i];
+                SceneConfig.ExtActivation activation = _sceneConfig.CustomActivation[i];
                 if (activation.When == SceneConfig.ActivationMode.OverTime)
                     overTimeSceneIds.Add((int)activation.Level);
                 else if (activation.When == SceneConfig.ActivationMode.StateChange)
