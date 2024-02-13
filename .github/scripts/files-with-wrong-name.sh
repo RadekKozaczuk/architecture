@@ -8,7 +8,6 @@ function CollectFilesThatAreNotPascalCase()
     local anyIncorrect=false
     local fileExtension="*.$1"
     local extensionLenght=${#1}
-    local errorMessage=" is not named with PascalCase(_Variant)"
 
     find "./" -type f -name "$fileExtension" -print0 | 
     while IFS= read -r -d $'\0' file 
@@ -24,10 +23,10 @@ function CollectFilesThatAreNotPascalCase()
                 if [[ $anyIncorrect == false ]]
                 then
                     anyIncorrect=true
-                    echo $'\n\n'"Please consider changes on those $1 files:"
+                    echo $'\n\n'"These \`$1\` files are not named with \`PascalCale(_Variant)\`"
                 fi
                 file=${file:2:${#file}}
-                echo "$file""$errorMessage"
+                echo "- $file"
             fi
         fi
     done
@@ -55,12 +54,12 @@ IncorrectFiles+=$(CollectFilesThatAreNotPascalCase $MusicFiles)
 #CsharpFiles="cs"
 #IncorrectFiles+=$(CollectFilesThatAreNotPascalCase $CsharpFiles)
 
-sed -i '2,$d' BodyFile.txt
+sed -i '2,$d' FilesNameBodyFile.txt
 
 if [[ $IncorrectFiles == "" ]]
 then
-    echo $'Success!\nAll Files are named correctly!' >> BodyFile.txt
+    echo $'Success!\nAll Files are named correctly!' >> FilesNameBodyFile.txt
 else
-    echo $'Failed :c \n'"$IncorrectFiles" >> BodyFile.txt
+    echo $'Failed :c \n'"$IncorrectFiles" >> FilesNameBodyFile.txt
     exit 1
 fi
