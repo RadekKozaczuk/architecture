@@ -16,4 +16,4 @@ MonoBehaviour:
   SwipeMinPercentage: 0.2
   LobbyListElement: {fileID: 8581436061393823233, guid: b44a6980699c9cf4aafd2738daa06453, type: 3}
   LobbyPlayerElementView: {fileID: 2147245011908361434, guid: b5cf0699a571c50458a1a8eb2bfd97b9, type: 3}
-  AudioMixer: {fileID: 24100000, guid: 5d515a76e8c140f418ad97f7588184ae, type: 2}
+  MobileJoystickPrefab: {fileID: 1443536905448313462, guid: 24f7e6c2c0939474eb53e405316fc196, type: 3}

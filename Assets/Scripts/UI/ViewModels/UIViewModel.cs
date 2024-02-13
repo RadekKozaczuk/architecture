@@ -6,6 +6,7 @@ using UI.Config;
 using UI.Controllers;
 using UI.Popups;
 using UI.Systems;
+using UnityEngine;
 using UnityEngine.Scripting;
 
 namespace UI.ViewModels
@@ -53,6 +54,9 @@ namespace UI.ViewModels
 
         public static void GameplayOnEntry()
         {
+            // todo: instantiate mobile joystick here
+            GameObject prefabToUse = _uiConfig.MobileJoystickPrefab;
+
             _uiConfig.InputActionAsset.FindActionMap(UIConstants.GameplayActionMap).Enable();
 
             // this happens only when we start a client game starts
