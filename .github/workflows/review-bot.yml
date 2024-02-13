@@ -1,0 +1,198 @@
+# This script does 3 things: 
+#  - checks if the project assets are in the correct folders 
+#  - checks if the files are properly named
+#  - and finally if the project builds properly using MONO compiler (we cannot use IL2CPP because large runners are too expensive)
+
+# The reasoning behind having all workflows in one file is optimization. 
+# File and name checks take just a few seconds to complete but due to GIT policy actual time is rounded up to whole minutes essentially wasting around 2 minutes per run.
+
+name: Auto Review
+
+run-name: Auto reviewing ${{ github.ref }} branch.
+on: 
+  pull_request:
+    types: [ opened, edited, synchronize ]
+
+jobs:
+  ReviewPullRequest:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        token: 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
+        submodules: true
+
+    - name: Create body file for files name check
+      run: echo $'Files name check status:\nWorking ⚙' > FilesNameBodyFile.txt
+
+    - name: Create body file for files path check
+      run: echo $'Files path check status:\nWorking ⚙' > FilesPathBodyFile.txt
+
+    - name: Create body file for unity build check
+      run: echo $'Unity build status:\nWorking ⚙' > UnityBuildBodyFile.txt
+
+#########################################################################################
+
+    - name: Find comment for files name check
+      if: always()
+      uses: peter-evans/find-comment@v2
+      id: FindCommentFilesName1
+      with:
+        issue-number: ${{ github.event.pull_request.number }}
+        comment-author: 'github-actions[bot]'
+        body-includes: Files name check status
+
+    - name: Find comment for files path check
+      if: always()
+      uses: peter-evans/find-comment@v2
+      id: FindCommentFilesPath1
+      with:
+        issue-number: ${{ github.event.pull_request.number }}
+        comment-author: 'github-actions[bot]'
+        body-includes: Files path check status
+
+    - name: Find comment for unity build check
+      if: always()
+      uses: peter-evans/find-comment@v2
+      id: FindCommentUnityBuild1
+      with:
+        issue-number: ${{ github.event.pull_request.number }}
+        comment-author: 'github-actions[bot]'
+        body-includes: Unity build status
+
+#########################################################################################
+
+    - name: Create or update comment for files name check
+      if: always()
+      uses: peter-evans/create-or-update-comment@v2
+      with:
+        comment-id: ${{ steps.FindCommentFilesName1.outputs.comment-id }}
+        issue-number: ${{ github.event.pull_request.number }}
+        body-file: 'FilesNameBodyFile.txt'
+        edit-mode: replace
+
+    - name: Create or update comment for files path check
+      if: always()
+      uses: peter-evans/create-or-update-comment@v2
+      with:
+        comment-id: ${{ steps.FindCommentFilesPath1.outputs.comment-id }}
+        issue-number: ${{ github.event.pull_request.number }}
+        body-file: 'FilesPathBodyFile.txt'
+        edit-mode: replace
+
+    - name: Create or update comment for unity build check
+      if: always()
+      uses: peter-evans/create-or-update-comment@v2
+      with:
+        comment-id: ${{ steps.FindCommentUnityBuild1.outputs.comment-id }}
+        issue-number: ${{ github.event.pull_request.number }}
+        body-file: 'UnityBuildBodyFile.txt'
+        edit-mode: replace
+
+#########################################################################################
+
+    - name: Check files name
+      run: chmod +x ./.github/scripts/files-with-wrong-name.sh && ./.github/scripts/files-with-wrong-name.sh false
+
+    - name: Find comment for files name check
+      if: always()
+      uses: peter-evans/find-comment@v2
+      id: FindCommentFilesName2
+      with:
+        issue-number: ${{ github.event.pull_request.number }}
+        comment-author: 'github-actions[bot]'
+        body-includes: Files name check status
+
+    - name: Create or update comment for files name check
+      if: always()
+      uses: peter-evans/create-or-update-comment@v3
+      with:
+        comment-id: ${{ steps.FindCommentFilesName2.outputs.comment-id }}
+        issue-number: ${{ github.event.pull_request.number }}
+        body-file: 'FilesNameBodyFile.txt'
+        edit-mode: replace
+
+#########################################################################################
+
+    - name: Check files path
+      run: chmod +x ./.github/scripts/files-with-wrong-path.sh && ./.github/scripts/files-with-wrong-path.sh false
+
+    - name: Find comment for files path check
+      if: always()
+      uses: peter-evans/find-comment@v2
+      id: FindCommentFilesPath2
+      with:
+        issue-number: ${{ github.event.pull_request.number }}
+        comment-author: 'github-actions[bot]'
+        body-includes: Files path check status
+
+    - name: Create or update comment check
+      if: always()
+      uses: peter-evans/create-or-update-comment@v3
+      with:
+        comment-id: ${{ steps.FindCommentFilesPath2.outputs.comment-id }}
+        issue-number: ${{ github.event.pull_request.number }}
+        body-file: 'FilesPathBodyFile.txt'
+        edit-mode: replace
+
+#########################################################################################
+
+    - name: Restore caches
+      uses: actions/cache@v4
+      with:
+        path: Library
+        key: Library-StandaloneWindows64
+        restore-keys: Library-
+
+    - name: Set scripting backend to mono
+      run: sudo mv "./ProjectSettings/ProjectSettings-MONO.asset" "./ProjectSettings/ProjectSettings.asset"
+
+    - name: Build unity project
+      uses: game-ci/unity-builder@v4
+      continue-on-error: true
+      env:
+        UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+        UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      with:
+        targetPlatform: StandaloneWindows64
+        allowDirtyBuild: true
+
+    - name: Set unity build check success output
+      if: success()
+      run: echo $'Unity build status:\nSuccess!\nThere were no problems with building unity project' > UnityBuildBodyFile.txt
+
+    - name: Set unity build check failure output
+      if: failure()
+      run: echo $'Unity build status:\nFailed\n Read action details for more informations' > UnityBuildBodyFile.txt
+
+    - name: Find comment for unity build check
+      if: always()
+      uses: peter-evans/find-comment@v2
+      id: FindCommentUnityBuild2
+      with:
+        issue-number: ${{ github.event.pull_request.number }}
+        comment-author: 'github-actions[bot]'
+        body-includes: Unity build status
+
+    - name: Create or update comment for unity build check
+      if: always()
+      uses: peter-evans/create-or-update-comment@v3
+      with:
+        comment-id: ${{ steps.FindCommentUnityBuild2.outputs.comment-id }}
+        issue-number: ${{ github.event.pull_request.number }}
+        body-file: 'UnityBuildBodyFile.txt'
+        edit-mode: replace
+
+#########################################################################################
+
+    - name: Upload builded unity project
+      uses: actions/upload-artifact@v4
+      continue-on-error: true
+      with:
+        name: BuildedUnityProjectOnMono
+        path: build
