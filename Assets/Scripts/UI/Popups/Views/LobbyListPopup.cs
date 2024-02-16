@@ -59,7 +59,11 @@ namespace UI.Popups.Views
                 PresentationViewModel.PlaySound(Sound.ClickSelect);
                 PopupSystem.ShowPopup(PopupType.CreateLobby);
             });
-            _joinByCode.onClick.AddListener(() => GameLogicViewModel.JoinLobbyByCode(_lobbyCodeInput.text, JoinLobbyResultCallback));
+            _joinByCode.onClick.AddListener(() =>
+            {
+                PresentationViewModel.PlaySound(Sound.ClickSelect);
+                GameLogicViewModel.JoinLobbyByCode(_lobbyCodeInput.text, JoinLobbyResultCallback);
+            });
             _joinByCode.interactable = false;
             _lobbyCodeInput.onValueChanged.AddListener(_ => LobbyCodeInputOnValueChanged());
         }
