@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Common;
 using Common.Enums;
 using GameLogic.ViewModels;
+using Presentation.ViewModels;
 using TMPro;
 using UI.Config;
 using UI.Views;
@@ -117,6 +118,7 @@ namespace UI.Popups.Views
 
         void StartAction()
         {
+            PresentationViewModel.PlaySound(Sound.ClickSelect);
             PopupSystem.CloseCurrentPopup();
             _start.interactable = false;
             CommonData.CurrentLevel = Level.HubLocation;
@@ -127,12 +129,14 @@ namespace UI.Popups.Views
 
         static void LeaveAction()
         {
+            PresentationViewModel.PlaySound(Sound.ClickSelect);
             GameLogicViewModel.LeaveLobby();
             PopupSystem.CloseCurrentPopup();
         }
 
         void MuteAction()
         {
+            PresentationViewModel.PlaySound(Sound.ClickSelect);
             _isMuted = !_isMuted;
             _mute.image.color = _isMuted ? Color.red : Color.white;
             GameLogicViewModel.ToggleMuteInput(_isMuted);

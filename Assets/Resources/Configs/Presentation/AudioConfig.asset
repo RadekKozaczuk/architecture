@@ -9,19 +9,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a61ab515fcc744f68ab90c1b042d30df, type: 3}
+  m_Script: {fileID: 11500000, guid: 16f393ba19da41068f96c4041a585720, type: 3}
   m_Name: AudioConfig
   m_EditorClassIdentifier: 
   AudioSourcePrefab: {fileID: 270683169326500953, guid: 201f3027257a0384c91e03f12f4cce60, type: 3}
+  AudioMixer: {fileID: 24100000, guid: 5d515a76e8c140f418ad97f7588184ae, type: 2}
+  AudioMixerSound: {fileID: -5521278846932173843, guid: 5d515a76e8c140f418ad97f7588184ae, type: 2}
   Sounds:
-  - {fileID: 8300000, guid: 9c948bca85a4b974aa2bf04aa651f988, type: 3}
-  - {fileID: 8300000, guid: 0b5cf9ec6c6d5844a9ef49861f441286, type: 3}
-  - {fileID: 8300000, guid: a3fe7648c24f6194bad6cdfd064db196, type: 3}
-  - {fileID: 8300000, guid: 79d828851830ca24688879147edd2279, type: 3}
+  - {fileID: 11400000, guid: 386d6387a59188d47b7cb5b1dd909265, type: 2}
+  - {fileID: 11400000, guid: 712794b7513553c4db375ceff6602269, type: 2}
   Music:
   - m_AssetGUID: d80be2c1fcbd1ee4b90e7bba860825ba
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  AudioMixer: {fileID: 24100000, guid: 5d515a76e8c140f418ad97f7588184ae, type: 2}
-  AudioMixerSound: {fileID: -5521278846932173843, guid: 5d515a76e8c140f418ad97f7588184ae, type: 2}
+  SoundPoolSize: 5

@@ -54,6 +54,7 @@ namespace UI.Popups.Views
 
         void Back()
         {
+            PresentationViewModel.PlaySound(Sound.ClickSelect);
             GameLogicViewModel.SaveVolumeSettings((int)_musicSlider.value, (int)_soundSlider.value);
             PopupSystem.CloseCurrentPopup();
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Common;
 using Common.Enums;
 using GameLogic.ViewModels;
+using Presentation.ViewModels;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -40,7 +41,11 @@ namespace UI.Popups.Views
         {
             _lobbyToReconnect.text = lobbyName;
             _lobbyToReconnectId = lobbyId;
-            _join.onClick.AddListener(() => GameLogicViewModel.RejoinToLobby(lobbyId, JoinLobbyResultCallback));
+            _join.onClick.AddListener(() =>
+            {
+                PresentationViewModel.PlaySound(Sound.ClickSelect);
+                GameLogicViewModel.RejoinToLobby(lobbyId, JoinLobbyResultCallback);
+            });
             _join.interactable = true;
         }
 

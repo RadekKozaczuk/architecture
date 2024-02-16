@@ -17,17 +17,12 @@ namespace Presentation
     {
         internal static PresentationViewModel ViewModel => _instance._viewModel;
 
-        internal static AudioController AudioController => _instance._audioController;
-
         internal static VFXController VFXController => _instance._vfxController;
 
         static PresentationReferenceHolder _instance;
 
         [Inject]
         readonly PresentationViewModel _viewModel;
-
-        [Inject]
-        readonly AudioController _audioController;
 
         [Inject]
         readonly VFXController _vfxController;

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 300f356bf98d470d9b24cc5b0755833b, type: 3}
+  m_Name: Hit
+  m_EditorClassIdentifier: 
+  Sounds:
+  - Sound: {fileID: 8300000, guid: 9c948bca85a4b974aa2bf04aa651f988, type: 3}
+    Probability: 25
+  - Sound: {fileID: 8300000, guid: 0b5cf9ec6c6d5844a9ef49861f441286, type: 3}
+    Probability: 25
+  - Sound: {fileID: 8300000, guid: a3fe7648c24f6194bad6cdfd064db196, type: 3}
+    Probability: 25
+  - Sound: {fileID: 8300000, guid: 79d828851830ca24688879147edd2279, type: 3}
+    Probability: 25

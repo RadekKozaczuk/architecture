@@ -5,6 +5,7 @@ using Common;
 using Common.Dtos;
 using Common.Enums;
 using GameLogic.ViewModels;
+using Presentation.ViewModels;
 using TMPro;
 using UI.Config;
 using UI.Views;
@@ -47,9 +48,17 @@ namespace UI.Popups.Views
         {
             _refresh.onClick.AddListener(RefreshAction);
             _join.onClick.AddListener(
-                () => GameLogicViewModel.JoinLobbyById(LobbyListElementView.SelectedLobby!.LobbyId, JoinLobbyResultCallback)); // join the selected
+                () =>
+                {
+                    PresentationViewModel.PlaySound(Sound.ClickSelect);
+                    GameLogicViewModel.JoinLobbyById(LobbyListElementView.SelectedLobby!.LobbyId, JoinLobbyResultCallback);
+                }); // join the selected
             _join.interactable = false;
-            _create.onClick.AddListener(() => PopupSystem.ShowPopup(PopupType.CreateLobby));
+            _create.onClick.AddListener(() =>
+            {
+                PresentationViewModel.PlaySound(Sound.ClickSelect);
+                PopupSystem.ShowPopup(PopupType.CreateLobby);
+            });
             _joinByCode.onClick.AddListener(() => GameLogicViewModel.JoinLobbyByCode(_lobbyCodeInput.text, JoinLobbyResultCallback));
             _joinByCode.interactable = false;
             _lobbyCodeInput.onValueChanged.AddListener(_ => LobbyCodeInputOnValueChanged());
@@ -70,9 +79,10 @@ namespace UI.Popups.Views
 
         void RefreshAction()
         {
+            PresentationViewModel.PlaySound(Sound.ClickSelect);
             _refresh.interactable = false;
-            float delay = 2f;
-            StartCoroutine(EnableButtonAfterDelay(delay));
+            const float Delay = 2f;
+            StartCoroutine(EnableButtonAfterDelay(Delay));
             GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback);
         }
 

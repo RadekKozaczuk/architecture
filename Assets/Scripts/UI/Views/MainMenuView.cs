@@ -3,6 +3,7 @@ using Common;
 using Common.Enums;
 using Common.Systems;
 using GameLogic.ViewModels;
+using Presentation.ViewModels;
 using UI.Popups;
 using UnityEngine;
 using UnityEngine.UI;
@@ -42,19 +43,33 @@ namespace UI.Views
 
         static void NewGame()
         {
+            PresentationViewModel.PlaySound(Sound.ClickSelect);
             CommonData.CurrentLevel = Level.HubLocation;
             GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
         }
 
-        static void Coop() => PopupSystem.ShowPopup(PopupType.SigningIn);
+        static void LoadGame()
+        {
+            PresentationViewModel.PlaySound(Sound.ClickSelect);
+            GameStateSystem.RequestStateChange(GameState.Gameplay, parameters: new[] {(StateTransitionParameter.LoadGameRequested, (object)true)});
+        }
 
-        static void LoadGame() =>
-            GameStateSystem.RequestStateChange(GameState.Gameplay,
-                                               parameters: new []{(StateTransitionParameter.LoadGameRequested, (object)true)});
-        static void Settings() => PopupSystem.ShowPopup(PopupType.Settings);
+        static void Coop()
+        {
+            PresentationViewModel.PlaySound(Sound.ClickSelect);
+            PopupSystem.ShowPopup(PopupType.SigningIn);
+        }
+
+        static void Settings()
+        {
+            PresentationViewModel.PlaySound(Sound.ClickSelect);
+            PopupSystem.ShowPopup(PopupType.Settings);
+        }
 
         static void Quit()
         {
+            PresentationViewModel.PlaySound(Sound.ClickSelect);
+
 #if UNITY_EDITOR
             EditorApplication.isPlaying = false;
 #else

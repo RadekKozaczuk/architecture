@@ -1,8 +1,10 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+using Common.Enums;
 using ControlFlow.DependencyInjector.Attributes;
 using ControlFlow.DependencyInjector.Interfaces;
 using ControlFlow.Interfaces;
 using JetBrains.Annotations;
+using Shared.Systems;
 using UnityEngine.Scripting;
 
 namespace Presentation.Controllers
@@ -24,9 +26,6 @@ namespace Presentation.Controllers
         [Inject]
         readonly VFXController _vfxController;
 
-        [Inject]
-        readonly AudioController _audioController;
-
         static bool _coreSceneLoaded;
 
         [Preserve]
@@ -45,9 +44,13 @@ namespace Presentation.Controllers
         public void CustomLateUpdate()
         {
             _vfxController.CustomLateUpdate();
-            _audioController.CustomLateUpdate();
         }
 
-        internal static void OnCoreSceneLoaded() => _coreSceneLoaded = true;
+        internal static void OnCoreSceneLoaded()
+        {
+            SoundSystem<Sound>.Initialize(PresentationSceneReferenceHolder.AudioContainer);
+            MusicSystem<Music>.Initialize(PresentationSceneReferenceHolder.MusicAudioSource);
+            _coreSceneLoaded = true;
+        }
     }
 }

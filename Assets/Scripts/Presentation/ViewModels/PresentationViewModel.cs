@@ -22,7 +22,6 @@ namespace Presentation.ViewModels
     {
         static PresentationViewModel _instance;
 
-        static readonly AudioConfig _audioConfig;
         static readonly PlayerConfig _playerConfig;
 
         [Inject]
@@ -142,16 +141,12 @@ namespace Presentation.ViewModels
 
         public static void MainMenuOnEntry()
         {
-            PresentationReferenceHolder.AudioController.LoadMusic(Music.MainMenu);
-            PresentationReferenceHolder.AudioController.PlayMusicWhenReady(Music.MainMenu);
+            MusicSystem<Music>.LoadAndPlayWhenReady(Music.MainMenu);
             PresentationSceneReferenceHolder.GameplayCamera.gameObject.SetActive(false);
             PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(true);
         }
 
-        public static void MainMenuOnExit()
-        {
-            PresentationReferenceHolder.AudioController.StopMusic();
-        }
+        public static void MainMenuOnExit() => MusicSystem<Music>.Stop();
 
         public static void GameplayOnEntry()
         {
@@ -166,7 +161,7 @@ namespace Presentation.ViewModels
                 int soundId = Random.Range(0, 4);
 
                 PresentationReferenceHolder.VFXController.SpawnParticleEffect(VFX.HitEffect, new Vector3(x, 0f, z));
-                AudioController.PlaySound((Sound)soundId, new Vector3(x, 0f, z));
+                SoundSystem<Sound>.Play((Sound)soundId, new Vector3(x, 0f, z));
             }
         }
 
@@ -188,14 +183,16 @@ namespace Presentation.ViewModels
         public static void SetMusicVolume(int music)
         {
             Assert.IsTrue(music is >= 0 and <= 10, "Volume must be represented by a value randing from 0 to 10.");
-            AudioController.SetMusicVolume(music);
+            MusicSystem<Music>.Volume = music;
         }
 
         public static void SetSoundVolume(int sound)
         {
             Assert.IsTrue(sound is >= 0 and <= 10, "Volume must be represented by a value randing from 0 to 10.");
-            AudioController.SetSoundVolume(sound);
+            SoundSystem<Sound>.Volume = sound;
         }
+
+        public static void PlaySound(Sound sound) => SoundSystem<Sound>.Play(sound);
 
         public static void SaveGame(BinaryWriter writer)
         {
