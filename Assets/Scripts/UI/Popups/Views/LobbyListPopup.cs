@@ -16,7 +16,7 @@ using UnityEngine.UI;
 namespace UI.Popups.Views
 {
     [DisallowMultipleComponent]
-    class LobbyListPopup : AbstractPopupView
+    class LobbyListPopup : AbstractPopup
     {
         [SerializeField]
         Button _refresh;

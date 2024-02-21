@@ -14,7 +14,7 @@ using UnityEngine.UI;
 namespace UI.Popups.Views
 {
     [DisallowMultipleComponent]
-    class LobbyPopup : AbstractPopupView
+    class LobbyPopup : AbstractPopup
     {
         [SerializeField]
         TextMeshProUGUI _lobbyName;

@@ -5,11 +5,11 @@ using UnityEngine;
 namespace UI.Popups.Views
 {
     [DisallowMultipleComponent]
-    abstract class AbstractPopupView : MonoBehaviour
+    abstract class AbstractPopup : MonoBehaviour
     {
         internal readonly PopupType Type;
 
-        protected AbstractPopupView(PopupType type) => Type = type;
+        protected AbstractPopup(PopupType type) => Type = type;
 
         internal virtual void Initialize() { }
 

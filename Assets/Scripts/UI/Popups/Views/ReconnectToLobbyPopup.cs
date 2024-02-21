@@ -11,7 +11,7 @@ using UnityEngine.UI;
 namespace UI.Popups.Views
 {
     [DisallowMultipleComponent]
-    class ReconnectToLobbyPopup : AbstractPopupView
+    class ReconnectToLobbyPopup : AbstractPopup
     {
         [SerializeField]
         TextMeshProUGUI _lobbyToReconnect;

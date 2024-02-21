@@ -10,7 +10,7 @@ using UnityEngine.UI;
 namespace UI.Popups.Views
 {
     [DisallowMultipleComponent]
-    class QuitGamePopup : AbstractPopupView
+    class QuitGamePopup : AbstractPopup
     {
         [SerializeField]
         Button _saveGame;

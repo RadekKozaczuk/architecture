@@ -11,7 +11,7 @@ using UnityEngine.UI;
 namespace UI.Popups.Views
 {
     [DisallowMultipleComponent]
-    class CreateLobbyPopup : AbstractPopupView
+    class CreateLobbyPopup : AbstractPopup
     {
         [SerializeField]
         TMP_InputField _input;

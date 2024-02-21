@@ -9,7 +9,7 @@ using UnityEngine.UI;
 namespace UI.Popups.Views
 {
     [DisallowMultipleComponent]
-    class SettingsPopup : AbstractPopupView
+    class SettingsPopup : AbstractPopup
     {
         [SerializeField]
         TextMeshProUGUI _musicVolumeText;
