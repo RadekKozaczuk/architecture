@@ -26,11 +26,16 @@ namespace UI.Popups.Views
         [SerializeField]
         Button _back;
 
+        [SerializeField]
+        RectTransform _rectTransform;
+
         SettingsPopup()
             : base(PopupType.Settings) { }
 
         internal override void Initialize()
         {
+            PopupSystem.SetupPopupSize(_rectTransform);
+
             (int music, int sound) = GameLogicViewModel.LoadVolumeSettings();
             _musicSlider.value = music;
             _soundSlider.value = sound;

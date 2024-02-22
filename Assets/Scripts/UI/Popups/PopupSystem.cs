@@ -77,6 +77,18 @@ namespace UI.Popups
             ShowNextPopupFromQueueIfAny();
         }
 
+        internal static void SetupPopupSize(RectTransform rectTransform)
+        {
+            // Check the screen width
+            float screenWidth = RectTransformUtility.PixelAdjustRect(rectTransform, UISceneReferenceHolder.Canvas).width;
+
+            float widthDifferenceToSetup = screenWidth * 0.3f;
+            float heightDiffrenceToSetup = widthDifferenceToSetup * 0.56f;
+
+            // Setup popup size
+            rectTransform.sizeDelta = new Vector2(-widthDifferenceToSetup, -heightDiffrenceToSetup);
+        }
+
         static void InstantiatePopup(AbstractPopup prefab, bool blockingPanel)
         {
             if (blockingPanel && _blockingPanel == null)
