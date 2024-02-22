@@ -12,6 +12,9 @@ namespace UI.Popups.Views
     class SettingsPopup : AbstractPopup
     {
         [SerializeField]
+        RectTransform _rectTransform;
+
+        [SerializeField]
         TextMeshProUGUI _musicVolumeText;
 
         [SerializeField]
@@ -25,9 +28,6 @@ namespace UI.Popups.Views
 
         [SerializeField]
         Button _back;
-
-        [SerializeField]
-        RectTransform _rectTransform;
 
         SettingsPopup()
             : base(PopupType.Settings) { }

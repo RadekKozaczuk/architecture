@@ -14,6 +14,9 @@ namespace UI.Popups.Views
     class CreateLobbyPopup : AbstractPopup
     {
         [SerializeField]
+        RectTransform _rectTransform;
+
+        [SerializeField]
         TMP_InputField _input;
 
         [SerializeField]
@@ -35,6 +38,8 @@ namespace UI.Popups.Views
 
         void Awake()
         {
+            PopupSystem.SetupPopupSize(_rectTransform, true);
+
             _input.onValueChanged.AddListener(InputChanged);
             _slider.onValueChanged.AddListener(SliderChanged);
             _create.onClick.AddListener(CreateAction);

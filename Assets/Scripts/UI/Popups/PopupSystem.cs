@@ -77,13 +77,41 @@ namespace UI.Popups
             ShowNextPopupFromQueueIfAny();
         }
 
-        internal static void SetupPopupSize(RectTransform rectTransform)
+        internal static void SetupPopupSize(RectTransform rectTransform, bool popupOrientationIsPortrait = false)
         {
-            // Check the screen width
-            float screenWidth = RectTransformUtility.PixelAdjustRect(rectTransform, UISceneReferenceHolder.Canvas).width;
+            // Check the screen orientation and size
+            Rect rect = RectTransformUtility.PixelAdjustRect(rectTransform, UISceneReferenceHolder.Canvas);
+            float screenWidth = rect.width;
+            float screenHeight = rect.height;
+            bool screenIsPortrait = false;
 
-            float widthDifferenceToSetup = screenWidth * 0.3f;
-            float heightDiffrenceToSetup = widthDifferenceToSetup * 0.56f;
+            if (screenWidth < screenHeight)
+                screenIsPortrait = true;
+
+            // Calculate popup scaling using screen size/oreientation
+            float widthDifferenceToSetup;
+            float heightDiffrenceToSetup;
+
+            if (screenIsPortrait && popupOrientationIsPortrait)
+            {
+                widthDifferenceToSetup = screenWidth * 0.2f;
+                heightDiffrenceToSetup = screenHeight * 0.2f;
+            }
+            else if (screenIsPortrait && !popupOrientationIsPortrait)
+            {
+                widthDifferenceToSetup = screenWidth * 0.1f;
+                heightDiffrenceToSetup = screenHeight * 0.6f;
+            }
+            else if (!screenIsPortrait && popupOrientationIsPortrait)
+            {
+                widthDifferenceToSetup = screenWidth * 0.6f;
+                heightDiffrenceToSetup = screenHeight * 0.1f;
+            }
+            else
+            {
+                widthDifferenceToSetup = screenWidth * 0.3f;
+                heightDiffrenceToSetup = screenHeight * 0.3f;
+            }
 
             // Setup popup size
             rectTransform.sizeDelta = new Vector2(-widthDifferenceToSetup, -heightDiffrenceToSetup);
