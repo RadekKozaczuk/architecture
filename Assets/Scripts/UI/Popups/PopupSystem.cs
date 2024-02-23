@@ -77,10 +77,10 @@ namespace UI.Popups
             ShowNextPopupFromQueueIfAny();
         }
 
-        internal static void SetupPopupSize(RectTransform rectTransform, bool popupOrientationIsPortrait = false)
+        internal static void SetupPopupSize(RectTransform popupRectTransform, bool popupOrientationIsPortrait)
         {
             // Check the screen orientation and size
-            Rect rect = RectTransformUtility.PixelAdjustRect(rectTransform, UISceneReferenceHolder.Canvas);
+            Rect rect = RectTransformUtility.PixelAdjustRect(UISceneReferenceHolder.ScreenSpaceRectTransform, UISceneReferenceHolder.Canvas);
             float screenWidth = rect.width;
             float screenHeight = rect.height;
             bool screenIsPortrait = false;
@@ -89,32 +89,32 @@ namespace UI.Popups
                 screenIsPortrait = true;
 
             // Calculate popup scaling using screen size/oreientation
-            float widthDifferenceToSetup;
-            float heightDiffrenceToSetup;
+            float newWidth;
+            float newHeight;
 
-            if (screenIsPortrait && popupOrientationIsPortrait)
+            if (screenIsPortrait && popupOrientationIsPortrait) // if both are portrait
             {
-                widthDifferenceToSetup = screenWidth * 0.2f;
-                heightDiffrenceToSetup = screenHeight * 0.2f;
+                newWidth = screenWidth * 0.8f;
+                newHeight = newWidth * 1.56f;
             }
-            else if (screenIsPortrait && !popupOrientationIsPortrait)
+            else if (screenIsPortrait && !popupOrientationIsPortrait) // if only screen is portrait
             {
-                widthDifferenceToSetup = screenWidth * 0.1f;
-                heightDiffrenceToSetup = screenHeight * 0.6f;
+                newWidth = screenWidth * 0.9f;
+                newHeight = newWidth * 0.56f;
             }
-            else if (!screenIsPortrait && popupOrientationIsPortrait)
+            else if (!screenIsPortrait && popupOrientationIsPortrait) // if only popup is portrait
             {
-                widthDifferenceToSetup = screenWidth * 0.6f;
-                heightDiffrenceToSetup = screenHeight * 0.1f;
+                newWidth = screenWidth * 0.3f;
+                newHeight = newWidth * 1.56f;
             }
-            else
+            else // if both are landscape
             {
-                widthDifferenceToSetup = screenWidth * 0.3f;
-                heightDiffrenceToSetup = screenHeight * 0.3f;
+                newWidth = screenWidth * 0.7f;
+                newHeight = newWidth * 0.56f;
             }
 
-            // Setup popup size
-            rectTransform.sizeDelta = new Vector2(-widthDifferenceToSetup, -heightDiffrenceToSetup);
+            // Setup new popup size
+            popupRectTransform.sizeDelta = new Vector2(newWidth, newHeight);
         }
 
         static void InstantiatePopup(AbstractPopup prefab, bool blockingPanel)

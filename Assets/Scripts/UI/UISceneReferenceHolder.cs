@@ -11,6 +11,7 @@ namespace UI
     {
         internal static Transform PopupContainer;
         internal static Canvas Canvas;
+        internal static RectTransform ScreenSpaceRectTransform;
 
         [SerializeField]
         Transform _popupContainer;
@@ -18,10 +19,14 @@ namespace UI
         [SerializeField]
         Canvas _canvas;
 
+        [SerializeField]
+        RectTransform _screenSpaceRectTransform;
+
         void Awake()
         {
             PopupContainer = _popupContainer;
             Canvas = _canvas;
+            ScreenSpaceRectTransform = _screenSpaceRectTransform;
         }
     }
 }

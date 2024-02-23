@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace UI.Popups
 {
+    [ExecuteInEditMode]
     class SettingsSlider : MonoBehaviour
     {
         [SerializeField]
@@ -13,8 +14,19 @@ namespace UI.Popups
 
         void Awake()
         {
+            SetupNewSize();
+        }
+
+        void Update()
+        {
+            if (!Application.isPlaying)
+                SetupNewSize();
+        }
+
+        void SetupNewSize()
+        {
             float handleSlideAreaHeight = RectTransformUtility.PixelAdjustRect(_handleSlideArea, UISceneReferenceHolder.Canvas).height;
-            _handle.sizeDelta = new Vector2(handleSlideAreaHeight * 0.75f, 0);
+            _handle.sizeDelta = new Vector2(handleSlideAreaHeight, 0);
         }
     }
 }
