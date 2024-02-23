@@ -32,7 +32,7 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3935040613451454680}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.1, y: 0.82}
+  m_AnchorMin: {x: 0.1, y: 0.8}
   m_AnchorMax: {x: 0.9, y: 0.97}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
@@ -128,7 +128,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 5, y: 10, z: 5, w: 10}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -360,7 +360,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 5, y: 10, z: 5, w: 10}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -610,7 +610,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4614081858484434779, guid: aef918b4c1bf3eb45a7ff77904faa2e2, type: 3}
       propertyPath: m_fontSize
-      value: 37.7
+      value: 28.75
       objectReference: {fileID: 0}
     - target: {fileID: 4639556359363279940, guid: aef918b4c1bf3eb45a7ff77904faa2e2, type: 3}
       propertyPath: m_AnchorMax.y
@@ -618,11 +618,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4639556359363279940, guid: aef918b4c1bf3eb45a7ff77904faa2e2, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 28.079998
+      value: 57.563995
       objectReference: {fileID: 0}
     - target: {fileID: 5954241417380651242, guid: aef918b4c1bf3eb45a7ff77904faa2e2, type: 3}
       propertyPath: m_fontSize
-      value: 37.7
+      value: 28.75
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -758,7 +758,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4614081858484434779, guid: aef918b4c1bf3eb45a7ff77904faa2e2, type: 3}
       propertyPath: m_fontSize
-      value: 37.7
+      value: 28.75
       objectReference: {fileID: 0}
     - target: {fileID: 4639556359363279940, guid: aef918b4c1bf3eb45a7ff77904faa2e2, type: 3}
       propertyPath: m_AnchorMax.y
@@ -766,11 +766,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4639556359363279940, guid: aef918b4c1bf3eb45a7ff77904faa2e2, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 28.079998
+      value: 57.563995
       objectReference: {fileID: 0}
     - target: {fileID: 5954241417380651242, guid: aef918b4c1bf3eb45a7ff77904faa2e2, type: 3}
       propertyPath: m_fontSize
-      value: 37.7
+      value: 28.75
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
