@@ -100,7 +100,7 @@ namespace UI.Popups
             else if (screenIsPortrait && !popupOrientationIsPortrait) // if only screen is portrait
             {
                 newWidth = screenWidth * 0.9f;
-                newHeight = newWidth * 0.56f;
+                newHeight = newWidth * 0.66f;
             }
             else if (!screenIsPortrait && popupOrientationIsPortrait) // if only popup is portrait
             {
@@ -110,7 +110,7 @@ namespace UI.Popups
             else // if both are landscape
             {
                 newWidth = screenWidth * 0.7f;
-                newHeight = newWidth * 0.56f;
+                newHeight = newWidth * 0.66f;
             }
 
             // Setup new popup size
