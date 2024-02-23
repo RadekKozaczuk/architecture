@@ -88,7 +88,7 @@ namespace UI.Popups
             if (screenWidth < screenHeight)
                 screenIsPortrait = true;
 
-            // Calculate popup scaling using screen size/oreientation
+            // Calculate popup scaling using screen size/orientation
             float newPopupWidth;
             float newPopupHeight;
 
@@ -109,7 +109,7 @@ namespace UI.Popups
             }
             else // if both aren't portrait
             {
-                newPopupWidth = screenWidth * 0.6f;
+                newPopupWidth = screenWidth * 0.5f;
                 newPopupHeight = newPopupWidth * 0.66f;
             }
 
