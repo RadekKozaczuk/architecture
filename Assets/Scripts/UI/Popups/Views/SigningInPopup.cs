@@ -14,6 +14,9 @@ namespace UI.Popups.Views
     [DisallowMultipleComponent]
     class SigningInPopup : AbstractPopup //In the future we can use this popup for signing in (login and password)
     {
+        [SerializeField]
+        RectTransform _rectTransform;
+
         List<string> _joinedLobbiesId = new();
 
         SigningInPopup()
@@ -21,6 +24,8 @@ namespace UI.Popups.Views
 
         internal override void Initialize()
         {
+            PopupSystem.SetupPopupSize(_rectTransform, false);
+
             if (UnityServices.State == ServicesInitializationState.Initialized)
             {
                 CheckIsUserHasJoinedLobbies();
