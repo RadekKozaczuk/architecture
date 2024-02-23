@@ -14,6 +14,9 @@ namespace UI.Popups.Views
     class ReconnectToLobbyPopup : AbstractPopup
     {
         [SerializeField]
+        RectTransform _rectTransform;
+
+        [SerializeField]
         TextMeshProUGUI _lobbyToReconnect;
 
         [SerializeField]
@@ -29,6 +32,8 @@ namespace UI.Popups.Views
 
         void Awake()
         {
+            PopupSystem.SetupPopupSize(_rectTransform, false);
+
             _lobbyList.interactable = true;
             _lobbyList.onClick.AddListener(BackToLobbyListAction);
         }
