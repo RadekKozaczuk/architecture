@@ -13,6 +13,9 @@ namespace UI.Popups.Views
     class QuitGamePopup : AbstractPopup
     {
         [SerializeField]
+        RectTransform _rectTransform;
+
+        [SerializeField]
         Button _saveGame;
 
         [SerializeField]
@@ -29,6 +32,8 @@ namespace UI.Popups.Views
 
         void Awake()
         {
+            PopupSystem.SetupPopupSize(_rectTransform, true);
+
             _saveGame.onClick.AddListener(SaveGameAction);
             _loadGame.onClick.AddListener(LoadGameAction);
             _loadGame.interactable = GameLogicViewModel.SaveFileExist;
