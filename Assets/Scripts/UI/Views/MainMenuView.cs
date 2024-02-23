@@ -17,6 +17,12 @@ namespace UI.Views
     class MainMenuView : MonoBehaviour
     {
         [SerializeField]
+        RectTransform _rectTransform;
+
+        [SerializeField]
+        Canvas _canvas;
+
+        [SerializeField]
         Button _newGame;
 
         [SerializeField]
@@ -33,12 +39,26 @@ namespace UI.Views
 
         void Awake()
         {
+            AnchorCheck();
+
             _newGame.onClick.AddListener(NewGame);
             _coop.onClick.AddListener(Coop);
             _loadGame.onClick.AddListener(LoadGame);
             _loadGame.interactable = GameLogicViewModel.SaveFileExist;
             _settings.onClick.AddListener(Settings);
             _quit.onClick.AddListener(Quit);
+        }
+
+        void AnchorCheck()
+        {
+            Rect rect = RectTransformUtility.PixelAdjustRect(_canvas.GetComponent<RectTransform>(), _canvas);
+
+            // If screen is in portrait mode
+            if (rect.width < rect.height)
+            {
+                _rectTransform.anchorMin = new Vector2(0.05f, _rectTransform.anchorMin.y);
+                _rectTransform.anchorMax = new Vector2(0.95f, _rectTransform.anchorMax.y);
+            }
         }
 
         static void NewGame()

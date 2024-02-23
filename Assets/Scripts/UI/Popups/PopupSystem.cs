@@ -89,32 +89,32 @@ namespace UI.Popups
                 screenIsPortrait = true;
 
             // Calculate popup scaling using screen size/oreientation
-            float newWidth;
-            float newHeight;
+            float newPopupWidth;
+            float newPopupHeight;
 
             if (screenIsPortrait && popupOrientationIsPortrait) // if both are portrait
             {
-                newWidth = screenWidth * 0.8f;
-                newHeight = newWidth * 1.56f;
+                newPopupWidth = screenWidth * 0.8f;
+                newPopupHeight = newPopupWidth * 1.56f;
             }
             else if (screenIsPortrait && !popupOrientationIsPortrait) // if only screen is portrait
             {
-                newWidth = screenWidth * 0.9f;
-                newHeight = newWidth * 0.66f;
+                newPopupWidth = screenWidth * 0.9f;
+                newPopupHeight = newPopupWidth * 0.66f;
             }
             else if (!screenIsPortrait && popupOrientationIsPortrait) // if only popup is portrait
             {
-                newWidth = screenWidth * 0.25f;
-                newHeight = newWidth * 1.56f;
+                newPopupWidth = screenWidth * 0.25f;
+                newPopupHeight = newPopupWidth * 1.56f;
             }
             else // if both aren't portrait
             {
-                newWidth = screenWidth * 0.6f;
-                newHeight = newWidth * 0.66f;
+                newPopupWidth = screenWidth * 0.6f;
+                newPopupHeight = newPopupWidth * 0.66f;
             }
 
             // Setup new popup size
-            popupRectTransform.sizeDelta = new Vector2(newWidth, newHeight);
+            popupRectTransform.sizeDelta = new Vector2(newPopupWidth, newPopupHeight);
         }
 
         static void InstantiatePopup(AbstractPopup prefab, bool blockingPanel)
