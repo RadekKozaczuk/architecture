@@ -17,7 +17,7 @@ namespace UI.Popups.Views
     class LobbyPopup : AbstractPopup
     {
         [SerializeField]
-        RectTransform _rectTransform;
+        internal RectTransform RectTransform;
 
         [SerializeField]
         TextMeshProUGUI _lobbyName;
@@ -48,7 +48,7 @@ namespace UI.Popups.Views
 
         void Awake()
         {
-            PopupSystem.SetupPopupSize(_rectTransform, false);
+            PopupSystem.SetupPopupSize(RectTransform, false);
 
             _start.onClick.AddListener(StartAction);
             _start.interactable = false;

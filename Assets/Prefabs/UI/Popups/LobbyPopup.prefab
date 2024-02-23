@@ -775,7 +775,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3444257674a541b0a29664822f4b400e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rectTransform: {fileID: 3319023685801872243}
+  RectTransform: {fileID: 3319023685801872243}
   _lobbyName: {fileID: 2185499709940485658}
   _lobbyCode: {fileID: 8285342648878625312}
   _mute: {fileID: 5109981153321923167}

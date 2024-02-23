@@ -19,7 +19,7 @@ namespace UI.Popups.Views
     class LobbyListPopup : AbstractPopup
     {
         [SerializeField]
-        RectTransform _rectTransform;
+        internal RectTransform RectTransform;
 
         [SerializeField]
         Button _refresh;
@@ -49,7 +49,7 @@ namespace UI.Popups.Views
 
         void Awake()
         {
-            PopupSystem.SetupPopupSize(_rectTransform, false);
+            PopupSystem.SetupPopupSize(RectTransform, false);
 
             _refresh.onClick.AddListener(RefreshAction);
             _join.onClick.AddListener(

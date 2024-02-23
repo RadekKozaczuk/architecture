@@ -26,6 +26,9 @@ namespace UI.Views
         internal string LobbyId;
 
         [SerializeField]
+        RectTransform _rectTransform;
+
+        [SerializeField]
         TextMeshProUGUI _name;
 
         [SerializeField]
@@ -39,8 +42,11 @@ namespace UI.Views
 
         static bool _canJoin;
 
-        void Awake() => _button.onClick.AddListener(ButtonAction);
-
+        void Awake()
+        {
+            SetupSize();
+            _button.onClick.AddListener(ButtonAction);
+        }
         internal void Initialize(string lobbyId, string lobbyName, int playerCount, int playerMax)
         {
             LobbyId = lobbyId;
@@ -66,6 +72,13 @@ namespace UI.Views
                 color.a = alpha;
                 _image.color = color;
             }
+        }
+        void SetupSize()
+        {
+            LobbyListPopup lobbyListPopup = GetComponentInParent<LobbyListPopup>();
+            float widthToSetup = lobbyListPopup.RectTransform.sizeDelta.x * 0.5f;
+            float heightToSetup = widthToSetup * 0.1f;
+            _rectTransform.sizeDelta = new Vector2(widthToSetup, heightToSetup);
         }
     }
 }

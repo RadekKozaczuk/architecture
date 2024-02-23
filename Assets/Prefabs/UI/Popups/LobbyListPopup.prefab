@@ -1230,7 +1230,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0124c6c1bce74c97acb690e8c703ca8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rectTransform: {fileID: 3235452239062573674}
+  RectTransform: {fileID: 3235452239062573674}
   _refresh: {fileID: 4552945094859763679}
   _join: {fileID: 1179355472748069788}
   _lobbyCodeInput: {fileID: 1132382097591089758}

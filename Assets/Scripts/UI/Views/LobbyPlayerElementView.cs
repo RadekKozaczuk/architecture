@@ -1,6 +1,7 @@
 ﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using GameLogic.ViewModels;
 using TMPro;
+using UI.Popups.Views;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +10,9 @@ namespace UI.Views
     [DisallowMultipleComponent]
     class LobbyPlayerElementView : MonoBehaviour
     {
+        [SerializeField]
+        RectTransform _rectTransform;
+
         [SerializeField]
         TextMeshProUGUI _playerName;
 
@@ -25,6 +29,8 @@ namespace UI.Views
 
         void Awake()
         {
+            SetupSize();
+
             _kick.onClick.AddListener(() => GameLogicViewModel.KickPlayer(_playerId));
             _giveHost.onClick.AddListener(() => GameLogicViewModel.GiveHost(_playerId));
         }
@@ -40,6 +46,14 @@ namespace UI.Views
             bool showHostMenu = forHost && !isHost;
             _kick.gameObject.SetActive(showHostMenu);
             _giveHost.gameObject.SetActive(showHostMenu);
+        }
+
+        void SetupSize()
+        {
+            LobbyPopup lobbyPopup = GetComponentInParent<LobbyPopup>();
+            float widthToSetup = lobbyPopup.RectTransform.sizeDelta.x * 0.6f;
+            float heightToSetup = widthToSetup * 0.12f;
+            _rectTransform.sizeDelta = new Vector2(widthToSetup, heightToSetup);
         }
     }
 }
