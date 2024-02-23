@@ -92,7 +92,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 281.05
+  m_fontSize: 59.9
   m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -275,8 +275,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9b4bf543aaa16c4c8de73e1083bcd36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _handleSlideArea: {fileID: 4723069242061921469}
-  _handle: {fileID: 4639556359363279940}
+  _sliderRect: {fileID: 6288284055796525654}
+  _handleRect: {fileID: 4639556359363279940}
 --- !u!1 &4854046103703903461
 GameObject:
   m_ObjectHideFlags: 0
@@ -459,7 +459,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 442.8, y: 0}
+  m_SizeDelta: {x: 165.23, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &727720348595196041
 CanvasRenderer:
@@ -668,7 +668,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 281.05
+  m_fontSize: 43.05
   m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 1

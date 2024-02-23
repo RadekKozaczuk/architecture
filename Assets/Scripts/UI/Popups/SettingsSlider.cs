@@ -7,26 +7,25 @@ namespace UI.Popups
     class SettingsSlider : MonoBehaviour
     {
         [SerializeField]
-        RectTransform _handleSlideArea;
+        RectTransform _sliderRect;
 
         [SerializeField]
-        RectTransform _handle;
+        RectTransform _handleRect;
 
-        void Awake()
-        {
-            SetupNewSize();
-        }
+        // This setup have to be in Start (not Awake) method
+        // because otherwise it is overwritten by the slider script
+        void Start() => SetupNewHandleSize();
 
         void Update()
         {
             if (!Application.isPlaying)
-                SetupNewSize();
+                SetupNewHandleSize();
         }
 
-        void SetupNewSize()
+        void SetupNewHandleSize()
         {
-            float handleSlideAreaHeight = RectTransformUtility.PixelAdjustRect(_handleSlideArea, UISceneReferenceHolder.Canvas).height;
-            _handle.sizeDelta = new Vector2(handleSlideAreaHeight, 0);
+            float sliderHeight = RectTransformUtility.PixelAdjustRect(_sliderRect, UISceneReferenceHolder.Canvas).height;
+            _handleRect.sizeDelta = new Vector2(sliderHeight, 0);
         }
     }
 }
