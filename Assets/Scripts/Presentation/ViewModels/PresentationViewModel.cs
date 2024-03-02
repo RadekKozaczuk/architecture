@@ -154,7 +154,7 @@ namespace Presentation.ViewModels
             PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(false);
 
             // spawn 5 VFXs around the player
-            for (int i = 0; i < 5; i++)
+            /*for (int i = 0; i < 5; i++)
             {
                 float x = Random.Range(-5, 5);
                 float z = Random.Range(-5, 5);
@@ -162,7 +162,7 @@ namespace Presentation.ViewModels
 
                 PresentationReferenceHolder.VFXController.SpawnParticleEffect(VFX.HitEffect, new Vector3(x, 0f, z));
                 SoundSystem<Sound>.Play((Sound)soundId, new Vector3(x, 0f, z));
-            }
+            }*/
         }
 
         public static void GameplayOnExit() { }
