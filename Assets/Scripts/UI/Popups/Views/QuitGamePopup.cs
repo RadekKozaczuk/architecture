@@ -27,16 +27,18 @@ namespace UI.Popups.Views
         QuitGamePopup()
             : base(PopupType.QuitGame) { }
 
-        void Awake()
+        internal override void Initialize()
         {
+            base.Initialize();
+
+            _hub.interactable = CommonData.CurrentLevel != Level.HubLocation;
+
             _saveGame.onClick.AddListener(SaveGameAction);
             _loadGame.onClick.AddListener(LoadGameAction);
             _loadGame.interactable = GameLogicViewModel.SaveFileExist;
             _hub.onClick.AddListener(HubAction);
             _mainMenu.onClick.AddListener(MainMenuAction);
         }
-
-        internal override void Initialize() => _hub.interactable = CommonData.CurrentLevel != Level.HubLocation;
 
         void SaveGameAction()
         {

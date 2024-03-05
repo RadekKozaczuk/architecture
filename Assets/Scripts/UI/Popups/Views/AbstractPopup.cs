@@ -15,25 +15,19 @@ namespace UI.Popups.Views
         internal virtual void Initialize()
         {
             RectTransform rect = GetComponent<RectTransform>();
-            SetPopupAnchorsPosition(rect);
-            SetPopupHightSize(rect);
-        }
 
-        internal virtual void Close() { }
-
-        void SetPopupAnchorsPosition(RectTransform rect)
-        {
+            // if game is on portrait mode change popup anchors
+            // leave free 1% of screen on the right and left sides
             if (PresentationViewModel.CurrentScreenOrientation == ScreenOrientation.Portrait)
             {
                 rect.anchorMin = new Vector2(0.01f, rect.anchorMin.y);
                 rect.anchorMax = new Vector2(0.99f, rect.anchorMax.y);
             }
-            else
-            {
-                rect.anchorMin = new Vector2(0.3f, rect.anchorMin.y);
-                rect.anchorMax = new Vector2(0.7f, rect.anchorMax.y);
-            }
+
+            SetPopupHightSize(rect);
         }
+
+        internal virtual void Close() { }
 
         void SetPopupHightSize(RectTransform rect)
         {
