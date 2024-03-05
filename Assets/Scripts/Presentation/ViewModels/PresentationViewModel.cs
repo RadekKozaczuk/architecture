@@ -24,14 +24,10 @@ namespace Presentation.ViewModels
         {
             get
             {
-#if UNITY_EDITOR
                 if (Screen.height < Screen.width)
                     return ScreenOrientation.LandscapeLeft;
                 else
                     return ScreenOrientation.Portrait;
-#else
-                return Screen.orientation;
-#endif
             }
         }
 
