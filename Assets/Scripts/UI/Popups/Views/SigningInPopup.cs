@@ -21,6 +21,8 @@ namespace UI.Popups.Views
 
         internal override void Initialize()
         {
+            base.Initialize();
+
             if (UnityServices.State == ServicesInitializationState.Initialized)
             {
                 CheckIsUserHasJoinedLobbies();
