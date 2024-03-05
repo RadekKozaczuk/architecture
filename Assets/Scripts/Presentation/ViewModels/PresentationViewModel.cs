@@ -20,6 +20,21 @@ namespace Presentation.ViewModels
     [UsedImplicitly]
     public class PresentationViewModel : IInitializable
     {
+        public static ScreenOrientation CurrentScreenOrientation
+        {
+            get
+            {
+#if UNITY_EDITOR
+                if (Screen.height < Screen.width)
+                    return ScreenOrientation.LandscapeLeft;
+                else
+                    return ScreenOrientation.Portrait;
+#else
+                return Screen.orientation;
+#endif
+            }
+        }
+
         static PresentationViewModel _instance;
 
         static readonly PlayerConfig _playerConfig;
