@@ -16,7 +16,7 @@ namespace UI.Popups.Views
         {
             RectTransform rect = GetComponent<RectTransform>();
 
-            // if game is on portrait mode change popup anchors
+            // if game is on portrait mode change popup anchors:
             // leave free 1% of screen on the right and left sides
             if (PresentationViewModel.CurrentScreenOrientation == ScreenOrientation.Portrait)
             {
