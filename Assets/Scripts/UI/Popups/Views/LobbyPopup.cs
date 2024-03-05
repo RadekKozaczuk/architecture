@@ -43,15 +43,15 @@ namespace UI.Popups.Views
         LobbyPopup()
             : base(PopupType.Lobby) { }
 
-        void Awake()
+        internal override void Initialize()
         {
+            base.Initialize();
+
             _start.onClick.AddListener(StartAction);
             _start.interactable = false;
             _leave.onClick.AddListener(LeaveAction);
             _mute.onClick.AddListener(MuteAction);
         }
-
-        internal override void Initialize() { }
 
         internal override void Close()
         {
