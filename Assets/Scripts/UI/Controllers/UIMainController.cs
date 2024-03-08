@@ -1,7 +1,6 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using Common.Signals;
 using ControlFlow.Interfaces;
-using ControlFlow.SignalProcessing;
 using JetBrains.Annotations;
 using Shared;
 using UI.Popups;
@@ -22,7 +21,6 @@ namespace UI.Controllers
     /// For better code readability all controllers meant to interact with this controller should implement
     /// <see cref="ICustomLateUpdate" /> interface.
     /// </summary>
-    [ReactOnSignals]
     [UsedImplicitly]
     class UIMainController : ICustomFixedUpdate, ICustomUpdate, ICustomLateUpdate
     {

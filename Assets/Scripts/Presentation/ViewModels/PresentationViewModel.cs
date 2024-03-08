@@ -3,8 +3,7 @@ using System.IO;
 using Common;
 using Common.Enums;
 using Common.Systems;
-using ControlFlow.DependencyInjector.Attributes;
-using ControlFlow.DependencyInjector.Interfaces;
+using ControlFlow.DependencyInjector;
 using JetBrains.Annotations;
 using Presentation.Config;
 using Presentation.Controllers;
@@ -36,10 +35,10 @@ namespace Presentation.ViewModels
         static readonly PlayerConfig _playerConfig;
 
         [Inject]
-        readonly VFXController _vfxController;
+        static readonly VFXController _vfxController;
 
         [Inject]
-        readonly PresentationMainController _presentationMainController;
+        static readonly PresentationMainController _presentationMainController;
 
         static LevelSceneReferenceHolder _level;
 
@@ -50,8 +49,6 @@ namespace Presentation.ViewModels
 
         public void Initialize()
         {
-            _instance = this;
-
             // this is called for the host too
             NetworkManager.Singleton.OnClientConnectedCallback += clientId =>
             {
@@ -86,11 +83,11 @@ namespace Presentation.ViewModels
             };
         }
 
-        public static void CustomUpdate() => _instance._presentationMainController.CustomUpdate();
+        public static void CustomUpdate() => _presentationMainController.CustomUpdate();
 
-        public static void CustomFixedUpdate() => _instance._presentationMainController.CustomFixedUpdate();
+        public static void CustomFixedUpdate() => _presentationMainController.CustomFixedUpdate();
 
-        public static void CustomLateUpdate() => _instance._presentationMainController.CustomLateUpdate();
+        public static void CustomLateUpdate() => _presentationMainController.CustomLateUpdate();
 
         public static void OnCoreSceneLoaded() => PresentationMainController.OnCoreSceneLoaded();
 

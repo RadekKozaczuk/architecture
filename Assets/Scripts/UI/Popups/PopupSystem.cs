@@ -1,7 +1,6 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using System.Collections.Generic;
 using Common.Enums;
-using ControlFlow.SignalProcessing;
 using UI.Config;
 using UI.Popups.Views;
 using UnityEngine;
@@ -14,7 +13,6 @@ namespace UI.Popups
     /// Popup systems automatically calls SetActive(true) on each instantiated popup. It is a good practice to make popup
     /// prefabs inactive so that all the changes done to the prefab during <see cref="AbstractPopup.Initialize" /> call are not visible to the player.
     /// </summary>
-    [ReactOnSignals]
     static class PopupSystem
     {
         // ReSharper disable once MemberCanBePrivate.Global

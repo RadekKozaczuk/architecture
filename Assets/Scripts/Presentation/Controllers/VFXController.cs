@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Common.Enums;
-using ControlFlow.DependencyInjector.Interfaces;
+using ControlFlow.DependencyInjector;
 using ControlFlow.Interfaces;
 using ControlFlow.Pooling;
 using JetBrains.Annotations;
