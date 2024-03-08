@@ -1,6 +1,5 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using Common.Enums;
-using Presentation.ViewModels;
 using UnityEngine;
 
 namespace UI.Popups.Views
@@ -8,37 +7,44 @@ namespace UI.Popups.Views
     [DisallowMultipleComponent]
     abstract class AbstractPopup : MonoBehaviour
     {
+        static ScreenOrientation CurrentScreenOrientation => Screen.height < Screen.width
+            ? ScreenOrientation.LandscapeLeft
+            : ScreenOrientation.Portrait;
+
         internal readonly PopupType Type;
 
         protected AbstractPopup(PopupType type) => Type = type;
 
         internal virtual void Initialize()
         {
-            RectTransform rect = GetComponent<RectTransform>();
+            var rect = GetComponent<RectTransform>();
 
             // if game is on portrait mode change popup anchors:
             // leave free 1% of screen on the right and left sides
-            if (PresentationViewModel.CurrentScreenOrientation == ScreenOrientation.Portrait)
+            if (CurrentScreenOrientation == ScreenOrientation.Portrait)
             {
                 rect.anchorMin = new Vector2(0.01f, rect.anchorMin.y);
                 rect.anchorMax = new Vector2(0.99f, rect.anchorMax.y);
             }
 
-            SetPopupHightSize(rect);
+            SetPopupHeightSize(rect);
         }
 
         internal virtual void Close() { }
 
-        void SetPopupHightSize(RectTransform rect)
+        static void SetPopupHeightSize(RectTransform rect)
         {
-            Vector2 currentSize = rect.rect.size;
+            Rect r = rect.rect;
+            Vector2 currentSize = r.size;
             float scaleMultiplierY = currentSize.y / currentSize.x;
-            float newHightSize = rect.rect.width * scaleMultiplierY;
+            float newHeightSize = r.width * scaleMultiplierY;
 
-            Vector2 deltaSize = new Vector2(currentSize.x, newHightSize) - currentSize;
+            Vector2 deltaSize = new Vector2(currentSize.x, newHeightSize) - currentSize;
 
-            rect.offsetMin = rect.offsetMin - new Vector2(deltaSize.x * rect.pivot.x, deltaSize.y * rect.pivot.y);
-            rect.offsetMax = rect.offsetMax + new Vector2(deltaSize.x * (1f - rect.pivot.x), deltaSize.y * (1f - rect.pivot.y));
+            Vector2 pivot = rect.pivot;
+            rect.offsetMin -= new Vector2(deltaSize.x * pivot.x, deltaSize.y * pivot.y);
+            pivot = rect.pivot;
+            rect.offsetMax += new Vector2(deltaSize.x * (1f - pivot.x), deltaSize.y * (1f - pivot.y));
         }
     }
 }
