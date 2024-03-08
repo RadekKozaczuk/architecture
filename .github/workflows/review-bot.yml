@@ -23,7 +23,9 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
       with:
-        token: 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
+        # this token can be generated at https://github.com/settings/tokens
+        # it has acceess to all repos that the user that generated it has
+        token: ${{ secrets.ACCESS_TOKEN }}
         submodules: true
 
     - name: Create body file for files name check

@@ -4,8 +4,7 @@ using Common;
 using Common.Enums;
 using Common.Signals;
 using Common.Systems;
-using ControlFlow.DependencyInjector.Attributes;
-using ControlFlow.DependencyInjector.Interfaces;
+using ControlFlow.DependencyInjector;
 using GameLogic.Controllers;
 using GameLogic.Systems;
 using JetBrains.Annotations;
@@ -19,29 +18,25 @@ using Random = UnityEngine.Random;
 namespace GameLogic.ViewModels
 {
     [UsedImplicitly]
-    public partial class GameLogicViewModel : IInitializable
+    public partial class GameLogicViewModel
     {
         public static bool SaveFileExist => SaveLoadSystem.SaveFileExist;
 
-        static GameLogicViewModel _instance;
-
         [Inject]
-        readonly GameLogicMainController _gameLogicMainController;
+        static readonly GameLogicMainController _gameLogicMainController;
 
         [Preserve]
         GameLogicViewModel() { }
 
-        public void Initialize() => _instance = this;
-
         public static void CustomUpdate()
         {
-            _instance._gameLogicMainController.CustomUpdate();
+            _gameLogicMainController.CustomUpdate();
             PresentationViewModel.CustomUpdate();
         }
 
-        public static void CustomFixedUpdate() => _instance._gameLogicMainController.CustomFixedUpdate();
+        public static void CustomFixedUpdate() => _gameLogicMainController.CustomFixedUpdate();
 
-        public static void CustomLateUpdate() => _instance._gameLogicMainController.CustomLateUpdate();
+        public static void CustomLateUpdate() => _gameLogicMainController.CustomLateUpdate();
 
         /// <summary>
         /// Result retrieval (processing) that should be handled in the callback function.

@@ -1,6 +1,5 @@
 ﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-using ControlFlow.DependencyInjector.Attributes;
-using ControlFlow.DependencyInjector.Interfaces;
+using ControlFlow.DependencyInjector;
 using JetBrains.Annotations;
 using UI.Config;
 using UI.Controllers;
@@ -14,25 +13,20 @@ namespace UI.ViewModels
     public class UIViewModel : IInitializable
     {
         static readonly UIConfig _uiConfig;
-        static UIViewModel _instance;
 
         [Inject]
-        readonly UIMainController _uiMainController;
+        static readonly UIMainController _uiMainController;
 
         [Preserve]
         UIViewModel() { }
 
-        public void Initialize()
-        {
-            _instance = this;
-            InputSystem.Initialize();
-        }
+        public void Initialize() => InputSystem.Initialize();
 
-        public static void CustomFixedUpdate() => _instance._uiMainController.CustomFixedUpdate();
+        public static void CustomFixedUpdate() => _uiMainController.CustomFixedUpdate();
 
-        public static void CustomUpdate() => _instance._uiMainController.CustomUpdate();
+        public static void CustomUpdate() => _uiMainController.CustomUpdate();
 
-        public static void CustomLateUpdate() => _instance._uiMainController.CustomLateUpdate();
+        public static void CustomLateUpdate() => _uiMainController.CustomLateUpdate();
 
         public static void OnUISceneLoaded()
         {
