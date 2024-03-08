@@ -44,8 +44,16 @@ namespace UI.Popups.Views
         LobbyListPopup()
             : base(PopupType.LobbyList) { }
 
-        void Awake()
+        internal override void Initialize()
         {
+            base.Initialize();
+
+            if (UnityServices.State == ServicesInitializationState.Initialized)
+            {
+                RefreshAction();
+                _create.interactable = true;
+            }
+
             _refresh.onClick.AddListener(RefreshAction);
             _join.onClick.AddListener(
                 () =>
@@ -66,15 +74,6 @@ namespace UI.Popups.Views
             });
             _joinByCode.interactable = false;
             _lobbyCodeInput.onValueChanged.AddListener(_ => LobbyCodeInputOnValueChanged());
-        }
-
-        internal override void Initialize()
-        {
-            if (UnityServices.State == ServicesInitializationState.Initialized)
-            {
-                RefreshAction();
-                _create.interactable = true;
-            }
         }
 
         internal override void Close() { }

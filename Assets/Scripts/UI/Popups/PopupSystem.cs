@@ -75,6 +75,14 @@ namespace UI.Popups
             ShowNextPopupFromQueueIfAny();
         }
 
+        internal static void SetupPopupElementSize(RectTransform parentRect, RectTransform thisRect)
+        {
+            float widthToSet = parentRect.rect.width;
+            float heightToSet = widthToSet * 0.1f;
+
+            thisRect.sizeDelta = new Vector2(widthToSet, heightToSet);
+        }
+
         static void InstantiatePopup(AbstractPopup prefab, bool blockingPanel)
         {
             if (blockingPanel && _blockingPanel == null)

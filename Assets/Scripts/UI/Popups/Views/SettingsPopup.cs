@@ -31,6 +31,8 @@ namespace UI.Popups.Views
 
         internal override void Initialize()
         {
+            base.Initialize();
+
             (int music, int sound) = GameLogicViewModel.LoadVolumeSettings();
             _musicSlider.value = music;
             _soundSlider.value = sound;

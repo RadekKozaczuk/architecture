@@ -3,12 +3,16 @@ using GameLogic.ViewModels;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UI.Popups;
 
 namespace UI.Views
 {
     [DisallowMultipleComponent]
     class LobbyPlayerElementView : MonoBehaviour
     {
+        [SerializeField]
+        RectTransform _rect;
+
         [SerializeField]
         TextMeshProUGUI _playerName;
 
@@ -27,6 +31,7 @@ namespace UI.Views
         {
             _kick.onClick.AddListener(() => GameLogicViewModel.KickPlayer(_playerId));
             _giveHost.onClick.AddListener(() => GameLogicViewModel.GiveHost(_playerId));
+            PopupSystem.SetupPopupElementSize(transform.parent.GetComponent<RectTransform>(), _rect);
         }
 
         // todo: this should also take into account lobby ownership

@@ -26,6 +26,9 @@ namespace UI.Views
         internal string LobbyId;
 
         [SerializeField]
+        RectTransform _rect;
+
+        [SerializeField]
         TextMeshProUGUI _name;
 
         [SerializeField]
@@ -39,7 +42,11 @@ namespace UI.Views
 
         static bool _canJoin;
 
-        void Awake() => _button.onClick.AddListener(ButtonAction);
+        void Awake()
+        {
+            _button.onClick.AddListener(ButtonAction);
+            PopupSystem.SetupPopupElementSize(transform.parent.GetComponent<RectTransform>(), _rect);
+        }
 
         internal void Initialize(string lobbyId, string lobbyName, int playerCount, int playerMax)
         {

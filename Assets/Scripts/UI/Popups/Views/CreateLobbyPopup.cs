@@ -33,8 +33,10 @@ namespace UI.Popups.Views
         CreateLobbyPopup()
             : base(PopupType.CreateLobby) { }
 
-        void Awake()
+        internal override void Initialize()
         {
+            base.Initialize();
+
             _input.onValueChanged.AddListener(InputChanged);
             _slider.onValueChanged.AddListener(SliderChanged);
             _create.onClick.AddListener(CreateAction);

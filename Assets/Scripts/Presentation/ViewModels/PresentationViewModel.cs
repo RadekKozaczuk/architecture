@@ -19,6 +19,8 @@ namespace Presentation.ViewModels
     [UsedImplicitly]
     public class PresentationViewModel : IInitializable
     {
+        static PresentationViewModel _instance;
+
         static readonly PlayerConfig _playerConfig;
 
         [Inject]

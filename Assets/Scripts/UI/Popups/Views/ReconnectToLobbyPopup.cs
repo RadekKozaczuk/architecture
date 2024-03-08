@@ -27,13 +27,13 @@ namespace UI.Popups.Views
         ReconnectToLobbyPopup()
             : base(PopupType.ReconnectToLobby) { }
 
-        void Awake()
+        internal override void Initialize()
         {
+            base.Initialize();
+
             _lobbyList.interactable = true;
             _lobbyList.onClick.AddListener(BackToLobbyListAction);
         }
-
-        internal override void Initialize() { }
 
         internal override void Close() { }
 
