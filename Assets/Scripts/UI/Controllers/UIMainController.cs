@@ -44,16 +44,14 @@ namespace UI.Controllers
 
         internal static void OnUISceneLoaded() => _uiSceneLoaded = true;
 
-        [React]
-        [Preserve]
+        /*[React]
         void OnInventoryChangedSignal()
         {
             Debug.Log("OnInventoryChangedSignal");
-        }
+        }*/
 
-        [React]
-        [Preserve]
+        /*[React]
         void OnLobbyChangedSignal(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players) =>
-            (PopupSystem.CurrentPopup as LobbyPopup)?.UpdateLobby(lobbyName, lobbyCode, players);
+            (PopupSystem.CurrentPopup as LobbyPopup)?.UpdateLobby(lobbyName, lobbyCode, players);*/
     }
 }

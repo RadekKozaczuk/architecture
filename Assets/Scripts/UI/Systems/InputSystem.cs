@@ -96,7 +96,7 @@ namespace UI.Systems
         [React]
         static void OnInventoryChangedSignal()
         {
-            Debug.Log("InputSystem OnInventoryChangedSignal");
+            Debug.Log("SIGNAL RECEIVED InputSystem OnInventoryChangedSignal");
         }
     }
 }

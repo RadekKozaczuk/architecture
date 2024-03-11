@@ -18,7 +18,7 @@ namespace Common
             void ISignals.MissionFailed() { }
             void ISignals.PlaySound(Vector3 position, Sound sound) { }
             void ISignals.PopupRequested(PopupType popupType) { }*/
-            void ISignals.HpChanged(int a, float b) { } // for test only, delete when ready
+            //void ISignals.HpChanged(int a, float b) { } // for test only, delete when ready
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Common
         public static void MissionFailed() => _signals.MissionFailed();
         public static void PlaySound(Vector3 position, Sound sound) => _signals.PlaySound(position, sound);
         public static void PopupRequested(PopupType popupType) => _signals.PopupRequested(popupType);*/
-        public static void HpChanged(int a, float b) => _signals.HpChanged(a, b);
+        //public static void HpChanged(int a, float b) => _signals.HpChanged(a, b);
 
         static readonly ISignals _signals = Architecture.Interception<ISignals>(new SignalsImplementation());
     }
@@ -52,6 +52,6 @@ namespace Common
         void MissionFailed();
         void PlaySound(Vector3 position, Sound sound);
         void PopupRequested(PopupType popupType);*/
-        void HpChanged(int a, float b);
+        //void HpChanged(int a, float b);
     }
 }

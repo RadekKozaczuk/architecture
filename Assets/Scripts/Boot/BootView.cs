@@ -68,7 +68,7 @@ namespace Boot
             Architecture.SetSharedData(overTimeSceneIds, stateChangeSceneIds);
 
             Signals.InventoryChanged();
-            Signals.InventoryChanged();
+            //Signals.InventoryChanged();
             //Signals.HpChanged(123, 1.5f);
 
             _gameStateMachine = new GameStateMachine<GameState, StateTransitionParameter>(
