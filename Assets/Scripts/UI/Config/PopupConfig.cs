@@ -11,7 +11,7 @@ namespace UI.Config
     {
         [InfoBox("Order should match Common.Enums.PopupType enum.", InfoMessageType.None)]
         [SerializeField]
-        internal AbstractPopupView[] PopupPrefabs;
+        internal AbstractPopup[] PopupPrefabs;
 
         [SerializeField]
         internal Image BlockingPanelPrefab;

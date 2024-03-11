@@ -7,15 +7,18 @@ function CollectFilesThatAreNotInFolder()
 {
     local anyIncorrect=false
     local fileExtension="*.$1"
+    local path=$2
+    local pathAlt=$3
+    path=${path:2:${#path}}
+    pathAlt=${pathAlt:2:${#pathAlt}}
     local folderPath=$2"/*"
     local folderPathAlt=$3"/*"
     local errorMessage=""
-    
     if [[ $3 != "" ]]
     then
-        errorMessage=" is not in << $2 >> or << $3 >> or any sub folder"
+        errorMessage="These \`$1\` files are not in \`$path\` or  \`$pathAlt\` or any sub folder"
     else
-        errorMessage=" is not in << $2 >> or any sub folder"
+        errorMessage="These \`$1\` files are not not in \`$path\` or any sub folder"
     fi
 
     find "./" -type f -name "$fileExtension" -print0 | 
@@ -26,10 +29,10 @@ function CollectFilesThatAreNotInFolder()
             if [[ $anyIncorrect == false ]]
             then
                 anyIncorrect=true
-                echo $'\n\n'"Please consider changes on those $1 files:"
+                echo $'\n\n'"$errorMessage"
             fi
             file=${file:2:${#file}}
-            echo "$file"$errorMessage
+            echo "- $file"
         fi
     done
 }
@@ -55,12 +58,12 @@ TextureFilesPath="$BasePath/Textures"
 TextureFilesPathAlt="$BasePath/UI"
 IncorrectFiles+="$(CollectFilesThatAreNotInFolder $TextureFiles $TextureFilesPath $TextureFilesPathAlt)"
 
-sed -i '2,$d' BodyFile.txt
+sed -i '2,$d' FilesPathBodyFile.txt
 
 if [[ $IncorrectFiles == "" ]]
 then
-    echo $'Success!\nAll files are in the correct folders!' >> BodyFile.txt
+    echo $'Success!\nAll files are in the correct folders!' >> FilesPathBodyFile.txt
 else
-    echo $'Failed :c \n'"$IncorrectFiles" >> BodyFile.txt
+    echo $'Failed :c \n'"$IncorrectFiles" >> FilesPathBodyFile.txt
     exit 1
 fi

@@ -3,8 +3,7 @@ using System.IO;
 using Common;
 using Common.Enums;
 using Common.Systems;
-using ControlFlow.DependencyInjector.Attributes;
-using ControlFlow.DependencyInjector.Interfaces;
+using ControlFlow.DependencyInjector;
 using JetBrains.Annotations;
 using Presentation.Config;
 using Presentation.Controllers;
@@ -12,6 +11,7 @@ using Presentation.Views;
 using Shared.Systems;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Scripting;
 
 namespace Presentation.ViewModels
@@ -19,19 +19,13 @@ namespace Presentation.ViewModels
     [UsedImplicitly]
     public class PresentationViewModel : IInitializable
     {
-        static PresentationViewModel _instance;
-
-        static readonly AudioConfig _audioConfig;
         static readonly PlayerConfig _playerConfig;
 
         [Inject]
-        readonly AudioController _audioController;
+        static readonly VFXController _vfxController;
 
         [Inject]
-        readonly VFXController _vfxController;
-
-        [Inject]
-        readonly PresentationMainController _presentationMainController;
+        static readonly PresentationMainController _presentationMainController;
 
         static LevelSceneReferenceHolder _level;
 
@@ -42,8 +36,6 @@ namespace Presentation.ViewModels
 
         public void Initialize()
         {
-            _instance = this;
-
             // this is called for the host too
             NetworkManager.Singleton.OnClientConnectedCallback += clientId =>
             {
@@ -78,11 +70,11 @@ namespace Presentation.ViewModels
             };
         }
 
-        public static void CustomUpdate() => _instance._presentationMainController.CustomUpdate();
+        public static void CustomUpdate() => _presentationMainController.CustomUpdate();
 
-        public static void CustomFixedUpdate() => _instance._presentationMainController.CustomFixedUpdate();
+        public static void CustomFixedUpdate() => _presentationMainController.CustomFixedUpdate();
 
-        public static void CustomLateUpdate() => _instance._presentationMainController.CustomLateUpdate();
+        public static void CustomLateUpdate() => _presentationMainController.CustomLateUpdate();
 
         public static void OnCoreSceneLoaded() => PresentationMainController.OnCoreSceneLoaded();
 
@@ -144,16 +136,12 @@ namespace Presentation.ViewModels
 
         public static void MainMenuOnEntry()
         {
-            PresentationReferenceHolder.AudioController.LoadMusic(Music.MainMenu);
-            PresentationReferenceHolder.AudioController.PlayMusicWhenReady(Music.MainMenu);
+            MusicSystem<Music>.LoadAndPlayWhenReady(Music.MainMenu);
             PresentationSceneReferenceHolder.GameplayCamera.gameObject.SetActive(false);
             PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(true);
         }
 
-        public static void MainMenuOnExit()
-        {
-            PresentationReferenceHolder.AudioController.StopMusic();
-        }
+        public static void MainMenuOnExit() => MusicSystem<Music>.Stop();
 
         public static void GameplayOnEntry()
         {
@@ -161,15 +149,15 @@ namespace Presentation.ViewModels
             PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(false);
 
             // spawn 5 VFXs around the player
-            for (int i = 0; i < 5; i++)
+            /*for (int i = 0; i < 5; i++)
             {
                 float x = Random.Range(-5, 5);
                 float z = Random.Range(-5, 5);
                 int soundId = Random.Range(0, 4);
 
                 PresentationReferenceHolder.VFXController.SpawnParticleEffect(VFX.HitEffect, new Vector3(x, 0f, z));
-                AudioController.PlaySound((Sound)soundId, new Vector3(x, 0f, z));
-            }
+                SoundSystem<Sound>.Play((Sound)soundId, new Vector3(x, 0f, z));
+            }*/
         }
 
         public static void GameplayOnExit() { }
@@ -186,6 +174,20 @@ namespace Presentation.ViewModels
             else
                 PresentationData.Player.Move(movementInput.normalized);
         }
+
+        public static void SetMusicVolume(int music)
+        {
+            Assert.IsTrue(music is >= 0 and <= 10, "Volume must be represented by a value randing from 0 to 10.");
+            MusicSystem<Music>.Volume = music;
+        }
+
+        public static void SetSoundVolume(int sound)
+        {
+            Assert.IsTrue(sound is >= 0 and <= 10, "Volume must be represented by a value randing from 0 to 10.");
+            SoundSystem<Sound>.Volume = sound;
+        }
+
+        public static void PlaySound(Sound sound) => SoundSystem<Sound>.Play(sound);
 
         public static void SaveGame(BinaryWriter writer)
         {

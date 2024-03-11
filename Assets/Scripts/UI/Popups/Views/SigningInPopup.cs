@@ -12,7 +12,7 @@ using UnityEngine;
 namespace UI.Popups.Views
 {
     [DisallowMultipleComponent]
-    class SigningInPopup : AbstractPopupView //In the future we can use this popup for signing in (login and password)
+    class SigningInPopup : AbstractPopup //In the future we can use this popup for signing in (login and password)
     {
         List<string> _joinedLobbiesId = new();
 
@@ -21,6 +21,8 @@ namespace UI.Popups.Views
 
         internal override void Initialize()
         {
+            base.Initialize();
+
             if (UnityServices.State == ServicesInitializationState.Initialized)
             {
                 CheckIsUserHasJoinedLobbies();

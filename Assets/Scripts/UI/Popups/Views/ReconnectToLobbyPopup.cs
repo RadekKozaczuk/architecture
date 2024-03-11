@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Common;
 using Common.Enums;
 using GameLogic.ViewModels;
+using Presentation.ViewModels;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,7 +11,7 @@ using UnityEngine.UI;
 namespace UI.Popups.Views
 {
     [DisallowMultipleComponent]
-    class ReconnectToLobbyPopup : AbstractPopupView
+    class ReconnectToLobbyPopup : AbstractPopup
     {
         [SerializeField]
         TextMeshProUGUI _lobbyToReconnect;
@@ -26,13 +27,13 @@ namespace UI.Popups.Views
         ReconnectToLobbyPopup()
             : base(PopupType.ReconnectToLobby) { }
 
-        void Awake()
+        internal override void Initialize()
         {
+            base.Initialize();
+
             _lobbyList.interactable = true;
             _lobbyList.onClick.AddListener(BackToLobbyListAction);
         }
-
-        internal override void Initialize() { }
 
         internal override void Close() { }
 
@@ -40,7 +41,11 @@ namespace UI.Popups.Views
         {
             _lobbyToReconnect.text = lobbyName;
             _lobbyToReconnectId = lobbyId;
-            _join.onClick.AddListener(() => GameLogicViewModel.RejoinToLobby(lobbyId, JoinLobbyResultCallback));
+            _join.onClick.AddListener(() =>
+            {
+                PresentationViewModel.PlaySound(Sound.ClickSelect);
+                GameLogicViewModel.RejoinToLobby(lobbyId, JoinLobbyResultCallback);
+            });
             _join.interactable = true;
         }
 

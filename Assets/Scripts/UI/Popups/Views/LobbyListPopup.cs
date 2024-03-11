@@ -5,6 +5,7 @@ using Common;
 using Common.Dtos;
 using Common.Enums;
 using GameLogic.ViewModels;
+using Presentation.ViewModels;
 using TMPro;
 using UI.Config;
 using UI.Views;
@@ -15,7 +16,7 @@ using UnityEngine.UI;
 namespace UI.Popups.Views
 {
     [DisallowMultipleComponent]
-    class LobbyListPopup : AbstractPopupView
+    class LobbyListPopup : AbstractPopup
     {
         [SerializeField]
         Button _refresh;
@@ -43,25 +44,36 @@ namespace UI.Popups.Views
         LobbyListPopup()
             : base(PopupType.LobbyList) { }
 
-        void Awake()
-        {
-            _refresh.onClick.AddListener(RefreshAction);
-            _join.onClick.AddListener(
-                () => GameLogicViewModel.JoinLobbyById(LobbyListElementView.SelectedLobby!.LobbyId, JoinLobbyResultCallback)); // join the selected
-            _join.interactable = false;
-            _create.onClick.AddListener(() => PopupSystem.ShowPopup(PopupType.CreateLobby));
-            _joinByCode.onClick.AddListener(() => GameLogicViewModel.JoinLobbyByCode(_lobbyCodeInput.text, JoinLobbyResultCallback));
-            _joinByCode.interactable = false;
-            _lobbyCodeInput.onValueChanged.AddListener(_ => LobbyCodeInputOnValueChanged());
-        }
-
         internal override void Initialize()
         {
+            base.Initialize();
+
             if (UnityServices.State == ServicesInitializationState.Initialized)
             {
                 RefreshAction();
                 _create.interactable = true;
             }
+
+            _refresh.onClick.AddListener(RefreshAction);
+            _join.onClick.AddListener(
+                () =>
+                {
+                    PresentationViewModel.PlaySound(Sound.ClickSelect);
+                    GameLogicViewModel.JoinLobbyById(LobbyListElementView.SelectedLobby!.LobbyId, JoinLobbyResultCallback);
+                }); // join the selected
+            _join.interactable = false;
+            _create.onClick.AddListener(() =>
+            {
+                PresentationViewModel.PlaySound(Sound.ClickSelect);
+                PopupSystem.ShowPopup(PopupType.CreateLobby);
+            });
+            _joinByCode.onClick.AddListener(() =>
+            {
+                PresentationViewModel.PlaySound(Sound.ClickSelect);
+                GameLogicViewModel.JoinLobbyByCode(_lobbyCodeInput.text, JoinLobbyResultCallback);
+            });
+            _joinByCode.interactable = false;
+            _lobbyCodeInput.onValueChanged.AddListener(_ => LobbyCodeInputOnValueChanged());
         }
 
         internal override void Close() { }
@@ -70,9 +82,10 @@ namespace UI.Popups.Views
 
         void RefreshAction()
         {
+            PresentationViewModel.PlaySound(Sound.ClickSelect);
             _refresh.interactable = false;
-            float delay = 2f;
-            StartCoroutine(EnableButtonAfterDelay(delay));
+            const float Delay = 2f;
+            StartCoroutine(EnableButtonAfterDelay(Delay));
             GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback);
         }
 

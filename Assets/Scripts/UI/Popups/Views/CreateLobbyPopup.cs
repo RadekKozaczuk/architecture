@@ -2,6 +2,7 @@
 using Common;
 using Common.Enums;
 using GameLogic.ViewModels;
+using Presentation.ViewModels;
 using TMPro;
 using UI.Config;
 using UnityEngine;
@@ -10,7 +11,7 @@ using UnityEngine.UI;
 namespace UI.Popups.Views
 {
     [DisallowMultipleComponent]
-    class CreateLobbyPopup : AbstractPopupView
+    class CreateLobbyPopup : AbstractPopup
     {
         [SerializeField]
         TMP_InputField _input;
@@ -32,12 +33,18 @@ namespace UI.Popups.Views
         CreateLobbyPopup()
             : base(PopupType.CreateLobby) { }
 
-        void Awake()
+        internal override void Initialize()
         {
+            base.Initialize();
+
             _input.onValueChanged.AddListener(InputChanged);
             _slider.onValueChanged.AddListener(SliderChanged);
             _create.onClick.AddListener(CreateAction);
-            _back.onClick.AddListener(PopupSystem.CloseCurrentPopup);
+            _back.onClick.AddListener(() =>
+            {
+                PresentationViewModel.PlaySound(Sound.ClickSelect);
+                PopupSystem.CloseCurrentPopup();
+            });
 
             _input.text = "MyLobby";
             _slider.value = 2;
@@ -49,6 +56,7 @@ namespace UI.Popups.Views
 
         async void CreateAction()
         {
+            PresentationViewModel.PlaySound(Sound.ClickSelect);
             (bool success, string playerId, string lobbyCode) = await GameLogicViewModel.CreateLobby(_input.text, (int)_slider.value);
 
             if (success)

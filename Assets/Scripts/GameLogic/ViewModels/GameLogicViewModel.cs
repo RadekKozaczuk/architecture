@@ -3,44 +3,38 @@ using System;
 using Common;
 using Common.Enums;
 using Common.Systems;
-using ControlFlow.DependencyInjector.Attributes;
-using ControlFlow.DependencyInjector.Interfaces;
+using ControlFlow.DependencyInjector;
 using GameLogic.Controllers;
 using GameLogic.Systems;
 using JetBrains.Annotations;
 using Presentation.ViewModels;
 using Shared;
 using Unity.Netcode;
-using UnityEngine;
 using UnityEngine.Scripting;
 using Random = UnityEngine.Random;
 
 namespace GameLogic.ViewModels
 {
     [UsedImplicitly]
-    public partial class GameLogicViewModel : IInitializable
+    public partial class GameLogicViewModel
     {
         public static bool SaveFileExist => SaveLoadSystem.SaveFileExist;
 
-        static GameLogicViewModel _instance;
-
         [Inject]
-        readonly GameLogicMainController _gameLogicMainController;
+        static readonly GameLogicMainController _gameLogicMainController;
 
         [Preserve]
         GameLogicViewModel() { }
 
-        public void Initialize() => _instance = this;
-
         public static void CustomUpdate()
         {
-            _instance._gameLogicMainController.CustomUpdate();
+            _gameLogicMainController.CustomUpdate();
             PresentationViewModel.CustomUpdate();
         }
 
-        public static void CustomFixedUpdate() => _instance._gameLogicMainController.CustomFixedUpdate();
+        public static void CustomFixedUpdate() => _gameLogicMainController.CustomFixedUpdate();
 
-        public static void CustomLateUpdate() => _instance._gameLogicMainController.CustomLateUpdate();
+        public static void CustomLateUpdate() => _gameLogicMainController.CustomLateUpdate();
 
         /// <summary>
         /// Result retrieval (processing) that should be handled in the callback function.
@@ -48,7 +42,7 @@ namespace GameLogic.ViewModels
         public static void ValidatePlayer(string accessCode, Action<bool> callback) =>
             StaticCoroutine.StartStaticCoroutine(JsonSystem.ValidateProfileAsync(accessCode, callback));
 
-        public static void BootingOnExit() => PersistentStorageSystem.LoadVolumeSettings();
+        public static void BootingOnExit() => PersistentStorageSystem.Initialize();
 
         public static void MainMenuOnEntry() => CommonData.PlayerName = Utils.GenerateRandomString(Random.Range(5, 9));
 
@@ -75,27 +69,6 @@ namespace GameLogic.ViewModels
         public static void SaveVolumeSettings(int music, int sound) => PersistentStorageSystem.SaveVolumeSettings(music, sound);
 
         public static (int music, int sound) LoadVolumeSettings() => PersistentStorageSystem.LoadVolumeSettings();
-
-        public static int ConvertVolumeValueToDecibels(int value) //Convert our value to audio mixer dB.
-        {
-            int dBToSet = -80;
-
-            if (value != 0)
-                dBToSet = (int)(-33.3f + (value * 3.3f));
-
-            return dBToSet;
-        }
-
-        public static bool FirstTimeRunCheck()
-        {
-            if (!PlayerPrefs.HasKey("firstTimeRun"))
-            {
-                PlayerPrefs.SetInt("firstTimeRun", 1);
-                return true;
-            }
-            else
-                return false;
-        }
 
         /// <summary>
         /// If the instance hosted a lobby, the lobby will be deleted.

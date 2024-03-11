@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Common.Enums;
-using ControlFlow.DependencyInjector.Interfaces;
+using ControlFlow.DependencyInjector;
 using ControlFlow.Interfaces;
 using ControlFlow.Pooling;
 using JetBrains.Annotations;
@@ -10,6 +10,7 @@ using Presentation.Config;
 using Presentation.Views;
 using UnityEngine;
 using UnityEngine.Scripting;
+using Object = UnityEngine.Object;
 
 namespace Presentation.Controllers
 {
@@ -57,8 +58,9 @@ namespace Presentation.Controllers
             _particleEffects.Add(view);
         }
 
-        ParticleEffectView CustomAlloc() => UnityEngine.Object.Instantiate(_config.ParticleEffects[(int)_vfx], _position, Quaternion.identity, PresentationSceneReferenceHolder.VfxContainer);
+        ParticleEffectView CustomAlloc() =>
+            Object.Instantiate(_config.ParticleEffects[(int)_vfx], _position, Quaternion.identity, PresentationSceneReferenceHolder.VfxContainer);
 
-        static void CustomReturn(ParticleEffectView view) => view.gameObject.SetActive(false);
+        static void CustomReturn(ParticleEffectView view, bool poolMaxOut) => view.gameObject.SetActive(false);
     }
 }

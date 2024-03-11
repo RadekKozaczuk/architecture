@@ -20,10 +20,8 @@ namespace Common.Enums
 
     public enum Sound
     {
-        ArtilleryShotHeavy,
-        ExplosionInTightSpace,
-        ExplosionNearby,
-        ExplosionWithRubbleDebris
+        ClickSelect,
+        Hit
     }
 
     public enum Level
