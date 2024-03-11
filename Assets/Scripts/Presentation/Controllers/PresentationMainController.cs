@@ -54,11 +54,11 @@ namespace Presentation.Controllers
             _coreSceneLoaded = true;
         }
 
-        /*[React]
-        void OnInventoryChangedSignal()
+        [React]
+        static void OnInventoryChangedSignal()
         {
-            Debug.Log("PresentationMainController OnInventoryChangedSignal");
-        }*/
+            Debug.Log("SIGNAL RECEIVED PresentationMainController OnInventoryChangedSignal");
+        }
 
         /*[React]
         static void OnHpChangedSignal(int a, float b)

@@ -44,11 +44,11 @@ namespace UI.Controllers
 
         internal static void OnUISceneLoaded() => _uiSceneLoaded = true;
 
-        /*[React]
-        void OnInventoryChangedSignal()
+        [React]
+        static void OnInventoryChangedSignal()
         {
-            Debug.Log("OnInventoryChangedSignal");
-        }*/
+            Debug.Log("SIGNAL RECEIVED UIMainController OnInventoryChangedSignal");
+        }
 
         /*[React]
         void OnLobbyChangedSignal(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players) =>
