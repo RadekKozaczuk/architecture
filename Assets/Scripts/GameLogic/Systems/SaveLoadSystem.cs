@@ -1,14 +1,12 @@
 ﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using System.IO;
 using Common;
-using ControlFlow.SignalProcessing;
 using Presentation.ViewModels;
+using Shared;
 using UnityEngine;
-using UnityEngine.Scripting;
 
 namespace GameLogic.Systems
 {
-    [ReactOnSignals]
     static class SaveLoadSystem
     {
         internal static bool SaveFileExist => File.Exists(_savePath);
@@ -34,14 +32,12 @@ namespace GameLogic.Systems
         internal static void LoadGame() { }
 
         [React]
-        [Preserve]
         static void OnInventoryChangedSignal()
         {
             Debug.Log("SaveLoadSystem OnInventoryChangedSignal");
         }
 
         [React]
-        [Preserve]
         static void OnHpChangedSignal(int a, float b)
         {
             Debug.Log($"SaveLoadSystem OnHpChangedSignal a={a} b={b}");

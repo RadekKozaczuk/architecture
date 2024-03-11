@@ -2,8 +2,8 @@
 using Common.Enums;
 using ControlFlow.DependencyInjector;
 using ControlFlow.Interfaces;
-using ControlFlow.SignalProcessing;
 using JetBrains.Annotations;
+using Shared;
 using Shared.Systems;
 using UnityEngine;
 using UnityEngine.Scripting;
@@ -53,17 +53,14 @@ namespace Presentation.Controllers
             MusicSystem<Music>.Initialize(PresentationSceneReferenceHolder.MusicAudioSource);
             _coreSceneLoaded = true;
         }
-        internal static void OnCoreSceneLoaded() => _coreSceneLoaded = true;
 
         [React]
-        [Preserve]
         void OnInventoryChangedSignal()
         {
             Debug.Log("PresentationMainController OnInventoryChangedSignal");
         }
 
         /*[React]
-        [Preserve]
         static void OnHpChangedSignal(int a, float b)
         {
             Debug.Log($"PresentationMainController OnHpChangedSignal a={a} b={b}");
