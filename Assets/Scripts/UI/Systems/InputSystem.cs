@@ -92,11 +92,5 @@ namespace UI.Systems
             if (_movementDown)
                 PresentationViewModel.Movement(_movementAction.ReadValue<Vector2>());
         }
-
-        [React]
-        static void OnInventoryChangedSignal()
-        {
-            Debug.Log("SIGNAL RECEIVED InputSystem OnInventoryChangedSignal");
-        }
     }
 }

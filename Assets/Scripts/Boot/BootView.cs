@@ -67,10 +67,6 @@ namespace Boot
 
             Architecture.SetSharedData(overTimeSceneIds, stateChangeSceneIds);
 
-            Signals.InventoryChanged();
-            //Signals.InventoryChanged();
-            //Signals.HpChanged(123, 1.5f);
-
             _gameStateMachine = new GameStateMachine<GameState, StateTransitionParameter>(
                 new List<(
                     GameState from,
@@ -138,14 +134,14 @@ namespace Boot
             Application.targetFrameRate = 60;
 #endif
 
-/*#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             DebugCommandSystem.Add("win_mission", "Instantly wins the mission.", GameLogicViewModel.WinMission);
             DebugCommandSystem.AddParameterized("give_gold", "Give gold", 100, 0, 1000, value =>
             {
                 MyDebug.Log($"Parametrized debug command called with the parameter equal to {value}");
             });
             DebugCommandSystem.Add("fail_mission", "Instantly fails current mission.", GameLogicViewModel.FailMission);
-#endif*/
+#endif
 		}
 
 		void FixedUpdate()

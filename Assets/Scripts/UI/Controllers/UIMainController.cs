@@ -50,8 +50,8 @@ namespace UI.Controllers
             Debug.Log("SIGNAL RECEIVED UIMainController OnInventoryChangedSignal");
         }
 
-        /*[React]
-        void OnLobbyChangedSignal(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players) =>
-            (PopupSystem.CurrentPopup as LobbyPopup)?.UpdateLobby(lobbyName, lobbyCode, players);*/
+        [React]
+        static void OnLobbyChangedSignal(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players) =>
+            (PopupSystem.CurrentPopup as LobbyPopup)?.UpdateLobby(lobbyName, lobbyCode, players);
     }
 }

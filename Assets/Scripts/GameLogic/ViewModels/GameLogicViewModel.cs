@@ -75,8 +75,8 @@ namespace GameLogic.ViewModels
         /// </summary>
         public static void QuitGame() => LobbySystem.SignOut();
 
-        /*public static void WinMission() => Signals.MissionComplete();
+        public static void WinMission() => Signals.MissionComplete();
 
-        public static void FailMission() => Signals.MissionFailed();*/
+        public static void FailMission() => Signals.MissionFailed();
     }
 }
