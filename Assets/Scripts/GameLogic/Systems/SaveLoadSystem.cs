@@ -32,7 +32,7 @@ namespace GameLogic.Systems
         internal static void LoadGame() { }
 
         [React]
-        static void OnInventoryChangedSignal()
+        static void OnInventoryChanged()
         {
             Debug.Log("SIGNAL RECEIVED SaveLoadSystem OnInventoryChangedSignal");
         }
