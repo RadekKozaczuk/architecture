@@ -504,7 +504,7 @@ namespace GameLogic.Systems
                 // send signal is if has changed
                 if (hashCode != _lastUpdateCallHash && !_gameStarted)
                 {
-                    //Signals.LobbyChanged(Lobby.Name, Lobby.LobbyCode, GetPlayers());
+                    Signals.LobbyChanged(Lobby.Name, Lobby.LobbyCode, GetPlayers());
                     _lastUpdateCallHash = hashCode;
                 }
             }

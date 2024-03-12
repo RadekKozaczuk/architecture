@@ -14,10 +14,10 @@ namespace Common
         {
             void ISignals.InventoryChanged() { }
             void ISignals.LobbyChanged(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players) { }
-            void ISignals.MissionComplete() { }
+            /*void ISignals.MissionComplete() { }
             void ISignals.MissionFailed() { }
             void ISignals.PlaySound(Vector3 position, Sound sound) { }
-            void ISignals.PopupRequested(PopupType popupType) { }
+            void ISignals.PopupRequested(PopupType popupType) { }*/
         }
 
         static readonly ISignals _signals = Architecture.Interception<ISignals>(new SignalsImplementation());
@@ -37,22 +37,22 @@ namespace Common
         public static void LobbyChanged(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players) =>
             _signals.LobbyChanged(lobbyName, lobbyCode, players);
 
-        public static void MissionComplete() => _signals.MissionComplete();
+        /*public static void MissionComplete() => _signals.MissionComplete();
 
         public static void MissionFailed() => _signals.MissionFailed();
 
         public static void PlaySound(Vector3 position, Sound sound) => _signals.PlaySound(position, sound);
 
-        public static void PopupRequested(PopupType popupType) => _signals.PopupRequested(popupType);
+        public static void PopupRequested(PopupType popupType) => _signals.PopupRequested(popupType);*/
     }
 
     public interface ISignals
     {
         void InventoryChanged();
         void LobbyChanged(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players);
-        void MissionComplete();
+        /*void MissionComplete();
         void MissionFailed();
         void PlaySound(Vector3 position, Sound sound);
-        void PopupRequested(PopupType popupType);
+        void PopupRequested(PopupType popupType);*/
     }
 }
