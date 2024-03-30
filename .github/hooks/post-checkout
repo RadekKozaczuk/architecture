@@ -15,6 +15,11 @@ REGEX="^([a-z]|[0-9])+(-([a-z]|[0-9])+)*$"
 # '[a-z]' - any small letter
 # '[0-9]' - any digit
 
+#ignore branch HEAD
+if [[ "$BRANCH" == "HEAD" ]]; then
+  exit 0
+fi
+
 if ! [[ $BRANCH =~ $REGEX ]]; then
   I=0
   branchname="my-branch-$I"
