@@ -16,6 +16,7 @@ namespace Boot
 
         static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
+            // ReSharper disable once ConvertIfStatementToSwitchStatement
             if (scene.buildIndex == Constants.CoreScene)
             {
                 SceneManager.UnloadSceneAsync(Constants.BootScene);

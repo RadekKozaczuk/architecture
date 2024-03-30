@@ -2,7 +2,6 @@
 using System;
 using Common;
 using Common.Enums;
-using Common.Signals;
 using Common.Systems;
 using ControlFlow.DependencyInjector;
 using GameLogic.Controllers;
@@ -10,7 +9,6 @@ using GameLogic.Systems;
 using JetBrains.Annotations;
 using Presentation.ViewModels;
 using Shared;
-using Shared.Systems;
 using Unity.Netcode;
 using UnityEngine.Scripting;
 using Random = UnityEngine.Random;
@@ -77,8 +75,8 @@ namespace GameLogic.ViewModels
         /// </summary>
         public static void QuitGame() => LobbySystem.SignOut();
 
-        public static void WinMission() => SignalProcessor.SendSignal(new MissionCompleteSignal());
+        public static void WinMission() => Signals.MissionComplete();
 
-        public static void FailMission() => SignalProcessor.SendSignal(new MissionFailedSignal());
+        public static void FailMission() => Signals.MissionFailed();
     }
 }

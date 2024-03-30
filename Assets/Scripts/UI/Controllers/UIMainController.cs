@@ -1,5 +1,5 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-using Common.Signals;
+using System.Collections.Generic;
 using ControlFlow.Interfaces;
 using JetBrains.Annotations;
 using Shared;
@@ -44,9 +44,16 @@ namespace UI.Controllers
         internal static void OnUISceneLoaded() => _uiSceneLoaded = true;
 
         [React]
-        void OnInventoryChangedSignal(InventoryChangedSignal _) { }
+        static void OnInventoryChanged() { }
 
         [React]
-        void OnLobbyChangedSignal(LobbyChangedSignal s) => (PopupSystem.CurrentPopup as LobbyPopup)?.UpdateLobby(s.LobbyName, s.LobbyCode, s.Players);
+        static void OnMissionComplete() { }
+
+        [React]
+        static void OnMissionFailed() { }
+
+        [React]
+        static void OnLobbyChanged(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players) =>
+            (PopupSystem.CurrentPopup as LobbyPopup)?.UpdateLobby(lobbyName, lobbyCode, players);
     }
 }
