@@ -61,7 +61,7 @@ namespace GameLogic.Systems
         static int _lastUpdateCallHash = int.MinValue;
 
         /// <summary>
-        /// Indicates that the player changed it's name.
+        /// Indicates that the player changed its name.
         /// </summary>
         static bool _lobbyIsDirty;
 

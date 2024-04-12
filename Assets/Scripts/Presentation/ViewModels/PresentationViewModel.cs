@@ -79,7 +79,7 @@ namespace Presentation.ViewModels
         public static void OnCoreSceneLoaded() => PresentationMainController.OnCoreSceneLoaded();
 
         /// <summary>
-        /// This is were network related things happens.
+        /// This is where network related things happens.
         /// Spawns all players.
         /// </summary>
         public static void OnLevelSceneLoaded()

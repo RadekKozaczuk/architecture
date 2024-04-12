@@ -11,8 +11,10 @@ namespace Presentation.Views
     {
         [SerializeField]
         PlayerId _playerId;
+
         [SerializeField]
         MeshFilter _meshFilter;
+
         [SerializeField]
         MeshRenderer _meshRenderer;
 
