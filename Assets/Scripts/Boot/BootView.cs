@@ -253,7 +253,7 @@ namespace Boot
         }
 
         /// <summary>
-        /// Returns ids of all currently open scenes except for <see cref="Constants.CoreScene" />, <see cref="Constants.MainMenuScene" />,
+        /// Returns ids of all currently open scenes except for <see cref="Constants.CoreScene" />, <see cref="Constants.MainMenuScene" />
         /// and <see cref="Constants.UIScene" />
         /// </summary>
         static int[] ScenesToUnloadFromGameplayToMainMenu()
