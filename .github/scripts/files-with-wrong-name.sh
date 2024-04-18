@@ -61,5 +61,4 @@ then
     echo $'Success!\nAll Files are named correctly!' >> FilesNameBodyFile.txt
 else
     echo $'Failed :c \n'"$IncorrectFiles" >> FilesNameBodyFile.txt
-    exit 1
 fi

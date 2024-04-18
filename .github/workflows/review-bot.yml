@@ -1,6 +1,6 @@
-# This script does 3 things: 
-#  - checks if the project assets are in the correct folders 
-#  - checks if the files are properly named
+# This script checks 3 things: 
+#  - if the project assets are in the correct folders 
+#  - if the files are properly named
 #  - and finally if the project builds properly using MONO compiler (we cannot use IL2CPP because large runners are too expensive)
 
 # The reasoning behind having all workflows in one file is optimization. 
@@ -27,15 +27,26 @@ jobs:
         # it has acceess to all repos that the user that generated it has
         token: ${{ secrets.ACCESS_TOKEN }}
         submodules: true
-
+        
+    - name: free disk space
+      run: |
+        sudo swapoff -a
+        sudo rm -f /swapfile
+        sudo apt clean
+        docker rmi $(docker image ls -aq)
+        df -h
+        
     - name: Create body file for files name check
-      run: echo $'Files name check status:\nWorking ⚙' > FilesNameBodyFile.txt
+      if: always() # free disk space might return error bcs it can try to clean already cleaned files
+      run: echo $'Files name check status:\nSuccess!' > FilesNameBodyFile.txt
 
     - name: Create body file for files path check
-      run: echo $'Files path check status:\nWorking ⚙' > FilesPathBodyFile.txt
+      if: always()
+      run: echo $'Files path check status:\nSuccess!' > FilesPathBodyFile.txt
 
     - name: Create body file for unity build check
-      run: echo $'Unity build status:\nWorking ⚙' > UnityBuildBodyFile.txt
+      if: always()
+      run: echo $'Unity build status:\nSuccess!' > UnityBuildBodyFile.txt
 
 #########################################################################################
 

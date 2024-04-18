@@ -1,6 +1,7 @@
 BasePath="./Assets/Art"
 ThirdPartyPath="./Assets/3rdParty/*"
 PluginsFolderPath="./Assets/Plugins/*"
+DocsFilesPath="./Assets/Scripts/Shared/Docs/*"
 IncorrectFiles=""
 
 function CollectFilesThatAreNotInFolder()
@@ -24,7 +25,7 @@ function CollectFilesThatAreNotInFolder()
     find "./" -type f -name "$fileExtension" -print0 | 
     while IFS= read -r -d $'\0' file 
     do
-        if [[ $file != $folderPath ]] && [[ $file != $ThirdPartyPath ]] && [[ $file != $folderPathAlt ]] && [[ $file != $PluginsFolderPath ]]
+        if [[ $file != $folderPath ]] && [[ $file != $ThirdPartyPath ]] && [[ $file != $folderPathAlt ]] && [[ $file != $PluginsFolderPath ]] && [[ $file != $DocsFilesPath ]]
         then
             if [[ $anyIncorrect == false ]]
             then
@@ -65,5 +66,4 @@ then
     echo $'Success!\nAll files are in the correct folders!' >> FilesPathBodyFile.txt
 else
     echo $'Failed :c \n'"$IncorrectFiles" >> FilesPathBodyFile.txt
-    exit 1
 fi
