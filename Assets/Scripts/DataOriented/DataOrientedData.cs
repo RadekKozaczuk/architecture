@@ -3,12 +3,12 @@ using Unity.Mathematics;
 using UnityEngine.Scripting;
 
 [assembly: Preserve]
-namespace Dots
+namespace DataOriented
 {
     /// <summary>
     /// Assembly-level data. Everything here should be internal.
     /// </summary>
-    static class DotsData
+    static class DataOrientedData
     {
         /// <summary>
         /// This should be final value (meaning including player, delta time, and others).
