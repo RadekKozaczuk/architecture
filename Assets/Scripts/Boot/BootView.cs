@@ -123,6 +123,8 @@ namespace Boot
             Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.ScriptOnly);
             Application.SetStackTraceLogType(LogType.Exception, StackTraceLogType.ScriptOnly);
 
+            // by default, we keep the frame rate low (>=30) to keep the temperature low
+            // feel free to change these values when the game gets closer to the release
 #if UNITY_EDITOR
             Application.targetFrameRate = 30;
 #elif UNITY_ANDROID || UNITY_IOS
@@ -132,9 +134,9 @@ namespace Boot
 #elif DEVELOPMENT_BUILD
             // On all other platforms, Unity ignores the value of targetFrameRate if you set vSyncCount
             // and calculates the target frame rate by dividing the platform's default target frame rate by the value of vSyncCount.
-            // For testing, ~30 FPS is enough, and does not cause overheating (especially important in multiplayer context).
-            // In the final version of the game this value may be higher.
             QualitySettings.vSyncCount = (int)(Screen.currentResolution.refreshRateRatio.value / 30);
+#else
+            QualitySettings.vSyncCount = (int)(Screen.currentResolution.refreshRateRatio.value / 45);
 #endif
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
