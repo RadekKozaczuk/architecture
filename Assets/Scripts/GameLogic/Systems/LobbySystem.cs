@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Common;
-using Common.Dtos;
-using Common.Enums;
-using Common.Systems;
+using Core;
+using Core.Dtos;
+using Core.Enums;
+using Core.Systems;
 using Shared;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;

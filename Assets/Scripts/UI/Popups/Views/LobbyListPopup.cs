@@ -1,9 +1,9 @@
 ﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using System.Collections;
 using System.Collections.Generic;
-using Common;
-using Common.Dtos;
-using Common.Enums;
+using Core;
+using Core.Dtos;
+using Core.Enums;
 using GameLogic.ViewModels;
 using Presentation.ViewModels;
 using TMPro;

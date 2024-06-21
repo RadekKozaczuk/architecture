@@ -4,21 +4,11 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Common.Config
+namespace Core.Config
 {
-    [CreateAssetMenu(fileName = "DebugConfig", menuName = "Config/Common/DebugConfig")]
+    [CreateAssetMenu(fileName = "DebugConfig", menuName = "Config/Core/DebugConfig")]
     public class DebugConfig : ScriptableObject
     {
-        /// <summary>
-        /// Show the order of execution of all reactive (implementing React attribute) systems and controllers.
-        /// </summary>
-        public bool LogSystemExecutionOrder;
-
-        /// <summary>
-        /// Logs all added <see cref="Shared.AbstractSignal" />.
-        /// </summary>
-        public bool LogAddedSignals;
-
         /// <summary>
         /// Logs all state change requests.
         /// </summary>

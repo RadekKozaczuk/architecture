@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Common
+namespace Core
 {
     public static class Layers
     {

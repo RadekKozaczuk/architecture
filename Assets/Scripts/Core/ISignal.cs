@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 // ReSharper disable UnusedParameter.Global
 
-namespace Common
+namespace Core
 {
     public interface ISignal
     {
@@ -13,8 +13,8 @@ namespace Common
 
         /// <summary>
         /// Indicates that something has changed in the lobby.
-        /// If LobbyName is different than null then the name changed.
-        /// If Players list is different than null then something changed in one or more players.
+        /// If LobbyName is different from null then the name changed.
+        /// If Players list is different from null then something changed in one or more players.
         /// The list always represents the current state, and not only the change.
         /// </summary>
         void LobbyChanged(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players);

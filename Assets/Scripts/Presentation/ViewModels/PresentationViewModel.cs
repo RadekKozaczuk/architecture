@@ -1,12 +1,13 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using System.IO;
-using Common;
-using Common.Enums;
-using Common.Systems;
+using Core;
+using Core.Enums;
+using Core.Systems;
 using ControlFlow.DependencyInjector;
 using JetBrains.Annotations;
 using Presentation.Config;
 using Presentation.Controllers;
+using Presentation.Systems;
 using Presentation.Views;
 using Shared.Systems;
 using Unity.Netcode;
@@ -136,12 +137,12 @@ namespace Presentation.ViewModels
 
         public static void MainMenuOnEntry()
         {
-            MusicSystem<Music>.LoadAndPlayWhenReady(Music.MainMenu);
+            MusicSystem.LoadAndPlayWhenReady(Music.MainMenu);
             PresentationSceneReferenceHolder.GameplayCamera.gameObject.SetActive(false);
             PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(true);
         }
 
-        public static void MainMenuOnExit() => MusicSystem<Music>.Stop();
+        public static void MainMenuOnExit() => MusicSystem.Stop();
 
         public static void GameplayOnEntry()
         {
@@ -178,16 +179,16 @@ namespace Presentation.ViewModels
         public static void SetMusicVolume(int music)
         {
             Assert.IsTrue(music is >= 0 and <= 10, "Volume must be represented by a value randing from 0 to 10.");
-            MusicSystem<Music>.Volume = music;
+            MusicSystem.Volume = music;
         }
 
         public static void SetSoundVolume(int sound)
         {
             Assert.IsTrue(sound is >= 0 and <= 10, "Volume must be represented by a value randing from 0 to 10.");
-            SoundSystem<Sound>.Volume = sound;
+            SoundSystem.Volume = sound;
         }
 
-        public static void PlaySound(Sound sound) => SoundSystem<Sound>.Play(sound);
+        public static void PlaySound(Sound sound) => SoundSystem.Play(sound);
 
         public static void SaveGame(BinaryWriter writer)
         {

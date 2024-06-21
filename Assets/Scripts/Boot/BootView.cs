@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Common;
-using Common.Config;
-using Common.Enums;
-using Common.Systems;
+using Core;
+using Core.Config;
+using Core.Enums;
+using Core.Systems;
 using GameLogic.ViewModels;
 using Presentation.ViewModels;
 using Shared;

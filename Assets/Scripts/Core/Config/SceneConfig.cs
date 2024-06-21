@@ -1,14 +1,14 @@
 ﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-using Common.Enums;
+using Core.Enums;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Common.Config
+namespace Core.Config
 {
     /// <summary>
     /// List of scenes that should be loaded with lower priority to extend loading over a longer period of time and prevent performance drops.
     /// </summary>
-    [CreateAssetMenu(fileName = "SceneConfig", menuName = "Config/Common/SceneConfig")]
+    [CreateAssetMenu(fileName = "SceneConfig", menuName = "Config/Core/SceneConfig")]
     public class SceneConfig : ScriptableObject
     {
         // todo: add validation that checks if a scene is listed no more than once
