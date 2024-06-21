@@ -1,9 +1,8 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-using Common.Enums;
 using ControlFlow.DependencyInjector;
 using ControlFlow.Interfaces;
 using JetBrains.Annotations;
-using Shared.Systems;
+using Presentation.Systems;
 using UnityEngine.Scripting;
 
 namespace Presentation.Controllers
@@ -47,8 +46,8 @@ namespace Presentation.Controllers
 
         internal static void OnCoreSceneLoaded()
         {
-            SoundSystem<Sound>.Initialize(PresentationSceneReferenceHolder.AudioContainer);
-            MusicSystem<Music>.Initialize(PresentationSceneReferenceHolder.MusicAudioSource);
+            SoundSystem.Initialize();
+            MusicSystem.Initialize();
             _coreSceneLoaded = true;
         }
     }

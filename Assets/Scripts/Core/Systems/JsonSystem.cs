@@ -2,7 +2,7 @@
 using System;
 using System.Collections;
 
-namespace Common.Systems
+namespace Core.Systems
 {
     public static class JsonSystem
     {

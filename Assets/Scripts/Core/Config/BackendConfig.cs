@@ -2,9 +2,9 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Common.Config
+namespace Core.Config
 {
-    [CreateAssetMenu(fileName = "BackendConfig", menuName = "Config/Common/BackendConfig")]
+    [CreateAssetMenu(fileName = "BackendConfig", menuName = "Config/Core/BackendConfig")]
     class BackendConfig : ScriptableObject
     {
         [SerializeField]

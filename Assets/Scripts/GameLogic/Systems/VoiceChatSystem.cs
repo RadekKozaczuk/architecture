@@ -10,7 +10,7 @@ namespace GameLogic.Systems
     static class VoiceChatSystem
     {
         static ILoginSession _session;
-        static IChannelSession _channel;
+        static IChannelSession? _channel;
         static readonly Client _client = new ();
 
         static Action? _callbackToRunWhenLogin;
@@ -35,7 +35,7 @@ namespace GameLogic.Systems
                     // Handle error
                     Debug.LogError($"Could not login: {e.Message}");
                 }
-                // At this point, we have successfully requested to login. 
+                // At this point, we have successfully requested to log in. 
                 // When you are able to join channels, LoginSession.State will be set to LoginState.LoggedIn.
                 // Reference LoginSession_PropertyChanged()
             });
@@ -70,9 +70,10 @@ namespace GameLogic.Systems
 
         internal static void LeaveCurrentChannel()
         {
-            if (_channel != null)
-                _channel.Disconnect();
+            _channel?.Disconnect();
         }
+
+        internal static void ToggleMuteInput(bool mute) => _client.AudioInputDevices.Muted = mute;
 
         // For this example, we immediately join a channel after LoginState changes to LoginState.LoggedIn.
         // In an actual game, when to join a channel will vary by implementation.
@@ -88,11 +89,9 @@ namespace GameLogic.Systems
                     const bool ConnectText = true;
 
                     // This puts you into an echo channel where you can hear yourself speaking.
-                    // If you can hear yourself, then everything is working and you are ready to integrate Vivox into your project.
+                    // If you can hear yourself, then everything is working, and you are ready to integrate Vivox into your project.
                     JoinChannel("TestChannel", ChannelType.NonPositional, ConnectAudio, ConnectText);
                 }
         }
-
-        internal static void ToggleMuteInput(bool mute) => _client.AudioInputDevices.Muted = mute;
     }
 }

@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Common.Dtos;
+using Core.Dtos;
 using GameLogic.Systems;
 
 namespace GameLogic.ViewModels

@@ -2,9 +2,9 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Common.Config
+namespace Core.Config
 {
-    [CreateAssetMenu(fileName = "PlayerConfig", menuName = "Config/Common/PlayerConfig")]
+    [CreateAssetMenu(fileName = "PlayerConfig", menuName = "Config/Core/PlayerConfig")]
     public class PlayerConfig : ScriptableObject
     {
         /// <summary>

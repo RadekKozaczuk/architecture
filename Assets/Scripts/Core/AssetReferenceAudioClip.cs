@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
-namespace Common
+namespace Core
 {
     /// <summary>
     /// Unity created a lot of more restrictive types like <see cref="AssetReferenceSprite" /> or <see cref="AssetReferenceGameObject" />,
