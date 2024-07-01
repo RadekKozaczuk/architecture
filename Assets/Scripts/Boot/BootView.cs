@@ -46,7 +46,9 @@ namespace Boot
             Application.backgroundLoadingPriority = ThreadPriority.High;
             // injection must be done in awake because fields cannot be injected into in the same method they are used in
             // start will be at least 1 frame later than Awake.
-            Architecture.Initialize();
+            Architecture.Initialize(SignalProcessorPrecalculatedArrays.SignalCount,
+                                    SignalProcessorPrecalculatedArrays.SignalNames,
+                                    SignalProcessorPrecalculatedArrays.SignalQueues);
         }
 
         void Start()
@@ -176,7 +178,7 @@ namespace Boot
                 PresentationViewModel.CustomUpdate();
                 UIViewModel.CustomUpdate();
 
-                SignalProcessor.ExecuteSentSignals();
+                Architecture.ExecuteSentSignals();
             }
         }
 
