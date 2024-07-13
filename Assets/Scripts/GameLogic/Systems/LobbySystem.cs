@@ -329,22 +329,21 @@ namespace GameLogic.Systems
             }
         }
 
-        static void JoinChannelVoiceChat()
-        {
-            VoiceChatSystem.JoinChannel(_lobby!.Name, VivoxUnity.ChannelType.Echo, true, false);
-        }
+        static void JoinChannelVoiceChat() => VoiceChatSystem.JoinChannel(_lobby!.Name, true, false);
 
-        static void LeaveChannelVoiceChat()
-        {
-            VoiceChatSystem.LeaveCurrentChannel();
-        }
+        static void LeaveChannelVoiceChat() => VoiceChatSystem.LeaveChannel();
 
         static async void ExecuteLobbyQueryCallback()
         {
             _lobbyQueryTimer = LobbyQueryRate;
             LobbyDto[] lobbies = await QueryLobbies();
-            _pendingLobbyQueryCallback!.Invoke(lobbies);
-            _pendingLobbyQueryCallback = null;
+            if (_pendingLobbyQueryCallback != null && lobbies != null)
+            {
+                _pendingLobbyQueryCallback.Invoke(lobbies);
+                _pendingLobbyQueryCallback = null;
+            }
+            else
+                Debug.LogWarning("Callback or lobbies are null");
         }
 
         /// <summary>

@@ -9,6 +9,8 @@ namespace GameLogic.ViewModels
 {
     public partial class GameLogicViewModel
     {
+        public static bool IsMuted => VoiceChatSystem.IsMuted;
+
         public static void RequestGetLobbies(Action<LobbyDto[]> callback) => LobbySystem.RequestGetLobbies(callback);
 
         public static void JoinLobbyById(string lobbyId, Action<string, string, List<(string playerName, string playerId, bool isHost)>> callback) =>
@@ -46,6 +48,6 @@ namespace GameLogic.ViewModels
 
         public static void LoginVoiceChat(Action callback) => VoiceChatSystem.Login(callback);
 
-        public static void ToggleMuteInput(bool mute) => VoiceChatSystem.ToggleMuteInput(mute);
+        public static void ToggleMuteInput() => VoiceChatSystem.ToggleMuteInput();
     }
 }

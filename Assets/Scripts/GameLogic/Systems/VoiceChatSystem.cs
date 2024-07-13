@@ -1,97 +1,79 @@
 ﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using System;
-using System.ComponentModel;
+using Core;
 using Unity.Services.Vivox;
 using UnityEngine;
-using VivoxUnity;
 
 namespace GameLogic.Systems
 {
     static class VoiceChatSystem
     {
-        static ILoginSession _session;
-        static IChannelSession? _channel;
-        static readonly Client _client = new ();
+        static Action _callbackToRunWhenLogin;
 
-        static Action? _callbackToRunWhenLogin;
+        internal static bool IsMuted => VivoxService.Instance != null && VivoxService.Instance.IsInputDeviceMuted;
 
-        internal static void Login(Action callback, string? displayName = null)
+        internal static async void Login(Action callback)
         {
             _callbackToRunWhenLogin = callback;
-            var account = new Account(displayName);
 
-            _session = VivoxService.Instance.Client.GetLoginSession(account);
-            _session.PropertyChanged += LoginSession_PropertyChanged;
+            try
+            {
+                await VivoxService.Instance.LoginAsync();
+                _callbackToRunWhenLogin?.Invoke();
+                _callbackToRunWhenLogin = null!;
 
-            _session.BeginLogin(_session.GetLoginToken(), SubscriptionMode.Accept, null, null, null, ar =>
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Could not login: {e.Message}");
+            }
+        }
+
+        internal static async void JoinChannel(string channelName, bool connectAudio, bool connectText, bool transmissionSwitch = true)
+        {
+            try
+            {
+                ChatCapability chatCapability = ChatCapability.TextOnly;
+                if (connectAudio && connectText)
+                    chatCapability = ChatCapability.TextAndAudio;
+                else if (connectAudio)
+                    chatCapability = ChatCapability.AudioOnly;
+                else if (connectText)
+                    chatCapability = ChatCapability.TextOnly;
+
+                await VivoxService.Instance.JoinGroupChannelAsync(channelName, chatCapability);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Could not connect to channel: {e.Message}");
+            }
+        }
+
+        internal static async void LeaveChannel()
+        {
+            if (VivoxService.Instance.ActiveChannels.Count > 0)
             {
                 try
                 {
-                    _session.EndLogin(ar);
+                    await VivoxService.Instance.LeaveAllChannelsAsync();
                 }
                 catch (Exception e)
                 {
-                    // Unbind any login session-related events you might be subscribed to.
-                    // Handle error
-                    Debug.LogError($"Could not login: {e.Message}");
+                    Debug.LogError($"Could not leave channels: {e.Message}");
                 }
-                // At this point, we have successfully requested to log in. 
-                // When you are able to join channels, LoginSession.State will be set to LoginState.LoggedIn.
-                // Reference LoginSession_PropertyChanged()
-            });
-        }
-
-        internal static void JoinChannel(string channelName, ChannelType channelType, bool connectAudio, bool connectText, bool transmissionSwitch = true,
-            Channel3DProperties? properties = null)
-        {
-            if (_session.State == LoginState.LoggedIn)
-            {
-                var channel = new Channel(channelName, channelType, properties);
-
-                IChannelSession channelSession = _session.GetChannelSession(channel);
-
-                _channel = channelSession;
-
-                channelSession.BeginConnect(connectAudio, connectText, transmissionSwitch, channelSession.GetConnectToken(), ar =>
-                {
-                    try
-                    {
-                        channelSession.EndConnect(ar);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogError($"Could not connect to channel: {e.Message}");
-                    }
-                });
             }
             else
-                Debug.LogError("Can't join a channel when not logged in.");
+                Debug.LogWarning("Attempted to leave channels, but no active channels are found.");
         }
 
-        internal static void LeaveCurrentChannel()
+        internal static void ToggleMuteInput()
         {
-            _channel?.Disconnect();
-        }
+            if (IsMuted)
+                VivoxService.Instance.UnmuteInputDevice();
+            else
+                VivoxService.Instance.MuteInputDevice();
 
-        internal static void ToggleMuteInput(bool mute) => _client.AudioInputDevices.Muted = mute;
-
-        // For this example, we immediately join a channel after LoginState changes to LoginState.LoggedIn.
-        // In an actual game, when to join a channel will vary by implementation.
-        static void LoginSession_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            var loginSession = (ILoginSession)sender;
-            if (e.PropertyName == "State")
-                if (loginSession.State == LoginState.LoggedIn)
-                {
-                    _callbackToRunWhenLogin?.Invoke();
-                    _callbackToRunWhenLogin = null;
-                    const bool ConnectAudio = true;
-                    const bool ConnectText = true;
-
-                    // This puts you into an echo channel where you can hear yourself speaking.
-                    // If you can hear yourself, then everything is working, and you are ready to integrate Vivox into your project.
-                    JoinChannel("TestChannel", ChannelType.NonPositional, ConnectAudio, ConnectText);
-                }
+            Signals.ToggleMuteVoiceChat();
         }
     }
 }
