@@ -8,7 +8,7 @@ namespace Core
     /// Application-level (global) data.
     /// All static data objects used across the project are stored here.
     /// </summary>
-    public static class CommonData
+    public static class CoreData
     {
         /// <summary>
         /// Has game been run in multiplayer mode.
@@ -34,5 +34,7 @@ namespace Core
         /// Used only in multiplayer context.
         /// </summary>
         public static string PlayerName;
+
+        public static MachineRole MachineRole;
     }
 }

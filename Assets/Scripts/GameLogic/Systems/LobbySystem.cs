@@ -75,7 +75,7 @@ namespace GameLogic.Systems
                 ExecuteLobbyQueryCallback();
 
             if (_lobbyIsDirty)
-                UpdatePlayerName(CommonData.PlayerName);
+                UpdatePlayerName(CoreData.PlayerName);
 
             if (Lobby == null)
                 return;
@@ -102,7 +102,7 @@ namespace GameLogic.Systems
                     {
                         Data = new Dictionary<string, PlayerDataObject>
                         {
-                            {Constants.PlayerName, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, CommonData.PlayerName)}
+                            {Constants.PlayerName, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, CoreData.PlayerName)}
                         }
                     }
                 };
@@ -142,7 +142,7 @@ namespace GameLogic.Systems
                     {
                         Data = new Dictionary<string, PlayerDataObject>
                         {
-                            {Constants.PlayerName, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, CommonData.PlayerName)}
+                            {Constants.PlayerName, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, CoreData.PlayerName)}
                         }
                     }
                 };
@@ -168,7 +168,7 @@ namespace GameLogic.Systems
                     {
                         Data = new Dictionary<string, PlayerDataObject>
                         {
-                            {Constants.PlayerName, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, CommonData.PlayerName)}
+                            {Constants.PlayerName, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, CoreData.PlayerName)}
                         }
                     }
                 };
@@ -293,8 +293,8 @@ namespace GameLogic.Systems
                 }
             });
 
-            CommonData.PlayerCount = Lobby.Players.Count;
-            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
+            CoreData.PlayerCount = Lobby.Players.Count;
+            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});
         }
 
         /// <summary>
@@ -401,8 +401,8 @@ namespace GameLogic.Systems
 
         static async void StartGame_Client()
         {
-            CommonData.IsMultiplayer = true;
-            CommonData.CurrentLevel = Level.HubLocation;
+            CoreData.IsMultiplayer = true;
+            CoreData.CurrentLevel = Level.HubLocation;
 
             try
             {
@@ -415,7 +415,7 @@ namespace GameLogic.Systems
                 MyDebug.Log(e.ToString());
             }
 
-            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
+            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});
         }
 
         /// <summary>

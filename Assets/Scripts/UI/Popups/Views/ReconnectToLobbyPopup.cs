@@ -54,7 +54,7 @@ namespace UI.Popups.Views
             PopupSystem.CloseCurrentPopup();
             PopupSystem.ShowPopup(PopupType.Lobby);
             (PopupSystem.CurrentPopup as LobbyPopup)!.SetValues(lobbyName, lobbyCode, players);
-            CommonData.PlayerId = PlayerId.Player2;
+            CoreData.PlayerId = PlayerId.Player2;
         }
 
         void BackToLobbyListAction()

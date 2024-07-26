@@ -21,7 +21,7 @@ namespace GameLogic.Systems
 
             // player
             writer.Write(Version);
-            writer.Write((byte)CommonData.CurrentLevel);
+            writer.Write((byte)CoreData.CurrentLevel);
 
             PresentationViewModel.SaveGame(writer);
 

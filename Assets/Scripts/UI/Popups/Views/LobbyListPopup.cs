@@ -37,6 +37,9 @@ namespace UI.Popups.Views
         Button _create;
 
         [SerializeField]
+        Button _joinDedicated;
+
+        [SerializeField]
         RectTransform _list;
 
         static readonly UIConfig _config;
@@ -55,18 +58,19 @@ namespace UI.Popups.Views
             }
 
             _refresh.onClick.AddListener(RefreshAction);
-            _join.onClick.AddListener(
-                () =>
-                {
-                    PresentationViewModel.PlaySound(Sound.ClickSelect);
-                    GameLogicViewModel.JoinLobbyById(LobbyListElementView.SelectedLobby!.LobbyId, JoinLobbyResultCallback);
-                }); // join the selected
+            _join.onClick.AddListener(() =>
+            {
+                PresentationViewModel.PlaySound(Sound.ClickSelect);
+                GameLogicViewModel.JoinLobbyById(LobbyListElementView.SelectedLobby!.LobbyId, JoinLobbyResultCallback);
+            }); // join the selected
             _join.interactable = false;
+
             _create.onClick.AddListener(() =>
             {
                 PresentationViewModel.PlaySound(Sound.ClickSelect);
                 PopupSystem.ShowPopup(PopupType.CreateLobby);
             });
+
             _joinByCode.onClick.AddListener(() =>
             {
                 PresentationViewModel.PlaySound(Sound.ClickSelect);
@@ -94,9 +98,8 @@ namespace UI.Popups.Views
             foreach (Transform child in _list.transform)
                 Destroy(child.gameObject);
 
-            for (int i = 0; i < lobbies.Length; i++)
+            foreach (LobbyDto lobby in lobbies)
             {
-                LobbyDto lobby = lobbies[i];
                 LobbyListElementView view = Instantiate(_config.LobbyListElement, _list.transform);
                 view.Initialize(lobby.LobbyId, lobby.LobbyName, lobby.PlayerCount, lobby.PlayerMax);
             }
@@ -122,7 +125,7 @@ namespace UI.Popups.Views
                 PopupSystem.CloseCurrentPopup();
                 PopupSystem.ShowPopup(PopupType.Lobby);
                 (PopupSystem.CurrentPopup as LobbyPopup)!.SetValues(lobbyName, lobbyCode, players);
-                CommonData.PlayerId = PlayerId.Player2;
+                CoreData.PlayerId = PlayerId.Player2;
             }
         }
 
