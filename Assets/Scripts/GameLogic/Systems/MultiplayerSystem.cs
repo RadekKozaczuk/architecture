@@ -16,7 +16,7 @@ namespace GameLogic.Systems
         static IServerQueryHandler? _serverQueryHandler;
 
         // should only be run if MachineRole = DedicatedServer
-        static async void CustomStart()
+        internal static async void CustomStart()
         {
             // todo: this hinda makes no sense as in our case it will always be dedicated server
             //if (Application.platform == RuntimePlatform.LinuxServer)
@@ -44,7 +44,7 @@ namespace GameLogic.Systems
         }
 
         // should only be run if MachineRole = DedicatedServer
-        static async void CustomUpdate()
+        internal static async void CustomUpdate()
         {
             // todo: this hinda makes no sense as in our case it will always be dedicated server
             //if (Application.platform == RuntimePlatform.LinuxServer)
