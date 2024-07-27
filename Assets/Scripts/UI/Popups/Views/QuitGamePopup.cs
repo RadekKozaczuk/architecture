@@ -31,7 +31,7 @@ namespace UI.Popups.Views
         {
             base.Initialize();
 
-            _hub.interactable = CommonData.CurrentLevel != Level.HubLocation;
+            _hub.interactable = CoreData.CurrentLevel != Level.HubLocation;
 
             _saveGame.onClick.AddListener(SaveGameAction);
             _loadGame.onClick.AddListener(LoadGameAction);

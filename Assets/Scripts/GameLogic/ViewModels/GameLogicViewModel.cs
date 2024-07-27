@@ -44,12 +44,12 @@ namespace GameLogic.ViewModels
 
         public static void BootingOnExit() => PersistentStorageSystem.Initialize();
 
-        public static void MainMenuOnEntry() => CommonData.PlayerName = Utils.GenerateRandomString(Random.Range(5, 9));
+        public static void MainMenuOnEntry() => CoreData.PlayerName = Utils.GenerateRandomString(Random.Range(5, 9));
 
         public static void MainMenuOnExit()
         {
             // if client and multiplayer and client not started - start client
-            if (CommonData.IsMultiplayer && !NetworkManager.Singleton.IsClient)
+            if (CoreData.IsMultiplayer && !NetworkManager.Singleton.IsClient)
                 NetworkManager.Singleton.StartClient();
         }
 
