@@ -7,6 +7,7 @@ using GameLogic.Systems;
 
 namespace GameLogic.ViewModels
 {
+    // todo: investigate if lobby and voice should not be part of UI, would be useful for Server builds
     public partial class GameLogicViewModel
     {
         public static void RequestGetLobbies(Action<LobbyDto[]> callback) => LobbySystem.RequestGetLobbies(callback);

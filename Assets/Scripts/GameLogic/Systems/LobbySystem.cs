@@ -1,4 +1,4 @@
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -500,7 +500,7 @@ namespace GameLogic.Systems
                 // calculate hash
                 int hashCode = CalculateHash();
 
-                // send signal is if has changed
+                // send signal if it has changed
                 if (hashCode != _lastUpdateCallHash && !_gameStarted)
                 {
                     Signals.LobbyChanged(Lobby.Name, Lobby.LobbyCode, GetPlayers());
