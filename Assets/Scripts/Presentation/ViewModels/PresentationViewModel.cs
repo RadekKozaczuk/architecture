@@ -62,7 +62,7 @@ namespace Presentation.ViewModels
                     player.gameObject.SetActive(false);
                 }
 
-                if (_joinedPlayers != CommonData.PlayerCount)
+                if (_joinedPlayers != CoreData.PlayerCount)
                     return;
 
                 foreach (PlayerNetworkView player in PresentationData.NetworkPlayers)
@@ -88,7 +88,7 @@ namespace Presentation.ViewModels
             // load level data
             _level = GameObject.FindWithTag("LevelSceneReferenceHolder").GetComponent<LevelSceneReferenceHolder>();
 
-            if (CommonData.IsMultiplayer)
+            if (CoreData.IsMultiplayer)
             {
                 if (NetworkManager.Singleton.IsHost)
                 {
@@ -107,7 +107,7 @@ namespace Presentation.ViewModels
                         // Spawning in Netcode means to instantiate and/or spawn the object that is synchronized between all clients by the server.
                         // Only server can spawn multiplayer objects.
                         player.NetworkObj.Spawn(true);
-                        player.gameObject.SetActive(CommonData.PlayerCount == 1);
+                        player.gameObject.SetActive(CoreData.PlayerCount == 1);
                     }
                     else
                     {
@@ -125,8 +125,8 @@ namespace Presentation.ViewModels
             bool loadGameRequested = (bool)GameStateSystem.GetTransitionParameter(StateTransitionParameter.LoadGameRequested)!;
             if (loadGameRequested)
             {
-                Vector3 position = SaveLoadUtils.ReadVector3(CommonData.SaveGameReader!);
-                Quaternion rotation = SaveLoadUtils.ReadQuaternion(CommonData.SaveGameReader!);
+                Vector3 position = SaveLoadUtils.ReadVector3(CoreData.SaveGameReader!);
+                Quaternion rotation = SaveLoadUtils.ReadQuaternion(CoreData.SaveGameReader!);
                 Transform transform = PresentationData.Player.transform;
                 transform.position = position;
                 transform.rotation = rotation;
@@ -165,7 +165,7 @@ namespace Presentation.ViewModels
 
         public static void Movement(Vector2 movementInput)
         {
-            if (CommonData.IsMultiplayer)
+            if (CoreData.IsMultiplayer)
             {
                 if (NetworkManager.Singleton.IsHost)
                     PresentationData.NetworkPlayers[(int)PlayerId.Player1].Move(movementInput.normalized);

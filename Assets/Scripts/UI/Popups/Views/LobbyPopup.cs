@@ -121,9 +121,9 @@ namespace UI.Popups.Views
             PresentationViewModel.PlaySound(Sound.ClickSelect);
             PopupSystem.CloseCurrentPopup();
             _start.interactable = false;
-            CommonData.CurrentLevel = Level.HubLocation;
-            CommonData.IsMultiplayer = true;
-            CommonData.PlayerId = PlayerId.Player1;
+            CoreData.CurrentLevel = Level.HubLocation;
+            CoreData.IsMultiplayer = true;
+            CoreData.PlayerId = PlayerId.Player1;
             GameLogicViewModel.StartGame();
         }
 

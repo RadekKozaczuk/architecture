@@ -44,8 +44,8 @@ namespace UI.Views
         static void NewGame()
         {
             PresentationViewModel.PlaySound(Sound.ClickSelect);
-            CommonData.CurrentLevel = Level.HubLocation;
-            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CommonData.CurrentLevel});
+            CoreData.CurrentLevel = Level.HubLocation;
+            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});
         }
 
         static void LoadGame()

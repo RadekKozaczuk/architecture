@@ -235,8 +235,8 @@ namespace Boot
             bool loadGameRequested = (bool)GameStateSystem.GetTransitionParameter(StateTransitionParameter.LoadGameRequested)!;
             if (loadGameRequested)
             {
-                CommonData.SaveGameReader!.Close();
-                CommonData.SaveGameReader = null;
+                CoreData.SaveGameReader!.Close();
+                CoreData.SaveGameReader = null;
             }
         }
 
@@ -253,12 +253,12 @@ namespace Boot
             if (loadGameRequested)
             {
                 byte[] data = File.ReadAllBytes(Path.Combine(Application.persistentDataPath, "savegame.sav"));
-                CommonData.SaveGameReader = new BinaryReader(new MemoryStream(data));
+                CoreData.SaveGameReader = new BinaryReader(new MemoryStream(data));
 
-                int _ = CommonData.SaveGameReader.ReadByte(); // save game version
-                CommonData.CurrentLevel = (Level)CommonData.SaveGameReader.ReadByte();
+                int _ = CoreData.SaveGameReader.ReadByte(); // save game version
+                CoreData.CurrentLevel = (Level)CoreData.SaveGameReader.ReadByte();
 
-                return new[] {(int)CommonData.CurrentLevel};
+                return new[] {(int)CoreData.CurrentLevel};
             }
 
             return null;
@@ -294,13 +294,13 @@ namespace Boot
             if (loadGameRequested)
             {
                 byte[] data = File.ReadAllBytes(Path.Combine(Application.persistentDataPath, "savegame.sav"));
-                CommonData.SaveGameReader = new BinaryReader(new MemoryStream(data));
+                CoreData.SaveGameReader = new BinaryReader(new MemoryStream(data));
 
-                int _ = CommonData.SaveGameReader.ReadByte(); // save game version
-                currentLevel = (int)CommonData.CurrentLevel;
-                CommonData.CurrentLevel = (Level)CommonData.SaveGameReader.ReadByte();
+                int _ = CoreData.SaveGameReader.ReadByte(); // save game version
+                currentLevel = (int)CoreData.CurrentLevel;
+                CoreData.CurrentLevel = (Level)CoreData.SaveGameReader.ReadByte();
 
-                return (new[] {(int)CommonData.CurrentLevel}, new[] {currentLevel});
+                return (new[] {(int)CoreData.CurrentLevel}, new[] {currentLevel});
             }
 
             bool hubRequested = (bool)GameStateSystem.GetTransitionParameter(StateTransitionParameter.HubSceneRequested)!;
@@ -308,18 +308,18 @@ namespace Boot
             // requested going back to hub
             if (hubRequested)
             {
-                currentLevel = (int)CommonData.CurrentLevel;
-                CommonData.CurrentLevel = Level.HubLocation;
+                currentLevel = (int)CoreData.CurrentLevel;
+                CoreData.CurrentLevel = Level.HubLocation;
                 return (new[] {(int)Level.HubLocation}, new[] {currentLevel});
             }
 
-            if (CommonData.CurrentLevel == Level.HubLocation)
+            if (CoreData.CurrentLevel == Level.HubLocation)
             {
-                CommonData.CurrentLevel += 1;
-                return (new[] {(int)CommonData.CurrentLevel}, new[] {(int)CommonData.CurrentLevel - 1});
+                CoreData.CurrentLevel += 1;
+                return (new[] {(int)CoreData.CurrentLevel}, new[] {(int)CoreData.CurrentLevel - 1});
             }
 
-            CommonData.CurrentLevel = Level.Level0;
+            CoreData.CurrentLevel = Level.Level0;
             return (new[] {(int)Level.Level0}, new[] {(int)Level.HubLocation});
         }
     }

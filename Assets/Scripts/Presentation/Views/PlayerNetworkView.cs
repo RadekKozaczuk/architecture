@@ -21,7 +21,7 @@ namespace Presentation.Views
             base.OnNetworkSpawn();
 
             if (IsOwner)
-                PresentationData.NetworkPlayers[(int)CommonData.PlayerId!.Value] = this;
+                PresentationData.NetworkPlayers[(int)CoreData.PlayerId!.Value] = this;
         }
 
         internal void Move(Vector2 v)
