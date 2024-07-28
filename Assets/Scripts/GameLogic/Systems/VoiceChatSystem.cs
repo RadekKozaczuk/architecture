@@ -3,6 +3,7 @@ using System;
 using Core;
 using Unity.Services.Vivox;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace GameLogic.Systems
 {

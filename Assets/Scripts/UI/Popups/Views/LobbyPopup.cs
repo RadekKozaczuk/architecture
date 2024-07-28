@@ -130,7 +130,6 @@ namespace UI.Popups.Views
         static void LeaveAction()
         {
             PresentationViewModel.PlaySound(Sound.ClickSelect);
-            GameLogicViewModel.LeaveLobby();
             PopupSystem.CloseCurrentPopup();
         }
 

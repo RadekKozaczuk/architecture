@@ -251,8 +251,6 @@ namespace GameLogic.Systems
                     await lobby.RemovePlayerAsync(Lobby!.Id, playerId);
 
                 LeaveChannelVoiceChat();
-
-                MyDebug.Log("Leave lobby");
             }
             catch (LobbyServiceException e)
             {
