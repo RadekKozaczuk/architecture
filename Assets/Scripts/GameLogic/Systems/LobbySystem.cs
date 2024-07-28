@@ -337,13 +337,12 @@ namespace GameLogic.Systems
         {
             _lobbyQueryTimer = LobbyQueryRate;
             LobbyDto[] lobbies = await QueryLobbies();
-            if (_pendingLobbyQueryCallback != null && lobbies != null)
-            {
-                _pendingLobbyQueryCallback.Invoke(lobbies);
-                _pendingLobbyQueryCallback = null;
-            }
-            else
-                Debug.LogWarning("Callback or lobbies are null");
+
+            Assert.IsNotNull(_pendingLobbyQueryCallback, "Pending lobby query callback should not be null.");
+            Assert.IsNotNull(lobbies, "Lobbies should not be null in order to execute LobbyQueryCallback.");
+
+            _pendingLobbyQueryCallback.Invoke(lobbies);
+            _pendingLobbyQueryCallback = null;
         }
 
         /// <summary>
