@@ -51,19 +51,15 @@ namespace GameLogic.Systems
 
         internal static async void LeaveChannel()
         {
-            if (VivoxService.Instance.ActiveChannels.Count > 0)
+            Assert.IsTrue(VivoxService.Instance.ActiveChannels.Count > 0, "Attempted to leave channels, but no active channels are found.");
+            try
             {
-                try
-                {
-                    await VivoxService.Instance.LeaveAllChannelsAsync();
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError($"Could not leave channels: {e.Message}");
-                }
+                await VivoxService.Instance.LeaveAllChannelsAsync();
             }
-            else
-                Debug.LogWarning("Attempted to leave channels, but no active channels are found.");
+            catch (Exception e)
+            {
+                Debug.LogError($"Could not leave channels: {e.Message}");
+            }
         }
 
         internal static void ToggleMuteInput()
