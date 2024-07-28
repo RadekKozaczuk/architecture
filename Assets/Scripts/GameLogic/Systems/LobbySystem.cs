@@ -499,7 +499,7 @@ namespace GameLogic.Systems
                 // calculate hash
                 int hashCode = CalculateHash();
 
-                // send signal is if has changed
+                // send signal if it has changed
                 if (hashCode != _lastUpdateCallHash && !_gameStarted)
                 {
                     Signals.LobbyChanged(Lobby.Name, Lobby.LobbyCode, GetPlayers());
