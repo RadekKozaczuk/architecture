@@ -38,8 +38,6 @@ namespace UI.Popups.Views
 
         string _hostId;
 
-        bool _isMuted;
-
         LobbyPopup()
             : base(PopupType.Lobby) { }
 
@@ -130,6 +128,7 @@ namespace UI.Popups.Views
         static void LeaveAction()
         {
             PresentationViewModel.PlaySound(Sound.ClickSelect);
+            GameLogicViewModel.LeaveLobby();
             PopupSystem.CloseCurrentPopup();
         }
 

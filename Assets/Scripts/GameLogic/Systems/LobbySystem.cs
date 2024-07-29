@@ -110,6 +110,7 @@ namespace GameLogic.Systems
                 Lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
 
                 _heartbeatTimer = HeartbeatRate;
+                JoinChannelVoiceChat();
                 return (true, Lobby.Players[0].Id, Lobby.LobbyCode);
             }
             catch (LobbyServiceException e)
@@ -192,6 +193,7 @@ namespace GameLogic.Systems
             try
             {
                 await Lobbies.Instance.QuickJoinLobbyAsync();
+                JoinChannelVoiceChat();
             }
             catch (LobbyServiceException e)
             {
