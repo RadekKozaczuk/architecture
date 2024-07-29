@@ -1,4 +1,4 @@
-﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -110,6 +110,7 @@ namespace GameLogic.Systems
                 Lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
 
                 _heartbeatTimer = HeartbeatRate;
+                JoinChannelVoiceChat();
                 return (true, Lobby.Players[0].Id, Lobby.LobbyCode);
             }
             catch (LobbyServiceException e)
@@ -192,6 +193,7 @@ namespace GameLogic.Systems
             try
             {
                 await Lobbies.Instance.QuickJoinLobbyAsync();
+                JoinChannelVoiceChat();
             }
             catch (LobbyServiceException e)
             {
@@ -251,8 +253,6 @@ namespace GameLogic.Systems
                     await lobby.RemovePlayerAsync(Lobby!.Id, playerId);
 
                 LeaveChannelVoiceChat();
-
-                MyDebug.Log("Leave lobby");
             }
             catch (LobbyServiceException e)
             {
@@ -337,13 +337,12 @@ namespace GameLogic.Systems
         {
             _lobbyQueryTimer = LobbyQueryRate;
             LobbyDto[] lobbies = await QueryLobbies();
-            if (_pendingLobbyQueryCallback != null && lobbies != null)
-            {
-                _pendingLobbyQueryCallback.Invoke(lobbies);
-                _pendingLobbyQueryCallback = null;
-            }
-            else
-                Debug.LogWarning("Callback or lobbies are null");
+
+            Assert.IsNotNull(_pendingLobbyQueryCallback, "Pending lobby query callback should not be null.");
+            Assert.IsNotNull(lobbies, "Lobbies should not be null in order to execute LobbyQueryCallback.");
+
+            _pendingLobbyQueryCallback.Invoke(lobbies);
+            _pendingLobbyQueryCallback = null;
         }
 
         /// <summary>

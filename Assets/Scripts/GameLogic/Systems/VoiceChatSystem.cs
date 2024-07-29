@@ -1,8 +1,9 @@
-﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using System;
 using Core;
 using Unity.Services.Vivox;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace GameLogic.Systems
 {
@@ -51,19 +52,15 @@ namespace GameLogic.Systems
 
         internal static async void LeaveChannel()
         {
-            if (VivoxService.Instance.ActiveChannels.Count > 0)
+            Assert.IsTrue(VivoxService.Instance.ActiveChannels.Count > 0, "Attempted to leave channels, but no active channels are found.");
+            try
             {
-                try
-                {
-                    await VivoxService.Instance.LeaveAllChannelsAsync();
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError($"Could not leave channels: {e.Message}");
-                }
+                await VivoxService.Instance.LeaveAllChannelsAsync();
             }
-            else
-                Debug.LogWarning("Attempted to leave channels, but no active channels are found.");
+            catch (Exception e)
+            {
+                Debug.LogError($"Could not leave channels: {e.Message}");
+            }
         }
 
         internal static void ToggleMuteInput()

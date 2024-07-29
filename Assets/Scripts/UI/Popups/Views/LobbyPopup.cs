@@ -38,8 +38,6 @@ namespace UI.Popups.Views
 
         string _hostId;
 
-        bool _isMuted;
-
         LobbyPopup()
             : base(PopupType.Lobby) { }
 
