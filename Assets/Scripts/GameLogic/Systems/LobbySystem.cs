@@ -110,6 +110,7 @@ namespace GameLogic.Systems
                 Lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
 
                 _heartbeatTimer = HeartbeatRate;
+                JoinChannelVoiceChat();
                 return (true, Lobby.Players[0].Id, Lobby.LobbyCode);
             }
             catch (LobbyServiceException e)
@@ -192,6 +193,7 @@ namespace GameLogic.Systems
             try
             {
                 await Lobbies.Instance.QuickJoinLobbyAsync();
+                JoinChannelVoiceChat();
             }
             catch (LobbyServiceException e)
             {
@@ -251,8 +253,6 @@ namespace GameLogic.Systems
                     await lobby.RemovePlayerAsync(Lobby!.Id, playerId);
 
                 LeaveChannelVoiceChat();
-
-                MyDebug.Log("Leave lobby");
             }
             catch (LobbyServiceException e)
             {
@@ -329,21 +329,19 @@ namespace GameLogic.Systems
             }
         }
 
-        static void JoinChannelVoiceChat()
-        {
-            VoiceChatSystem.JoinChannel(_lobby!.Name, VivoxUnity.ChannelType.Echo, true, false);
-        }
+        static void JoinChannelVoiceChat() => VoiceChatSystem.JoinChannel(_lobby!.Name, true, false);
 
-        static void LeaveChannelVoiceChat()
-        {
-            VoiceChatSystem.LeaveCurrentChannel();
-        }
+        static void LeaveChannelVoiceChat() => VoiceChatSystem.LeaveChannel();
 
         static async void ExecuteLobbyQueryCallback()
         {
             _lobbyQueryTimer = LobbyQueryRate;
             LobbyDto[] lobbies = await QueryLobbies();
-            _pendingLobbyQueryCallback!.Invoke(lobbies);
+
+            Assert.IsNotNull(_pendingLobbyQueryCallback, "Pending lobby query callback should not be null.");
+            Assert.IsNotNull(lobbies, "Lobbies should not be null in order to execute LobbyQueryCallback.");
+
+            _pendingLobbyQueryCallback.Invoke(lobbies);
             _pendingLobbyQueryCallback = null;
         }
 

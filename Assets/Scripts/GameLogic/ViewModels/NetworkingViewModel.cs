@@ -10,6 +10,8 @@ namespace GameLogic.ViewModels
     // todo: investigate if lobby and voice should not be part of UI, would be useful for Server builds
     public partial class GameLogicViewModel
     {
+        public static bool IsMuted => VoiceChatSystem.IsMuted;
+
         public static void RequestGetLobbies(Action<LobbyDto[]> callback) => LobbySystem.RequestGetLobbies(callback);
 
         public static void JoinLobbyById(string lobbyId, Action<string, string, List<(string playerName, string playerId, bool isHost)>> callback) =>
@@ -47,6 +49,6 @@ namespace GameLogic.ViewModels
 
         public static void LoginVoiceChat(Action callback) => VoiceChatSystem.Login(callback);
 
-        public static void ToggleMuteInput(bool mute) => VoiceChatSystem.ToggleMuteInput(mute);
+        public static void ToggleMuteInput() => VoiceChatSystem.ToggleMuteInput();
     }
 }

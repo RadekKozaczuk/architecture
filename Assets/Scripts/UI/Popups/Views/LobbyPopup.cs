@@ -38,8 +38,6 @@ namespace UI.Popups.Views
 
         string _hostId;
 
-        bool _isMuted;
-
         LobbyPopup()
             : base(PopupType.Lobby) { }
 
@@ -137,9 +135,8 @@ namespace UI.Popups.Views
         void MuteAction()
         {
             PresentationViewModel.PlaySound(Sound.ClickSelect);
-            _isMuted = !_isMuted;
-            _mute.image.color = _isMuted ? Color.red : Color.white;
-            GameLogicViewModel.ToggleMuteInput(_isMuted);
+            GameLogicViewModel.ToggleMuteInput();
+            _mute.image.color = GameLogicViewModel.IsMuted ? Color.red : Color.white;
         }
     }
 }
