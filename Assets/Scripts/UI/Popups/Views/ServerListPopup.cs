@@ -63,7 +63,7 @@ namespace UI.Popups.Views
                 string url = $"https://services.api.unity.com/auth/v1/token-exchange?projectId={projectId}&environmentId={environmentId}";
 
                 string jsonRequestBody
-                    = JsonUtility.ToJson(new TokenExchangeRequest {scopes = new[] {"multiplay.allocations.create", "multiplay.allocations.list"},});
+                    = JsonUtility.ToJson(new TokenExchangeRequest {Scopes = new[] {"multiplay.allocations.create", "multiplay.allocations.list"},});
 
                 WebRequestSystem.PostJson(url, unityWebRequest => unityWebRequest.SetRequestHeader("Authorization", "Basic " + keyBase64), jsonRequestBody,
                                      error => Debug.Log("Error: " + error), json =>
@@ -78,12 +78,12 @@ namespace UI.Popups.Views
                                          WebRequestSystem.PostJson(
                                              url,
                                              unityWebRequest =>
-                                                 unityWebRequest.SetRequestHeader("Authorization", "Bearer " + tokenExchangeResponse.accessToken),
+                                                 unityWebRequest.SetRequestHeader("Authorization", "Bearer " + tokenExchangeResponse.AccessToken),
                                              JsonUtility.ToJson(new QueueAllocationRequest
                                              {
-                                                 allocationId = "AAAAAAAAAAAAA",
-                                                 buildConfigurationId = 0,
-                                                 regionId = "AAAAAAAAAAAAAAAAA"
+                                                 AllocationId = "AAAAAAAAAAAAA",
+                                                 BuildConfigurationId = 0,
+                                                 RegionId = "AAAAAAAAAAAAAAAAA"
                                              }), error => Debug.Log("Error: " + error), json => Debug.Log("Success: " + json));
                                      });
             });
@@ -116,9 +116,9 @@ namespace UI.Popups.Views
                             {
                                 Debug.Log("Success: " + json);
                                 var listServers = JsonUtility.FromJson<ListServers>("{\"serverList\":" + json + "}");
-                                foreach (Server server in listServers.serverList)
+                                foreach (Server server in listServers.ServerList)
                                     //Debug.Log(server.ip + " : " + server.port + " " + server.deleted + " " + server.status);
-                                    if (server.status == ServerStatus.Online.ToString() || server.status == ServerStatus.Allocated.ToString())
+                                    if (server.Status == ServerStatus.Online.ToString() || server.Status == ServerStatus.Allocated.ToString())
                                     {
                                         // Server is Online!
                                         Transform serverTransform = Instantiate(serverTemplate, serverContainer);
@@ -133,48 +133,48 @@ namespace UI.Popups.Views
 
         public class TokenExchangeResponse
         {
-            public string accessToken;
+            public string AccessToken;
         }
 
         [Serializable]
         public class TokenExchangeRequest
         {
-            public string[] scopes;
+            public string[] Scopes;
         }
 
         [Serializable]
         public class QueueAllocationRequest
         {
-            public string allocationId;
-            public int buildConfigurationId;
-            public string payload;
-            public string regionId;
-            public bool restart;
+            public string AllocationId;
+            public int BuildConfigurationId;
+            public string Payload;
+            public string RegionId;
+            public bool Restart;
         }
 
         [Serializable]
         public class ListServers
         {
-            public Server[] serverList;
+            public Server[] ServerList;
         }
 
         [Serializable]
         public class Server
         {
-            public int buildConfigurationID;
-            public string buildConfigurationName;
-            public string buildName;
-            public bool deleted;
-            public string fleetID;
-            public string fleetName;
-            public string hardwareType;
-            public int id;
-            public string ip;
-            public int locationID;
-            public string locationName;
-            public int machineID;
-            public int port;
-            public string status;
+            public int BuildConfigurationID;
+            public string BuildConfigurationName;
+            public string BuildName;
+            public bool Deleted;
+            public string FleetID;
+            public string FleetName;
+            public string HardwareType;
+            public int Id;
+            public string Ip;
+            public int LocationID;
+            public string LocationName;
+            public int MachineID;
+            public int Port;
+            public string Status;
         }
     }
 }

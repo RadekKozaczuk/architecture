@@ -11,8 +11,6 @@ namespace UI.Systems
 {
     public static class WebRequestSystem
     {
-        class WebRequestsMonoBehaviour : MonoBehaviour { }
-
         public static void Get(string url, Action<string> onError, Action<string> onSuccess)
         {
             StaticCoroutine.StartStaticCoroutine(GetCoroutine(url, null, onError, onSuccess));
@@ -21,26 +19,6 @@ namespace UI.Systems
         public static void Get(string url, Action<UnityWebRequest> setHeaderAction, Action<string> onError, Action<string> onSuccess)
         {
             StaticCoroutine.StartStaticCoroutine(GetCoroutine(url, setHeaderAction, onError, onSuccess));
-        }
-
-        static IEnumerator GetCoroutine(string url, Action<UnityWebRequest>? setHeaderAction, Action<string> onError, Action<string> onSuccess)
-        {
-            using UnityWebRequest unityWebRequest = UnityWebRequest.Get(url);
-            setHeaderAction?.Invoke(unityWebRequest);
-
-            yield return unityWebRequest.SendWebRequest();
-
-            if (unityWebRequest.result is UnityWebRequest.Result.ConnectionError
-                                          or UnityWebRequest.Result.DataProcessingError
-                                          or UnityWebRequest.Result.ProtocolError)
-            {
-                // Error
-                onError(unityWebRequest.error);
-            }
-            else
-            {
-                onSuccess(unityWebRequest.downloadHandler.text);
-            }
         }
 
         public static void Post(string url, Dictionary<string, string> formFields, Action<string> onError, Action<string> onSuccess)
@@ -61,6 +39,36 @@ namespace UI.Systems
         public static void PostJson(string url, Action<UnityWebRequest> setHeaderAction, string jsonData, Action<string> onError, Action<string> onSuccess) 
         {
             StaticCoroutine.StartStaticCoroutine(GetCoroutinePostJson(url, setHeaderAction, jsonData, onError, onSuccess));
+        }
+
+        public static void Put(string url, string bodyData, Action<string> onError, Action<string> onSuccess)
+        {
+            StaticCoroutine.StartStaticCoroutine(GetCoroutinePut(url, bodyData, onError, onSuccess));
+        }
+
+        public static void GetTexture(string url, Action<string> onError, Action<Texture2D> onSuccess)
+        {
+            StaticCoroutine.StartStaticCoroutine(GetTextureCoroutine(url, onError, onSuccess));
+        }
+
+        static IEnumerator GetCoroutine(string url, Action<UnityWebRequest>? setHeaderAction, Action<string> onError, Action<string> onSuccess)
+        {
+            using UnityWebRequest unityWebRequest = UnityWebRequest.Get(url);
+            setHeaderAction?.Invoke(unityWebRequest);
+
+            yield return unityWebRequest.SendWebRequest();
+
+            if (unityWebRequest.result is UnityWebRequest.Result.ConnectionError
+                                          or UnityWebRequest.Result.DataProcessingError
+                                          or UnityWebRequest.Result.ProtocolError)
+            {
+                // Error
+                onError(unityWebRequest.error);
+            }
+            else
+            {
+                onSuccess(unityWebRequest.downloadHandler.text);
+            }
         }
 
         static IEnumerator GetCoroutinePost(string url, Dictionary<string, string> formFields, Action<string> onError, Action<string> onSuccess)
@@ -124,11 +132,6 @@ namespace UI.Systems
             }
         }
 
-        public static void Put(string url, string bodyData, Action<string> onError, Action<string> onSuccess)
-        {
-            StaticCoroutine.StartStaticCoroutine(GetCoroutinePut(url, bodyData, onError, onSuccess));
-        }
-
         static IEnumerator GetCoroutinePut(string url, string bodyData, Action<string> onError, Action<string> onSuccess)
         {
             using UnityWebRequest unityWebRequest = UnityWebRequest.Put(url, bodyData);
@@ -145,11 +148,6 @@ namespace UI.Systems
             {
                 onSuccess(unityWebRequest.downloadHandler.text);
             }
-        }
-
-        public static void GetTexture(string url, Action<string> onError, Action<Texture2D> onSuccess)
-        {
-            StaticCoroutine.StartStaticCoroutine(GetTextureCoroutine(url, onError, onSuccess));
         }
 
         static IEnumerator GetTextureCoroutine(string url, Action<string> onError, Action<Texture2D> onSuccess)
