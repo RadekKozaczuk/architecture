@@ -9,6 +9,7 @@ using System.Text;
 using System;
 using Core;
 using Core.Systems;
+using UI.Config;
 using UI.Systems;
 
 namespace UI.Popups.Views
@@ -19,8 +20,6 @@ namespace UI.Popups.Views
         [SerializeField]
         Transform serverContainer;
         [SerializeField]
-        Transform serverTemplate;
-        [SerializeField]
         Button joinIPButton;
         [SerializeField]
         Button createServerButton;
@@ -28,6 +27,14 @@ namespace UI.Popups.Views
         TMP_InputField ipInputField;
         [SerializeField]
         TMP_InputField portInputField;
+
+        const string KeyId = "AAAAAAAAAAAAA";
+        const string KeySecret = "AAAAAAAAAAAA";
+        const string ProjectId = "AAAAAAAAAAAAAAAAA";
+        const string EnvironmentId = "AAAAAAAAAAAAAAAAAAAAA";
+        const string FleetId = "89aa5df1-6886-45e4-b808-a1b67563367a";
+
+        static readonly UIConfig _config;
 
         public ServerListPopup(PopupType type)
             : base(type) { }
@@ -53,81 +60,87 @@ namespace UI.Popups.Views
 
             createServerButton.onClick.AddListener(() =>
             {
-                string keyId = "AAAAAAAAAAAAA";
-                string keySecret = "AAAAAAAAAAAA";
-                byte[] keyByteArray = Encoding.UTF8.GetBytes(keyId + ":" + keySecret);
+                byte[] keyByteArray = Encoding.UTF8.GetBytes(KeyId + ":" + KeySecret);
                 string keyBase64 = Convert.ToBase64String(keyByteArray);
+                string url = $"https://services.api.unity.com/auth/v1/token-exchange?projectId={ProjectId}&environmentId={EnvironmentId}";
 
-                string projectId = "AAAAAAAAAAAAAAAAA";
-                string environmentId = "AAAAAAAAAAAAAAAAAAAAA";
-                string url = $"https://services.api.unity.com/auth/v1/token-exchange?projectId={projectId}&environmentId={environmentId}";
+                string jsonRequestBody = JsonUtility.ToJson(new TokenExchangeRequest
+                {
+                    Scopes = new[] {"multiplay.allocations.create", "multiplay.allocations.list"},
+                });
 
-                string jsonRequestBody
-                    = JsonUtility.ToJson(new TokenExchangeRequest {Scopes = new[] {"multiplay.allocations.create", "multiplay.allocations.list"},});
-
-                WebRequestSystem.PostJson(url, unityWebRequest => unityWebRequest.SetRequestHeader("Authorization", "Basic " + keyBase64), jsonRequestBody,
-                                     error => Debug.Log("Error: " + error), json =>
-                                     {
-                                         Debug.Log("Success: " + json);
-                                         var tokenExchangeResponse = JsonUtility.FromJson<TokenExchangeResponse>(json);
-
-                                         string fleetId = "AAAAAAAAAAAAAAAA";
-                                         string url
-                                             = $"https://multiplay.services.api.unity.com/v1/allocations/projects/{projectId}/environments/{environmentId}/fleets/{fleetId}/allocations";
-
-                                         WebRequestSystem.PostJson(
-                                             url,
-                                             unityWebRequest =>
-                                                 unityWebRequest.SetRequestHeader("Authorization", "Bearer " + tokenExchangeResponse.AccessToken),
-                                             JsonUtility.ToJson(new QueueAllocationRequest
-                                             {
-                                                 AllocationId = "AAAAAAAAAAAAA",
-                                                 BuildConfigurationId = 0,
-                                                 RegionId = "AAAAAAAAAAAAAAAAA"
-                                             }), error => Debug.Log("Error: " + error), json => Debug.Log("Success: " + json));
-                                     });
+                WebRequestSystem.PostJson(url,
+                                          unityWebRequest => unityWebRequest.SetRequestHeader("Authorization", "Basic " + keyBase64),
+                                          jsonRequestBody,
+                                          error => Debug.Log("Error: " + error),
+                                          ParseServerPost);
             });
 
-            serverTemplate.gameObject.SetActive(false);
+            // todo: destroy children
+            // todo: intantiate new
+
+            /*serverTemplate.gameObject.SetActive(false);
             foreach (Transform child in serverContainer)
             {
                 if (child == serverTemplate)
                     continue;
 
                 Destroy(child.gameObject);
-            }
+            }*/
+        }
+
+        static void ParseServerPost(string json)
+        {
+            Debug.Log("Success: " + json);
+            var tokenExchangeResponse = JsonUtility.FromJson<TokenExchangeResponse>(json);
+
+            string url
+                = $"https://multiplay.services.api.unity.com/v1/allocations/projects/{ProjectId}/environments/{EnvironmentId}/fleets/{FleetId}/allocations";
+
+            WebRequestSystem.PostJson(
+                url,
+                unityWebRequest => unityWebRequest.SetRequestHeader("Authorization", "Bearer " + tokenExchangeResponse.AccessToken),
+                JsonUtility.ToJson(new QueueAllocationRequest
+                {
+                    AllocationId = "AAAAAAAAAAAAA",
+                    BuildConfigurationId = 0,
+                    RegionId = "AAAAAAAAAAAAAAAAA"
+                }), error => Debug.Log("Error: " + error), json => Debug.Log("Success: " + json));
         }
 
 #if !DEDICATED_SERVER
         void Start()
         {
-            string keyId = "AAAAAAAAAAAA";
-            string keySecret = "AAAAAAAAAAAA";
-            byte[] keyByteArray = Encoding.UTF8.GetBytes(keyId + ":" + keySecret);
+            byte[] keyByteArray = Encoding.UTF8.GetBytes(KeyId + ":" + KeySecret);
             string keyBase64 = Convert.ToBase64String(keyByteArray);
 
-            string projectId = "AAAAAAAAAAAAAAA";
-            string environmentId = "AAAAAAAAAAAAAAAAAAAAA";
-            string url = $"https://services.api.unity.com/multiplay/servers/v1/projects/{projectId}/environments/{environmentId}/servers";
+            string url = $"https://services.api.unity.com/multiplay/servers/v1/projects/{ProjectId}/environments/{EnvironmentId}/servers";
 
-            WebRequestSystem.Get(url, unityWebRequest => unityWebRequest.SetRequestHeader("Authorization", "Basic " + keyBase64),
-                            error => Debug.Log("Error: " + error),
-                            json =>
-                            {
-                                Debug.Log("Success: " + json);
-                                var listServers = JsonUtility.FromJson<ListServers>("{\"serverList\":" + json + "}");
-                                foreach (Server server in listServers.ServerList)
-                                    //Debug.Log(server.ip + " : " + server.port + " " + server.deleted + " " + server.status);
-                                    if (server.Status == ServerStatus.Online.ToString() || server.Status == ServerStatus.Allocated.ToString())
-                                    {
-                                        // Server is Online!
-                                        Transform serverTransform = Instantiate(serverTemplate, serverContainer);
-                                        serverTransform.gameObject.SetActive(true);
+            WebRequestSystem.Get(url,
+                                 unityWebRequest => unityWebRequest.SetRequestHeader("Authorization", "Basic " + keyBase64),
+                                 error => Debug.Log("Error: " + error),
+                                 ParseGetServersJson);
+        }
 
-                                        // todo: temporary commented out
-                                        //serverTransform.GetComponent<ServerBrowserSingleUI>().SetServer(server.ip, (ushort)server.port);
-                                    }
-                            });
+        static void ParseGetServersJson(string json)
+        {
+            Debug.Log("Success: " + json);
+            var listServers = JsonUtility.FromJson<ListServers>("{\"serverList\":" + json + "}");
+
+            // todo: create servers
+            foreach (Server server in listServers.ServerList)
+                //Debug.Log(server.ip + " : " + server.port + " " + server.deleted + " " + server.status);
+                if (server.Status == ServerStatus.Online.ToString() || server.Status == ServerStatus.Allocated.ToString())
+                {
+                    // Server is Online!
+                    //Transform serverTransform = Instantiate(serverTemplate, serverContainer);
+                    //serverTransform.gameObject.SetActive(true);
+
+                    Debug.Log("Destroy OLD create NEW");
+
+                    // todo: temporary commented out
+                    //serverTransform.GetComponent<ServerBrowserSingleUI>().SetServer(server.ip, (ushort)server.port);
+                }
         }
 #endif
 

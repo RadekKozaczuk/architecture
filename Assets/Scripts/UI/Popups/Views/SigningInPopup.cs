@@ -11,8 +11,10 @@ using UnityEngine;
 
 namespace UI.Popups.Views
 {
+    // todo: in the future signing in should already start in main menu (or even Boot)
+    // todo: so that the player is not annoyed by this
     [DisallowMultipleComponent]
-    class SigningInPopup : AbstractPopup //In the future we can use this popup for signing in (login and password)
+    class SigningInPopup : AbstractPopup // todo: In the future we can use this popup for signing in (login and password)
     {
         List<string> _joinedLobbiesId = new();
 
