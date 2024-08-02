@@ -9,4 +9,11 @@ namespace UI
         Left,
         Right
     }
+
+    enum ServerStatus
+    {
+        Available,
+        Online,
+        Allocated
+    }
 }
