@@ -7,6 +7,8 @@ using Unity.Netcode.Transports.UTP;
 using Unity.Netcode;
 using System.Text;
 using System;
+using Core;
+using Core.Systems;
 using UI.Systems;
 
 namespace UI.Popups.Views
@@ -38,8 +40,15 @@ namespace UI.Popups.Views
                 ushort port = ushort.Parse(portInputField.text);
                 NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(ipv4Address, port);
 
-                // todo: uncomment and add logic
+                // todo: temporary disabled
                 //KitchenGameMultiplayer.Instance.StartClient();
+
+                // todo: RADEK's start client start here
+                CoreData.IsMultiplayer = true;
+                CoreData.CurrentLevel = Level.HubLocation;
+
+                // this will start the netcode client
+                GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});
             });
 
             createServerButton.onClick.AddListener(() =>
@@ -56,7 +65,7 @@ namespace UI.Popups.Views
                 string jsonRequestBody
                     = JsonUtility.ToJson(new TokenExchangeRequest {scopes = new[] {"multiplay.allocations.create", "multiplay.allocations.list"},});
 
-                WebRequests.PostJson(url, unityWebRequest => unityWebRequest.SetRequestHeader("Authorization", "Basic " + keyBase64), jsonRequestBody,
+                WebRequestSystem.PostJson(url, unityWebRequest => unityWebRequest.SetRequestHeader("Authorization", "Basic " + keyBase64), jsonRequestBody,
                                      error => Debug.Log("Error: " + error), json =>
                                      {
                                          Debug.Log("Success: " + json);
@@ -66,7 +75,7 @@ namespace UI.Popups.Views
                                          string url
                                              = $"https://multiplay.services.api.unity.com/v1/allocations/projects/{projectId}/environments/{environmentId}/fleets/{fleetId}/allocations";
 
-                                         WebRequests.PostJson(
+                                         WebRequestSystem.PostJson(
                                              url,
                                              unityWebRequest =>
                                                  unityWebRequest.SetRequestHeader("Authorization", "Bearer " + tokenExchangeResponse.accessToken),
@@ -101,8 +110,9 @@ namespace UI.Popups.Views
             string environmentId = "AAAAAAAAAAAAAAAAAAAAA";
             string url = $"https://services.api.unity.com/multiplay/servers/v1/projects/{projectId}/environments/{environmentId}/servers";
 
-            WebRequests.Get(url, unityWebRequest => unityWebRequest.SetRequestHeader("Authorization", "Basic " + keyBase64),
-                            error => Debug.Log("Error: " + error), json =>
+            WebRequestSystem.Get(url, unityWebRequest => unityWebRequest.SetRequestHeader("Authorization", "Basic " + keyBase64),
+                            error => Debug.Log("Error: " + error),
+                            json =>
                             {
                                 Debug.Log("Success: " + json);
                                 var listServers = JsonUtility.FromJson<ListServers>("{\"serverList\":" + json + "}");

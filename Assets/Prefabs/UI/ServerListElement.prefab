@@ -135,8 +135,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 332c2ad29d415de42a64fde2d3680727, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ipText: {fileID: 4726955519628252025}
-  portText: {fileID: 1490334684384564175}
+  _ipText: {fileID: 4726955519628252025}
+  _portText: {fileID: 1490334684384564175}
 --- !u!1 &6039419604729714096
 GameObject:
   m_ObjectHideFlags: 0

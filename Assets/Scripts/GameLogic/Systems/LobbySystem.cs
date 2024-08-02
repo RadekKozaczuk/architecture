@@ -341,7 +341,7 @@ namespace GameLogic.Systems
             Assert.IsNotNull(_pendingLobbyQueryCallback, "Pending lobby query callback should not be null.");
             Assert.IsNotNull(lobbies, "Lobbies should not be null in order to execute LobbyQueryCallback.");
 
-            _pendingLobbyQueryCallback.Invoke(lobbies);
+            _pendingLobbyQueryCallback!.Invoke(lobbies);
             _pendingLobbyQueryCallback = null;
         }
 

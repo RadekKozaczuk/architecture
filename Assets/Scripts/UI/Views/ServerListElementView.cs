@@ -1,4 +1,7 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+using Core;
+using Core.Enums;
+using Core.Systems;
 using TMPro;
 using Unity.Netcode.Transports.UTP;
 using Unity.Netcode;
@@ -10,27 +13,31 @@ namespace UI.Views
     public class ServerListElementView : MonoBehaviour
     {
         [SerializeField]
-        TextMeshProUGUI ipText;
+        TextMeshProUGUI _ipText;
         [SerializeField]
-        TextMeshProUGUI portText;
+        TextMeshProUGUI _portText;
 
-        void Awake()
+        void Awake() => GetComponent<Button>().onClick.AddListener(() =>
         {
-            GetComponent<Button>().onClick.AddListener(() =>
-            {
-                string ipv4Address = ipText.text;
-                ushort port = ushort.Parse(portText.text);
-                NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(ipv4Address, port);
+            string ipv4Address = _ipText.text;
+            ushort port = ushort.Parse(_portText.text);
+            NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(ipv4Address, port);
 
-                // todo: temporary disabled
-                //KitchenGameMultiplayer.Instance.StartClient();
-            });
-        }
+            // todo: temporary disabled
+            //KitchenGameMultiplayer.Instance.StartClient();
+
+            // todo: RADEK's start client start here
+            CoreData.IsMultiplayer = true;
+            CoreData.CurrentLevel = Level.HubLocation;
+
+            // this will start the netcode client
+            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});
+        });
 
         public void SetServer(string ip, ushort port)
         {
-            ipText.text = ip;
-            portText.text = port.ToString();
+            _ipText.text = ip;
+            _portText.text = port.ToString();
         }
     }
 }

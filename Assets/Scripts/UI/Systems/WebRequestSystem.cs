@@ -3,36 +3,24 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using Shared;
 using UnityEngine;
 using UnityEngine.Networking;
 
 namespace UI.Systems
 {
-    public class WebRequests
+    public static class WebRequestSystem
     {
         class WebRequestsMonoBehaviour : MonoBehaviour { }
 
-        static WebRequestsMonoBehaviour webRequestsMonoBehaviour;
-
-        static void Init()
-        {
-            if (webRequestsMonoBehaviour == null)
-            {
-                var gameObject = new GameObject("WebRequests");
-                webRequestsMonoBehaviour = gameObject.AddComponent<WebRequestsMonoBehaviour>();
-            }
-        }
-
         public static void Get(string url, Action<string> onError, Action<string> onSuccess)
         {
-            Init();
-            webRequestsMonoBehaviour.StartCoroutine(GetCoroutine(url, null, onError, onSuccess));
+            StaticCoroutine.StartStaticCoroutine(GetCoroutine(url, null, onError, onSuccess));
         }
 
         public static void Get(string url, Action<UnityWebRequest> setHeaderAction, Action<string> onError, Action<string> onSuccess)
         {
-            Init();
-            webRequestsMonoBehaviour.StartCoroutine(GetCoroutine(url, setHeaderAction, onError, onSuccess));
+            StaticCoroutine.StartStaticCoroutine(GetCoroutine(url, setHeaderAction, onError, onSuccess));
         }
 
         static IEnumerator GetCoroutine(string url, Action<UnityWebRequest>? setHeaderAction, Action<string> onError, Action<string> onSuccess)
@@ -57,26 +45,22 @@ namespace UI.Systems
 
         public static void Post(string url, Dictionary<string, string> formFields, Action<string> onError, Action<string> onSuccess)
         {
-            Init();
-            webRequestsMonoBehaviour.StartCoroutine(GetCoroutinePost(url, formFields, onError, onSuccess));
+            StaticCoroutine.StartStaticCoroutine(GetCoroutinePost(url, formFields, onError, onSuccess));
         }
 
         public static void Post(string url, string postData, Action<string> onError, Action<string> onSuccess)
         {
-            Init();
-            webRequestsMonoBehaviour.StartCoroutine(GetCoroutinePost(url, postData, onError, onSuccess));
+            StaticCoroutine.StartStaticCoroutine(GetCoroutinePost(url, postData, onError, onSuccess));
         }
 
         public static void PostJson(string url, string jsonData, Action<string> onError, Action<string> onSuccess)
         {
-            Init();
-            webRequestsMonoBehaviour.StartCoroutine(GetCoroutinePostJson(url, null, jsonData, onError, onSuccess));
+            StaticCoroutine.StartStaticCoroutine(GetCoroutinePostJson(url, null, jsonData, onError, onSuccess));
         }
 
         public static void PostJson(string url, Action<UnityWebRequest> setHeaderAction, string jsonData, Action<string> onError, Action<string> onSuccess) 
         {
-            Init();
-            webRequestsMonoBehaviour.StartCoroutine(GetCoroutinePostJson(url, setHeaderAction, jsonData, onError, onSuccess));
+            StaticCoroutine.StartStaticCoroutine(GetCoroutinePostJson(url, setHeaderAction, jsonData, onError, onSuccess));
         }
 
         static IEnumerator GetCoroutinePost(string url, Dictionary<string, string> formFields, Action<string> onError, Action<string> onSuccess)
@@ -142,8 +126,7 @@ namespace UI.Systems
 
         public static void Put(string url, string bodyData, Action<string> onError, Action<string> onSuccess)
         {
-            Init();
-            webRequestsMonoBehaviour.StartCoroutine(GetCoroutinePut(url, bodyData, onError, onSuccess));
+            StaticCoroutine.StartStaticCoroutine(GetCoroutinePut(url, bodyData, onError, onSuccess));
         }
 
         static IEnumerator GetCoroutinePut(string url, string bodyData, Action<string> onError, Action<string> onSuccess)
@@ -166,8 +149,7 @@ namespace UI.Systems
 
         public static void GetTexture(string url, Action<string> onError, Action<Texture2D> onSuccess)
         {
-            Init();
-            webRequestsMonoBehaviour.StartCoroutine(GetTextureCoroutine(url, onError, onSuccess));
+            StaticCoroutine.StartStaticCoroutine(GetTextureCoroutine(url, onError, onSuccess));
         }
 
         static IEnumerator GetTextureCoroutine(string url, Action<string> onError, Action<Texture2D> onSuccess)
@@ -185,7 +167,7 @@ namespace UI.Systems
             else
             {
                 var downloadHandlerTexture = unityWebRequest.downloadHandler as DownloadHandlerTexture;
-                onSuccess(downloadHandlerTexture.texture);
+                onSuccess(downloadHandlerTexture!.texture);
             }
         }
     }
