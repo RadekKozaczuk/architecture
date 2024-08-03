@@ -18,20 +18,24 @@ namespace UI.Popups.Views
     class ServerListPopup : AbstractPopup
     {
         [SerializeField]
-        Transform serverContainer;
-        [SerializeField]
-        Button joinIPButton;
-        [SerializeField]
-        Button createServerButton;
-        [SerializeField]
-        TMP_InputField ipInputField;
-        [SerializeField]
-        TMP_InputField portInputField;
+        Transform _serverContainer;
 
-        const string KeyId = "AAAAAAAAAAAAA";
-        const string KeySecret = "AAAAAAAAAAAA";
-        const string ProjectId = "AAAAAAAAAAAAAAAAA";
-        const string EnvironmentId = "AAAAAAAAAAAAAAAAAAAAA";
+        [SerializeField]
+        Button _joinButton;
+
+        [SerializeField]
+        Button _createServerButton;
+
+        [SerializeField]
+        TMP_InputField _ipInputField;
+
+        [SerializeField]
+        TMP_InputField _portInputField;
+
+        const string KeyId = "89302e22-e73b-4890-80fd-04e29f27a721";
+        const string KeySecret = "cQb6Cj1nV6QyIsflmwVxt-ZTLtEpa8_P";
+        const string ProjectId = "f99e7a47-7455-4b68-a7fd-0b4c6e99c755";
+        const string EnvironmentId = "3a7f6955-55a9-4574-94b0-8c4ef77f8666";
         const string FleetId = "89aa5df1-6886-45e4-b808-a1b67563367a";
 
         static readonly UIConfig _config;
@@ -41,10 +45,10 @@ namespace UI.Popups.Views
 
         void Awake()
         {
-            joinIPButton.onClick.AddListener(() =>
+            _joinButton.onClick.AddListener(() =>
             {
-                string ipv4Address = ipInputField.text;
-                ushort port = ushort.Parse(portInputField.text);
+                string ipv4Address = _ipInputField.text;
+                ushort port = ushort.Parse(_portInputField.text);
                 NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(ipv4Address, port);
 
                 // todo: temporary disabled
@@ -58,7 +62,7 @@ namespace UI.Popups.Views
                 GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});
             });
 
-            createServerButton.onClick.AddListener(() =>
+            _createServerButton.onClick.AddListener(() =>
             {
                 byte[] keyByteArray = Encoding.UTF8.GetBytes(KeyId + ":" + KeySecret);
                 string keyBase64 = Convert.ToBase64String(keyByteArray);
@@ -89,6 +93,19 @@ namespace UI.Popups.Views
             }*/
         }
 
+        internal static void TEST_TROLL()
+        {
+            byte[] keyByteArray = Encoding.UTF8.GetBytes(KeyId + ":" + KeySecret);
+            string keyBase64 = Convert.ToBase64String(keyByteArray);
+
+            string url = $"https://services.api.unity.com/multiplay/servers/v1/projects/{ProjectId}/environments/{EnvironmentId}/servers";
+
+            WebRequestSystem.Get(url,
+                                 unityWebRequest => unityWebRequest.SetRequestHeader("Authorization", "Basic " + keyBase64),
+                                 error => Debug.Log("Error: " + error),
+                                 ParseGetServersJson);
+        }
+
         static void ParseServerPost(string json)
         {
             Debug.Log("Success: " + json);
@@ -116,6 +133,7 @@ namespace UI.Popups.Views
 
             string url = $"https://services.api.unity.com/multiplay/servers/v1/projects/{ProjectId}/environments/{EnvironmentId}/servers";
 
+            // requires "Game Server Hosting API Viewer" permission
             WebRequestSystem.Get(url,
                                  unityWebRequest => unityWebRequest.SetRequestHeader("Authorization", "Basic " + keyBase64),
                                  error => Debug.Log("Error: " + error),
@@ -127,6 +145,9 @@ namespace UI.Popups.Views
             Debug.Log("Success: " + json);
             var listServers = JsonUtility.FromJson<ListServers>("{\"serverList\":" + json + "}");
 
+            if (listServers.ServerList == null)
+                return;
+            
             // todo: create servers
             foreach (Server server in listServers.ServerList)
                 //Debug.Log(server.ip + " : " + server.port + " " + server.deleted + " " + server.status);
@@ -168,7 +189,7 @@ namespace UI.Popups.Views
         [Serializable]
         public class ListServers
         {
-            public Server[] ServerList;
+            public Server[]? ServerList;
         }
 
         [Serializable]

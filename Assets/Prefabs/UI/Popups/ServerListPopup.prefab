@@ -230,12 +230,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 478bf93e36df4222b9cb4171f439579e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serverContainer: {fileID: 447732164492796039}
-  serverTemplate: {fileID: 0}
-  joinIPButton: {fileID: 5877606257121715504}
-  createServerButton: {fileID: 8613310356178258640}
-  ipInputField: {fileID: 6098569494176472616}
-  portInputField: {fileID: 7704862201064053255}
+  _serverContainer: {fileID: 447732164492796039}
+  _joinButton: {fileID: 5877606257121715504}
+  _createServerButton: {fileID: 8613310356178258640}
+  _ipInputField: {fileID: 6098569494176472616}
+  _portInputField: {fileID: 7704862201064053255}
 --- !u!1 &1253797053950805679
 GameObject:
   m_ObjectHideFlags: 0
