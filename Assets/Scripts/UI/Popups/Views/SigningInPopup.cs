@@ -51,8 +51,6 @@ namespace UI.Popups.Views
 
             Debug.Log(turbo.Count);
 
-            ServerListPopup.TEST_TROLL();
-
             await VivoxService.Instance.InitializeAsync();
             GameLogicViewModel.LoginVoiceChat(CheckIsUserHasJoinedLobbies);
         }
