@@ -5,8 +5,8 @@ using Core.Enums;
 using GameLogic.ViewModels;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
-using Unity.Services.Lobbies;
-using Unity.Services.Lobbies.Models;
+using Unity.Services.Lobbies;        // todo: should happen in GameLogic
+using Unity.Services.Lobbies.Models; // todo: should happen in GameLogic
 using Unity.Services.Vivox;
 using UnityEngine;
 
@@ -53,6 +53,8 @@ namespace UI.Popups.Views
             Debug.Log(turbo.Count);
 
             await VivoxService.Instance.InitializeAsync();
+
+            // todo: should happen in GameLogic
             GameLogicViewModel.LoginVoiceChat(CheckIsUserHasJoinedLobbies);
         }
 
@@ -60,9 +62,10 @@ namespace UI.Popups.Views
         {
             try
             {
+                // todo: should happen in GameLogic
                 _joinedLobbiesId = await LobbyService.Instance.GetJoinedLobbiesAsync();
             }
-            catch (LobbyServiceException e)
+            catch (LobbyServiceException e) // todo: should happen in GameLogic
             {
                 _joinedLobbiesId.Clear();
                 Debug.Log(e);
@@ -74,6 +77,7 @@ namespace UI.Popups.Views
             if (_joinedLobbiesId.Count > 0)
             {
                 string lobbyId = _joinedLobbiesId[^1];
+                // todo: should happen in GameLogic
                 Lobby lobby = await Lobbies.Instance.GetLobbyAsync(lobbyId);
                 PopupSystem.ShowPopup(PopupType.ReconnectToLobby);
                 (PopupSystem.CurrentPopup as ReconnectToLobbyPopup)!.SetLobbyToReconnect(lobby.Id, lobby.Name);
