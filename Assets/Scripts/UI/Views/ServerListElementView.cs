@@ -19,9 +19,10 @@ namespace UI.Views
 
         void Awake() => GetComponent<Button>().onClick.AddListener(() =>
         {
-            string ipv4Address = _ipText.text;
+            // todo: get ip and port and pass to GameLogic
+            /*string ipv4Address = _ipText.text;
             ushort port = ushort.Parse(_portText.text);
-            NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(ipv4Address, port);
+            NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(ipv4Address, port);*/
 
             // todo: temporary disabled
             //KitchenGameMultiplayer.Instance.StartClient();
