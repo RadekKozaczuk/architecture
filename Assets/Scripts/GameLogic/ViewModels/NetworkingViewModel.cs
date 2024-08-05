@@ -50,5 +50,11 @@ namespace GameLogic.ViewModels
         public static void LoginVoiceChat(Action callback) => VoiceChatSystem.Login(callback);
 
         public static void ToggleMuteInput() => VoiceChatSystem.ToggleMuteInput();
+
+        /// <summary>
+        /// Asks backed for a list of servers.
+        /// List may be empty.
+        /// </summary>
+        public static async Task<List<ServerDto>> GetServers() => await WebRequestSystem.GetServers();
     }
 }

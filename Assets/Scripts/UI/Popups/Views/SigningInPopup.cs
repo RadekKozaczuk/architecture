@@ -1,5 +1,6 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using System.Collections.Generic;
+using Core.Dtos;
 using Core.Enums;
 using GameLogic.ViewModels;
 using Unity.Services.Authentication;
@@ -45,6 +46,10 @@ namespace UI.Popups.Views
 
             // this will create an account automatically without need to provide password or username
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
+
+            List<ServerDto> turbo = await GameLogicViewModel.GetServers();
+
+            Debug.Log(turbo.Count);
 
             ServerListPopup.TEST_TROLL();
 

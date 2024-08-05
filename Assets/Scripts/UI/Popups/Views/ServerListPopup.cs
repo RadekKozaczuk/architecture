@@ -93,19 +93,6 @@ namespace UI.Popups.Views
             }*/
         }
 
-        internal static void TEST_TROLL()
-        {
-            byte[] keyByteArray = Encoding.UTF8.GetBytes(KeyId + ":" + KeySecret);
-            string keyBase64 = Convert.ToBase64String(keyByteArray);
-
-            string url = $"https://services.api.unity.com/multiplay/servers/v1/projects/{ProjectId}/environments/{EnvironmentId}/servers";
-
-            WebRequestSystem.Get(url,
-                                 unityWebRequest => unityWebRequest.SetRequestHeader("Authorization", "Basic " + keyBase64),
-                                 error => Debug.Log("Error: " + error),
-                                 ParseGetServersJson);
-        }
-
         static void ParseServerPost(string json)
         {
             Debug.Log("Success: " + json);
@@ -147,7 +134,7 @@ namespace UI.Popups.Views
 
             if (listServers.ServerList == null)
                 return;
-            
+
             // todo: create servers
             foreach (Server server in listServers.ServerList)
                 //Debug.Log(server.ip + " : " + server.port + " " + server.deleted + " " + server.status);
