@@ -40,6 +40,7 @@ namespace UI.Popups.Views
         async void InitializeAsync()
         {
             await UnityServices.InitializeAsync();
+
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             AuthenticationService.Instance.ClearSessionToken();
 #endif

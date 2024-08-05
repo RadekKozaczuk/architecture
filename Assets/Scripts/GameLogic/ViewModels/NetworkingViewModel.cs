@@ -56,5 +56,7 @@ namespace GameLogic.ViewModels
         /// List may be empty.
         /// </summary>
         public static async Task<List<ServerDto>> GetServers() => await WebRequestSystem.GetServers();
+
+        public static void SetConnectionData() => WebRequestSystem.SetConnectionData();
     }
 }

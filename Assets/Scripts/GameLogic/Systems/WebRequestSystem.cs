@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Core.Dtos;
 using Shared;
+using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Networking;
@@ -14,6 +16,8 @@ namespace GameLogic.Systems
 {
     static class WebRequestSystem
     {
+        // todo: https://docs.unity.com/ugs/en-us/manual/game-server-hosting/manual/sdk/game-server-sdk-for-unity
+
         const string KeyId = "89302e22-e73b-4890-80fd-04e29f27a721";
         const string KeySecret = "cQb6Cj1nV6QyIsflmwVxt-ZTLtEpa8_P";
         const string ProjectId = "f99e7a47-7455-4b68-a7fd-0b4c6e99c755";
@@ -44,7 +48,7 @@ namespace GameLogic.Systems
 
             _requestInProgress = true;
             string url = $"https://services.api.unity.com/multiplay/servers/v1/projects/{ProjectId}/environments/{EnvironmentId}/servers";
-            StaticCoroutine.StartStaticCoroutine(SimpleStuff(url));
+            StaticCoroutine.StartStaticCoroutine(GetServersCoroutine(url));
 
             while (_requestInProgress)
                 await Task.Yield();
@@ -66,10 +70,16 @@ namespace GameLogic.Systems
             return retVal;
         }
 
+        internal static void SetConnectionData()
+        {
+            // todo: add ip and port
+            //NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData("ipv4Address", "port");
+        }
+
         /// <summary>
         /// This coroutine eventually fill the variable.
         /// </summary>
-        static IEnumerator SimpleStuff(string url)
+        static IEnumerator GetServersCoroutine(string url)
         {
             using UnityWebRequest unityWebRequest = UnityWebRequest.Get(url);
 
