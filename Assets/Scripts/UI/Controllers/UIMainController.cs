@@ -47,13 +47,13 @@ namespace UI.Controllers
         static void OnInventoryChanged() { }
 
         [React]
+        static void OnLobbyChanged(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players) =>
+            (PopupSystem.CurrentPopup as LobbyPopup)?.UpdateLobby(lobbyName, lobbyCode, players);
+
+        [React]
         static void OnMissionComplete() { }
 
         [React]
         static void OnMissionFailed() { }
-
-        [React]
-        static void OnLobbyChanged(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players) =>
-            (PopupSystem.CurrentPopup as LobbyPopup)?.UpdateLobby(lobbyName, lobbyCode, players);
     }
 }

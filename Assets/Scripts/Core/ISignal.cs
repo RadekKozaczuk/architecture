@@ -19,9 +19,8 @@ namespace Core
         /// </summary>
         void LobbyChanged(string lobbyName, string lobbyCode, List<(string playerName, string playerId, bool isHost)> players);
 
-        void ToggleMuteVoiceChat();
-
         void MissionComplete();
         void MissionFailed();
+        void ToggleMuteVoiceChat();
     }
 }
