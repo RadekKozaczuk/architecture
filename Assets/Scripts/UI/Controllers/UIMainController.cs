@@ -55,5 +55,8 @@ namespace UI.Controllers
 
         [React]
         static void OnMissionFailed() { }
+
+        [React]
+        static void OnToggleMuteVoiceChat() { }
     }
 }
