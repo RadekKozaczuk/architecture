@@ -95,21 +95,42 @@ namespace GameLogic.Systems
                 HandleLobbyHeartbeat();
         }
 
-        internal static async Task<Lobby> GetLobbyAsync(string lobbyId) => await Lobbies.Instance.GetLobbyAsync(lobbyId);
-
-        internal static async Task<List<string>> GetJoinedLobbiesAsync()
+        internal static async Task<Lobby> GetLobbyAsync(string lobbyId)
         {
-            await Lobbies.Instance.GetJoinedLobbiesAsync();
+            RequestInProgress = true;
 
             try
             {
-                return await LobbyService.Instance.GetJoinedLobbiesAsync();
+                Lobby lobby = await LobbyService.Instance.GetLobbyAsync(lobbyId);
+                RequestInProgress = false;
+                return lobby;
             }
             catch (LobbyServiceException e)
             {
                 Debug.Log(e);
-                return new List<string>();
             }
+
+            RequestInProgress = false;
+            return null!;
+        }
+
+        internal static async Task<List<string>> GetJoinedLobbiesAsync()
+        {
+            RequestInProgress = true;
+
+            try
+            {
+                List<string> lobbies = await LobbyService.Instance.GetJoinedLobbiesAsync();
+                RequestInProgress = false;
+                return lobbies;
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.Log(e);
+            }
+
+            RequestInProgress = false;
+            return null!;
         }
 
         // lobbies are automatically turn inactive if the lobby does not receive any data for 30 seconds
