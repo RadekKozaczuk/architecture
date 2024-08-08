@@ -8,10 +8,14 @@ using UnityEngine.UI;
 
 namespace UI.Views
 {
-    public class ServerListElementView : MonoBehaviour
+    class ServerListElementView : MonoBehaviour
     {
         [SerializeField]
+        TextMeshProUGUI _nameText;
+
+        [SerializeField]
         TextMeshProUGUI _ipText;
+
         [SerializeField]
         TextMeshProUGUI _portText;
 
@@ -33,8 +37,9 @@ namespace UI.Views
             GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});
         });
 
-        public void SetServer(string ip, ushort port)
+        internal void Initialize(string serverName, string ip, string port)
         {
+            _nameText.text = serverName;
             _ipText.text = ip;
             _portText.text = port.ToString();
         }

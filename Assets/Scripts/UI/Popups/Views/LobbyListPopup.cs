@@ -88,7 +88,7 @@ namespace UI.Popups.Views
         {
             PresentationViewModel.PlaySound(Sound.ClickSelect);
             _refresh.interactable = false;
-            //GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback);
+            GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback);
             List<ServerDto> servers = await GameLogicViewModel.GetServers();
 
             // cleanup
