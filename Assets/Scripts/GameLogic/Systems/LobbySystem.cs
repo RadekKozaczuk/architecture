@@ -172,6 +172,7 @@ namespace GameLogic.Systems
             }
         }
 
+        // todo: to be deleted
         internal static void RequestGetLobbies(Action<LobbyDto[]> callback)
         {
             Assert.IsNotNull(callback, "Callback function cannot be null.");

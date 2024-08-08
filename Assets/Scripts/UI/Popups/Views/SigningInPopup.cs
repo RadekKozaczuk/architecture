@@ -53,7 +53,7 @@ namespace UI.Popups.Views
 
             PopupSystem.CloseCurrentPopup();
 
-            // has user joined any lobbies
+            // has user joined any lobbies?
             if (lobbyId == null)
             {
                 PopupSystem.ShowPopup(PopupType.ServerList);
