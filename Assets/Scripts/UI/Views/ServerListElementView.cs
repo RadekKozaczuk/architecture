@@ -37,7 +37,7 @@ namespace UI.Views
             GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});
         });
 
-        internal void Initialize(string serverName, string ip, string port)
+        internal void Initialize(string serverName, string ip, int port)
         {
             _nameText.text = serverName;
             _ipText.text = ip;

@@ -83,23 +83,20 @@ namespace UI.Popups.Views
             foreach (Transform child in _list.transform)
                 Destroy(child.gameObject);
 
-            // todo: for now only take one
-            //foreach (ServerDto server in servers)
-            if (servers.Count > 0)
+            // add servers
+            foreach (ServerDto server in servers)
             {
-                ServerDto? server = servers[0];
                 ServerListElementView view = Instantiate(_config.ServerListElementView, _list.transform);
 
-                // todo: no idea how to retrieve player count
-                // todo: dedicated servers have always max 16 players
+                // todo: no idea how to retrieve player count (current/max)
                 string id = server.Id.ToString();
-                view.Initialize("Dedicated Server" + id, "0.0.0.0", "8080");
+                view.Initialize("Dedicated Server-" + id, server.Ip, server.Port);
             }
 
-            // todo: in the future also lobbies
-            //List<ServerDto> servers = await GameLogicViewModel.GetServers();
+            // add lobbies
 
-            Debug.Log(servers.Count);
+            // todo: in the future also lobbies
+            //List<ServerDto> lobbies = await GameLogicViewModel.GetServers();
 
             _refresh.interactable = false;
         }
