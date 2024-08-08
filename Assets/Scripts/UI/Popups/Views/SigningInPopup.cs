@@ -28,7 +28,7 @@ namespace UI.Popups.Views
 
             if (UnityServices.State == ServicesInitializationState.Initialized)
             {
-                CheckIsUserHasJoinedLobbies();
+                HasUserJoinedLobbies();
                 return;
             }
 
@@ -48,17 +48,17 @@ namespace UI.Popups.Views
             // this will create an account automatically without need to provide password or username
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
 
-            List<ServerDto> turbo = await GameLogicViewModel.GetServers();
+            /*List<ServerDto> turbo = await GameLogicViewModel.GetServers();
 
-            Debug.Log(turbo.Count);
+            Debug.Log(turbo.Count);*/
 
             await VivoxService.Instance.InitializeAsync();
 
             // todo: should happen in GameLogic
-            GameLogicViewModel.LoginVoiceChat(CheckIsUserHasJoinedLobbies);
+            GameLogicViewModel.LoginVoiceChat(HasUserJoinedLobbies);
         }
 
-        async void CheckIsUserHasJoinedLobbies()
+        async void HasUserJoinedLobbies()
         {
             try
             {

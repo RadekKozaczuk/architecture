@@ -25,6 +25,15 @@ namespace GameLogic.Systems
 	/// </summary>
 	static class LobbySystem
     {
+        /// <summary>
+        /// Indicates if the system is currently processing a call. Consecutive calls are not allowed.
+        /// </summary>
+        internal static bool RequestInProgress
+        {
+            get;
+            private set;
+        }
+
         static bool IsHost => AuthenticationService.Instance.PlayerId == Lobby!.HostId;
 
         /// <summary>
@@ -127,7 +136,7 @@ namespace GameLogic.Systems
 
         internal static void RequestGetLobbies(Action<LobbyDto[]> callback)
         {
-            Assert.IsNotNull(callback, "callback function cannot be null.");
+            Assert.IsNotNull(callback, "Callback function cannot be null.");
 
             _pendingLobbyQueryCallback = callback;
         }

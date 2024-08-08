@@ -6,8 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Core.Dtos;
 using Shared;
-using Unity.Netcode;
-using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Networking;
@@ -32,7 +30,11 @@ namespace GameLogic.Systems
         /// <summary>
         /// Indicates if the system is currently processing a call. Consecutive calls are not allowed.
         /// </summary>
-        static bool _requestInProgress;
+        internal static bool RequestInProgress
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// Tell if the last call has been successful.
@@ -44,13 +46,13 @@ namespace GameLogic.Systems
         /// </summary>
         internal static async Task<List<ServerDto>> GetServers()
         {
-            Assert.IsFalse(_requestInProgress, "Consecutive calls are not allowed");
+            Assert.IsFalse(RequestInProgress, "Consecutive calls are not allowed");
 
-            _requestInProgress = true;
+            RequestInProgress = true;
             string url = $"https://services.api.unity.com/multiplay/servers/v1/projects/{ProjectId}/environments/{EnvironmentId}/servers";
             StaticCoroutine.StartStaticCoroutine(GetServersCoroutine(url));
 
-            while (_requestInProgress)
+            while (RequestInProgress)
                 await Task.Yield();
 
             var retVal = new List<ServerDto>();
@@ -103,7 +105,7 @@ namespace GameLogic.Systems
                 _result = unityWebRequest.downloadHandler.text;
             }
 
-            _requestInProgress = false;
+            RequestInProgress = false;
         }
     }
 }

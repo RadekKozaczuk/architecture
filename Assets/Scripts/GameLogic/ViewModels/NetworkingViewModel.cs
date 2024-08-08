@@ -12,6 +12,14 @@ namespace GameLogic.ViewModels
     {
         public static bool IsMuted => VoiceChatSystem.IsMuted;
 
+        /// <summary>
+        /// Indicates that a web request is being processed at the moment. Consecutive calls are not allowed.
+        /// </summary>
+        public static bool WebRequestInProgress => WebRequestSystem.RequestInProgress || LobbySystem.RequestInProgress;
+
+        /// <summary>
+        /// This method is NOT asynchronous as the actual call happens later to prevent bandwidth overuse.
+        /// </summary>
         public static void RequestGetLobbies(Action<LobbyDto[]> callback) => LobbySystem.RequestGetLobbies(callback);
 
         public static void JoinLobbyById(string lobbyId, Action<string, string, List<(string playerName, string playerId, bool isHost)>> callback) =>
@@ -23,6 +31,9 @@ namespace GameLogic.ViewModels
         public static void RejoinToLobby(string lobbyId, Action<string, string, List<(string playerName, string playerId, bool isHost)>> callback) =>
             LobbySystem.RejoinToLobby(lobbyId, callback);
 
+        /// <summary>
+        /// Join a random lobby.
+        /// </summary>
         public static void QuickJoinLobby() => LobbySystem.QuickJoinLobby();
 
         /// <summary>
