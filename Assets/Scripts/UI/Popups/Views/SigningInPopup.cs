@@ -1,5 +1,4 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-using System.Collections.Generic;
 using Core.Enums;
 using GameLogic.ViewModels;
 using Unity.Services.Authentication;
@@ -48,7 +47,7 @@ namespace UI.Popups.Views
             GameLogicViewModel.LoginVoiceChat(HasUserJoinedLobbies);
         }
 
-        async void HasUserJoinedLobbies()
+        static async void HasUserJoinedLobbies()
         {
             string? lobbyId = await GameLogicViewModel.GetJoinedLobbyAsync();
 
