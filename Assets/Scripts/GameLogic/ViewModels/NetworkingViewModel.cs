@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.Dtos;
 using GameLogic.Systems;
+using Unity.Services.Lobbies.Models;
 
 namespace GameLogic.ViewModels
 {
@@ -69,5 +70,11 @@ namespace GameLogic.ViewModels
         public static async Task<List<ServerDto>> GetServers() => await WebRequestSystem.GetServers();
 
         public static void SetConnectionData() => WebRequestSystem.SetConnectionData();
+
+        public static async Task<(string id, string name)> GetLobbyAsync(string lobbyId)
+        {
+            Lobby lobby = await LobbySystem.GetLobbyAsync(lobbyId);
+            return (lobby.Id, lobby.Name);
+        }
     }
 }

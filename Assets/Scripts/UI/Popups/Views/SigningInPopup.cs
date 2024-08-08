@@ -71,10 +71,9 @@ namespace UI.Popups.Views
             if (_joinedLobbiesId.Count > 0)
             {
                 string lobbyId = _joinedLobbiesId[^1];
-                // todo: should happen in GameLogic
-                Lobby lobby = await Lobbies.Instance.GetLobbyAsync(lobbyId);
                 PopupSystem.ShowPopup(PopupType.ReconnectToLobby);
-                (PopupSystem.CurrentPopup as ReconnectToLobbyPopup)!.SetLobbyToReconnect(lobby.Id, lobby.Name);
+                (string id, string lobbyName) = await GameLogicViewModel.GetLobbyAsync(lobbyId);
+                (PopupSystem.CurrentPopup as ReconnectToLobbyPopup)!.SetLobbyToReconnect(id, lobbyName);
             }
             else
                 PopupSystem.ShowPopup(PopupType.ServerList);

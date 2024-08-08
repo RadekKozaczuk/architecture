@@ -95,6 +95,8 @@ namespace GameLogic.Systems
                 HandleLobbyHeartbeat();
         }
 
+        internal static async Task<Lobby> GetLobbyAsync(string lobbyId) => await Lobbies.Instance.GetLobbyAsync(lobbyId);
+
         // lobbies are automatically turn inactive if the lobby does not receive any data for 30 seconds
         // inactive means other players cannot find it but the players that are inside can still normally operate
         /// <summary>
