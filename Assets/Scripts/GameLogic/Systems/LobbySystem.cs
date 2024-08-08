@@ -97,6 +97,21 @@ namespace GameLogic.Systems
 
         internal static async Task<Lobby> GetLobbyAsync(string lobbyId) => await Lobbies.Instance.GetLobbyAsync(lobbyId);
 
+        internal static async Task<List<string>> GetJoinedLobbiesAsync()
+        {
+            await Lobbies.Instance.GetJoinedLobbiesAsync();
+
+            try
+            {
+                return await LobbyService.Instance.GetJoinedLobbiesAsync();
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.Log(e);
+                return new List<string>();
+            }
+        }
+
         // lobbies are automatically turn inactive if the lobby does not receive any data for 30 seconds
         // inactive means other players cannot find it but the players that are inside can still normally operate
         /// <summary>

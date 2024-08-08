@@ -4,8 +4,6 @@ using Core.Enums;
 using GameLogic.ViewModels;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
-using Unity.Services.Lobbies;        // todo: should happen in GameLogic
-using Unity.Services.Lobbies.Models; // todo: should happen in GameLogic
 using Unity.Services.Vivox;
 using UnityEngine;
 
@@ -16,8 +14,6 @@ namespace UI.Popups.Views
     [DisallowMultipleComponent]
     class SigningInPopup : AbstractPopup // todo: In the future we can use this popup for signing in (login and password)
     {
-        List<string> _joinedLobbiesId = new();
-
         SigningInPopup()
             : base(PopupType.SigningIn) { }
 
@@ -54,29 +50,22 @@ namespace UI.Popups.Views
 
         async void HasUserJoinedLobbies()
         {
-            try
-            {
-                // todo: should happen in GameLogic
-                _joinedLobbiesId = await LobbyService.Instance.GetJoinedLobbiesAsync();
-            }
-            catch (LobbyServiceException e) // todo: should happen in GameLogic
-            {
-                _joinedLobbiesId.Clear();
-                Debug.Log(e);
-            }
+            string? lobbyId = await GameLogicViewModel.GetJoinedLobbyAsync();
 
             PopupSystem.CloseCurrentPopup();
 
             // has user joined any lobbies
-            if (_joinedLobbiesId.Count > 0)
+            if (lobbyId == null)
             {
-                string lobbyId = _joinedLobbiesId[^1];
+                PopupSystem.ShowPopup(PopupType.ServerList);
+            }
+            else
+            {
                 PopupSystem.ShowPopup(PopupType.ReconnectToLobby);
+                // todo: do we need this extra call just to retrieve lobby's name?
                 (string id, string lobbyName) = await GameLogicViewModel.GetLobbyAsync(lobbyId);
                 (PopupSystem.CurrentPopup as ReconnectToLobbyPopup)!.SetLobbyToReconnect(id, lobbyName);
             }
-            else
-                PopupSystem.ShowPopup(PopupType.ServerList);
         }
     }
 }

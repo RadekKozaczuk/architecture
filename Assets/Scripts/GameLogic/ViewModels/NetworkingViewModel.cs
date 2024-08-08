@@ -76,5 +76,14 @@ namespace GameLogic.ViewModels
             Lobby lobby = await LobbySystem.GetLobbyAsync(lobbyId);
             return (lobby.Id, lobby.Name);
         }
+
+        /// <summary>
+        /// If the player joined any lobby already it will return its id, null otherwise.
+        /// </summary>
+        public static async Task<string?> GetJoinedLobbyAsync()
+        {
+            List<string> ids = await LobbySystem.GetJoinedLobbiesAsync();
+            return ids.Count == 0 ? null : ids[0];
+        }
     }
 }
