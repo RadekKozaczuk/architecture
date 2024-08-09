@@ -1,4 +1,4 @@
-﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -25,6 +25,9 @@ namespace GameLogic.Systems
             public string AccessToken;
         }
 
+        // API is described here:
+        // https://services.docs.unity.com/multiplay-config/v1/#tag/Allocations
+
         // todo: https://docs.unity.com/ugs/en-us/manual/game-server-hosting/manual/sdk/game-server-sdk-for-unity
 
         const string KeyId = "89302e22-e73b-4890-80fd-04e29f27a721";
@@ -32,6 +35,7 @@ namespace GameLogic.Systems
         const string ProjectId = "f99e7a47-7455-4b68-a7fd-0b4c6e99c755";
         const string EnvironmentId = "3a7f6955-55a9-4574-94b0-8c4ef77f8666";
         const string FleetId = "89aa5df1-6886-45e4-b808-a1b67563367a";
+        const int BuildConfigurationID = 1270962;
 
         /// <summary>
         /// The result of the last call. Either the requested resource (as JSON) or the error message.
@@ -157,6 +161,7 @@ namespace GameLogic.Systems
                 _error = true;
                 _result = request.error;
                 Debug.Log("CreateServersCoroutine Error: " + request.error);
+                RequestInProgress = false;
             }
             else
             {
