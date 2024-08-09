@@ -23,7 +23,7 @@ namespace GameLogic.ViewModels
         /// </summary>
         public static async Task<LobbyDto[]> GetLobbiesAsync() => await LobbySystem.GetLobbiesAsync();
 
-        public static void CreateServer() => WebRequestSystem.CreateServer();
+        public static async Task CreateServerAsync() => await WebRequestSystem.CreateServer();
 
         public static void JoinLobbyById(string lobbyId, Action<string, string, List<(string playerName, string playerId, bool isHost)>> callback) =>
             LobbySystem.JoinLobbyById(lobbyId, callback);

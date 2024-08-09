@@ -99,12 +99,15 @@ namespace UI.Popups.Views
             _refresh.interactable = true;
         }
 
-        void CreateServer()
+        async void CreateServer()
         {
             PresentationViewModel.PlaySound(Sound.ClickSelect);
+            _createServer.interactable = false;
             //PopupSystem.ShowPopup(PopupType.CreateLobby);
 
-            GameLogicViewModel.CreateServer();
+            await GameLogicViewModel.CreateServerAsync();
+
+            _createServer.interactable = false;
         }
     }
 }

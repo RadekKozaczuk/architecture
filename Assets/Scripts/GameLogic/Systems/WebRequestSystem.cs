@@ -89,27 +89,20 @@ namespace GameLogic.Systems
             //NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData("ipv4Address", "port");
         }
 
-        internal static void CreateServer()
+        internal static async Task CreateServer()
         {
             string url = $"https://services.api.unity.com/auth/v1/token-exchange?projectId={ProjectId}&environmentId={EnvironmentId}";
-            using var request = new UnityWebRequest(url, "POST");
 
-            string json = JsonUtility.ToJson(new TokenExchangeRequest
+            string jsonRequestBody = JsonUtility.ToJson(new TokenExchangeRequest
             {
-                Scopes = new[] { "multiplay.allocations.create", "multiplay.allocations.list" }
+                Scopes = new[] { "multiplay.allocations.create", "multiplay.allocations.list" },
             });
 
-            byte[] keyByteArray = Encoding.UTF8.GetBytes(KeyId + ":" + KeySecret);
-            string keyBase64 = Convert.ToBase64String(keyByteArray);
-
-            byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
-            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("Authorization", "Basic " + keyBase64);
-
             // todo: here must start the coroutine because yes
-            StaticCoroutine.StartStaticCoroutine(CreateServersCoroutine(request));
+            StaticCoroutine.StartStaticCoroutine(CreateServersCoroutine(url, jsonRequestBody));
+
+            while (RequestInProgress)
+                await Task.Yield();
         }
 
         /// <summary>
@@ -142,8 +135,19 @@ namespace GameLogic.Systems
             RequestInProgress = false;
         }
 
-        static IEnumerator CreateServersCoroutine(UnityWebRequest request)
+        static IEnumerator CreateServersCoroutine(string url, string jsonRequestBody)
         {
+            using var request = new UnityWebRequest(url, "POST");
+
+            byte[] keyByteArray = Encoding.UTF8.GetBytes(KeyId + ":" + KeySecret);
+            string keyBase64 = Convert.ToBase64String(keyByteArray);
+
+            byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonRequestBody);
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("Authorization", "Basic " + keyBase64);
+
             yield return request.SendWebRequest();
 
             if (request.result is UnityWebRequest.Result.ConnectionError
@@ -152,33 +156,33 @@ namespace GameLogic.Systems
             {
                 _error = true;
                 _result = request.error;
+                Debug.Log("CreateServersCoroutine Error: " + request.error);
             }
             else
             {
                 _error = false;
                 _result = request.downloadHandler.text;
+                Debug.Log("CreateServersCoroutine Success: " + request.downloadHandler.text);
 
-                Debug.Log("Success: " + _result);
-                var tokenExchangeResponse = JsonUtility.FromJson<TokenExchangeResponse>(_result);
-                string url = $"https://multiplay.services.api.unity.com/v1/allocations/projects/{ProjectId}/environments/{EnvironmentId}/fleets/{FleetId}/allocations";
-
-                request = new UnityWebRequest(url, "POST");
-
-                byte[] bodyRaw = Encoding.UTF8.GetBytes(_result);
-                request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-                request.downloadHandler = new DownloadHandlerBuffer();
-                request.SetRequestHeader("Content-Type", "application/json");
-                request.SetRequestHeader("Authorization", "Bearer " + tokenExchangeResponse.AccessToken);
-
-                StaticCoroutine.StartStaticCoroutine(CreateServersCoroutine_Internal(request));
+                string urlInternal = $"https://multiplay.services.api.unity.com/v1/allocations/projects/{ProjectId}/environments/{EnvironmentId}/fleets/{FleetId}/allocations";
+                StaticCoroutine.StartStaticCoroutine(CreateServersCoroutine_Internal(urlInternal, request.downloadHandler.text));
             }
         }
 
         /// <summary>
         /// This coroutine will eventually fill the <see cref="_result"/> variable and change <see cref="RequestInProgress"/> to false.
         /// </summary>
-        static IEnumerator CreateServersCoroutine_Internal(UnityWebRequest request)
+        static IEnumerator CreateServersCoroutine_Internal(string url, string jsonRequestBody)
         {
+            var tokenExchangeResponse = JsonUtility.FromJson<TokenExchangeResponse>(jsonRequestBody);
+            var request = new UnityWebRequest(url, "POST");
+
+            byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonRequestBody);
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("Authorization", "Bearer " + tokenExchangeResponse.AccessToken);
+
             yield return request.SendWebRequest();
 
             if (request.result is UnityWebRequest.Result.ConnectionError
@@ -187,12 +191,13 @@ namespace GameLogic.Systems
             {
                 _error = true;
                 _result = request.error;
+                Debug.Log("CreateServersCoroutine_Internal Error: " + request.error);
             }
             else
             {
                 _error = false;
                 _result = request.downloadHandler.text;
-                Debug.Log("Success: " + _result);
+                Debug.Log("CreateServersCoroutine_Internal Success: " + request.downloadHandler.text);
             }
 
             RequestInProgress = false;
