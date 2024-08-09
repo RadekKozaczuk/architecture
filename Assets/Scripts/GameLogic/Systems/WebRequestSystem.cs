@@ -14,6 +14,17 @@ namespace GameLogic.Systems
 {
     static class WebRequestSystem
     {
+        [Serializable]
+        public class TokenExchangeRequest
+        {
+            public string[] Scopes;
+        }
+
+        public class TokenExchangeResponse
+        {
+            public string AccessToken;
+        }
+
         // todo: https://docs.unity.com/ugs/en-us/manual/game-server-hosting/manual/sdk/game-server-sdk-for-unity
 
         const string KeyId = "89302e22-e73b-4890-80fd-04e29f27a721";
@@ -78,31 +89,110 @@ namespace GameLogic.Systems
             //NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData("ipv4Address", "port");
         }
 
-        /// <summary>
-        /// This coroutine eventually fill the variable.
-        /// </summary>
-        static IEnumerator GetServersCoroutine(string url)
+        internal static void CreateServer()
         {
-            using UnityWebRequest unityWebRequest = UnityWebRequest.Get(url);
+            string url = $"https://services.api.unity.com/auth/v1/token-exchange?projectId={ProjectId}&environmentId={EnvironmentId}";
+            using var request = new UnityWebRequest(url, "POST");
+
+            string json = JsonUtility.ToJson(new TokenExchangeRequest
+            {
+                Scopes = new[] { "multiplay.allocations.create", "multiplay.allocations.list" }
+            });
 
             byte[] keyByteArray = Encoding.UTF8.GetBytes(KeyId + ":" + KeySecret);
             string keyBase64 = Convert.ToBase64String(keyByteArray);
 
-            unityWebRequest.SetRequestHeader("Authorization", "Basic " + keyBase64);
+            byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("Authorization", "Basic " + keyBase64);
 
-            yield return unityWebRequest.SendWebRequest();
+            // todo: here must start the coroutine because yes
+            StaticCoroutine.StartStaticCoroutine(CreateServersCoroutine(request));
+        }
 
-            if (unityWebRequest.result is UnityWebRequest.Result.ConnectionError
-                                          or UnityWebRequest.Result.DataProcessingError
-                                          or UnityWebRequest.Result.ProtocolError)
+        /// <summary>
+        /// This coroutine will eventually fill the <see cref="_result"/> variable and change <see cref="RequestInProgress"/> to false.
+        /// </summary>
+        static IEnumerator GetServersCoroutine(string url)
+        {
+            using UnityWebRequest request = UnityWebRequest.Get(url);
+
+            byte[] keyByteArray = Encoding.UTF8.GetBytes(KeyId + ":" + KeySecret);
+            string keyBase64 = Convert.ToBase64String(keyByteArray);
+
+            request.SetRequestHeader("Authorization", "Basic " + keyBase64);
+
+            yield return request.SendWebRequest();
+
+            if (request.result is UnityWebRequest.Result.ConnectionError
+                                  or UnityWebRequest.Result.DataProcessingError
+                                  or UnityWebRequest.Result.ProtocolError)
             {
                 _error = true;
-                _result = unityWebRequest.error;
+                _result = request.error;
             }
             else
             {
                 _error = false;
-                _result = unityWebRequest.downloadHandler.text;
+                _result = request.downloadHandler.text;
+            }
+
+            RequestInProgress = false;
+        }
+
+        static IEnumerator CreateServersCoroutine(UnityWebRequest request)
+        {
+            yield return request.SendWebRequest();
+
+            if (request.result is UnityWebRequest.Result.ConnectionError
+                                  or UnityWebRequest.Result.DataProcessingError
+                                  or UnityWebRequest.Result.ProtocolError)
+            {
+                _error = true;
+                _result = request.error;
+            }
+            else
+            {
+                _error = false;
+                _result = request.downloadHandler.text;
+
+                Debug.Log("Success: " + _result);
+                var tokenExchangeResponse = JsonUtility.FromJson<TokenExchangeResponse>(_result);
+                string url = $"https://multiplay.services.api.unity.com/v1/allocations/projects/{ProjectId}/environments/{EnvironmentId}/fleets/{FleetId}/allocations";
+
+                request = new UnityWebRequest(url, "POST");
+
+                byte[] bodyRaw = Encoding.UTF8.GetBytes(_result);
+                request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                request.downloadHandler = new DownloadHandlerBuffer();
+                request.SetRequestHeader("Content-Type", "application/json");
+                request.SetRequestHeader("Authorization", "Bearer " + tokenExchangeResponse.AccessToken);
+
+                StaticCoroutine.StartStaticCoroutine(CreateServersCoroutine_Internal(request));
+            }
+        }
+
+        /// <summary>
+        /// This coroutine will eventually fill the <see cref="_result"/> variable and change <see cref="RequestInProgress"/> to false.
+        /// </summary>
+        static IEnumerator CreateServersCoroutine_Internal(UnityWebRequest request)
+        {
+            yield return request.SendWebRequest();
+
+            if (request.result is UnityWebRequest.Result.ConnectionError
+                                  or UnityWebRequest.Result.DataProcessingError
+                                  or UnityWebRequest.Result.ProtocolError)
+            {
+                _error = true;
+                _result = request.error;
+            }
+            else
+            {
+                _error = false;
+                _result = request.downloadHandler.text;
+                Debug.Log("Success: " + _result);
             }
 
             RequestInProgress = false;

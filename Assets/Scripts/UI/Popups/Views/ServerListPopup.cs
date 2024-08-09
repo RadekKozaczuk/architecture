@@ -50,11 +50,7 @@ namespace UI.Popups.Views
                 GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});
             });
 
-            _createServer.onClick.AddListener(() =>
-            {
-                PresentationViewModel.PlaySound(Sound.ClickSelect);
-                PopupSystem.ShowPopup(PopupType.CreateLobby);
-            });
+            _createServer.onClick.AddListener(CreateServer);
 
             _refresh.interactable = !GameLogicViewModel.WebRequestInProgress;
             _refresh.onClick.AddListener(RefreshAction);
@@ -101,6 +97,14 @@ namespace UI.Popups.Views
             }
 
             _refresh.interactable = true;
+        }
+
+        void CreateServer()
+        {
+            PresentationViewModel.PlaySound(Sound.ClickSelect);
+            //PopupSystem.ShowPopup(PopupType.CreateLobby);
+
+            GameLogicViewModel.CreateServer();
         }
     }
 }

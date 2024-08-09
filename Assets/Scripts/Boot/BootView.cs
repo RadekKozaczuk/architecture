@@ -175,7 +175,7 @@ namespace Boot
 
         internal static void OnCoreSceneLoaded() => _isCoreSceneLoaded = true;
 
-        GameStateMachine<GameState, StateTransitionParameter> CreateStateMachine() =>
+        static GameStateMachine<GameState, StateTransitionParameter> CreateStateMachine() =>
             new(new List<(
                     GameState from,
                     GameState to,
@@ -217,6 +217,7 @@ namespace Boot
         /// <summary>
         /// Creates simplified version of the state machine. Used only on the server.
         /// </summary>
+        // ReSharper disable once UnusedMember.Local
         static GameStateMachine<GameState, StateTransitionParameter> CreateStateMachine_Server() =>
             new(new List<(
                     GameState from,
