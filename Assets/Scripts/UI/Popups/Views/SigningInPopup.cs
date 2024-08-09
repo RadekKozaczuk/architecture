@@ -31,7 +31,7 @@ namespace UI.Popups.Views
 
         internal override void Close() { }
 
-        async void InitializeAsync()
+        static async void InitializeAsync()
         {
             await UnityServices.InitializeAsync();
 

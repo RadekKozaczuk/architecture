@@ -37,7 +37,6 @@ namespace UI.Popups.Views
         {
             _join.onClick.AddListener(() =>
             {
-
                 GameLogicViewModel.SetConnectionData();
 
                 // todo: temporary disabled
@@ -53,14 +52,15 @@ namespace UI.Popups.Views
 
             _createServer.onClick.AddListener(() =>
             {
-
+                PresentationViewModel.PlaySound(Sound.ClickSelect);
+                PopupSystem.ShowPopup(PopupType.CreateLobby);
             });
 
             _refresh.interactable = !GameLogicViewModel.WebRequestInProgress;
             _refresh.onClick.AddListener(RefreshAction);
 
             // todo: destroy children
-            // todo: intantiate new
+            // todo: instantiate new
 
             /*serverTemplate.gameObject.SetActive(false);
             foreach (Transform child in serverContainer)
@@ -76,14 +76,13 @@ namespace UI.Popups.Views
         {
             PresentationViewModel.PlaySound(Sound.ClickSelect);
             _refresh.interactable = false;
-            //GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback);
-            List<ServerDto> servers = await GameLogicViewModel.GetServers();
 
             // cleanup
             foreach (Transform child in _list.transform)
                 Destroy(child.gameObject);
 
             // add servers
+            List<ServerDto> servers = await GameLogicViewModel.GetServers();
             foreach (ServerDto server in servers)
             {
                 ServerListElementView view = Instantiate(_config.ServerListElementView, _list.transform);
@@ -94,11 +93,14 @@ namespace UI.Popups.Views
             }
 
             // add lobbies
+            LobbyDto[] lobbies = await GameLogicViewModel.GetLobbiesAsync();
+            foreach (LobbyDto lobby in lobbies)
+            {
+                ServerListElementView view = Instantiate(_config.ServerListElementView, _list.transform);
+                view.Initialize(lobby.LobbyName, lobby.LobbyId, 0000);
+            }
 
-            // todo: in the future also lobbies
-            //List<ServerDto> lobbies = await GameLogicViewModel.GetServers();
-
-            _refresh.interactable = false;
+            _refresh.interactable = true;
         }
     }
 }

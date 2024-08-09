@@ -21,7 +21,7 @@ namespace GameLogic.ViewModels
         /// <summary>
         /// This method is NOT asynchronous as the actual call happens later to prevent bandwidth overuse.
         /// </summary>
-        public static void RequestGetLobbies(Action<LobbyDto[]> callback) => LobbySystem.RequestGetLobbies(callback);
+        public static async Task<LobbyDto[]> GetLobbiesAsync() => await LobbySystem.GetLobbiesAsync();
 
         public static void JoinLobbyById(string lobbyId, Action<string, string, List<(string playerName, string playerId, bool isHost)>> callback) =>
             LobbySystem.JoinLobbyById(lobbyId, callback);
