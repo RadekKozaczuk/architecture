@@ -29,7 +29,7 @@ namespace GameLogic.Systems
 
                 ServerConfig serverConfig = MultiplayService.Instance.ServerConfig;
 
-                _serverQueryHandler = await MultiplayService.Instance.StartServerQueryHandlerAsync(10, "MyServer", "MyGameType", "0", "TestMap");
+                _serverQueryHandler = await MultiplayService.Instance.StartServerQueryHandlerAsync(2, "MyServer", "MyGameType", "0", "TestMap");
 
                 // tells if the server is up and running
                 if (serverConfig.AllocationId != string.Empty)
