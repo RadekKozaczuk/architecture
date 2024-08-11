@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.Dtos;
 using GameLogic.Systems;
+using Unity.Services.Lobbies.Models;
 
 namespace GameLogic.ViewModels
 {
@@ -12,7 +13,17 @@ namespace GameLogic.ViewModels
     {
         public static bool IsMuted => VoiceChatSystem.IsMuted;
 
-        public static void RequestGetLobbies(Action<LobbyDto[]> callback) => LobbySystem.RequestGetLobbies(callback);
+        /// <summary>
+        /// Indicates that a web request is being processed at the moment. Consecutive calls are not allowed.
+        /// </summary>
+        public static bool WebRequestInProgress => WebRequestSystem.RequestInProgress || LobbySystem.RequestInProgress;
+
+        /// <summary>
+        /// This method is NOT asynchronous as the actual call happens later to prevent bandwidth overuse.
+        /// </summary>
+        public static async Task<LobbyDto[]> GetLobbiesAsync() => await LobbySystem.GetLobbiesAsync();
+
+        public static async Task CreateServerAsync() => await WebRequestSystem.CreateServer();
 
         public static void JoinLobbyById(string lobbyId, Action<string, string, List<(string playerName, string playerId, bool isHost)>> callback) =>
             LobbySystem.JoinLobbyById(lobbyId, callback);
@@ -23,6 +34,9 @@ namespace GameLogic.ViewModels
         public static void RejoinToLobby(string lobbyId, Action<string, string, List<(string playerName, string playerId, bool isHost)>> callback) =>
             LobbySystem.RejoinToLobby(lobbyId, callback);
 
+        /// <summary>
+        /// Join a random lobby.
+        /// </summary>
         public static void QuickJoinLobby() => LobbySystem.QuickJoinLobby();
 
         /// <summary>
@@ -50,5 +64,28 @@ namespace GameLogic.ViewModels
         public static void LoginVoiceChat(Action callback) => VoiceChatSystem.Login(callback);
 
         public static void ToggleMuteInput() => VoiceChatSystem.ToggleMuteInput();
+
+        /// <summary>
+        /// Asks backed for a list of servers.
+        /// List may be empty.
+        /// </summary>
+        public static async Task<List<ServerDto>> GetServers() => await WebRequestSystem.GetServers();
+
+        public static void SetConnectionData() => WebRequestSystem.SetConnectionData();
+
+        public static async Task<(string id, string name)> GetLobbyAsync(string lobbyId)
+        {
+            Lobby lobby = await LobbySystem.GetLobbyAsync(lobbyId);
+            return (lobby.Id, lobby.Name);
+        }
+
+        /// <summary>
+        /// If the player joined any lobby already it will return its id, null otherwise.
+        /// </summary>
+        public static async Task<string?> GetJoinedLobbyAsync()
+        {
+            List<string> ids = await LobbySystem.GetJoinedLobbiesAsync();
+            return ids.Count == 0 ? null : ids[0];
+        }
     }
 }

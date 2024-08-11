@@ -4,7 +4,6 @@ using Core.Enums;
 using GameLogic.ViewModels;
 using Presentation.ViewModels;
 using TMPro;
-using UI.Config;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,8 +26,6 @@ namespace UI.Popups.Views
 
         [SerializeField]
         Button _back;
-
-        static readonly UIConfig _config;
 
         CreateLobbyPopup()
             : base(PopupType.CreateLobby) { }

@@ -1,5 +1,4 @@
 ﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-using System.Collections;
 using System.Collections.Generic;
 using Core;
 using Core.Dtos;
@@ -37,6 +36,9 @@ namespace UI.Popups.Views
         Button _create;
 
         [SerializeField]
+        Button _joinDedicated;
+
+        [SerializeField]
         RectTransform _list;
 
         static readonly UIConfig _config;
@@ -54,19 +56,21 @@ namespace UI.Popups.Views
                 _create.interactable = true;
             }
 
+            _refresh.interactable = !GameLogicViewModel.WebRequestInProgress;
             _refresh.onClick.AddListener(RefreshAction);
-            _join.onClick.AddListener(
-                () =>
-                {
-                    PresentationViewModel.PlaySound(Sound.ClickSelect);
-                    GameLogicViewModel.JoinLobbyById(LobbyListElementView.SelectedLobby!.LobbyId, JoinLobbyResultCallback);
-                }); // join the selected
+            _join.onClick.AddListener(() =>
+            {
+                PresentationViewModel.PlaySound(Sound.ClickSelect);
+                GameLogicViewModel.JoinLobbyById(LobbyListElementView.SelectedLobby!.LobbyId, JoinLobbyResultCallback);
+            }); // join the selected
             _join.interactable = false;
+
             _create.onClick.AddListener(() =>
             {
                 PresentationViewModel.PlaySound(Sound.ClickSelect);
                 PopupSystem.ShowPopup(PopupType.CreateLobby);
             });
+
             _joinByCode.onClick.AddListener(() =>
             {
                 PresentationViewModel.PlaySound(Sound.ClickSelect);
@@ -80,13 +84,35 @@ namespace UI.Popups.Views
 
         internal void SelectedLobbyChanged(bool canJoin) => _join.interactable = canJoin;
 
-        void RefreshAction()
+        async void RefreshAction()
         {
             PresentationViewModel.PlaySound(Sound.ClickSelect);
             _refresh.interactable = false;
-            const float Delay = 2f;
-            StartCoroutine(EnableButtonAfterDelay(Delay));
-            GameLogicViewModel.RequestGetLobbies(LobbyQueryResultCallback);
+            List<ServerDto> servers = await GameLogicViewModel.GetServers();
+
+            // cleanup
+            foreach (Transform child in _list.transform)
+                Destroy(child.gameObject);
+
+            // todo: for now only take one
+            //foreach (ServerDto server in servers)
+            if (servers.Count > 0)
+            {
+                ServerDto? server = servers[0];
+                LobbyListElementView view = Instantiate(_config.LobbyListElement, _list.transform);
+
+                // todo: no idea how to retrieve player count
+                // todo: dedicated servers have always max 16 players
+                string id = server.Id.ToString();
+                view.Initialize(id, "Dedicated Server" + id, 0, 16);
+            }
+
+            // todo: in the future also lobbies
+            //List<ServerDto> servers = await GameLogicViewModel.GetServers();
+
+            Debug.Log(servers.Count);
+
+            _refresh.interactable = false;
         }
 
         void LobbyQueryResultCallback(LobbyDto[] lobbies)
@@ -94,19 +120,11 @@ namespace UI.Popups.Views
             foreach (Transform child in _list.transform)
                 Destroy(child.gameObject);
 
-            for (int i = 0; i < lobbies.Length; i++)
+            foreach (LobbyDto lobby in lobbies)
             {
-                LobbyDto lobby = lobbies[i];
                 LobbyListElementView view = Instantiate(_config.LobbyListElement, _list.transform);
                 view.Initialize(lobby.LobbyId, lobby.LobbyName, lobby.PlayerCount, lobby.PlayerMax);
             }
-        }
-
-        IEnumerator EnableButtonAfterDelay(float delay)
-        {
-            yield return new WaitForSeconds(delay);
-
-            _refresh.interactable = true;
         }
 
         void JoinLobbyResultCallback(string? lobbyName, string? lobbyCode, List<(string playerName, string playerId, bool isHost)> players)

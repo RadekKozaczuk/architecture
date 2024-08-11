@@ -57,7 +57,11 @@ namespace Core.Enums
         /// <summary>
         /// Settings accessible from the main menu.
         /// </summary>
-        Settings
+        Settings,
+        /// <summary>
+        /// Server Browser.
+        /// </summary>
+        ServerList
     }
 
     public enum PlayerId

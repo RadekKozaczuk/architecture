@@ -42,6 +42,10 @@ namespace Boot
 
         void Awake()
         {
+            // at this point we know the machine role but only if it is a server
+            if (Application.platform == RuntimePlatform.LinuxServer)
+                CoreData.MachineRole = MachineRole.DedicatedServer;
+
             // increase priority so that main menu can appear faster
             Application.backgroundLoadingPriority = ThreadPriority.High;
             // injection must be done in awake because fields cannot be injected into in the same method they are used in
@@ -64,43 +68,10 @@ namespace Boot
 
             Architecture.SetSharedData(overTimeSceneIds, stateChangeSceneIds);
 
-            _gameStateMachine = new GameStateMachine<GameState, StateTransitionParameter>(
-                new List<(
-                    GameState from,
-                    GameState to,
-                    Func<(int[]?, int[]?)>? scenesToLoadUnload,
-                    Action? betweenLoadAndUnload)>
-                {
-                    (GameState.Booting,
-                     GameState.MainMenu,
-                     () => (new[] {Constants.MainMenuScene, Constants.CoreScene, Constants.UIScene}, null),
-                     null),
-                    (GameState.MainMenu,
-                     GameState.Gameplay,
-                     () => (ScenesToLoadFromMainMenuToGameplay(), new[] {Constants.MainMenuScene}),
-                     null),
-                    (GameState.Gameplay,
-                     GameState.MainMenu,
-                     () => (new[] {Constants.MainMenuScene}, ScenesToUnloadFromGameplayToMainMenu()),
-                     null),
-                    (GameState.Gameplay,
-                     GameState.Gameplay,
-                     ScenesToLoadUnloadFromGameplayToGameplay,
-                     null)
-                },
-                new (GameState, Action?, Action?)[]
-                {
-                    (GameState.Booting, null, BootingOnExit),
-                    (GameState.MainMenu, MainMenuOnEntry, MainMenuOnExit),
-                    (GameState.Gameplay, GameplayOnEntry, GameplayOnExit)
-                }
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-                // ReSharper disable once MergeConditionalExpression
-                // ReSharper disable once SimplifyConditionalTernaryExpression
-                , _config is null ? false : _config.LogRequestedStateChange);
+#if UNITY_SERVER
+            _gameStateMachine = CreateStateMachine_Server();
 #else
-            );
+            _gameStateMachine = CreateStateMachine();
 #endif
 
             // set transition parameters
@@ -114,7 +85,12 @@ namespace Boot
             GameStateSystem.OnGetCurrentGameState += _gameStateMachine.GetCurrentState;
             GameStateSystem.OnEndFrameSignal += _gameStateMachine.EndFrameSignal;
             GameStateSystem.OnGetTransitionParameter += _gameStateMachine.GetTransitionParameter;
+
+#if UNITY_SERVER
+            GameStateSystem.RequestStateChange(GameState.Gameplay);
+#else
             GameStateSystem.RequestStateChange(GameState.MainMenu);
+#endif
 
             DontDestroyOnLoad(_eventSystem);
             DontDestroyOnLoad(this);
@@ -198,6 +174,72 @@ namespace Boot
         }
 
         internal static void OnCoreSceneLoaded() => _isCoreSceneLoaded = true;
+
+        static GameStateMachine<GameState, StateTransitionParameter> CreateStateMachine() =>
+            new(new List<(
+                    GameState from,
+                    GameState to,
+                    Func<(int[]?, int[]?)>? scenesToLoadUnload,
+                    Action? betweenLoadAndUnload)>
+                {
+                    (GameState.Booting,
+                     GameState.MainMenu,
+                     () => (new[] {Constants.MainMenuScene, Constants.CoreScene, Constants.UIScene}, null),
+                     null),
+                    (GameState.MainMenu,
+                     GameState.Gameplay,
+                     () => (ScenesToLoadFromMainMenuToGameplay(), new[] {Constants.MainMenuScene}),
+                     null),
+                    (GameState.Gameplay,
+                     GameState.MainMenu,
+                     () => (new[] {Constants.MainMenuScene}, ScenesToUnloadFromGameplayToMainMenu()),
+                     null),
+                    (GameState.Gameplay,
+                     GameState.Gameplay,
+                     ScenesToLoadUnloadFromGameplayToGameplay,
+                     null)
+                },
+                new (GameState, Action?, Action?)[]
+                {
+                    (GameState.Booting, null, BootingOnExit),
+                    (GameState.MainMenu, MainMenuOnEntry, MainMenuOnExit),
+                    (GameState.Gameplay, GameplayOnEntry, GameplayOnExit)
+                }
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+                // ReSharper disable once MergeConditionalExpression
+                // ReSharper disable once SimplifyConditionalTernaryExpression
+                , _config is null ? false : _config.LogRequestedStateChange);
+#else
+            );
+#endif
+
+        /// <summary>
+        /// Creates simplified version of the state machine. Used only on the server.
+        /// </summary>
+        // ReSharper disable once UnusedMember.Local
+        static GameStateMachine<GameState, StateTransitionParameter> CreateStateMachine_Server() =>
+            new(new List<(
+                    GameState from,
+                    GameState to,
+                    Func<(int[]?, int[]?)>? scenesToLoadUnload,
+                    Action? betweenLoadAndUnload)>
+                {
+                    (GameState.Booting,
+                     GameState.Gameplay,
+                     () => (new[] {Constants.CoreScene, (int)Level.HubLocation}, null),
+                     null),
+                    (GameState.Gameplay,
+                     GameState.Gameplay,
+                     ScenesToLoadUnloadFromGameplayToGameplay,
+                     null)
+                },
+                new (GameState, Action?, Action?)[]
+                {
+                    (GameState.Booting, null, BootingOnExit),
+                    (GameState.Gameplay, GameplayOnEntry, GameplayOnExit)
+                }
+            );
 
         static void BootingOnExit()
         {

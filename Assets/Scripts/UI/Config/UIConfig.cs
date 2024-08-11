@@ -23,5 +23,8 @@ namespace UI.Config
 
         [SerializeField]
         internal LobbyPlayerElementView LobbyPlayerElementView;
+
+        [SerializeField]
+        internal ServerListElementView ServerListElementView;
     }
 }

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-// ReSharper disable UnusedParameter.Global
+// ReSharper disable UnusedMemberInSuper.Global
 
 namespace Core
 {

@@ -1,4 +1,4 @@
-﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -21,10 +21,19 @@ using UnityEngine.Assertions;
 namespace GameLogic.Systems
 {
 	/// <summary>
-	/// This is system is responsible for creating a multiplayer lobby.
+	/// This is system is responsible for creating a multiplayer lobby as well as for handling voice chat.
 	/// </summary>
 	static class LobbySystem
     {
+        /// <summary>
+        /// Indicates if the system is currently processing a call. Consecutive calls are not allowed.
+        /// </summary>
+        internal static bool RequestInProgress
+        {
+            get;
+            private set;
+        }
+
         static bool IsHost => AuthenticationService.Instance.PlayerId == Lobby!.HostId;
 
         /// <summary>
@@ -33,10 +42,14 @@ namespace GameLogic.Systems
         const float HeartbeatRate = 25f;
         const float LobbyUpdateTimerMax = 1.1f;
         /// <summary>
-        /// Maximum allowed lobby query rate is 1 per seconds. Executing queries faster will result in an error.
+        /// Maximum allowed lobby query rate by Unity is 1 query per seconds. Executing queries faster will result in an error.
+        /// For safety, we allow execution slightly slower than this.
         /// </summary>
-        const float LobbyQueryRate = 1.1f;
+        const float LobbyQueryRate = 1.5f;
 
+        /// <summary>
+        /// Currently joined lobby.
+        /// </summary>
         static Lobby? Lobby
         {
             get => _lobby;
@@ -52,7 +65,6 @@ namespace GameLogic.Systems
         static float? _lobbyUpdateTimer;
 
         static float _lobbyQueryTimer;
-        static Action<LobbyDto[]>? _pendingLobbyQueryCallback;
         static string _relayCode;
 
         /// <summary>
@@ -71,8 +83,6 @@ namespace GameLogic.Systems
         {
             if (_lobbyQueryTimer > 0)
                 _lobbyQueryTimer -= Time.deltaTime;
-            else if (_pendingLobbyQueryCallback != null)
-                ExecuteLobbyQueryCallback();
 
             if (_lobbyIsDirty)
                 UpdatePlayerName(CoreData.PlayerName);
@@ -84,6 +94,44 @@ namespace GameLogic.Systems
 
             if (IsHost)
                 HandleLobbyHeartbeat();
+        }
+
+        internal static async Task<Lobby> GetLobbyAsync(string lobbyId)
+        {
+            RequestInProgress = true;
+
+            try
+            {
+                Lobby lobby = await LobbyService.Instance.GetLobbyAsync(lobbyId);
+                RequestInProgress = false;
+                return lobby;
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.Log(e);
+            }
+
+            RequestInProgress = false;
+            return null!;
+        }
+
+        internal static async Task<List<string>> GetJoinedLobbiesAsync()
+        {
+            RequestInProgress = true;
+
+            try
+            {
+                List<string> lobbies = await LobbyService.Instance.GetJoinedLobbiesAsync();
+                RequestInProgress = false;
+                return lobbies;
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.Log(e);
+            }
+
+            RequestInProgress = false;
+            return null!;
         }
 
         // lobbies are automatically turn inactive if the lobby does not receive any data for 30 seconds
@@ -110,7 +158,7 @@ namespace GameLogic.Systems
                 Lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
 
                 _heartbeatTimer = HeartbeatRate;
-                JoinChannelVoiceChat();
+                VoiceChatSystem.JoinChannel(_lobby!.Name, true, false);
                 return (true, Lobby.Players[0].Id, Lobby.LobbyCode);
             }
             catch (LobbyServiceException e)
@@ -123,13 +171,6 @@ namespace GameLogic.Systems
                 MyDebug.Log(e.ToString());
                 return (false, null!, null!);
             }
-        }
-
-        internal static void RequestGetLobbies(Action<LobbyDto[]> callback)
-        {
-            Assert.IsNotNull(callback, "callback function cannot be null.");
-
-            _pendingLobbyQueryCallback = callback;
         }
 
         internal static async void JoinLobbyById(string lobbyId,
@@ -150,7 +191,7 @@ namespace GameLogic.Systems
 
                 Lobby = await Lobbies.Instance.JoinLobbyByIdAsync(lobbyId, options);
                 callback(Lobby.Name, Lobby.LobbyCode, GetPlayers());
-                JoinChannelVoiceChat();
+                VoiceChatSystem.JoinChannel(_lobby!.Name, true, false);
             }
             catch (LobbyServiceException e)
             {
@@ -176,7 +217,7 @@ namespace GameLogic.Systems
 
 				Lobby = await Lobbies.Instance.JoinLobbyByCodeAsync(lobbyCode, options);
 				callback(Lobby.Name, Lobby.LobbyCode, GetPlayers());
-                JoinChannelVoiceChat();
+                VoiceChatSystem.JoinChannel(_lobby!.Name, true, false);
 			}
 			catch (LobbyServiceException e)
 			{
@@ -193,7 +234,7 @@ namespace GameLogic.Systems
             try
             {
                 await Lobbies.Instance.QuickJoinLobbyAsync();
-                JoinChannelVoiceChat();
+                VoiceChatSystem.JoinChannel(_lobby!.Name, true, false);
             }
             catch (LobbyServiceException e)
             {
@@ -208,7 +249,7 @@ namespace GameLogic.Systems
             {
                 Lobby = await Lobbies.Instance.ReconnectToLobbyAsync(lobbyId);
                 callback(Lobby.Name, Lobby.LobbyCode, GetPlayers());
-                JoinChannelVoiceChat();
+                VoiceChatSystem.JoinChannel(_lobby!.Name, true, false);
             }
             catch (LobbyServiceException e)
             {
@@ -252,7 +293,7 @@ namespace GameLogic.Systems
                 else
                     await lobby.RemovePlayerAsync(Lobby!.Id, playerId);
 
-                LeaveChannelVoiceChat();
+                VoiceChatSystem.LeaveChannel();
             }
             catch (LobbyServiceException e)
             {
@@ -329,28 +370,17 @@ namespace GameLogic.Systems
             }
         }
 
-        static void JoinChannelVoiceChat() => VoiceChatSystem.JoinChannel(_lobby!.Name, true, false);
-
-        static void LeaveChannelVoiceChat() => VoiceChatSystem.LeaveChannel();
-
-        static async void ExecuteLobbyQueryCallback()
-        {
-            _lobbyQueryTimer = LobbyQueryRate;
-            LobbyDto[] lobbies = await QueryLobbies();
-
-            Assert.IsNotNull(_pendingLobbyQueryCallback, "Pending lobby query callback should not be null.");
-            Assert.IsNotNull(lobbies, "Lobbies should not be null in order to execute LobbyQueryCallback.");
-
-            _pendingLobbyQueryCallback.Invoke(lobbies);
-            _pendingLobbyQueryCallback = null;
-        }
-
         /// <summary>
         /// Rate limit for lobby querying is 1 query per second.
         /// Calling this method more often will result in an error.
         /// </summary>
-        static async Task<LobbyDto[]> QueryLobbies()
+        internal static async Task<LobbyDto[]> GetLobbiesAsync()
         {
+            RequestInProgress = true;
+
+            if (_lobbyQueryTimer > 0)
+                await Task.Delay((int)(_lobbyQueryTimer * 1000));
+
             try
             {
                 var options = new QueryLobbiesOptions {Count = 25};
@@ -364,6 +394,8 @@ namespace GameLogic.Systems
                     array[i] = new LobbyDto(lobby.Id, lobby.Name, lobby.Players.Count, lobby.MaxPlayers);
                 }
 
+                _lobbyQueryTimer = LobbyQueryRate;
+                RequestInProgress = false;
                 return array;
             }
             catch (LobbyServiceException e)
@@ -371,6 +403,7 @@ namespace GameLogic.Systems
                 MyDebug.Log(e.ToString());
             }
 
+            RequestInProgress = false;
             return null!;
         }
 

@@ -34,5 +34,7 @@ namespace Core
         /// Used only in multiplayer context.
         /// </summary>
         public static string PlayerName;
+
+        public static MachineRole MachineRole;
     }
 }

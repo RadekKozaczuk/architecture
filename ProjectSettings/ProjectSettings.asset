@@ -847,8 +847,10 @@ PlayerSettings:
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:
+    Server: 0
     Standalone: 1
   il2cppCompilerConfiguration:
+    Server: 2
     Standalone: 2
   il2cppCodeGeneration:
     Standalone: 0
@@ -860,6 +862,7 @@ PlayerSettings:
     Nintendo Switch: 1
     PS4: 1
     PS5: 1
+    Server: 3
     Stadia: 1
     Standalone: 3
     WebGL: 1
