@@ -57,6 +57,23 @@ namespace Boot
 
         void Start()
         {
+            SceneManager.sceneLoaded += (scene, _) =>
+            {
+                if (scene.buildIndex == Constants.CoreScene)
+                {
+                    SceneManager.UnloadSceneAsync(Constants.BootScene);
+                    _isCoreSceneLoaded = true;
+                    PresentationViewModel.OnCoreSceneLoaded();
+                }
+
+                if (scene.buildIndex == Constants.UIScene)
+                    UIViewModel.OnUISceneLoaded();
+
+                // level was loaded
+                if (scene.buildIndex > 3)
+                    PresentationViewModel.OnLevelSceneLoaded();
+            };
+
             Architecture.InvokeInitialization();
             List<int> overTimeSceneIds = new ();
             List<int> stateChangeSceneIds = new ();
@@ -172,8 +189,6 @@ namespace Boot
 
             GameStateSystem.SendEndFrameSignal();
         }
-
-        internal static void OnCoreSceneLoaded() => _isCoreSceneLoaded = true;
 
         static GameStateMachine<GameState, StateTransitionParameter> CreateStateMachine() =>
             new(new List<(
