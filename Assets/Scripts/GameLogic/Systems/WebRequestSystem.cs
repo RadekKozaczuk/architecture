@@ -17,7 +17,9 @@ namespace GameLogic.Systems
         [Serializable]
         public class TokenExchangeRequest
         {
-            public string[] Scopes;
+#pragma warning disable RAD201
+            public string[] scopes;
+#pragma warning restore RAD201
         }
 
         public class TokenExchangeResponse
@@ -99,7 +101,7 @@ namespace GameLogic.Systems
 
             string jsonRequestBody = JsonUtility.ToJson(new TokenExchangeRequest
             {
-                Scopes = new[] { "multiplay.allocations.create", "multiplay.allocations.list" },
+                scopes = new[] { "multiplay.allocations.create", "multiplay.allocations.list" },
             });
 
             // todo: here must start the coroutine because yes
