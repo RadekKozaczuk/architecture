@@ -81,11 +81,14 @@ namespace UI.Popups.Views
             List<ServerDto> servers = await GameLogicViewModel.GetServers();
             foreach (ServerDto server in servers)
             {
+                if (server.status != ServerStatus.Allocated.ToString().ToUpper())
+                    continue;
+
                 ServerListElementView view = Instantiate(_config.ServerListElementView, _list.transform);
 
                 // todo: no idea how to retrieve player count (current/max)
-                string id = server.Id.ToString();
-                view.Initialize("Dedicated Server-" + id, server.Ip, server.Port);
+                string id = server.id.ToString();
+                view.Initialize("Dedicated Server-" + id, server.ip, server.port);
             }
 
             // add lobbies
@@ -105,9 +108,10 @@ namespace UI.Popups.Views
             _createServer.interactable = false;
             //PopupSystem.ShowPopup(PopupType.CreateLobby);
 
-            await GameLogicViewModel.CreateServerAsync();
+            if(await GameLogicViewModel.CreateTestAllocationAsync())
+                await GameLogicViewModel.CreateServerAsync();
 
-            _createServer.interactable = false;
+            _createServer.interactable = true;
         }
     }
 }

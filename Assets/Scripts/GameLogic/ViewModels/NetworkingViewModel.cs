@@ -24,6 +24,7 @@ namespace GameLogic.ViewModels
         public static async Task<LobbyDto[]> GetLobbiesAsync() => await LobbySystem.GetLobbiesAsync();
 
         public static async Task CreateServerAsync() => await WebRequestSystem.CreateServer();
+        public static async Task<bool> CreateTestAllocationAsync() => await WebRequestSystem.CreateTestAllocation();
 
         public static void JoinLobbyById(string lobbyId, Action<string, string, List<(string playerName, string playerId, bool isHost)>> callback) =>
             LobbySystem.JoinLobbyById(lobbyId, callback);
@@ -70,6 +71,7 @@ namespace GameLogic.ViewModels
         /// List may be empty.
         /// </summary>
         public static async Task<List<ServerDto>> GetServers() => await WebRequestSystem.GetServers();
+        public static async Task<List<AllocationDto>> GetTestAllocations() => await WebRequestSystem.GetTestAllocations();
 
         public static void SetConnectionData() => WebRequestSystem.SetConnectionData();
 

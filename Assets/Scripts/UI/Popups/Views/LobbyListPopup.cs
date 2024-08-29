@@ -103,7 +103,7 @@ namespace UI.Popups.Views
 
                 // todo: no idea how to retrieve player count
                 // todo: dedicated servers have always max 16 players
-                string id = server.Id.ToString();
+                string id = server.id.ToString();
                 view.Initialize(id, "Dedicated Server" + id, 0, 16);
             }
 

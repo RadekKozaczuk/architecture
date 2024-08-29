@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Core.Dtos;
@@ -22,9 +23,21 @@ namespace GameLogic.Systems
 #pragma warning restore RAD201
         }
 
+        [Serializable]
+        public class AllocationRequest
+        {
+#pragma warning disable RAD201
+            public string allocationId;
+            public int buildConfigurationId;
+            public string regionId;
+#pragma warning restore RAD201
+        }
+
         public class TokenExchangeResponse
         {
-            public string AccessToken;
+#pragma warning disable RAD201
+            public string accessToken;
+#pragma warning restore RAD201
         }
 
         // API is described here:
@@ -37,6 +50,7 @@ namespace GameLogic.Systems
         const string ProjectId = "f99e7a47-7455-4b68-a7fd-0b4c6e99c755";
         const string EnvironmentId = "3a7f6955-55a9-4574-94b0-8c4ef77f8666";
         const string FleetId = "89aa5df1-6886-45e4-b808-a1b67563367a";
+        const string RegionId = "436932c9-100c-4156-b12d-7b8e507a9a9e";
         const int BuildConfigurationID = 1270962;
 
         /// <summary>
@@ -57,6 +71,11 @@ namespace GameLogic.Systems
         /// Tell if the last call has been successful.
         /// </summary>
         static bool _error;
+
+        /// <summary>
+        /// Allocate allocation to the server
+        /// </summary>
+        static string _allocationId;
 
         /// <summary>
         /// Returns a list of as a callback function.
@@ -87,6 +106,76 @@ namespace GameLogic.Systems
 
             retVal.AddRange(servers.ServerList);
             return retVal;
+        }
+
+        internal static async Task<bool> CreateTestAllocation()
+        {
+            List<AllocationDto> allocations = await GetTestAllocations();
+            AllocationDto? freeAllocation = allocations.FirstOrDefault(allocation => string.IsNullOrEmpty(allocation.requested));
+            if (freeAllocation == null)
+            {
+                Debug.LogWarning("All allocations are full, create more allocations in unity.cloud");
+                return false;
+            }
+            _allocationId = freeAllocation.allocationId;
+            return true;
+        }
+
+        internal static async Task<List<AllocationDto>> GetTestAllocations()
+        {
+            Assert.IsFalse(RequestInProgress, "Consecutive calls are not allowed");
+
+            RequestInProgress = true;
+            string url = $"https://services.api.unity.com/multiplay/allocations/v1/projects/{ProjectId}/environments/{EnvironmentId}/test-allocations";
+            StaticCoroutine.StartStaticCoroutine(GetTestAllocationsCoroutine(url));
+
+            while (RequestInProgress)
+                await Task.Yield();
+
+            var retVal = new List<AllocationDto>();
+
+            if (_error)
+            {
+                Debug.LogError("Error: " + _error);
+                return retVal;
+            }
+
+            var allocations = JsonUtility.FromJson<AllocationListDto>(_result);
+
+            if (allocations.allocations == null)
+                return retVal;
+
+            retVal.AddRange(allocations.allocations);
+            return retVal;
+        }
+
+        static IEnumerator GetTestAllocationsCoroutine(string url)
+        {
+            using UnityWebRequest request = UnityWebRequest.Get(url);
+
+            byte[] keyByteArray = Encoding.UTF8.GetBytes(KeyId + ":" + KeySecret);
+            string keyBase64 = Convert.ToBase64String(keyByteArray);
+
+            request.SetRequestHeader("Authorization", "Basic " + keyBase64);
+
+            yield return request.SendWebRequest();
+
+            if (request.result is UnityWebRequest.Result.ConnectionError
+                or UnityWebRequest.Result.DataProcessingError
+                or UnityWebRequest.Result.ProtocolError)
+            {
+                _error = true;
+                _result = request.error;
+                Debug.Log("GetTestAllocationsCoroutine Error: " + request.error);
+            }
+            else
+            {
+                _error = false;
+                _result = request.downloadHandler.text;
+                Debug.Log("GetTestAllocationsCoroutine Success: " + request.downloadHandler.text);
+            }
+
+            RequestInProgress = false;
         }
 
         internal static void SetConnectionData()
@@ -182,13 +271,20 @@ namespace GameLogic.Systems
         static IEnumerator CreateServersCoroutine_Internal(string url, string jsonRequestBody)
         {
             var tokenExchangeResponse = JsonUtility.FromJson<TokenExchangeResponse>(jsonRequestBody);
-            var request = new UnityWebRequest(url, "POST");
+            using var request = new UnityWebRequest(url, "POST");
 
-            byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonRequestBody);
+            string jsonData = JsonUtility.ToJson(new AllocationRequest
+            {
+                allocationId = _allocationId,
+                buildConfigurationId = BuildConfigurationID,
+                regionId = RegionId,
+            });
+
+            byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
             request.uploadHandler = new UploadHandlerRaw(bodyRaw);
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("Authorization", "Bearer " + tokenExchangeResponse.AccessToken);
+            request.SetRequestHeader("Authorization", "Bearer " + tokenExchangeResponse.accessToken);
 
             yield return request.SendWebRequest();
 
