@@ -108,7 +108,7 @@ namespace UI.Popups.Views
             _createServer.interactable = false;
             //PopupSystem.ShowPopup(PopupType.CreateLobby);
 
-            if(await GameLogicViewModel.CreateTestAllocationAsync())
+            if (await GameLogicViewModel.CreateTestAllocationAsync())
                 await GameLogicViewModel.CreateServerAsync();
 
             _createServer.interactable = true;

@@ -161,8 +161,8 @@ namespace GameLogic.Systems
             yield return request.SendWebRequest();
 
             if (request.result is UnityWebRequest.Result.ConnectionError
-                or UnityWebRequest.Result.DataProcessingError
-                or UnityWebRequest.Result.ProtocolError)
+                                  or UnityWebRequest.Result.DataProcessingError
+                                  or UnityWebRequest.Result.ProtocolError)
             {
                 _error = true;
                 _result = request.error;
