@@ -54,11 +54,6 @@ namespace GameLogic.Systems
         const int BuildConfigurationID = 1270962;
 
         /// <summary>
-        /// The result of the last call. Either the requested resource (as JSON) or the error message.
-        /// </summary>
-        static string _result;
-
-        /// <summary>
         /// Indicates if the system is currently processing a call. Consecutive calls are not allowed.
         /// </summary>
         internal static bool RequestInProgress
@@ -66,6 +61,11 @@ namespace GameLogic.Systems
             get;
             private set;
         }
+
+        /// <summary>
+        /// The result of the last call. Either the requested resource (as JSON) or the error message.
+        /// </summary>
+        static string _result;
 
         /// <summary>
         /// Tell if the last call has been successful.
@@ -147,35 +147,6 @@ namespace GameLogic.Systems
 
             retVal.AddRange(allocations.allocations);
             return retVal;
-        }
-
-        static IEnumerator GetTestAllocationsCoroutine(string url)
-        {
-            using UnityWebRequest request = UnityWebRequest.Get(url);
-
-            byte[] keyByteArray = Encoding.UTF8.GetBytes(KeyId + ":" + KeySecret);
-            string keyBase64 = Convert.ToBase64String(keyByteArray);
-
-            request.SetRequestHeader("Authorization", "Basic " + keyBase64);
-
-            yield return request.SendWebRequest();
-
-            if (request.result is UnityWebRequest.Result.ConnectionError
-                                  or UnityWebRequest.Result.DataProcessingError
-                                  or UnityWebRequest.Result.ProtocolError)
-            {
-                _error = true;
-                _result = request.error;
-                Debug.Log("GetTestAllocationsCoroutine Error: " + request.error);
-            }
-            else
-            {
-                _error = false;
-                _result = request.downloadHandler.text;
-                Debug.Log("GetTestAllocationsCoroutine Success: " + request.downloadHandler.text);
-            }
-
-            RequestInProgress = false;
         }
 
         internal static void SetConnectionData()
@@ -301,6 +272,35 @@ namespace GameLogic.Systems
                 _error = false;
                 _result = request.downloadHandler.text;
                 Debug.Log("CreateServersCoroutine_Internal Success: " + request.downloadHandler.text);
+            }
+
+            RequestInProgress = false;
+        }
+
+        static IEnumerator GetTestAllocationsCoroutine(string url)
+        {
+            using UnityWebRequest request = UnityWebRequest.Get(url);
+
+            byte[] keyByteArray = Encoding.UTF8.GetBytes(KeyId + ":" + KeySecret);
+            string keyBase64 = Convert.ToBase64String(keyByteArray);
+
+            request.SetRequestHeader("Authorization", "Basic " + keyBase64);
+
+            yield return request.SendWebRequest();
+
+            if (request.result is UnityWebRequest.Result.ConnectionError
+                                  or UnityWebRequest.Result.DataProcessingError
+                                  or UnityWebRequest.Result.ProtocolError)
+            {
+                _error = true;
+                _result = request.error;
+                Debug.Log("GetTestAllocationsCoroutine Error: " + request.error);
+            }
+            else
+            {
+                _error = false;
+                _result = request.downloadHandler.text;
+                Debug.Log("GetTestAllocationsCoroutine Success: " + request.downloadHandler.text);
             }
 
             RequestInProgress = false;

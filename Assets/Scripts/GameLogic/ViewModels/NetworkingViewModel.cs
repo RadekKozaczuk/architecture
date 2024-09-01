@@ -18,9 +18,6 @@ namespace GameLogic.ViewModels
         /// </summary>
         public static bool WebRequestInProgress => WebRequestSystem.RequestInProgress || LobbySystem.RequestInProgress;
 
-        /// <summary>
-        /// This method is NOT asynchronous as the actual call happens later to prevent bandwidth overuse.
-        /// </summary>
         public static async Task<LobbyDto[]> GetLobbiesAsync() => await LobbySystem.GetLobbiesAsync();
 
         public static async Task CreateServerAsync() => await WebRequestSystem.CreateServer();
