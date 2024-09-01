@@ -88,7 +88,7 @@ namespace UI.Popups.Views
         {
             PresentationViewModel.PlaySound(Sound.ClickSelect);
             _refresh.interactable = false;
-            List<ServerDto> servers = await GameLogicViewModel.GetServers();
+            List<ServerDto> servers = await GameLogicViewModel.GetServersAsync();
 
             // cleanup
             foreach (Transform child in _list.transform)

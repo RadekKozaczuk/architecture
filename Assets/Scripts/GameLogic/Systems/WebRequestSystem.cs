@@ -164,7 +164,6 @@ namespace GameLogic.Systems
                 scopes = new[] { "multiplay.allocations.create", "multiplay.allocations.list" },
             });
 
-            // todo: here must start the coroutine because yes
             StaticCoroutine.StartStaticCoroutine(CreateServersCoroutine(url, jsonRequestBody));
 
             while (RequestInProgress)

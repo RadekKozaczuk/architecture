@@ -65,10 +65,10 @@ namespace GameLogic.ViewModels
         public static void ToggleMuteInput() => VoiceChatSystem.ToggleMuteInput();
 
         /// <summary>
-        /// Asks backed for a list of servers.
+        /// Asks backend for a list of servers.
         /// List may be empty.
         /// </summary>
-        public static async Task<List<ServerDto>> GetServers() => await WebRequestSystem.GetServers();
+        public static async Task<List<ServerDto>> GetServersAsync() => await WebRequestSystem.GetServers();
 
         public static async Task<List<AllocationDto>> GetTestAllocations() => await WebRequestSystem.GetTestAllocations();
 

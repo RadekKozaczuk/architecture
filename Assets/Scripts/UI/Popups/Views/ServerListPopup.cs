@@ -78,7 +78,7 @@ namespace UI.Popups.Views
                 Destroy(child.gameObject);
 
             // add servers
-            List<ServerDto> servers = await GameLogicViewModel.GetServers();
+            List<ServerDto> servers = await GameLogicViewModel.GetServersAsync();
             foreach (ServerDto server in servers)
             {
                 if (server.status != ServerStatus.Allocated.ToString().ToUpper())
