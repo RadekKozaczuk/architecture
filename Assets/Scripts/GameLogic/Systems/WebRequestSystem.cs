@@ -33,6 +33,7 @@ namespace GameLogic.Systems
 #pragma warning restore RAD201
         }
 
+        [Serializable]
         public class TokenExchangeResponse
         {
 #pragma warning disable RAD201
@@ -73,11 +74,6 @@ namespace GameLogic.Systems
         static bool _error;
 
         /// <summary>
-        /// Allocate allocation to the server
-        /// </summary>
-        static string _allocationId;
-
-        /// <summary>
         /// Returns a list of as a callback function.
         /// </summary>
         internal static async Task<List<ServerDto>> GetServers()
@@ -107,20 +103,6 @@ namespace GameLogic.Systems
             retVal.AddRange(servers.ServerList);
             return retVal;
         }
-
-        internal static async Task<bool> CreateTestAllocation()
-        {
-            List<AllocationDto> allocations = await GetTestAllocations();
-            AllocationDto? freeAllocation = allocations.FirstOrDefault(allocation => string.IsNullOrEmpty(allocation.requested));
-            if (freeAllocation == null)
-            {
-                Debug.LogWarning("All allocations are full, create more allocations in unity.cloud");
-                return false;
-            }
-            _allocationId = freeAllocation.allocationId;
-            return true;
-        }
-
         internal static async Task<List<AllocationDto>> GetTestAllocations()
         {
             Assert.IsFalse(RequestInProgress, "Consecutive calls are not allowed");
@@ -155,7 +137,7 @@ namespace GameLogic.Systems
             //NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData("ipv4Address", "port");
         }
 
-        internal static async Task CreateServer()
+        internal static async Task CreateServer(string allocationId)
         {
             string url = $"https://services.api.unity.com/auth/v1/token-exchange?projectId={ProjectId}&environmentId={EnvironmentId}";
 
@@ -164,7 +146,7 @@ namespace GameLogic.Systems
                 scopes = new[] { "multiplay.allocations.create", "multiplay.allocations.list" },
             });
 
-            StaticCoroutine.StartStaticCoroutine(CreateServersCoroutine(url, jsonRequestBody));
+            StaticCoroutine.StartStaticCoroutine(CreateServersCoroutine(url, jsonRequestBody, allocationId));
 
             while (RequestInProgress)
                 await Task.Yield();
@@ -200,7 +182,7 @@ namespace GameLogic.Systems
             RequestInProgress = false;
         }
 
-        static IEnumerator CreateServersCoroutine(string url, string jsonRequestBody)
+        static IEnumerator CreateServersCoroutine(string url, string jsonRequestBody, string allocationId)
         {
             using var request = new UnityWebRequest(url, "POST");
 
@@ -231,21 +213,21 @@ namespace GameLogic.Systems
                 Debug.Log("CreateServersCoroutine Success: " + request.downloadHandler.text);
 
                 string urlInternal = $"https://multiplay.services.api.unity.com/v1/allocations/projects/{ProjectId}/environments/{EnvironmentId}/fleets/{FleetId}/allocations";
-                StaticCoroutine.StartStaticCoroutine(CreateServersCoroutine_Internal(urlInternal, request.downloadHandler.text));
+                StaticCoroutine.StartStaticCoroutine(CreateServersCoroutine_Internal(urlInternal, request.downloadHandler.text, allocationId));
             }
         }
 
         /// <summary>
         /// This coroutine will eventually fill the <see cref="_result"/> variable and change <see cref="RequestInProgress"/> to false.
         /// </summary>
-        static IEnumerator CreateServersCoroutine_Internal(string url, string jsonRequestBody)
+        static IEnumerator CreateServersCoroutine_Internal(string url, string jsonRequestBody, string allocationId)
         {
             var tokenExchangeResponse = JsonUtility.FromJson<TokenExchangeResponse>(jsonRequestBody);
             using var request = new UnityWebRequest(url, "POST");
 
             string jsonData = JsonUtility.ToJson(new AllocationRequest
             {
-                allocationId = _allocationId,
+                allocationId = allocationId,
                 buildConfigurationId = BuildConfigurationID,
                 regionId = RegionId,
             });

@@ -106,12 +106,20 @@ namespace UI.Popups.Views
         {
             PresentationViewModel.PlaySound(Sound.ClickSelect);
             _createServer.interactable = false;
+            _refresh.interactable = false;
             //PopupSystem.ShowPopup(PopupType.CreateLobby);
 
-            if (await GameLogicViewModel.CreateTestAllocationAsync())
-                await GameLogicViewModel.CreateServerAsync();
+            AllocationDto? allocationData = await GameLogicViewModel.GetFreeTestAllocationAsync();
+            string allocationId = allocationData?.allocationId ?? string.Empty;
+            if (!string.IsNullOrEmpty(allocationId))
+            {
+                await GameLogicViewModel.CreateServerAsync(allocationId);
+                await GameLogicViewModel.WaitUntilAllocationAsync(allocationId);
+                RefreshAction();
+            }
 
             _createServer.interactable = true;
+            _refresh.interactable = true;
         }
     }
 }
