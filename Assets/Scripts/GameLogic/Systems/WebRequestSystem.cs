@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Core.Dtos;
 using Shared;
+using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Networking;
@@ -129,12 +131,6 @@ namespace GameLogic.Systems
 
             retVal.AddRange(allocations.allocations);
             return retVal;
-        }
-
-        internal static void SetConnectionData()
-        {
-            // todo: add ip and port
-            //NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData("ipv4Address", "port");
         }
 
         internal static async Task CreateServer(string allocationId)

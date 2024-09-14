@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Core.Dtos;
 using GameLogic.Systems;
+using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
@@ -104,7 +106,7 @@ namespace GameLogic.ViewModels
             }
         }
 
-        public static void SetConnectionData() => WebRequestSystem.SetConnectionData();
+        public static void SetConnectionData(string ipv4, string port) => NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(ipv4, ushort.Parse(port));
 
         public static async Task<(string id, string name)> GetLobbyAsync(string lobbyId)
         {

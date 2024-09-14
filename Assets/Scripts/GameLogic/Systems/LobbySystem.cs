@@ -413,17 +413,17 @@ namespace GameLogic.Systems
             {
                 // we should make isDirty pattern and call update when update happened
                 Lobby = await LobbyService.Instance.UpdatePlayerAsync(Lobby!.Id, AuthenticationService.Instance.PlayerId,
-                                                                      new UpdatePlayerOptions
-                                                                      {
-                                                                          Data = new Dictionary<string, PlayerDataObject>
-                                                                          {
-                                                                              {
-                                                                                  Constants.PlayerName,
-                                                                                  new PlayerDataObject(
-                                                                                      PlayerDataObject.VisibilityOptions.Member, playerName)
-                                                                              }
-                                                                          }
-                                                                      });
+                      new UpdatePlayerOptions
+                      {
+                          Data = new Dictionary<string, PlayerDataObject>
+                          {
+                              {
+                                  Constants.PlayerName,
+                                  new PlayerDataObject(
+                                      PlayerDataObject.VisibilityOptions.Member, playerName)
+                              }
+                          }
+                      });
             }
             catch (LobbyServiceException e)
             {

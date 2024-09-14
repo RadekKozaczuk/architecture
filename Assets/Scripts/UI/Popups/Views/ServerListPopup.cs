@@ -8,6 +8,7 @@ using Core.Dtos;
 using Core.Systems;
 using GameLogic.ViewModels;
 using Presentation.ViewModels;
+using TMPro;
 using UI.Config;
 using UI.Views;
 
@@ -28,6 +29,12 @@ namespace UI.Popups.Views
         [SerializeField]
         Button _refresh;
 
+        [SerializeField]
+        TMP_Text _ipv4InputField;
+
+        [SerializeField]
+        TMP_Text _portInputField;
+
         static readonly UIConfig _config;
 
         public ServerListPopup(PopupType type)
@@ -37,12 +44,8 @@ namespace UI.Popups.Views
         {
             _join.onClick.AddListener(() =>
             {
-                GameLogicViewModel.SetConnectionData();
+                GameLogicViewModel.SetConnectionData(_ipv4InputField.text, _portInputField.text);
 
-                // todo: temporary disabled
-                //KitchenGameMultiplayer.Instance.StartClient();
-
-                // todo: RADEK's start client start here
                 CoreData.IsMultiplayer = true;
                 CoreData.CurrentLevel = Level.HubLocation;
 

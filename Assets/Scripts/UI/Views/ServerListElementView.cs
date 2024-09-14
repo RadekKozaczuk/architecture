@@ -2,6 +2,7 @@
 using Core;
 using Core.Enums;
 using Core.Systems;
+using GameLogic.ViewModels;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,15 +22,8 @@ namespace UI.Views
 
         void Awake() => GetComponent<Button>().onClick.AddListener(() =>
         {
-            // todo: get ip and port and pass to GameLogic
-            /*string ipv4Address = _ipText.text;
-            ushort port = ushort.Parse(_portText.text);
-            NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(ipv4Address, port);*/
+            GameLogicViewModel.SetConnectionData(_ipText.text, _portText.text);
 
-            // todo: temporary disabled
-            //KitchenGameMultiplayer.Instance.StartClient();
-
-            // todo: RADEK's start client start here
             CoreData.IsMultiplayer = true;
             CoreData.CurrentLevel = Level.HubLocation;
 
