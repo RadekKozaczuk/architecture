@@ -44,10 +44,12 @@ namespace UI.Popups.Views
         {
             _join.onClick.AddListener(() =>
             {
-                GameLogicViewModel.SetConnectionData(_ipv4InputField.text, _portInputField.text);
+                CoreData.MachineRole = MachineRole.Client;
 
                 CoreData.IsMultiplayer = true;
                 CoreData.CurrentLevel = Level.HubLocation;
+
+                GameLogicViewModel.SetConnectionData(_ipv4InputField.text, _portInputField.text);
 
                 // this will start the netcode client
                 GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});

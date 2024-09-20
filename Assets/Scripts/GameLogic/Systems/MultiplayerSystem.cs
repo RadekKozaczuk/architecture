@@ -1,5 +1,8 @@
 ﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+using System;
+using System.Collections;
 using System.Threading.Tasks;
+using Shared;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
@@ -15,54 +18,44 @@ namespace GameLogic.Systems
 
         static IServerQueryHandler? _serverQueryHandler;
 
-        // should only be run if MachineRole = DedicatedServer
-        internal static async void CustomStart()
+        internal static async void StartServer()
         {
-            // todo: this hinda makes no sense as in our case it will always be dedicated server
-            //if (Application.platform == RuntimePlatform.LinuxServer)
-            //{
-                // on linux server framerate is not initially set
-                // todo: probably to be deleted as we set it in Boot
-                Application.targetFrameRate = 30;
+            await UnityServices.InitializeAsync();
 
-                await UnityServices.InitializeAsync();
+            ServerConfig serverConfig = MultiplayService.Instance.ServerConfig;
 
-                ServerConfig serverConfig = MultiplayService.Instance.ServerConfig;
+            _serverQueryHandler = await MultiplayService.Instance.StartServerQueryHandlerAsync(2, "n/a", "n/a", "0", "n/a");
 
-                _serverQueryHandler = await MultiplayService.Instance.StartServerQueryHandlerAsync(2, "MyServer", "MyGameType", "0", "TestMap");
-
-                // tells if the server is up and running
-                if (serverConfig.AllocationId != string.Empty)
-                {
-                    NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData("0,0,0,0", serverConfig.Port, "0,0,0,0");
-                    NetworkManager.Singleton.StartServer();
-
-                    // inform the matchmaker that the server is ready to receive players
-                    await MultiplayService.Instance.ReadyServerForPlayersAsync();
-                }
-            //}
-        }
-
-        // should only be run if MachineRole = DedicatedServer
-        internal static async void CustomUpdate()
-        {
-            // todo: this hinda makes no sense as in our case it will always be dedicated server
-            //if (Application.platform == RuntimePlatform.LinuxServer)
-            //{
-            if (_serverQueryHandler != null)
+            // tells if the server is up and running
+            if (serverConfig.AllocationId != string.Empty)
             {
-                _serverQueryHandler.CurrentPlayers = (ushort)NetworkManager.Singleton.ConnectedClientsIds.Count;
-                _serverQueryHandler.UpdateServerCheck();
-                await Task.Delay(100);
+                NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData("0,0,0,0", serverConfig.Port, "0,0,0,0");
+                NetworkManager.Singleton.StartServer();
+
+                // inform the matchmaker that the server is ready to receive players
+                await MultiplayService.Instance.ReadyServerForPlayersAsync();
+
+                // start updating server invoked by coroutine
+                StaticCoroutine.StartStaticCoroutine(ServerUpdateCoroutine());
             }
-            //}
         }
 
-        internal static void JoinServer()
+        internal static void JoinServer() => NetworkManager.Singleton.StartClient();
+
+        static IEnumerator ServerUpdateCoroutine()
         {
-            var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
-            transport.SetConnectionData(IpAddress, ushort.Parse(Port));
-            NetworkManager.Singleton.StartClient();
+            while (true)
+            {
+                // process when server is still allocated
+                if (_serverQueryHandler == null || !Application.isPlaying)
+                    yield break;
+
+                if (NetworkManager.Singleton.IsServer)
+                    _serverQueryHandler.CurrentPlayers = (ushort)NetworkManager.Singleton.ConnectedClientsIds.Count;
+
+                _serverQueryHandler.UpdateServerCheck();
+                yield return null;
+            }
         }
     }
 }

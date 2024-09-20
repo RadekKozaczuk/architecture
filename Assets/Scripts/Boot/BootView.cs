@@ -44,7 +44,10 @@ namespace Boot
         {
             // at this point we know the machine role but only if it is a server
             if (Application.platform == RuntimePlatform.LinuxServer)
+            {
+                Application.targetFrameRate = 60;
                 CoreData.MachineRole = MachineRole.DedicatedServer;
+            }
 
             // increase priority so that main menu can appear faster
             Application.backgroundLoadingPriority = ThreadPriority.High;

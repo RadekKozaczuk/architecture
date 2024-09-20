@@ -2,6 +2,7 @@
 using Core;
 using Core.Enums;
 using Core.Systems;
+using dnlib.PE;
 using GameLogic.ViewModels;
 using TMPro;
 using UnityEngine;
@@ -22,10 +23,12 @@ namespace UI.Views
 
         void Awake() => GetComponent<Button>().onClick.AddListener(() =>
         {
-            GameLogicViewModel.SetConnectionData(_ipText.text, _portText.text);
+            CoreData.MachineRole = MachineRole.Client;
 
             CoreData.IsMultiplayer = true;
             CoreData.CurrentLevel = Level.HubLocation;
+
+            GameLogicViewModel.SetConnectionData(_ipText.text, _portText.text);
 
             // this will start the netcode client
             GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});

@@ -43,6 +43,8 @@ namespace UI.Views
 
         static void NewGame()
         {
+            CoreData.MachineRole = MachineRole.LocalSimulation;
+
             PresentationViewModel.PlaySound(Sound.ClickSelect);
             CoreData.CurrentLevel = Level.HubLocation;
             GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});
