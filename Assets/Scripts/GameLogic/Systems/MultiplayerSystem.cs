@@ -27,17 +27,30 @@ namespace GameLogic.Systems
             _serverQueryHandler = await MultiplayService.Instance.StartServerQueryHandlerAsync(2, "n/a", "n/a", "0", "n/a");
 
             // tells if the server is up and running
-            if (serverConfig.AllocationId != string.Empty)
-            {
-                NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData("0,0,0,0", serverConfig.Port, "0,0,0,0");
-                NetworkManager.Singleton.StartServer();
+            if (serverConfig.AllocationId == string.Empty)
+                return;
 
+            NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData("0,0,0,0", serverConfig.Port, "0,0,0,0");
+            if (!NetworkManager.Singleton.StartServer())
+            {
+                Debug.LogError("Failed to start server");
+                throw new Exception("Failed to start server");
+            }
+
+            MultiplayEventCallbacks callbacks = new MultiplayEventCallbacks();
+            callbacks.Allocate += async _ =>
+            {
                 // inform the matchmaker that the server is ready to receive players
                 await MultiplayService.Instance.ReadyServerForPlayersAsync();
-
                 // start updating server invoked by coroutine
                 StaticCoroutine.StartStaticCoroutine(ServerUpdateCoroutine());
-            }
+            };
+            callbacks.Deallocate += _ =>
+            {
+                MultiplayService.Instance.UnreadyServerAsync();
+            };
+
+            await MultiplayService.Instance.SubscribeToServerEventsAsync(callbacks);
         }
 
         internal static void JoinServer() => NetworkManager.Singleton.StartClient();
