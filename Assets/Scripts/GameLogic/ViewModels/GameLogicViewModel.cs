@@ -1,18 +1,16 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+using ControlFlow.DependencyInjector;
+using Random = UnityEngine.Random;
+using Presentation.ViewModels;
+using GameLogic.Controllers;
+using JetBrains.Annotations;
+using UnityEngine.Scripting;
+using GameLogic.Systems;
+using Core.Systems;
+using Core.Enums;
+using Shared;
 using System;
 using Core;
-using Core.Enums;
-using Core.Systems;
-using ControlFlow.DependencyInjector;
-using GameLogic.Controllers;
-using GameLogic.Systems;
-using JetBrains.Annotations;
-using Presentation.ViewModels;
-using Shared;
-using Unity.Netcode;
-using UnityEngine;
-using UnityEngine.Scripting;
-using Random = UnityEngine.Random;
 
 namespace GameLogic.ViewModels
 {

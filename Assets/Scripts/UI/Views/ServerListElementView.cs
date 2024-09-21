@@ -1,12 +1,11 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-using Core;
-using Core.Enums;
-using Core.Systems;
-using dnlib.PE;
 using GameLogic.ViewModels;
-using TMPro;
-using UnityEngine;
 using UnityEngine.UI;
+using Core.Systems;
+using UnityEngine;
+using Core.Enums;
+using TMPro;
+using Core;
 
 namespace UI.Views
 {

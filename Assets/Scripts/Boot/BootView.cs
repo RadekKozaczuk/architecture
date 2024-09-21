@@ -1,19 +1,19 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-using System;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
-using System.IO;
-using Core;
-using Core.Config;
-using Core.Enums;
-using Core.Systems;
-using GameLogic.ViewModels;
+using UnityEngine.EventSystems;
 using Presentation.ViewModels;
-using Shared;
+using GameLogic.ViewModels;
+using Core.Systems;
 using Shared.Systems;
 using UI.ViewModels;
+using Core.Config;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
+using Core.Enums;
+using System.IO;
+using Shared;
+using System;
+using Core;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 using Shared.DebugCommands;
 #endif
