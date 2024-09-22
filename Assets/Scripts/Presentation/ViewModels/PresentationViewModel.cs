@@ -45,26 +45,26 @@ namespace Presentation.ViewModels
                 if (clientId == 0)
                     return;
 
-                if (!NetworkManager.Singleton.IsHost)
+                if (!NetworkManager.Singleton.IsServer && !NetworkManager.Singleton.IsHost)
                     return;
 
-                if (clientId == 1)
-                {
-                    Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player2).transform;
-                    PlayerNetworkView player = Object.Instantiate(_playerConfig.PlayerClientPrefab, spawnPoint.position, spawnPoint.rotation,
-                                                                  PresentationSceneReferenceHolder.PlayerContainer);
+                Transform spawnPoint = _level.GetSpawnPoint((PlayerId)(clientId - 1)).transform;
+                PlayerNetworkView networkPlayer = Object.Instantiate(_playerConfig.PlayerClientPrefab, spawnPoint.position, spawnPoint.rotation,
+                                                              PresentationSceneReferenceHolder.PlayerContainer);
 
-                    // this will be assigned only on the host
-                    PresentationData.NetworkPlayers[(int)PlayerId.Player2] = player;
+                // this will be assigned only on the host
+                PresentationData.NetworkPlayers[(int)(PlayerId)clientId] = networkPlayer;
 
-                    // spawn over the network
-                    player.NetworkObj.SpawnWithOwnership(1, true);
-                    player.gameObject.SetActive(false);
-                }
+                // spawn over the network
+                networkPlayer.NetworkObj.SpawnWithOwnership(clientId, true);
+                networkPlayer.gameObject.SetActive(false);
 
-                if (_joinedPlayers != CoreData.PlayerCount)
-                    return;
+                // waiting for all players to connect and then display players
+                if(NetworkManager.Singleton.IsHost)
+                    if (_joinedPlayers != CoreData.PlayerCount)
+                        return;
 
+                // show active players
                 foreach (PlayerNetworkView player in PresentationData.NetworkPlayers)
                     if (player != null)
                         player.gameObject.SetActive(true);
@@ -170,7 +170,7 @@ namespace Presentation.ViewModels
                 if (NetworkManager.Singleton.IsHost)
                     PresentationData.NetworkPlayers[(int)PlayerId.Player1].Move(movementInput.normalized);
                 else
-                    PresentationData.NetworkPlayers[(int)PlayerId.Player2].Move(movementInput.normalized);
+                    PresentationData.NetworkPlayers[(int)CoreData.PlayerId!].Move(movementInput.normalized);
             }
             else
                 PresentationData.Player.Move(movementInput.normalized);

@@ -22,14 +22,13 @@ namespace GameLogic.Systems
             await UnityServices.InitializeAsync();
 
             ServerConfig serverConfig = MultiplayService.Instance.ServerConfig;
-
             _serverQueryHandler = await MultiplayService.Instance.StartServerQueryHandlerAsync(2, "n/a", "n/a", "0", "n/a");
 
             // tells if the server is up and running
             if (serverConfig.AllocationId == string.Empty)
                 return;
 
-            NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData("0,0,0,0", serverConfig.Port, "0,0,0,0");
+            NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData("0.0.0.0", serverConfig.Port, "0.0.0.0");
             if (!NetworkManager.Singleton.StartServer())
             {
                 Debug.LogError("Failed to start server");

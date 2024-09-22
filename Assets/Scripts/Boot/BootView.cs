@@ -46,6 +46,7 @@ namespace Boot
             if (Application.platform == RuntimePlatform.LinuxServer)
             {
                 Application.targetFrameRate = 60;
+                CoreData.IsMultiplayer = true;
                 CoreData.MachineRole = MachineRole.DedicatedServer;
             }
 
