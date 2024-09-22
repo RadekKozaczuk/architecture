@@ -96,7 +96,8 @@ namespace GameLogic.ViewModels
                 var allocation = (await WebRequestSystem.GetTestAllocations()).
                     FirstOrDefault((alloc) => string.Equals(alloc.allocationId, allocationId));
 
-                if (allocation == null) break;
+                if (allocation == null)
+                    break;
 
                 if (!string.IsNullOrEmpty(allocation.fulfilled))
                     return;
