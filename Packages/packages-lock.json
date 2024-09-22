@@ -92,7 +92,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.netcode.gameobjects": {
-      "version": "1.10.0",
+      "version": "1.11.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -249,13 +249,13 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.services.vivox": {
-      "version": "16.0.0-pre.1",
+      "version": "16.5.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {
         "com.unity.modules.audio": "1.0.0",
-        "com.unity.services.core": "1.4.0",
-        "com.unity.settings-manager": "2.0.0",
+        "com.unity.services.core": "1.12.5",
+        "com.unity.settings-manager": "1.0.3",
         "com.unity.nuget.newtonsoft-json": "3.0.2"
       },
       "url": "https://packages.unity.com"
@@ -344,7 +344,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.transport": {
-      "version": "1.4.1",
+      "version": "1.5.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {
