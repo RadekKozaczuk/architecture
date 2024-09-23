@@ -1,10 +1,14 @@
 ﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Core.Dtos;
 using GameLogic.Systems;
+using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 using Unity.Services.Lobbies.Models;
+using UnityEngine;
 
 namespace GameLogic.ViewModels
 {
@@ -18,12 +22,22 @@ namespace GameLogic.ViewModels
         /// </summary>
         public static bool WebRequestInProgress => WebRequestSystem.RequestInProgress || LobbySystem.RequestInProgress;
 
-        /// <summary>
-        /// This method is NOT asynchronous as the actual call happens later to prevent bandwidth overuse.
-        /// </summary>
         public static async Task<LobbyDto[]> GetLobbiesAsync() => await LobbySystem.GetLobbiesAsync();
 
-        public static async Task CreateServerAsync() => await WebRequestSystem.CreateServer();
+        public static async Task CreateServerAsync(string allocationId) => await WebRequestSystem.CreateServer(allocationId);
+
+        public static async Task<AllocationDto?> GetFreeTestAllocationAsync()
+        {
+            List<AllocationDto> allocations = await GetTestAllocations();
+            AllocationDto? freeAllocation = allocations.FirstOrDefault(allocation => string.IsNullOrEmpty(allocation.requested));
+            if (freeAllocation == null)
+            {
+                Debug.LogWarning("All allocations are full, create more allocations in unity.cloud");
+                return null;
+            }
+
+            return freeAllocation;
+        }
 
         public static void JoinLobbyById(string lobbyId, Action<string, string, List<(string playerName, string playerId, bool isHost)>> callback) =>
             LobbySystem.JoinLobbyById(lobbyId, callback);
@@ -66,12 +80,34 @@ namespace GameLogic.ViewModels
         public static void ToggleMuteInput() => VoiceChatSystem.ToggleMuteInput();
 
         /// <summary>
-        /// Asks backed for a list of servers.
+        /// Asks backend for a list of servers.
         /// List may be empty.
         /// </summary>
-        public static async Task<List<ServerDto>> GetServers() => await WebRequestSystem.GetServers();
+        public static async Task<List<ServerDto>> GetServersAsync() => await WebRequestSystem.GetServers();
 
-        public static void SetConnectionData() => WebRequestSystem.SetConnectionData();
+        public static async Task<List<AllocationDto>> GetTestAllocations() => await WebRequestSystem.GetTestAllocations();
+        public static async Task WaitUntilAllocationAsync(string allocationId)
+        {
+            int i = 0;
+            int exceptionRequests = 50;
+
+            while (i <= exceptionRequests)
+            {
+                var allocation = (await WebRequestSystem.GetTestAllocations()).
+                    FirstOrDefault((alloc) => string.Equals(alloc.allocationId, allocationId));
+
+                if (allocation == null)
+                    break;
+
+                if (!string.IsNullOrEmpty(allocation.fulfilled))
+                    return;
+
+                await Task.Delay(5000);
+                i++;
+            }
+        }
+
+        public static void SetConnectionData(string ipv4, string port) => NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(ipv4, ushort.Parse(port));
 
         public static async Task<(string id, string name)> GetLobbyAsync(string lobbyId)
         {

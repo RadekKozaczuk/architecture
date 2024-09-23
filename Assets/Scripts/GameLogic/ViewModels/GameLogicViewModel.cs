@@ -1,17 +1,16 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+using ControlFlow.DependencyInjector;
+using Random = UnityEngine.Random;
+using Presentation.ViewModels;
+using GameLogic.Controllers;
+using JetBrains.Annotations;
+using UnityEngine.Scripting;
+using GameLogic.Systems;
+using Core.Systems;
+using Core.Enums;
+using Shared;
 using System;
 using Core;
-using Core.Enums;
-using Core.Systems;
-using ControlFlow.DependencyInjector;
-using GameLogic.Controllers;
-using GameLogic.Systems;
-using JetBrains.Annotations;
-using Presentation.ViewModels;
-using Shared;
-using Unity.Netcode;
-using UnityEngine.Scripting;
-using Random = UnityEngine.Random;
 
 namespace GameLogic.ViewModels
 {
@@ -46,18 +45,33 @@ namespace GameLogic.ViewModels
 
         public static void MainMenuOnEntry() => CoreData.PlayerName = Utils.GenerateRandomString(Random.Range(5, 9));
 
-        public static void MainMenuOnExit()
-        {
-            // if client and multiplayer and client not started - start client
-            if (CoreData.IsMultiplayer && !NetworkManager.Singleton.IsClient)
-                NetworkManager.Singleton.StartClient();
-        }
+        public static void MainMenuOnExit() { }
 
         public static void GameplayOnEntry()
         {
             bool loadGameRequested = (bool)GameStateSystem.GetTransitionParameter(StateTransitionParameter.LoadGameRequested)!;
             if (loadGameRequested)
                 SaveLoadSystem.LoadGame();
+
+            switch (CoreData.MachineRole)
+            {
+                case MachineRole.DedicatedServer:
+                {
+                    MultiplayerSystem.StartServer();
+                }
+                    break;
+                case MachineRole.Host: break;
+                case MachineRole.Client:
+                {
+                    MultiplayerSystem.JoinServer();
+                }
+                    break;
+                case MachineRole.LocalSimulation: break;
+                case MachineRole.Undefined: throw new Exception("Variable CoreData.MachineRole is undefined. "
+                                                                + "Assign the variable before reaching this point.");
+
+                default: throw new ArgumentOutOfRangeException();
+            }
         }
 
         public static void GameplayOnExit() { }

@@ -88,7 +88,7 @@ namespace UI.Popups.Views
         {
             PresentationViewModel.PlaySound(Sound.ClickSelect);
             _refresh.interactable = false;
-            List<ServerDto> servers = await GameLogicViewModel.GetServers();
+            List<ServerDto> servers = await GameLogicViewModel.GetServersAsync();
 
             // cleanup
             foreach (Transform child in _list.transform)
@@ -103,7 +103,7 @@ namespace UI.Popups.Views
 
                 // todo: no idea how to retrieve player count
                 // todo: dedicated servers have always max 16 players
-                string id = server.Id.ToString();
+                string id = server.id.ToString();
                 view.Initialize(id, "Dedicated Server" + id, 0, 16);
             }
 
