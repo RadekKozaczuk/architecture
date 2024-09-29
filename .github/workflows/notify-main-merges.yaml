@@ -1,0 +1,44 @@
+name: Notify Main Merge
+
+on:
+  push:
+    branches:
+      - main
+      
+jobs:
+  notify-main-merge:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Cache pip
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: pip install slack_sdk
+
+    - name: Run bot
+      run: |
+        commit_message="${{ github.event.head_commit.message }}"
+        commit_author="${{ github.event.head_commit.author.name }}"
+        commit_url="${{ github.event.head_commit.url }}"
+
+        # this might happend if we dont push to main by pull request
+        if echo "$commit_message" | grep -q "from"; then
+          branch_name=$(echo "$commit_message" | grep -oP 'from .*/\K[^\s]+')
+        else
+          branch_name=$commit_message
+        fi
+
+        python ./.github/scripts/PerfectStormBot.py general ${{ secrets.SLACK_BOT_TOKEN }} "$branch_name" "$commit_url"
