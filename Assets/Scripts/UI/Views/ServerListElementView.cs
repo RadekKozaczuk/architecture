@@ -15,6 +15,9 @@ namespace UI.Views
         TextMeshProUGUI _nameText;
 
         [SerializeField]
+        TextMeshProUGUI _playersText;
+
+        [SerializeField]
         TextMeshProUGUI _ipText;
 
         [SerializeField]
@@ -39,5 +42,8 @@ namespace UI.Views
             _ipText.text = ip;
             _portText.text = port.ToString();
         }
+
+        internal void UpdatePlayersCount(int currentPlayers, int maxPlayers) =>
+            _playersText.text = currentPlayers + "/" + maxPlayers;
     }
 }
