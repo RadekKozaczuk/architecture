@@ -61,7 +61,8 @@ namespace Core.Enums
         /// <summary>
         /// Server Browser.
         /// </summary>
-        ServerList
+        ServerList,
+        CreateServer
     }
 
     public enum PlayerId
