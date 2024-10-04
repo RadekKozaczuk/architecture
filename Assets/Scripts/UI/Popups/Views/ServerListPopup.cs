@@ -1,5 +1,6 @@
 ﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Presentation.ViewModels;
 using GameLogic.ViewModels;
 using UnityEngine.UI;
@@ -11,6 +12,7 @@ using Core.Dtos;
 using UI.Views;
 using TMPro;
 using Core;
+using Unity.Services.Core;
 
 namespace UI.Popups.Views
 {
@@ -30,7 +32,7 @@ namespace UI.Popups.Views
         Button _refresh;
 
         [SerializeField]
-        Toggle _createServerToggle;
+        Toggle _dedicatedServerToggle;
 
         [SerializeField]
         TMP_Text _ipv4InputField;
@@ -48,7 +50,7 @@ namespace UI.Popups.Views
             _createServer.onClick.AddListener(() =>
             {
                 PresentationViewModel.PlaySound(Sound.ClickSelect);
-                PopupSystem.ShowPopup(_createServerToggle.isOn ? PopupType.CreateServer : PopupType.CreateLobby);
+                PopupSystem.ShowPopup(_dedicatedServerToggle.isOn ? PopupType.CreateServer : PopupType.CreateLobby);
             });
 
             _join.onClick.AddListener(() =>
@@ -64,8 +66,8 @@ namespace UI.Popups.Views
                 GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});
             });
 
-            _refresh.interactable = !GameLogicViewModel.WebRequestInProgress;
             _refresh.onClick.AddListener(RefreshAction);
+            _refresh.interactable = !GameLogicViewModel.WebRequestInProgress;
 
             RefreshAction();
         }
@@ -79,6 +81,16 @@ namespace UI.Popups.Views
             foreach (Transform child in _list.transform)
                 Destroy(child.gameObject);
 
+            if (_dedicatedServerToggle.isOn)
+                await RefreshServerList();
+            else
+                await RefreshLobbyList();
+
+            _refresh.interactable = true;
+        }
+
+        async Task RefreshServerList()
+        {
             // add servers
             List<ServerDto> servers = await GameLogicViewModel.GetServersAsync();
             foreach (ServerDto server in servers)
@@ -92,16 +104,17 @@ namespace UI.Popups.Views
                 string id = server.id.ToString();
                 view.Initialize("Dedicated Server-" + id, server.ip, server.port);
             }
+        }
 
+        async Task RefreshLobbyList()
+        {
             // add lobbies
             LobbyDto[] lobbies = await GameLogicViewModel.GetLobbiesAsync();
             foreach (LobbyDto lobby in lobbies)
             {
-                ServerListElementView view = Instantiate(_config.ServerListElementView, _list.transform);
-                view.Initialize(lobby.LobbyName, lobby.LobbyId, 0000);
+                LobbyListElementView view = Instantiate(_config.LobbyListElement, _list.transform);
+                view.Initialize(lobby.LobbyId, lobby.LobbyId, lobby.PlayerCount, lobby.PlayerMax);
             }
-
-            _refresh.interactable = true;
         }
     }
 }

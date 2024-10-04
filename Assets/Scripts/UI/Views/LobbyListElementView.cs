@@ -1,4 +1,8 @@
 ﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+using System.Collections.Generic;
+using Core;
+using Core.Enums;
+using GameLogic.ViewModels;
 using TMPro;
 using UI.Popups;
 using UI.Popups.Views;
@@ -11,18 +15,6 @@ namespace UI.Views
     [DisallowMultipleComponent]
     class LobbyListElementView : MonoBehaviour
     {
-        internal static LobbyListElementView? SelectedLobby
-        {
-            get => _selectedLobby;
-            private set
-            {
-                _selectedLobby = value;
-                var popup = (LobbyListPopup)PopupSystem.CurrentPopup!;
-                popup.SelectedLobbyChanged(_selectedLobby != null && _canJoin); // if any is selected
-            }
-        }
-        static LobbyListElementView? _selectedLobby;
-
         internal string LobbyId;
 
         [SerializeField]
@@ -44,7 +36,7 @@ namespace UI.Views
 
         void Awake()
         {
-            _button.onClick.AddListener(ButtonAction);
+            _button.onClick.AddListener(() => GameLogicViewModel.JoinLobbyById(LobbyId, JoinLobbyResultCallback));
             PopupSystem.SetupPopupElementSize(transform.parent.GetComponent<RectTransform>(), _rect);
         }
 
@@ -56,23 +48,15 @@ namespace UI.Views
             _canJoin = playerCount < playerMax;
         }
 
-        void ButtonAction()
+        void JoinLobbyResultCallback(string? lobbyName, string? lobbyCode, List<(string playerName, string playerId, bool isHost)> players)
         {
-            // first click
-            if (SelectedLobby == null)
-                SetAlpha(this, 100);
-            else if (SelectedLobby == this)
-                SetAlpha(null, 0);
-            else
-                SetAlpha(this, 100);
+            if (lobbyName == null || lobbyCode == null)
+                return;
 
-            void SetAlpha(LobbyListElementView? selectedLobby, float alpha)
-            {
-                SelectedLobby = selectedLobby;
-                Color color = _image.color;
-                color.a = alpha;
-                _image.color = color;
-            }
+            PopupSystem.CloseCurrentPopup();
+            PopupSystem.ShowPopup(PopupType.Lobby);
+            (PopupSystem.CurrentPopup as LobbyPopup)!.SetValues(lobbyName, lobbyCode, players);
+            CoreData.PlayerId = PlayerId.Player2;
         }
     }
 }

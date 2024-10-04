@@ -61,7 +61,7 @@ namespace UI.Popups.Views
             _join.onClick.AddListener(() =>
             {
                 PresentationViewModel.PlaySound(Sound.ClickSelect);
-                GameLogicViewModel.JoinLobbyById(LobbyListElementView.SelectedLobby!.LobbyId, JoinLobbyResultCallback);
+                //GameLogicViewModel.JoinLobbyById(LobbyListElementView.SelectedLobby!.LobbyId, JoinLobbyResultCallback);
             }); // join the selected
             _join.interactable = false;
 
