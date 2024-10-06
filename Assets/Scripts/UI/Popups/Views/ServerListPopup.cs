@@ -113,7 +113,7 @@ namespace UI.Popups.Views
             foreach (LobbyDto lobby in lobbies)
             {
                 LobbyListElementView view = Instantiate(_config.LobbyListElement, _list.transform);
-                view.Initialize(lobby.LobbyId, lobby.LobbyId, lobby.PlayerCount, lobby.PlayerMax);
+                view.Initialize(lobby.LobbyId, lobby.LobbyName, lobby.PlayerCount, lobby.PlayerMax);
             }
         }
     }
