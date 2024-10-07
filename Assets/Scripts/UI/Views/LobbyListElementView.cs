@@ -31,9 +31,7 @@ namespace UI.Views
 
         [SerializeField]
         Image _image;
-
-        static bool _canJoin;
-
+        
         void Awake()
         {
             _button.onClick.AddListener(() => GameLogicViewModel.JoinLobbyById(LobbyId, JoinLobbyResultCallback));
@@ -45,7 +43,6 @@ namespace UI.Views
             LobbyId = lobbyId;
             _name.text = lobbyName;
             _playerCount.text = $"{playerCount}/{playerMax}";
-            _canJoin = playerCount < playerMax;
         }
 
         void JoinLobbyResultCallback(string? lobbyName, string? lobbyCode, List<(string playerName, string playerId, bool isHost)> players)

@@ -71,17 +71,13 @@ namespace UI
         {
             int dot = 0;
             int dotCount = 3;
-            string infoText = _resultInfo;
+            float waitTime = 0.3f;
 
             while (!_create.interactable)
             {
-                string dotString = string.Empty;
-                for (int i = 0; i < dot; i++)
-                    dotString += ".";
-
-                _info.text = infoText + dotString;
-                dot = dot >= dotCount ? 0 : dot + 1;
-                yield return new WaitForSeconds(0.3f);
+                _info.text = $"{_resultInfo}{new string('.', dot)}";
+                dot = (dot + 1) % (dotCount + 1);
+                yield return new WaitForSeconds(waitTime);
             }
 
             _info.text = string.Empty;
