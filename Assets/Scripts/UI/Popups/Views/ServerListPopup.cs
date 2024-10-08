@@ -67,8 +67,6 @@ namespace UI.Popups.Views
             });
 
             _refresh.onClick.AddListener(RefreshAction);
-            _refresh.interactable = !GameLogicViewModel.WebRequestInProgress;
-
             RefreshAction();
         }
 
