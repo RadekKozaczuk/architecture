@@ -58,19 +58,23 @@ namespace GameLogic.ViewModels
                 case MachineRole.DedicatedServer:
                 {
                     MultiplayerSystem.StartServer();
-                }
                     break;
-                case MachineRole.Host: break;
+                }
+                case MachineRole.Host:
+                    break;
                 case MachineRole.Client:
                 {
                     MultiplayerSystem.JoinServer();
-                }
                     break;
-                case MachineRole.LocalSimulation: break;
-                case MachineRole.Undefined: throw new Exception("Variable CoreData.MachineRole is undefined. "
-                                                                + "Assign the variable before reaching this point.");
+                }
+                case MachineRole.LocalSimulation:
+                    break;
+                case MachineRole.Undefined:
+                    throw new Exception("Variable CoreData.MachineRole is undefined. "
+                                        + "Assign the variable before reaching this point.");
 
-                default: throw new ArgumentOutOfRangeException();
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 

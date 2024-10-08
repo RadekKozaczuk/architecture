@@ -5,12 +5,10 @@ using Core.Enums;
 using GameLogic.ViewModels;
 using Presentation.ViewModels;
 using TMPro;
-using UI.Popups;
-using UI.Popups.Views;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI
+namespace UI.Popups.Views
 {
     [DisallowMultipleComponent]
     class CreateServerPopup : AbstractPopup

@@ -28,7 +28,7 @@ namespace GameLogic.ViewModels
 
         public static async Task<AllocationDto?> GetFreeTestAllocationAsync()
         {
-            List<AllocationDto> allocations = await GetTestAllocations();
+            List<AllocationDto> allocations = await WebRequestSystem.GetTestAllocations();
             AllocationDto? freeAllocation = allocations.FirstOrDefault(allocation => string.IsNullOrEmpty(allocation.requested));
             if (freeAllocation == null)
             {
@@ -39,6 +39,7 @@ namespace GameLogic.ViewModels
             return freeAllocation;
         }
 
+        // todo: why these methods have callbacks instead of being async like the ones above?
         public static void JoinLobbyById(string lobbyId, Action<string, string, List<(string playerName, string playerId, bool isHost)>> callback) =>
             LobbySystem.JoinLobbyById(lobbyId, callback);
 
@@ -85,7 +86,6 @@ namespace GameLogic.ViewModels
         /// </summary>
         public static async Task<List<ServerDto>> GetServersAsync() => await WebRequestSystem.GetServers();
 
-        public static async Task<List<AllocationDto>> GetTestAllocations() => await WebRequestSystem.GetTestAllocations();
         public static async Task WaitUntilAllocationAsync(string allocationId)
         {
             int i = 0;
@@ -93,8 +93,8 @@ namespace GameLogic.ViewModels
 
             while (i <= exceptionRequests)
             {
-                var allocation = (await WebRequestSystem.GetTestAllocations()).
-                    FirstOrDefault((alloc) => string.Equals(alloc.allocationId, allocationId));
+                List<AllocationDto> allocations = await WebRequestSystem.GetTestAllocations();
+                AllocationDto? allocation = allocations.FirstOrDefault(alloc => string.Equals(alloc.allocationId, allocationId));
 
                 if (allocation == null)
                     break;
@@ -107,7 +107,8 @@ namespace GameLogic.ViewModels
             }
         }
 
-        public static void SetConnectionData(string ipv4, string port) => NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(ipv4, ushort.Parse(port));
+        public static void SetConnectionData(string ipv4, string port) =>
+            NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(ipv4, ushort.Parse(port));
 
         public static async Task<(string id, string name)> GetLobbyAsync(string lobbyId)
         {

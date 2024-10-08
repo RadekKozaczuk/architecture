@@ -8,7 +8,6 @@ using UI.Popups;
 using UI.Popups.Views;
 using UnityEngine;
 using UnityEngine.UI;
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
 namespace UI.Views
 {
@@ -31,7 +30,7 @@ namespace UI.Views
 
         [SerializeField]
         Image _image;
-        
+
         void Awake()
         {
             _button.onClick.AddListener(() => GameLogicViewModel.JoinLobbyById(LobbyId, JoinLobbyResultCallback));

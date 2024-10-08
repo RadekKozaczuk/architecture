@@ -58,11 +58,7 @@ namespace UI.Popups.Views
 
             _refresh.interactable = !GameLogicViewModel.WebRequestInProgress;
             _refresh.onClick.AddListener(RefreshAction);
-            _join.onClick.AddListener(() =>
-            {
-                PresentationViewModel.PlaySound(Sound.ClickSelect);
-                //GameLogicViewModel.JoinLobbyById(LobbyListElementView.SelectedLobby!.LobbyId, JoinLobbyResultCallback);
-            }); // join the selected
+            _join.onClick.AddListener(() => PresentationViewModel.PlaySound(Sound.ClickSelect));
             _join.interactable = false;
 
             _create.onClick.AddListener(() =>
@@ -76,13 +72,12 @@ namespace UI.Popups.Views
                 PresentationViewModel.PlaySound(Sound.ClickSelect);
                 GameLogicViewModel.JoinLobbyByCode(_lobbyCodeInput.text, JoinLobbyResultCallback);
             });
+
             _joinByCode.interactable = false;
             _lobbyCodeInput.onValueChanged.AddListener(_ => LobbyCodeInputOnValueChanged());
         }
 
         internal override void Close() { }
-
-        internal void SelectedLobbyChanged(bool canJoin) => _join.interactable = canJoin;
 
         async void RefreshAction()
         {
@@ -94,8 +89,6 @@ namespace UI.Popups.Views
             foreach (Transform child in _list.transform)
                 Destroy(child.gameObject);
 
-            // todo: for now only take one
-            //foreach (ServerDto server in servers)
             if (servers.Count > 0)
             {
                 ServerDto? server = servers[0];
@@ -107,24 +100,7 @@ namespace UI.Popups.Views
                 view.Initialize(id, "Dedicated Server" + id, 0, 16);
             }
 
-            // todo: in the future also lobbies
-            //List<ServerDto> servers = await GameLogicViewModel.GetServers();
-
-            Debug.Log(servers.Count);
-
             _refresh.interactable = false;
-        }
-
-        void LobbyQueryResultCallback(LobbyDto[] lobbies)
-        {
-            foreach (Transform child in _list.transform)
-                Destroy(child.gameObject);
-
-            foreach (LobbyDto lobby in lobbies)
-            {
-                LobbyListElementView view = Instantiate(_config.LobbyListElement, _list.transform);
-                view.Initialize(lobby.LobbyId, lobby.LobbyName, lobby.PlayerCount, lobby.PlayerMax);
-            }
         }
 
         void JoinLobbyResultCallback(string? lobbyName, string? lobbyCode, List<(string playerName, string playerId, bool isHost)> players)

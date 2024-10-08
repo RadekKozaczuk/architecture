@@ -51,7 +51,7 @@ namespace Presentation.ViewModels
                 ulong id = clientId - 1;
                 Transform spawnPoint = _level.GetSpawnPoint((PlayerId)id).transform;
                 PlayerNetworkView networkPlayer = Object.Instantiate(_playerConfig.PlayerClientPrefab, spawnPoint.position, spawnPoint.rotation,
-                                                              PresentationSceneReferenceHolder.PlayerContainer);
+                                                                     PresentationSceneReferenceHolder.PlayerContainer);
 
                 // this will be assigned only on the host
                 PresentationData.NetworkPlayers[(int)(PlayerId)id] = networkPlayer;

@@ -12,7 +12,6 @@ using Core.Dtos;
 using UI.Views;
 using TMPro;
 using Core;
-using Unity.Services.Core;
 
 namespace UI.Popups.Views
 {
