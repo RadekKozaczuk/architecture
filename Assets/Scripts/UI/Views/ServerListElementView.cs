@@ -15,6 +15,9 @@ namespace UI.Views
         TextMeshProUGUI _nameText;
 
         [SerializeField]
+        TextMeshProUGUI _playersText;
+
+        [SerializeField]
         TextMeshProUGUI _ipText;
 
         [SerializeField]
@@ -28,8 +31,6 @@ namespace UI.Views
             CoreData.CurrentLevel = Level.HubLocation;
 
             GameLogicViewModel.SetConnectionData(_ipText.text, _portText.text);
-
-            // this will start the netcode client
             GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});
         });
 

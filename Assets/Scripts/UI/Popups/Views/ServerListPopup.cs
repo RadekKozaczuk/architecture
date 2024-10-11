@@ -1,5 +1,6 @@
 ﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Presentation.ViewModels;
 using GameLogic.ViewModels;
 using UnityEngine.UI;
@@ -30,6 +31,9 @@ namespace UI.Popups.Views
         Button _refresh;
 
         [SerializeField]
+        Toggle _dedicatedServerToggle;
+
+        [SerializeField]
         TMP_Text _ipv4InputField;
 
         [SerializeField]
@@ -37,11 +41,17 @@ namespace UI.Popups.Views
 
         static readonly UIConfig _config;
 
-        public ServerListPopup(PopupType type)
-            : base(type) { }
+        public ServerListPopup()
+            : base(PopupType.ServerList) { }
 
         void Awake()
         {
+            _createServer.onClick.AddListener(() =>
+            {
+                PresentationViewModel.PlaySound(Sound.ClickSelect);
+                PopupSystem.ShowPopup(_dedicatedServerToggle.isOn ? PopupType.CreateServer : PopupType.CreateLobby);
+            });
+
             _join.onClick.AddListener(() =>
             {
                 CoreData.MachineRole = MachineRole.Client;
@@ -55,22 +65,8 @@ namespace UI.Popups.Views
                 GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});
             });
 
-            _createServer.onClick.AddListener(CreateServer);
-
-            _refresh.interactable = !GameLogicViewModel.WebRequestInProgress;
             _refresh.onClick.AddListener(RefreshAction);
-
-            // todo: destroy children
-            // todo: instantiate new
-
-            /*serverTemplate.gameObject.SetActive(false);
-            foreach (Transform child in serverContainer)
-            {
-                if (child == serverTemplate)
-                    continue;
-
-                Destroy(child.gameObject);
-            }*/
+            RefreshAction();
         }
 
         async void RefreshAction()
@@ -82,6 +78,16 @@ namespace UI.Popups.Views
             foreach (Transform child in _list.transform)
                 Destroy(child.gameObject);
 
+            if (_dedicatedServerToggle.isOn)
+                await RefreshServerList();
+            else
+                await RefreshLobbyList();
+
+            _refresh.interactable = true;
+        }
+
+        async Task RefreshServerList()
+        {
             // add servers
             List<ServerDto> servers = await GameLogicViewModel.GetServersAsync();
             foreach (ServerDto server in servers)
@@ -95,36 +101,17 @@ namespace UI.Popups.Views
                 string id = server.id.ToString();
                 view.Initialize("Dedicated Server-" + id, server.ip, server.port);
             }
+        }
 
+        async Task RefreshLobbyList()
+        {
             // add lobbies
             LobbyDto[] lobbies = await GameLogicViewModel.GetLobbiesAsync();
             foreach (LobbyDto lobby in lobbies)
             {
-                ServerListElementView view = Instantiate(_config.ServerListElementView, _list.transform);
-                view.Initialize(lobby.LobbyName, lobby.LobbyId, 0000);
+                LobbyListElementView view = Instantiate(_config.LobbyListElement, _list.transform);
+                view.Initialize(lobby.LobbyId, lobby.LobbyName, lobby.PlayerCount, lobby.PlayerMax);
             }
-
-            _refresh.interactable = true;
-        }
-
-        async void CreateServer()
-        {
-            PresentationViewModel.PlaySound(Sound.ClickSelect);
-            _createServer.interactable = false;
-            _refresh.interactable = false;
-            //PopupSystem.ShowPopup(PopupType.CreateLobby);
-
-            AllocationDto? allocationData = await GameLogicViewModel.GetFreeTestAllocationAsync();
-            string allocationId = allocationData?.allocationId ?? string.Empty;
-            if (!string.IsNullOrEmpty(allocationId))
-            {
-                await GameLogicViewModel.CreateServerAsync(allocationId);
-                await GameLogicViewModel.WaitUntilAllocationAsync(allocationId);
-                RefreshAction();
-            }
-
-            _createServer.interactable = true;
-            _refresh.interactable = true;
         }
     }
 }
