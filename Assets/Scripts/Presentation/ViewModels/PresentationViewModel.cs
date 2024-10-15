@@ -99,7 +99,12 @@ namespace Presentation.ViewModels
                     {
                         // instantiate locally
                         // in network context objects can only be spawned in root - we cannot spawn under other objects.
-                        PlayerNetworkView player = Object.Instantiate(_playerConfig.PlayerServerPrefab, spawnPoint.position, spawnPoint.rotation);
+                        // todo: player must be explicitly spawned in PlayerContainer because at the moment of state transition the main scene
+                        // todo: is the MainMenuScene. This problem eventually fix itself as after MainMenuScene is unloaded CoreScene
+                        // todo: becomes the new main scene.
+                        // todo: however maybe GameStateMachine should control which scene is the main scene to avoid these problems in the future.
+                        PlayerNetworkView player = Object.Instantiate(_playerConfig.PlayerServerPrefab, spawnPoint.position, spawnPoint.rotation,
+                                                                      PresentationSceneReferenceHolder.PlayerContainer);
 
                         // this will be assigned only on the host
                         PresentationData.NetworkPlayers[(int)PlayerId.Player1] = player;
