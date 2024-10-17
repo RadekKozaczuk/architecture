@@ -35,7 +35,7 @@ namespace GameLogic.Systems
                 throw new Exception("Failed to start server");
             }
 
-            MultiplayEventCallbacks callbacks = new MultiplayEventCallbacks();
+            var callbacks = new MultiplayEventCallbacks();
             callbacks.Allocate += async _ =>
             {
                 // inform the matchmaker that the server is ready to receive players
@@ -43,10 +43,7 @@ namespace GameLogic.Systems
                 // start updating server invoked by coroutine
                 StaticCoroutine.StartStaticCoroutine(ServerUpdateCoroutine());
             };
-            callbacks.Deallocate += _ =>
-            {
-                MultiplayService.Instance.UnreadyServerAsync();
-            };
+            callbacks.Deallocate += _ => MultiplayService.Instance.UnreadyServerAsync();
 
             await MultiplayService.Instance.SubscribeToServerEventsAsync(callbacks);
         }

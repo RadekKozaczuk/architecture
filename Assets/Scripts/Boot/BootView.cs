@@ -65,6 +65,7 @@ namespace Boot
             {
                 if (scene.buildIndex == Constants.CoreScene)
                 {
+                    SceneManager.SetActiveScene(scene);
                     SceneManager.UnloadSceneAsync(Constants.BootScene);
                     _isCoreSceneLoaded = true;
                     PresentationViewModel.OnCoreSceneLoaded();
