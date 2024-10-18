@@ -20,7 +20,7 @@ namespace Core
         /// <summary>
         /// Selected player. Useful only in multiplayer.
         /// </summary>
-        public static PlayerId? PlayerId;
+        public static ulong? PlayerId;
 
         public static BinaryReader? SaveGameReader;
 

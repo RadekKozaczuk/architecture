@@ -23,8 +23,8 @@ namespace Presentation.Views
 
             if (IsOwner)
             {
-                CoreData.PlayerId = (PlayerId)NetworkObj.NetworkObjectId - 1;
-                PresentationData.NetworkPlayers[(int)CoreData.PlayerId!.Value] = this;
+                CoreData.PlayerId = NetworkObj.NetworkObjectId - 1;
+                PresentationData.NetworkPlayers[CoreData.PlayerId!.Value] = this;
             }
         }
 

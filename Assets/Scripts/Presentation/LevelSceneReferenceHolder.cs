@@ -24,7 +24,7 @@ namespace Presentation
         internal Transform EnemyContainer;
         // todo: add assertion that checks if spawn points are not duplicated
 
-        internal Transform GetSpawnPoint(PlayerId playerId) => _spawnPoints[(int)playerId].transform;
+        internal Transform GetSpawnPoint(int playerId) => _spawnPoints[playerId].transform;
 
         internal void CopyLightReferences(List<Light> list)
         {

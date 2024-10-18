@@ -1,4 +1,5 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+using System.Collections.Generic;
 using Presentation.Views;
 
 namespace Presentation
@@ -16,7 +17,7 @@ namespace Presentation
         /// <summary>
         /// This will contain all the player references on the server and only the client's player on a client.
         /// </summary>
-        internal static readonly PlayerNetworkView[] NetworkPlayers = new PlayerNetworkView[4];
+        internal static readonly Dictionary<ulong, PlayerNetworkView> NetworkPlayers = new();
 
         /// <summary>
         /// When we host a game, other players are spawn in their respective spawn points as single-player prefabs.

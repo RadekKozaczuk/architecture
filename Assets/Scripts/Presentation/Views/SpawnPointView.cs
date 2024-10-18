@@ -10,7 +10,7 @@ namespace Presentation.Views
     class SpawnPointView : MonoBehaviour
     {
         [SerializeField]
-        PlayerId _playerId;
+        int _playerId;
 
         [SerializeField]
         MeshFilter _meshFilter;

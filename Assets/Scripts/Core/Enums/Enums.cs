@@ -65,14 +65,6 @@ namespace Core.Enums
         CreateServer
     }
 
-    public enum PlayerId
-    {
-        Player1,
-        Player2,
-        Player3,
-        Player4
-    }
-
     /// <summary>
     /// Tells what is the role of this machine (computer).
     /// </summary>
