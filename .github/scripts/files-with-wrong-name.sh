@@ -1,6 +1,7 @@
 REGEX='^((([P][H])?[A-Z][a-z]+[0-9]*)|([A][N][_]))(([H][D][R])?[_]?[0-9]*[A-Z][a-z]+[0-9]*([H][D][R])?)*$'
 ThirdPartyPath="./Assets/3rdParty/*"
 PluginsFolderPath="./Assets/Plugins/*"
+PackagesFilePath="./Packages/*"
 IncorrectFiles=""
 
 function CollectFilesThatAreNotPascalCase()
@@ -12,7 +13,7 @@ function CollectFilesThatAreNotPascalCase()
     find "./" -type f -name "$fileExtension" -print0 | 
     while IFS= read -r -d $'\0' file 
     do
-        if [[ $file != $ThirdPartyPath ]] && [[ $file != $PluginsFolderPath ]]
+        if [[ $file != $ThirdPartyPath ]] && [[ $file != $PluginsFolderPath ]] && [[ $file != $PackagesFilePath ]]
         then
             fileName=$(basename "$file")
             fullLenght=${#fileName}
