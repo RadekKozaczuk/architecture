@@ -9,7 +9,8 @@ using Shared.Systems;
 namespace Core.Systems
 {
     public delegate void RequestStateChange(GameState requested, int[]? additionalScenesToLoad = null,
-        int[]? additionalScenesToUnload = null, (StateTransitionParameter key, object value)[]? parameters = null);
+        int[]? additionalScenesToUnload = null, (StateTransitionParameter key, object value)[]? parameters = null,
+        int[]? scenesToSynchronize = null);
 
     public delegate void RequestPreLoad(GameState requested, int[]? additionalScenesToLoad = null,
         (StateTransitionParameter key, object value)[]? parameters = null);
@@ -39,8 +40,9 @@ namespace Core.Systems
         /// Actual state change may be delayed in time. Consecutive calls are not allowed.
         /// </summary>
         public static void RequestStateChange(GameState state, int[]? additionalScenesToLoad = null,
-            int[]? additionalScenesToUnload = null, (StateTransitionParameter key, object value)[]? parameters = null) =>
-            OnStateChangeRequest.Invoke(state, additionalScenesToLoad, additionalScenesToUnload, parameters);
+            int[]? additionalScenesToUnload = null, (StateTransitionParameter key, object value)[]? parameters = null,
+            int[]? scenesToSynchronize = null) =>
+            OnStateChangeRequest.Invoke(state, additionalScenesToLoad, additionalScenesToUnload, parameters, scenesToSynchronize);
 
         /// <summary>
         /// Simplified version of <see cref="RequestStateChange"/>.
