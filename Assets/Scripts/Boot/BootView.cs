@@ -198,25 +198,20 @@ namespace Boot
             new(new List<(
                     GameState from,
                     GameState to,
-                    Func<(int[]?, int[]?)>? scenesToLoadUnload,
-                    Action? betweenLoadAndUnload)>
+                    Func<(int[]?, int[]?)>? scenesToLoadUnload)>
                 {
                     (GameState.Booting,
                      GameState.MainMenu,
-                     () => (new[] {Constants.MainMenuScene, Constants.CoreScene, Constants.UIScene}, null),
-                     null),
+                     () => (new[] {Constants.MainMenuScene, Constants.CoreScene, Constants.UIScene}, null)),
                     (GameState.MainMenu,
                      GameState.Gameplay,
-                     () => (ScenesToLoadFromMainMenuToGameplay(), new[] {Constants.MainMenuScene}),
-                     null),
+                     () => (ScenesToLoadFromMainMenuToGameplay(), new[] {Constants.MainMenuScene})),
                     (GameState.Gameplay,
                      GameState.MainMenu,
-                     () => (new[] {Constants.MainMenuScene}, ScenesToUnloadFromGameplayToMainMenu()),
-                     null),
+                     () => (new[] {Constants.MainMenuScene}, ScenesToUnloadFromGameplayToMainMenu())),
                     (GameState.Gameplay,
                      GameState.Gameplay,
-                     ScenesToLoadUnloadFromGameplayToGameplay,
-                     null)
+                     ScenesToLoadUnloadFromGameplayToGameplay)
                 },
                 new (GameState, Action?, Action?)[]
                 {
@@ -241,17 +236,14 @@ namespace Boot
             new(new List<(
                     GameState from,
                     GameState to,
-                    Func<(int[]?, int[]?)>? scenesToLoadUnload,
-                    Action? betweenLoadAndUnload)>
+                    Func<(int[]?, int[]?)>? scenesToLoadUnload)>
                 {
                     (GameState.Booting,
                      GameState.Gameplay,
-                     () => (new[] {Constants.CoreScene, (int)Level.HubLocation}, null),
-                     null),
+                     () => (new[] {Constants.CoreScene, (int)Level.HubLocation}, null)),
                     (GameState.Gameplay,
                      GameState.Gameplay,
-                     ScenesToLoadUnloadFromGameplayToGameplay,
-                     null)
+                     ScenesToLoadUnloadFromGameplayToGameplay)
                 },
                 new (GameState, Action?, Action?)[]
                 {
