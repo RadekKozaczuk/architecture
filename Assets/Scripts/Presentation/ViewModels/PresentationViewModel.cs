@@ -86,6 +86,7 @@ namespace Presentation.ViewModels
         /// </summary>
         public static void OnLevelSceneLoaded()
         {
+            Debug.Log("OnLevelSceneLoaded CALLBACK (GAME)");
             // load level data
             _level = GameObject.FindWithTag("LevelSceneReferenceHolder").GetComponent<LevelSceneReferenceHolder>();
 
