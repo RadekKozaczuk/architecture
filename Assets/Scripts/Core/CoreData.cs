@@ -18,7 +18,8 @@ namespace Core
         public static Level CurrentLevel;
 
         /// <summary>
-        /// Represents the unique identifier for a player (owner)
+        /// ID of the player that this machine owns.
+        /// Null in single player.
         /// </summary>
         public static ulong? PlayerId;
 

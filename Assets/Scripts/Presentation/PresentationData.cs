@@ -16,7 +16,6 @@ namespace Presentation
 
         /// <summary>
         /// This will contain all the player references on the server and only the client's player on a client.
-        /// Netcode recycles indices after a certain period of time, so they need to be continuously incremented.
         /// </summary>
         internal static readonly Dictionary<ulong, PlayerNetworkView> NetworkPlayers = new();
 

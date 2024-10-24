@@ -46,6 +46,7 @@ namespace Presentation.ViewModels
                 if (!NetworkManager.Singleton.IsServer && !NetworkManager.Singleton.IsHost)
                     return;
 
+                // Because Netcode recycles indices with a delay we have to continuously increment them to avoid conflicts.
                 int id = Enumerable.Range(0, int.MaxValue).First(id => !PresentationData.NetworkPlayers.ContainsKey((ulong)id));
                 Transform spawnPoint = _level.GetSpawnPoint(id).transform;
                 PlayerNetworkView networkPlayer = Object.Instantiate(_playerConfig.PlayerClientPrefab, spawnPoint.position, spawnPoint.rotation,
