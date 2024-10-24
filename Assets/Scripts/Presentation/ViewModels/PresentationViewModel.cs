@@ -84,10 +84,10 @@ namespace Presentation.ViewModels
                 if (NetworkManager.Singleton.IsHost)
                 {
                     // Host is always 0
-                    ulong id = 0;
-                    Transform spawnPoint = _level.GetSpawnPoint((int)id).transform;
+                    const ulong ID = 0;
+                    Transform spawnPoint = _level.GetSpawnPoint((int)ID).transform;
 
-                    if (PresentationData.NetworkPlayers.TryGetValue(id, out PlayerNetworkView networkPlayer))
+                    if (PresentationData.NetworkPlayers.TryGetValue(ID, out PlayerNetworkView networkPlayer))
                     {
                         Transform transform = networkPlayer.transform;
                         transform.position = spawnPoint.position;
@@ -105,7 +105,7 @@ namespace Presentation.ViewModels
                                                                       PresentationSceneReferenceHolder.PlayerContainer);
 
                         // this will be assigned only on the host
-                        PresentationData.NetworkPlayers.Add(id, player);
+                        PresentationData.NetworkPlayers.Add(ID, player);
 
                         // spawn over the network
                         // Spawning in Netcode means to instantiate and/or spawn the object that is synchronized between all clients by the server.
