@@ -164,12 +164,7 @@ namespace Presentation.ViewModels
         public static void Movement(Vector2 movementInput)
         {
             if (CoreData.IsMultiplayer)
-            {
-                if (NetworkManager.Singleton.IsHost)
-                    PresentationData.NetworkPlayers[CoreData.PlayerId!.Value].Move(movementInput.normalized);
-                else
-                    PresentationData.NetworkPlayers[CoreData.PlayerId!.Value].Move(movementInput.normalized);
-            }
+                PresentationData.NetworkPlayers[CoreData.PlayerId!.Value].Move(movementInput.normalized);
             else
                 PresentationData.Player.Move(movementInput.normalized);
         }

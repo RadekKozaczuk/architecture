@@ -18,7 +18,7 @@ namespace Core
         public static Level CurrentLevel;
 
         /// <summary>
-        /// Selected player. Useful only in multiplayer.
+        /// Represents the unique identifier for a player (owner)
         /// </summary>
         public static ulong? PlayerId;
 
