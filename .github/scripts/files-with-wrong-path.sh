@@ -2,6 +2,7 @@ BasePath="./Assets/Art"
 ThirdPartyPath="./Assets/3rdParty/*"
 PluginsFolderPath="./Assets/Plugins/*"
 DocsFilesPath="./Assets/Scripts/Shared/Docs/*"
+PackagesFilePath="./Packages/*"
 IncorrectFiles=""
 
 function CollectFilesThatAreNotInFolder()
@@ -25,7 +26,7 @@ function CollectFilesThatAreNotInFolder()
     find "./" -type f -name "$fileExtension" -print0 | 
     while IFS= read -r -d $'\0' file 
     do
-        if [[ $file != $folderPath ]] && [[ $file != $ThirdPartyPath ]] && [[ $file != $folderPathAlt ]] && [[ $file != $PluginsFolderPath ]] && [[ $file != $DocsFilesPath ]]
+        if [[ $file != $folderPath ]] && [[ $file != $ThirdPartyPath ]] && [[ $file != $folderPathAlt ]] && [[ $file != $PluginsFolderPath ]] && [[ $file != $DocsFilesPath ]] && [[ $file != PackagesFilePath ]]
         then
             if [[ $anyIncorrect == false ]]
             then
