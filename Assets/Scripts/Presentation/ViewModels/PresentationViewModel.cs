@@ -80,68 +80,6 @@ namespace Presentation.ViewModels
 
         public static void OnCoreSceneLoaded() => PresentationMainController.OnCoreSceneLoaded();
 
-        /// <summary>
-        /// This is where network related things happens.
-        /// Spawns all players.
-        /// </summary>
-        public static void OnLevelSceneLoaded()
-        {
-            return;
-            
-            Debug.Log("OnLevelSceneLoaded CALLBACK (GAME)");
-            // load level data
-            _level = GameObject.FindWithTag("LevelSceneReferenceHolder").GetComponent<LevelSceneReferenceHolder>();
-
-            if (CoreData.IsMultiplayer)
-            {
-                if (NetworkManager.Singleton.IsHost)
-                {
-                    Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player1).transform;
-
-                    if (PresentationData.NetworkPlayers[(int)PlayerId.Player1] == null)
-                    {
-                        // instantiate locally
-                        // in network context objects can only be spawned in root - we cannot spawn under other objects.
-                        // todo: player must be explicitly spawned in PlayerContainer because at the moment of state transition the main scene
-                        // todo: is the MainMenuScene. This problem eventually fix itself as after MainMenuScene is unloaded CoreScene
-                        // todo: becomes the new main scene.
-                        // todo: however maybe GameStateMachine should control which scene is the main scene to avoid these problems in the future.
-                        PlayerNetworkView player = Object.Instantiate(_playerConfig.PlayerServerPrefab, spawnPoint.position, spawnPoint.rotation,
-                                                                      PresentationSceneReferenceHolder.PlayerContainer);
-
-                        // this will be assigned only on the host
-                        PresentationData.NetworkPlayers[(int)PlayerId.Player1] = player;
-
-                        // spawn over the network
-                        // Spawning in Netcode means to instantiate and/or spawn the object that is synchronized between all clients by the server.
-                        // Only server can spawn multiplayer objects.
-                        player.NetworkObj.Spawn(true);
-                        player.gameObject.SetActive(CoreData.PlayerCount == 1);
-                    }
-                    else
-                    {
-                        Transform transform = PresentationData.NetworkPlayers[(int)PlayerId.Player1].transform;
-                        transform.position = spawnPoint.position;
-                        transform.rotation = spawnPoint.rotation;
-                    }
-                }
-            }
-            else
-            {
-                SpawnSinglePlayer(_level.GetSpawnPoint(PlayerId.Player1));
-            }
-
-            bool loadGameRequested = (bool)GameStateSystem.GetTransitionParameter(StateTransitionParameter.LoadGameRequested)!;
-            if (loadGameRequested)
-            {
-                Vector3 position = SaveLoadUtils.ReadVector3(CoreData.SaveGameReader!);
-                Quaternion rotation = SaveLoadUtils.ReadQuaternion(CoreData.SaveGameReader!);
-                Transform transform = PresentationData.Player.transform;
-                transform.position = position;
-                transform.rotation = rotation;
-            }
-        }
-
         public static void BootingOnExit() { }
 
         public static void MainMenuOnEntry()
@@ -210,11 +148,7 @@ namespace Presentation.ViewModels
                 transform.position = position;
                 transform.rotation = rotation;
             }
-            
-            
-            
-            
-            
+
             // spawn 5 VFXs around the player
             /*for (int i = 0; i < 5; i++)
             {
