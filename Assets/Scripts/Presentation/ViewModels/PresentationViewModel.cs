@@ -87,7 +87,13 @@ namespace Presentation.ViewModels
                     ulong id = 0;
                     Transform spawnPoint = _level.GetSpawnPoint((int)id).transform;
 
-                    if (!PresentationData.NetworkPlayers.TryGetValue(id, out var networkPlayer))
+                    if (PresentationData.NetworkPlayers.TryGetValue(id, out PlayerNetworkView networkPlayer))
+                    {
+                        Transform transform = networkPlayer.transform;
+                        transform.position = spawnPoint.position;
+                        transform.rotation = spawnPoint.rotation;
+                    }
+                    else
                     {
                         // instantiate locally
                         // in network context objects can only be spawned in root - we cannot spawn under other objects.
@@ -106,12 +112,6 @@ namespace Presentation.ViewModels
                         // Only server can spawn multiplayer objects.
                         player.NetworkObj.Spawn(true);
                         player.gameObject.SetActive(true);
-                    }
-                    else
-                    {
-                        Transform transform = networkPlayer.transform;
-                        transform.position = spawnPoint.position;
-                        transform.rotation = spawnPoint.rotation;
                     }
                 }
             }
