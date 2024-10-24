@@ -1,6 +1,5 @@
 ﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using System.Collections.Generic;
-using Core.Enums;
 using Presentation.Views;
 using UnityEngine;
 
@@ -24,7 +23,7 @@ namespace Presentation
         internal Transform EnemyContainer;
         // todo: add assertion that checks if spawn points are not duplicated
 
-        internal Transform GetSpawnPoint(PlayerId playerId) => _spawnPoints[(int)playerId].transform;
+        internal Transform GetSpawnPoint(int playerId) => _spawnPoints[playerId].transform;
 
         internal void CopyLightReferences(List<Light> list)
         {

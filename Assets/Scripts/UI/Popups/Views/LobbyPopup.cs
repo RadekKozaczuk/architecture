@@ -121,7 +121,6 @@ namespace UI.Popups.Views
             _start.interactable = false;
             CoreData.CurrentLevel = Level.HubLocation;
             CoreData.IsMultiplayer = true;
-            CoreData.PlayerId = PlayerId.Player1;
             GameLogicViewModel.StartGame();
         }
 
