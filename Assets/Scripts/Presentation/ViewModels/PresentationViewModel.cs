@@ -78,7 +78,7 @@ namespace Presentation.ViewModels
         {
             // load level data
             _level = GameObject.FindWithTag("LevelSceneReferenceHolder").GetComponent<LevelSceneReferenceHolder>();
-            Debug.Log("OnLevelSceneLoaded Reading reference");
+
             if (CoreData.IsMultiplayer)
             {
                 if (NetworkManager.Singleton.IsHost)
