@@ -1,5 +1,6 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using System.IO;
+using System.Linq;
 using Core;
 using Core.Enums;
 using Core.Systems;
@@ -30,8 +31,6 @@ namespace Presentation.ViewModels
 
         static LevelSceneReferenceHolder _level;
 
-        static int _joinedPlayers;
-
         [Preserve]
         PresentationViewModel() { }
 
@@ -40,7 +39,6 @@ namespace Presentation.ViewModels
             // this is called for the host too
             NetworkManager.Singleton.OnClientConnectedCallback += clientId =>
             {
-                _joinedPlayers++;
                 // ignore self connection
                 if (clientId == 0)
                     return;
@@ -48,28 +46,21 @@ namespace Presentation.ViewModels
                 if (!NetworkManager.Singleton.IsServer && !NetworkManager.Singleton.IsHost)
                     return;
 
-                ulong id = clientId - 1;
-                Transform spawnPoint = _level.GetSpawnPoint((PlayerId)id).transform;
+                // Because Netcode recycles indices with a delay we have to continuously increment them to avoid conflicts.
+                int id = Enumerable.Range(0, int.MaxValue).First(id => !PresentationData.NetworkPlayers.ContainsKey((ulong)id));
+                Transform spawnPoint = _level.GetSpawnPoint(id).transform;
                 PlayerNetworkView networkPlayer = Object.Instantiate(_playerConfig.PlayerClientPrefab, spawnPoint.position, spawnPoint.rotation,
                                                                      PresentationSceneReferenceHolder.PlayerContainer);
 
                 // this will be assigned only on the host
-                PresentationData.NetworkPlayers[(int)(PlayerId)id] = networkPlayer;
+                PresentationData.NetworkPlayers.Add(clientId, networkPlayer);
 
                 // spawn over the network
                 networkPlayer.NetworkObj.SpawnWithOwnership(clientId, true);
-                networkPlayer.gameObject.SetActive(false);
-
-                // waiting for all players to connect and then display players
-                if(NetworkManager.Singleton.IsHost)
-                    if (_joinedPlayers != CoreData.PlayerCount)
-                        return;
-
-                // show active players
-                foreach (PlayerNetworkView player in PresentationData.NetworkPlayers)
-                    if (player != null)
-                        player.gameObject.SetActive(true);
+                networkPlayer.gameObject.SetActive(true);
             };
+
+            NetworkManager.Singleton.OnClientDisconnectCallback += clientId => PresentationData.NetworkPlayers.Remove(clientId);
         }
 
         public static void CustomUpdate() => _presentationMainController.CustomUpdate();
@@ -104,9 +95,17 @@ namespace Presentation.ViewModels
             {
                 if (NetworkManager.Singleton.IsHost)
                 {
-                    Transform spawnPoint = _level.GetSpawnPoint(PlayerId.Player1).transform;
+                    // Host is always 0
+                    const ulong ID = 0;
+                    Transform spawnPoint = _level.GetSpawnPoint((int)ID).transform;
 
-                    if (PresentationData.NetworkPlayers[(int)PlayerId.Player1] == null)
+                    if (PresentationData.NetworkPlayers.TryGetValue(ID, out PlayerNetworkView networkPlayer))
+                    {
+                        Transform transform = networkPlayer.transform;
+                        transform.position = spawnPoint.position;
+                        transform.rotation = spawnPoint.rotation;
+                    }
+                    else
                     {
                         // instantiate locally
                         // in network context objects can only be spawned in root - we cannot spawn under other objects.
@@ -118,25 +117,19 @@ namespace Presentation.ViewModels
                                                                       PresentationSceneReferenceHolder.PlayerContainer);
 
                         // this will be assigned only on the host
-                        PresentationData.NetworkPlayers[(int)PlayerId.Player1] = player;
+                        PresentationData.NetworkPlayers.Add(ID, player);
 
                         // spawn over the network
                         // Spawning in Netcode means to instantiate and/or spawn the object that is synchronized between all clients by the server.
                         // Only server can spawn multiplayer objects.
                         player.NetworkObj.Spawn(true);
-                        player.gameObject.SetActive(CoreData.PlayerCount == 1);
-                    }
-                    else
-                    {
-                        Transform transform = PresentationData.NetworkPlayers[(int)PlayerId.Player1].transform;
-                        transform.position = spawnPoint.position;
-                        transform.rotation = spawnPoint.rotation;
+                        player.gameObject.SetActive(true);
                     }
                 }
             }
             else
             {
-                SpawnSinglePlayer(_level.GetSpawnPoint(PlayerId.Player1));
+                SpawnSinglePlayer(_level.GetSpawnPoint(0));
             }
 
             bool loadGameRequested = (bool)GameStateSystem.GetTransitionParameter(StateTransitionParameter.LoadGameRequested)!;
@@ -166,12 +159,7 @@ namespace Presentation.ViewModels
         public static void Movement(Vector2 movementInput)
         {
             if (CoreData.IsMultiplayer)
-            {
-                if (NetworkManager.Singleton.IsHost)
-                    PresentationData.NetworkPlayers[(int)PlayerId.Player1].Move(movementInput.normalized);
-                else
-                    PresentationData.NetworkPlayers[(int)CoreData.PlayerId!].Move(movementInput.normalized);
-            }
+                PresentationData.NetworkPlayers[CoreData.PlayerId!.Value].Move(movementInput.normalized);
             else
                 PresentationData.Player.Move(movementInput.normalized);
         }

@@ -18,9 +18,10 @@ namespace Core
         public static Level CurrentLevel;
 
         /// <summary>
-        /// Selected player. Useful only in multiplayer.
+        /// ID of the player that this machine owns.
+        /// Null in single player.
         /// </summary>
-        public static PlayerId? PlayerId;
+        public static ulong? PlayerId;
 
         public static BinaryReader? SaveGameReader;
 

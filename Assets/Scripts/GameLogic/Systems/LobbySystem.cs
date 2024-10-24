@@ -436,6 +436,7 @@ namespace GameLogic.Systems
         {
             CoreData.IsMultiplayer = true;
             CoreData.CurrentLevel = Level.HubLocation;
+            CoreData.MachineRole = MachineRole.Client;
 
             try
             {
