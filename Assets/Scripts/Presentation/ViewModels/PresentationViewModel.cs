@@ -71,12 +71,24 @@ namespace Presentation.ViewModels
 
         public static void OnCoreSceneLoaded() => PresentationMainController.OnCoreSceneLoaded();
 
-        /// <summary>
-        /// This is where network related things happens.
-        /// Spawns all players.
-        /// </summary>
-        public static void OnLevelSceneLoaded()
+        public static void BootingOnExit() { }
+
+        public static void MainMenuOnEntry()
         {
+            MusicSystem.LoadAndPlayWhenReady(Music.MainMenu);
+            PresentationSceneReferenceHolder.GameplayCamera.gameObject.SetActive(false);
+            PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(true);
+        }
+
+        public static void MainMenuOnExit() => MusicSystem.Stop();
+
+        public static void GameplayOnEntry()
+        {
+            PresentationSceneReferenceHolder.GameplayCamera.gameObject.SetActive(true);
+            PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(false);
+
+            Debug.Log($"GameplayOnEntry, frame: {Time.frameCount}");
+
             // load level data
             _level = GameObject.FindWithTag("LevelSceneReferenceHolder").GetComponent<LevelSceneReferenceHolder>();
 
@@ -130,23 +142,6 @@ namespace Presentation.ViewModels
                 transform.position = position;
                 transform.rotation = rotation;
             }
-        }
-
-        public static void BootingOnExit() { }
-
-        public static void MainMenuOnEntry()
-        {
-            MusicSystem.LoadAndPlayWhenReady(Music.MainMenu);
-            PresentationSceneReferenceHolder.GameplayCamera.gameObject.SetActive(false);
-            PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(true);
-        }
-
-        public static void MainMenuOnExit() => MusicSystem.Stop();
-
-        public static void GameplayOnEntry()
-        {
-            PresentationSceneReferenceHolder.GameplayCamera.gameObject.SetActive(true);
-            PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(false);
 
             // spawn 5 VFXs around the player
             /*for (int i = 0; i < 5; i++)

@@ -72,22 +72,9 @@ namespace Boot
 
                 if (scene.buildIndex == Constants.UIScene)
                     UIViewModel.OnUISceneLoaded();
-
-                // level was loaded
-                if (scene.buildIndex > 3)
-                    PresentationViewModel.OnLevelSceneLoaded();
             };
 
             Architecture.InvokeInitialization();
-            List<int> overTimeSceneIds = new ();
-            List<int> stateChangeSceneIds = new ();
-            foreach (SceneConfig.ExtActivation activation in _sceneConfig.CustomActivation)
-                if (activation.When == SceneConfig.ActivationMode.OverTime)
-                    overTimeSceneIds.Add((int)activation.Level);
-                else if (activation.When == SceneConfig.ActivationMode.StateChange)
-                    stateChangeSceneIds.Add((int)activation.Level);
-
-            Architecture.SetSharedData(overTimeSceneIds, stateChangeSceneIds);
 
 #if UNITY_SERVER
             _gameStateMachine = CreateStateMachine_Server();
@@ -99,10 +86,9 @@ namespace Boot
             _gameStateMachine.AddTransitionParameter(StateTransitionParameter.HubSceneRequested, typeof(bool));
             _gameStateMachine.AddTransitionParameter(StateTransitionParameter.LoadGameRequested, typeof(bool));
 
-            GameStateSystem.OnStateChangeRequest += _gameStateMachine.RequestStateChange;
-            GameStateSystem.OnRequestPreLoad += _gameStateMachine.RequestPreLoad;
-            GameStateSystem.OnActivateRoots_StateChange += _gameStateMachine.ActivateRoots_StateChange;
-            GameStateSystem.OnActivateRoots_OverTime += _gameStateMachine.ActivateRoots_OverTime;
+            GameStateSystem.OnChangeState += _gameStateMachine.ChangeState;
+            GameStateSystem.OnChangeStatePreLoad += _gameStateMachine.ChangeStatePreLoad;
+            GameStateSystem.OnFinalizePreLoad += _gameStateMachine.FinalizePreLoad;
             GameStateSystem.OnGetCurrentGameState += _gameStateMachine.GetCurrentState;
             GameStateSystem.OnEndFrameSignal += _gameStateMachine.EndFrameSignal;
             GameStateSystem.OnGetTransitionParameter += _gameStateMachine.GetTransitionParameter;
@@ -110,7 +96,7 @@ namespace Boot
 #if UNITY_SERVER
             GameStateSystem.RequestStateChange(GameState.Gameplay);
 #else
-            GameStateSystem.RequestStateChange(GameState.MainMenu);
+            GameStateSystem.ChangeState(GameState.MainMenu);
 #endif
 
             DontDestroyOnLoad(_eventSystem);
@@ -141,9 +127,7 @@ namespace Boot
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             DebugCommandSystem.Add("win_mission", "Instantly wins the mission.", GameLogicViewModel.WinMission);
             DebugCommandSystem.AddParameterized("give_gold", "Give gold", 100, 0, 1000, value =>
-            {
-                MyDebug.Log($"Parametrized debug command called with the parameter equal to {value}");
-            });
+                MyDebug.Log($"Parametrized debug command called with the parameter equal to {value}"));
             DebugCommandSystem.Add("fail_mission", "Instantly fails current mission.", GameLogicViewModel.FailMission);
 #endif
 		}
@@ -198,25 +182,20 @@ namespace Boot
             new(new List<(
                     GameState from,
                     GameState to,
-                    Func<(int[]?, int[]?)>? scenesToLoadUnload,
-                    Action? betweenLoadAndUnload)>
+                    Func<(int[]?, int[]?)>? scenesToLoadUnload)>
                 {
                     (GameState.Booting,
                      GameState.MainMenu,
-                     () => (new[] {Constants.MainMenuScene, Constants.CoreScene, Constants.UIScene}, null),
-                     null),
+                     () => (new[] {Constants.MainMenuScene, Constants.CoreScene, Constants.UIScene}, null)),
                     (GameState.MainMenu,
                      GameState.Gameplay,
-                     () => (ScenesToLoadFromMainMenuToGameplay(), new[] {Constants.MainMenuScene}),
-                     null),
+                     () => (ScenesToLoadFromMainMenuToGameplay(), new[] {Constants.MainMenuScene})),
                     (GameState.Gameplay,
                      GameState.MainMenu,
-                     () => (new[] {Constants.MainMenuScene}, ScenesToUnloadFromGameplayToMainMenu()),
-                     null),
+                     () => (new[] {Constants.MainMenuScene}, ScenesToUnloadFromGameplayToMainMenu())),
                     (GameState.Gameplay,
                      GameState.Gameplay,
-                     ScenesToLoadUnloadFromGameplayToGameplay,
-                     null)
+                     ScenesToLoadUnloadFromGameplayToGameplay)
                 },
                 new (GameState, Action?, Action?)[]
                 {
@@ -241,17 +220,14 @@ namespace Boot
             new(new List<(
                     GameState from,
                     GameState to,
-                    Func<(int[]?, int[]?)>? scenesToLoadUnload,
-                    Action? betweenLoadAndUnload)>
+                    Func<(int[]?, int[]?)>? scenesToLoadUnload)>
                 {
                     (GameState.Booting,
                      GameState.Gameplay,
-                     () => (new[] {Constants.CoreScene, (int)Level.HubLocation}, null),
-                     null),
+                     () => (new[] {Constants.CoreScene, (int)Level.HubLocation}, null)),
                     (GameState.Gameplay,
                      GameState.Gameplay,
-                     ScenesToLoadUnloadFromGameplayToGameplay,
-                     null)
+                     ScenesToLoadUnloadFromGameplayToGameplay)
                 },
                 new (GameState, Action?, Action?)[]
                 {

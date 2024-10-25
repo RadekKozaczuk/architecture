@@ -51,23 +51,23 @@ namespace UI.Popups.Views
         {
             PresentationViewModel.PlaySound(Sound.ClickSelect);
             PopupSystem.CloseCurrentPopup();
-            GameStateSystem.RequestStateChange(GameState.Gameplay,
-                                               parameters: new []{(StateTransitionParameter.LoadGameRequested, (object)true)});
+            GameStateSystem.ChangeState(GameState.Gameplay,
+                                        parameters: new []{(StateTransitionParameter.LoadGameRequested, (object)true)});
         }
 
         static void HubAction()
         {
             PresentationViewModel.PlaySound(Sound.ClickSelect);
             PopupSystem.CloseCurrentPopup();
-            GameStateSystem.RequestStateChange(GameState.Gameplay,
-                                               parameters: new []{(StateTransitionParameter.HubSceneRequested, (object)true)});
+            GameStateSystem.ChangeState(GameState.Gameplay,
+                                        parameters: new []{(StateTransitionParameter.HubSceneRequested, (object)true)});
         }
 
         static void MainMenuAction()
         {
             PresentationViewModel.PlaySound(Sound.ClickSelect);
             PopupSystem.CloseCurrentPopup();
-            GameStateSystem.RequestStateChange(GameState.MainMenu);
+            GameStateSystem.ChangeState(GameState.MainMenu);
         }
     }
 }

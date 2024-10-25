@@ -32,5 +32,15 @@ namespace Presentation
             for (int i = 0; i < LightContainer.childCount; i++)
                 list.Add(LightContainer.GetChild(i).GetComponent<Light>());
         }
+
+        void Awake()
+        {
+            Debug.Log($"LevelSceneReferenceHolder AWAKE, frame: {Time.frameCount}");
+        }
+
+        void Start()
+        {
+            Debug.Log($"LevelSceneReferenceHolder START, frame: {Time.frameCount}");
+        }
     }
 }
