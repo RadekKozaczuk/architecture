@@ -35,12 +35,12 @@ namespace Presentation
 
         void Awake()
         {
-            Debug.Log("LevelSceneReferenceHolder AWAKE");
+            Debug.Log($"LevelSceneReferenceHolder AWAKE, frame: {Time.frameCount}");
         }
 
         void Start()
         {
-            Debug.Log("LevelSceneReferenceHolder START");
+            Debug.Log($"LevelSceneReferenceHolder START, frame: {Time.frameCount}");
         }
     }
 }

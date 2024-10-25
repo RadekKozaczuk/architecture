@@ -87,7 +87,8 @@ namespace Presentation.ViewModels
             PresentationSceneReferenceHolder.GameplayCamera.gameObject.SetActive(true);
             PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(false);
 
-            Debug.Log("OnLevelSceneLoaded CALLBACK (GAME)");
+            Debug.Log($"GameplayOnEntry, frame: {Time.frameCount}");
+
             // load level data
             _level = GameObject.FindWithTag("LevelSceneReferenceHolder").GetComponent<LevelSceneReferenceHolder>();
 

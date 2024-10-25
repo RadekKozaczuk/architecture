@@ -47,13 +47,13 @@ namespace UI.Views
 
             PresentationViewModel.PlaySound(Sound.ClickSelect);
             CoreData.CurrentLevel = Level.HubLocation;
-            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});
+            GameStateSystem.ChangeState(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});
         }
 
         static void LoadGame()
         {
             PresentationViewModel.PlaySound(Sound.ClickSelect);
-            GameStateSystem.RequestStateChange(GameState.Gameplay, parameters: new[] {(StateTransitionParameter.LoadGameRequested, (object)true)});
+            GameStateSystem.ChangeState(GameState.Gameplay, parameters: new[] {(StateTransitionParameter.LoadGameRequested, (object)true)});
         }
 
         static void Coop()

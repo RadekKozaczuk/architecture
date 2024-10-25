@@ -62,7 +62,7 @@ namespace UI.Popups.Views
                 GameLogicViewModel.SetConnectionData(_ipv4InputField.text, _portInputField.text);
 
                 // this will start the netcode client
-                GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});
+                GameStateSystem.ChangeState(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});
             });
 
             _refresh.onClick.AddListener(RefreshAction);

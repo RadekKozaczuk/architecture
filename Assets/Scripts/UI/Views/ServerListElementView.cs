@@ -31,7 +31,7 @@ namespace UI.Views
             CoreData.CurrentLevel = Level.HubLocation;
 
             GameLogicViewModel.SetConnectionData(_ipText.text, _portText.text);
-            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});
+            GameStateSystem.ChangeState(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});
         });
 
         internal void Initialize(string serverName, string ip, int port)

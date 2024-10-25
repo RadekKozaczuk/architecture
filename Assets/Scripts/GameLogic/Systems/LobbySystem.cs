@@ -336,7 +336,7 @@ namespace GameLogic.Systems
             });
 
             CoreData.PlayerCount = Lobby.Players.Count;
-            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});
+            GameStateSystem.ChangeState(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});
         }
 
         /// <summary>
@@ -449,7 +449,7 @@ namespace GameLogic.Systems
                 MyDebug.Log(e.ToString());
             }
 
-            GameStateSystem.RequestStateChange(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});
+            GameStateSystem.ChangeState(GameState.Gameplay, new[] {(int)CoreData.CurrentLevel});
         }
 
         /// <summary>

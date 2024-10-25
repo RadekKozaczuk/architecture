@@ -75,15 +75,6 @@ namespace Boot
             };
 
             Architecture.InvokeInitialization();
-            List<int> overTimeSceneIds = new ();
-            List<int> stateChangeSceneIds = new ();
-            foreach (SceneConfig.ExtActivation activation in _sceneConfig.CustomActivation)
-                if (activation.When == SceneConfig.ActivationMode.OverTime)
-                    overTimeSceneIds.Add((int)activation.Level);
-                else if (activation.When == SceneConfig.ActivationMode.StateChange)
-                    stateChangeSceneIds.Add((int)activation.Level);
-
-            Architecture.SetSharedData(overTimeSceneIds, stateChangeSceneIds);
 
 #if UNITY_SERVER
             _gameStateMachine = CreateStateMachine_Server();
@@ -95,10 +86,9 @@ namespace Boot
             _gameStateMachine.AddTransitionParameter(StateTransitionParameter.HubSceneRequested, typeof(bool));
             _gameStateMachine.AddTransitionParameter(StateTransitionParameter.LoadGameRequested, typeof(bool));
 
-            GameStateSystem.OnStateChangeRequest += _gameStateMachine.RequestStateChange;
-            GameStateSystem.OnRequestPreLoad += _gameStateMachine.RequestPreLoad;
-            GameStateSystem.OnActivateRoots_StateChange += _gameStateMachine.ActivateRoots_StateChange;
-            GameStateSystem.OnActivateRoots_OverTime += _gameStateMachine.ActivateRoots_OverTime;
+            GameStateSystem.OnChangeState += _gameStateMachine.ChangeState;
+            GameStateSystem.OnChangeStatePreLoad += _gameStateMachine.ChangeStatePreLoad;
+            GameStateSystem.OnFinalizePreLoad += _gameStateMachine.FinalizePreLoad;
             GameStateSystem.OnGetCurrentGameState += _gameStateMachine.GetCurrentState;
             GameStateSystem.OnEndFrameSignal += _gameStateMachine.EndFrameSignal;
             GameStateSystem.OnGetTransitionParameter += _gameStateMachine.GetTransitionParameter;
@@ -106,7 +96,7 @@ namespace Boot
 #if UNITY_SERVER
             GameStateSystem.RequestStateChange(GameState.Gameplay);
 #else
-            GameStateSystem.RequestStateChange(GameState.MainMenu);
+            GameStateSystem.ChangeState(GameState.MainMenu);
 #endif
 
             DontDestroyOnLoad(_eventSystem);
