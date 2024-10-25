@@ -38,8 +38,6 @@ namespace Boot
         static readonly DebugConfig _config;
 #endif
 
-        static readonly SceneConfig _sceneConfig;
-
         void Awake()
         {
             // at this point we know the machine role but only if it is a server
