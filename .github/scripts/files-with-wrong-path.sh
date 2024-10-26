@@ -26,7 +26,7 @@ function CollectFilesThatAreNotInFolder()
     find "./" -type f -name "$fileExtension" -print0 | 
     while IFS= read -r -d $'\0' file 
     do
-        if [[ $file != $folderPath ]] && [[ $file != $ThirdPartyPath ]] && [[ $file != $folderPathAlt ]] && [[ $file != $PluginsFolderPath ]] && [[ $file != $DocsFilesPath ]] && [[ $file != PackagesFilePath ]]
+        if [[ $file != $folderPath ]] && [[ $file != $ThirdPartyPath ]] && [[ $file != $folderPathAlt ]] && [[ $file != $PluginsFolderPath ]] && [[ $file != $DocsFilesPath ]] && [[ $file != $PackagesFilePath ]]
         then
             if [[ $anyIncorrect == false ]]
             then
