@@ -127,6 +127,7 @@ namespace Boot
             DebugCommandSystem.AddParameterized("give_gold", "Give gold", 100, 0, 1000, value =>
                 MyDebug.Log($"Parametrized debug command called with the parameter equal to {value}"));
             DebugCommandSystem.Add("fail_mission", "Instantly fails current mission.", GameLogicViewModel.FailMission);
+            DebugCommandSystem.Add("add_player", "Spawn player", PresentationViewModel.SpawnPlayer);
 #endif
 		}
 

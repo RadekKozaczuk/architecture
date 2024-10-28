@@ -187,6 +187,15 @@ namespace Presentation.ViewModels
             SaveLoadUtils.Write(writer, player.rotation);
         }
 
+        public static void SpawnPlayer()
+        {
+            Debug.Log("Reference level: " +  _level);
+            var spawnPoint = _level.GetSpawnPoint(1);
+
+            Object.Instantiate(
+                _playerConfig.PlayerPrefab, spawnPoint.position, spawnPoint.rotation, PresentationSceneReferenceHolder.PlayerContainer);
+        }
+
         /// <summary>
         /// If player instance already exists it simply moves it to the spawn point.
         /// </summary>
