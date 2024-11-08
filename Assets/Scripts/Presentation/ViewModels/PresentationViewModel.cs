@@ -80,7 +80,11 @@ namespace Presentation.ViewModels
             PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(true);
         }
 
-        public static void MainMenuOnExit() => MusicSystem.Stop();
+        public static void MainMenuOnExit()
+        {
+            MusicSystem.Stop();
+            MusicSystem.Unload(Music.MainMenu);
+        }
 
         public static void GameplayOnEntry()
         {
