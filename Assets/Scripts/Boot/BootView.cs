@@ -7,7 +7,6 @@ using GameLogic.ViewModels;
 using Core.Systems;
 using Shared.Systems;
 using UI.ViewModels;
-using Core.Config;
 using UnityEngine;
 using Core.Enums;
 using System.IO;
@@ -15,6 +14,7 @@ using Shared;
 using System;
 using Core;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+using Core.Config;
 using Shared.DebugCommands;
 #endif
 
@@ -118,8 +118,10 @@ namespace Boot
             // On all other platforms, Unity ignores the value of targetFrameRate if you set vSyncCount
             // and calculates the target frame rate by dividing the platform's default target frame rate by the value of vSyncCount.
             QualitySettings.vSyncCount = (int)(Screen.currentResolution.refreshRateRatio.value / 30);
+            Application.targetFrameRate = 60;
 #else
             QualitySettings.vSyncCount = (int)(Screen.currentResolution.refreshRateRatio.value / 45);
+            Application.targetFrameRate = 60;
 #endif
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD

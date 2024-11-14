@@ -877,7 +877,7 @@ PlayerSettings:
   platformArchitecture: {}
   scriptingBackend:
     Server: 0
-    Standalone: 0
+    Standalone: 1
   il2cppCompilerConfiguration:
     Server: 2
     Standalone: 2
@@ -894,7 +894,7 @@ PlayerSettings:
     PS5: 1
     Server: 3
     Stadia: 1
-    Standalone: 0
+    Standalone: 3
     WebGL: 1
     Windows Store Apps: 1
     XboxOne: 1
