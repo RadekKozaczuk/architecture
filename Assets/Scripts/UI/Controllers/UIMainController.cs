@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using ControlFlow.Interfaces;
 using JetBrains.Annotations;
+using Presentation.ViewModels;
 using Shared;
 using UI.Popups;
 using UI.Popups.Views;
@@ -42,6 +43,12 @@ namespace UI.Controllers
         public void CustomLateUpdate() { }
 
         internal static void OnUISceneLoaded() => _uiSceneLoaded = true;
+
+        [React]
+        static void OnClientConnected(ulong clientId, int clientIndex) => PresentationViewModel.OnClientConnected(clientId, clientIndex);
+
+        [React]
+        static void OnClientDisconnected(ulong clientId, int clientIndex) => PresentationViewModel.OnClientDisconnected(clientId, clientIndex);
 
         [React]
         static void OnInventoryChanged() { }

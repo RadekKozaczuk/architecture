@@ -65,6 +65,12 @@ namespace UI.Popups.Views
 
         static void MainMenuAction()
         {
+            if (CoreData.IsMultiplayer)
+            {
+                GameLogicViewModel.RemoveSelfFromLobby();
+                GameLogicViewModel.LeaveChannel();
+            }
+
             PresentationViewModel.PlaySound(Sound.ClickSelect);
             PopupSystem.CloseCurrentPopup();
             GameStateSystem.ChangeState(GameState.MainMenu);

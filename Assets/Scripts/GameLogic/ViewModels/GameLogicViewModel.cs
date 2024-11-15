@@ -11,6 +11,7 @@ using Core.Enums;
 using Shared;
 using System;
 using Core;
+using Unity.Netcode;
 
 namespace GameLogic.ViewModels
 {
@@ -79,7 +80,6 @@ namespace GameLogic.ViewModels
         }
 
         public static void GameplayOnExit() { }
-
         public static void SaveGame() => SaveLoadSystem.SaveGame();
 
         public static void LoadGame() { }

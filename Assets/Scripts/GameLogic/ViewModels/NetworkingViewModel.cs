@@ -73,12 +73,21 @@ namespace GameLogic.ViewModels
         public static void LeaveLobby() => LobbySystem.LeaveLobby();
 
         public static void RemovePlayerFromLobby(string lobbyId) => LobbySystem.RemovePlayerFromLobby(lobbyId);
+        public static async void RemoveSelfFromLobby()
+        {
+            string? playerId = await GetJoinedLobbyAsync();
 
+            if (playerId == null)
+                return;
+
+            RemovePlayerFromLobby(playerId);
+        }
         public static async void StartGame() => await LobbySystem.StartGame_Host();
 
         public static void LoginVoiceChat(Action callback) => VoiceChatSystem.Login(callback);
 
         public static void ToggleMuteInput() => VoiceChatSystem.ToggleMuteInput();
+        public static void LeaveChannel() =>  VoiceChatSystem.LeaveChannel();
 
         /// <summary>
         /// Asks backend for a list of servers.
