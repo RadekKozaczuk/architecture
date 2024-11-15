@@ -1,6 +1,5 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using System.IO;
-using System.Linq;
 using Core;
 using Core.Enums;
 using Core.Systems;
@@ -34,40 +33,32 @@ namespace Presentation.ViewModels
         [Preserve]
         PresentationViewModel() { }
 
-        public void Initialize()
-        {
-            // this is called for the host too
-            NetworkManager.Singleton.OnClientConnectedCallback += clientId =>
-            {
-                // ignore self connection
-                if (clientId == 0)
-                    return;
-
-                if (!NetworkManager.Singleton.IsServer && !NetworkManager.Singleton.IsHost)
-                    return;
-
-                // Because Netcode recycles indices with a delay we have to continuously increment them to avoid conflicts.
-                int id = Enumerable.Range(0, int.MaxValue).First(id => !PresentationData.NetworkPlayers.ContainsKey((ulong)id));
-                Transform spawnPoint = _level.GetSpawnPoint(id).transform;
-                PlayerNetworkView networkPlayer = Object.Instantiate(_playerConfig.PlayerClientPrefab, spawnPoint.position, spawnPoint.rotation,
-                                                                     PresentationSceneReferenceHolder.PlayerContainer);
-
-                // this will be assigned only on the host
-                PresentationData.NetworkPlayers.Add(clientId, networkPlayer);
-
-                // spawn over the network
-                networkPlayer.NetworkObj.SpawnWithOwnership(clientId, true);
-                networkPlayer.gameObject.SetActive(true);
-            };
-
-            NetworkManager.Singleton.OnClientDisconnectCallback += clientId => PresentationData.NetworkPlayers.Remove(clientId);
-        }
-
+        public void Initialize() { }
         public static void CustomUpdate() => _presentationMainController.CustomUpdate();
 
         public static void CustomFixedUpdate() => _presentationMainController.CustomFixedUpdate();
 
         public static void CustomLateUpdate() => _presentationMainController.CustomLateUpdate();
+
+        public static void OnClientConnected(ulong clientId, int clientIndex)
+        {
+            if (clientId == 0)
+                return;
+
+            Transform spawnPoint = _level.GetSpawnPoint(clientIndex).transform;
+            PlayerNetworkView networkPlayer = Object.Instantiate(_playerConfig.PlayerClientPrefab, spawnPoint.position, spawnPoint.rotation,
+                PresentationSceneReferenceHolder.PlayerContainer);
+
+            // this will be assigned only on the host
+            PresentationData.NetworkPlayers.Add(clientId, networkPlayer);
+
+            // spawn over the network
+            networkPlayer.NetworkObj.SpawnWithOwnership(clientId, true);
+            networkPlayer.gameObject.SetActive(true);
+        }
+
+        public static void OnClientDisconnected(ulong clientId, int clientIndex) =>
+            PresentationData.NetworkPlayers.Remove(clientId);
 
         public static void OnCoreSceneLoaded() => PresentationMainController.OnCoreSceneLoaded();
 
