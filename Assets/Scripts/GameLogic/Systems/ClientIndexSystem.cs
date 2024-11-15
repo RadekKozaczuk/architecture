@@ -54,6 +54,9 @@ namespace GameLogic.Systems
 
             _ids[freeIndex] = null;
             Signals.ClientDisconnected(disconnectClientId, freeIndex);
+
+            if (disconnectClientId == 0)
+                _ids.Clear();
         }
     }
 }
