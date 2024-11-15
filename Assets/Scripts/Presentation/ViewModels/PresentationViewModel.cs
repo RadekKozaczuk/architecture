@@ -66,16 +66,12 @@ namespace Presentation.ViewModels
 
         public static void MainMenuOnEntry()
         {
-            MusicSystem.LoadAndPlayWhenReady(Music.MainMenu);
+            MusicSystem.LoadAndPlayWhenReady(Music.MainMenu, false);
             PresentationSceneReferenceHolder.GameplayCamera.gameObject.SetActive(false);
             PresentationSceneReferenceHolder.MainMenuCamera.gameObject.SetActive(true);
         }
 
-        public static void MainMenuOnExit()
-        {
-            MusicSystem.Stop();
-            MusicSystem.Unload(Music.MainMenu);
-        }
+        public static void MainMenuOnExit() => MusicSystem.StopAndUnload();
 
         public static void GameplayOnEntry()
         {
